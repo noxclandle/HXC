@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String           @id @default(uuid()) @db.Uuid
+  email             String?          @unique
+  password          String?
+  name              String?
+  handle_name       String?
+  alias_name        String?
+  photo_url         String?
+  is_alias_active   Boolean          @default(false)
+  is_alias_unlocked Boolean          @default(false)
+  address           String?
+  phone             String?
+  role              String           @default("member")
+  rank              String           @default("Initiate")
+  link_x            String?          // X (Twitter) URL
+  link_instagram    String?          // Instagram URL
+  link_website      String?          // Website URL
+  rt_balance        BigInt           @default(0)
+  last_daily_at     DateTime?        // 最後にデイリーボーナスを受け取った日時
+  ai_config         Json?
+  owned_assets      Json?
+  unlocked_titles   Json?
+  created_at        DateTime         @default(now())
+  card              Card?
+  rt_transactions   RTTransaction[]
+  contacts          Contact[]        @relation("UserContacts")
+  audit_logs        AuditLog[]
+  chat_messages     ChatMessage[]
+
+  @@map("users")
+}
+
+model ChatMessage {
+  id           String   @id @default(uuid()) @db.Uuid
+  user_id      String   @db.Uuid
+  role         String
+  text         String
+  created_at   DateTime @default(now())
+  user         User     @relation(fields: [user_id], references: [id])
+
+  @@map("chat_messages")
+}
+
+model Contact {
+  id           String   @id @default(uuid()) @db.Uuid
+  owner_id     String   @db.Uuid
+  name         String
+  handle_name  String?
+  phone        String?
+  email        String?
+  address      String?
+  notes        String?
+  ai_tags      Json?
+  coord_x      Float?
+  coord_y      Float?
+  created_at   DateTime @default(now())
+  owner        User     @relation("UserContacts", fields: [owner_id], references: [id])
+
+  @@map("contacts")
+}
+
+model Card {
+  uid             String    @id
+  internal_serial String    @unique
+  status          String    @default("unissued")
+  user_id         String?   @unique @db.Uuid
+  issued_at       DateTime?
+  activated_at    DateTime?
+  user            User?     @relation(fields: [user_id], references: [id])
+
+  @@map("cards")
+}
+
+model RTTransaction {
+  id          Int      @id @default(autoincrement())
+  user_id     String   @db.Uuid
+  amount      Int
+  type        String
+  description String?
+  created_at  DateTime @default(now())
+  user        User     @relation(fields: [user_id], references: [id])
+
+  @@map("rt_transactions")
+}
+
+model AuditLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  user_id      String?  @db.Uuid
+  action       String
+  details      Json?
+  ip_address   String?
+  created_at   DateTime @default(now())
+  user         User?    @relation(fields: [user_id], references: [id])
+
+  @@map("audit_logs")
+}
+
+model ScheduledTask {
+  id           String   @id @default(uuid()) @db.Uuid
+  action       String
+  payload      Json
+  scheduled_at DateTime
+  executed_at  DateTime?
+  status       String   @default("pending")
+  created_at   DateTime @default(now())
+
+  @@map("scheduled_tasks")
+}
