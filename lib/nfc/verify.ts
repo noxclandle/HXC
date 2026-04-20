@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
  * @returns 検証結果と関連データ
  */
 export async function verifyHexaCard(uid: string, serial: string) {
-  const card = await prisma.cards.findUnique({
+  const card = await prisma.card.findUnique({
     where: { uid },
   });
 
@@ -32,7 +32,7 @@ export async function verifyHexaCard(uid: string, serial: string) {
  * 新規カードを登録（アクティベーション）
  */
 export async function activateHexaCard(uid: string, userId: string) {
-  return await prisma.cards.update({
+  return await prisma.card.update({
     where: { uid },
     data: {
       status: "active",

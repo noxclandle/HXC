@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     // 1. 全名刺のメモを取得
     const contacts = await prisma.contact.findMany({
       where: { owner_id: session.user.id },
-      select: { name: true, notes: true, role: true }
+      select: { name: true, notes: true }
     });
 
     // 2. 過去の重要な会話を取得

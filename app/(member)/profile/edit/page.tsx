@@ -45,7 +45,11 @@ export default function ProfileEditPage() {
   const handleSave = async () => {
     if (!validate()) return;
     try {
-      // ... existing fetch ...
+      const res = await fetch("/api/profile/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
       if (res.ok) router.push("/dashboard");
       else alert("Failed to sync identity.");
     } catch (err) {

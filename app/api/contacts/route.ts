@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { executeRTTransaction } from "@/lib/rt/engine";
 
 import { checkAndAwardTitles } from "@/lib/game/titles";
 
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await req.json();
-    const { name, handle, email, phone, address, notes, role } = data; // roleはOCRで取得した役職
+    const { name, handle, email, phone, address, notes, role, coord_x = 0, coord_y = 0 } = data; // roleはOCRで取得した役職
 
     // 肩書きによるRTの重み付け判定 (新バランス)
     const isHighValue = /社長|代表|CEO|役員|Director|President/i.test(role || name || "");

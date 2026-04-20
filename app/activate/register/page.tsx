@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Hexagon, UserCheck, ShieldCheck, Mail, Lock, Briefcase } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function IdentityRegisterPage() {
+function RegisterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const uid = searchParams.get("uid") || "AUTO-DETECTED";
@@ -26,8 +26,7 @@ export default function IdentityRegisterPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6 text-center bg-void text-moonlight">
-      <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait">
         {step === 0 && (
           <motion.div key="reg" className="max-w-md w-full space-y-12">
             <header className="space-y-2">
@@ -93,6 +92,15 @@ export default function IdentityRegisterPage() {
           </motion.div>
         )}
       </AnimatePresence>
+  );
+}
+
+export default function IdentityRegisterPage() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center p-6 text-center bg-void text-moonlight">
+      <Suspense fallback={<div className="text-xs uppercase tracking-widest opacity-40">Loading Archive...</div>}>
+        <RegisterContent />
+      </Suspense>
     </main>
   );
 }
