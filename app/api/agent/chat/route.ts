@@ -16,12 +16,12 @@ export async function POST(req: NextRequest) {
     // 1. ユーザーの「記憶（名刺データ）」を収集
     const contacts = await prisma.contact.findMany({
       where: { owner_id: session.user.id },
-      select: { name: true, notes: true, role: true, ai_tags: true }
+      select: { name: true, notes: true, handle_name: true, ai_tags: true }
     });
 
     // 2. コンテキストの構築（本来はここでGemini APIを叩く）
     // 簡易的なRAG（検索拡張生成）ロジックをシミュレーション
-    const knowledge = contacts.map(c => `${c.name}(${c.role}): ${c.notes}`).join("\n");
+    const knowledge = contacts.map(c => `${c.name}(${c.handle_name}): ${c.notes}`).join("\n");
     
     let aiResponse = "";
     const query = prompt.toLowerCase();
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     if (query.includes("誰") || query.includes("教え")) {
       const match = contacts.find(c => query.includes(c.name?.toLowerCase()));
       if (match) {
-        aiResponse = `${match.name}様ですね。${match.role}として登録されています。「${match.notes}」という記録が残っています。彼との共鳴はあなたの力となるでしょう。`;
+        aiResponse = `${match.name}様ですね。${match.handle_name || "名無しの権兵衛"}として登録されています。「${match.notes}」という記録が残っています。彼との共鳴はあなたの力となるでしょう。`;
       } else {
         aiResponse = "その名の魂は、まだあなたのアーカイブには刻まれていないようです。";
       }
