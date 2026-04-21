@@ -34,6 +34,14 @@ function RegisterContent() {
               <p className="text-[10px] tracking-widest opacity-40 uppercase italic">物理カードをアカウントへ同期します</p>
             </header>
 
+            <div className="p-6 border border-emerald-500/20 bg-emerald-500/5 space-y-4">
+              <p className="text-[11px] text-emerald-400 tracking-[0.2em] font-bold">【同期手順】</p>
+              <ol className="text-[10px] text-left space-y-2 opacity-80 leading-relaxed">
+                <li>1. スマートフォンのNFC読み取り位置にカードを固定してください。</li>
+                <li>2. 以下の情報を入力し、カードを離さずにボタンを押してください。</li>
+              </ol>
+            </div>
+
             <div className="p-4 border border-white/5 bg-white/5 flex justify-between items-center mb-8">
                <span className="text-[8px] uppercase tracking-widest opacity-40">Verified Hardware UID</span>
                <span className="text-[10px] font-mono text-emerald-400">{uid}</span>
