@@ -10,91 +10,156 @@ import VoidRadar from "@/components/ui/VoidRadar";
 import GraceBloomEffect from "@/components/ui/GraceBloomEffect";
 import DecorationRitual from "@/components/ui/DecorationRitual";
 import MonthlyReport from "@/components/ui/MonthlyReport";
+import DigitalIdentityOverlay from "@/components/ui/DigitalIdentityOverlay";
 
 export default function DashboardPage() {
   const [isSublimating, setIsSublimating] = useState(false);
   const [isGraceActive, setIsGraceActive] = useState(false);
   const [ritualTitle, setRitualTitle] = useState<string | null>(null);
   const [pendingSyncCount, setPendingSyncCount] = useState(0);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
     const pending = JSON.parse(localStorage.getItem("pending_scans") || "[]");
     setPendingSyncCount(pending.length);
+
+    // 初回ログイン判定（実際にはDBのフラグを見るべきだが、簡易的にlocalStorageを使用）
+    const hasSeenOnboarding = localStorage.getItem("hxc_onboarding_seen");
+    if (!hasSeenOnboarding) {
+      setTimeout(() => setShowOnboarding(true), 1500);
+    }
   }, []);
 
-  const handleSync = async () => {
-    alert("オフラインデータを同期しています...");
-    localStorage.removeItem("pending_scans");
-    setPendingSyncCount(0);
-    window.dispatchEvent(new CustomEvent("sync-complete"));
+  const completeOnboarding = () => {
+    localStorage.setItem("hxc_onboarding_seen", "true");
+    setShowOnboarding(false);
   };
 
   const userData = {
     name: "Chief Officer",
     uid: "04:A2:3F:81",
+    handle: "ARCHITECT",
+    slug: "architect",
     personality: "Sentinel",
     aura: 85,
     level: 12,
     exp: 65,
-    rt_balance: 2450,
-    titles: ["Premium Member", "Network Architect"],
+    rt_balance: 1000000,
+    titles: ["Chief Officer", "Founder", "Architect"],
     current_frame: "Obsidian",
     current_sound: "Silver Resonance"
   };
 
   const getTitleColor = (title: string) => {
     switch (title) {
-      case "Messenger": return "title-rare";
-      case "Void Voyager": return "title-elite";
-      case "Headhunter": return "title-epic";
-      case "Chief Officer": return "title-mythic";
-      default: return "opacity-60";
+      case "Messenger": return "text-blue-400 border-blue-400/20 shadow-[0_0_10px_rgba(96,165,250,0.2)]";
+      case "Void Voyager": return "text-purple-400 border-purple-400/20 shadow-[0_0_10px_rgba(192,132,252,0.2)]";
+      case "Headhunter": return "text-rose-400 border-rose-400/20 shadow-[0_0_10px_rgba(251,113,133,0.2)]";
+      case "Chief Officer": return "text-emerald-400 border-emerald-400/20 shadow-[0_0_10px_rgba(52,211,153,0.2)]";
+      default: return "opacity-40 border-white/10";
     }
   };
 
   return (
-    <div className="max-w-5xl mx-auto pt-24 px-6 pb-24">
+    <div className="max-w-5xl mx-auto pt-24 px-6 pb-24 relative">
+      {/* Onboarding Overlay */}
+      <AnimatePresence>
+        {showOnboarding && (
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[1000] bg-void flex items-center justify-center p-12 overflow-hidden"
+          >
+            {/* Background Effects */}
+            <motion.div 
+              animate={{ rotate: 360 }} 
+              transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+              className="absolute w-[800px] h-[800px] border border-moonlight/5 rounded-full pointer-events-none"
+            />
+            
+            <div className="max-w-xl w-full space-y-12 text-center relative z-10">
+              <motion.div 
+                initial={{ y: 20, opacity: 0 }} 
+                animate={{ y: 0, opacity: 1 }} 
+                transition={{ delay: 0.5 }}
+                className="space-y-4"
+              >
+                <h2 className="text-2xl tracking-[0.8em] uppercase font-light">Welcome, {userData.name}</h2>
+                <div className="w-12 h-px bg-moonlight/20 mx-auto" />
+              </motion.div>
+
+              <motion.div 
+                initial={{ y: 20, opacity: 0 }} 
+                animate={{ y: 0, opacity: 1 }} 
+                transition={{ delay: 1.5 }}
+                className="space-y-6"
+              >
+                <p className="text-xs tracking-[0.4em] leading-loose opacity-60 uppercase italic">
+                  「主（あるじ）よ、お待ちしておりました。<br />
+                  このカードは単なる道具ではなく、あなたの運命を刻む鍵です。」
+                </p>
+                <p className="text-[10px] tracking-[0.2em] leading-relaxed opacity-40 uppercase">
+                  現実の共鳴（スキャン）によって人脈を星座のように繋ぎ、<br />
+                  ポイント（RT）を捧げることで、システムの深淵を解禁してください。
+                </p>
+              </motion.div>
+
+              <motion.button 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                transition={{ delay: 3 }}
+                onClick={completeOnboarding}
+                className="px-16 py-5 bg-white text-void font-bold text-[11px] tracking-[1em] uppercase shadow-[0_0_50px_rgba(255,255,255,0.2)] hover:scale-105 transition-all"
+              >
+                Enter Sanctum
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Synchronization Banner */}
       <AnimatePresence>
         {pendingSyncCount > 0 && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="mb-12 p-6 border border-moonlight/20 bg-white/5 flex justify-between items-center overflow-hidden">
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="mb-12 p-6 border border-emerald-500/20 bg-emerald-500/5 flex justify-between items-center overflow-hidden">
             <div className="space-y-1">
-              <p className="text-[10px] tracking-[0.4em] uppercase font-bold text-moonlight">Pending Connections</p>
-              <p className="text-[8px] opacity-40 uppercase tracking-widest">{pendingSyncCount} 件の未同期データがあります</p>
+              <p className="text-[10px] tracking-[0.4em] uppercase font-bold text-emerald-400 flex items-center gap-2">
+                <Sparkles size={12} /> Pending Connections
+              </p>
+              <p className="text-[8px] opacity-60 uppercase tracking-widest">{pendingSyncCount} 件の未同期データがあります</p>
             </div>
-            <button onClick={handleSync} className="px-8 py-3 bg-moonlight text-void text-[9px] font-bold uppercase tracking-widest hover:bg-white transition-all">Sync Now</button>
+            <button onClick={handleSync} className="px-8 py-3 bg-emerald-500 text-void text-[9px] font-bold uppercase tracking-widest hover:bg-emerald-400 transition-all">Sync Now</button>
           </motion.div>
         )}
       </AnimatePresence>
 
       <DecorationRitual title={ritualTitle || ""} isVisible={!!ritualTitle} onComplete={() => setRitualTitle(null)} />
-      <SublimationOverlay isVisible={isSublimating} onComplete={() => setIsSublimating(false)} rankName="Premium Member" />
+      <SublimationOverlay isVisible={isSublimating} onComplete={() => setIsSublimating(false)} rankName="Chief Officer" />
       <GraceBloomEffect isActive={isGraceActive} onComplete={() => setIsGraceActive(false)} />
 
       <header className="mb-16">
         <div className="flex justify-between items-end mb-6">
           <div>
-            <h1 className="text-3xl tracking-[0.3em] uppercase mb-2">Personal Hub</h1>
+            <h1 className="text-4xl tracking-[0.4em] uppercase mb-4 font-light">Personal Hub</h1>
             <div className="flex gap-4 items-center">
-              <p className="text-gothic-silver text-[9px] tracking-[0.4em] opacity-40 uppercase italic">Hexa Card Premium Network</p>
-              <div className="h-px w-8 bg-moonlight/20" />
+              <p className="text-emerald-400 text-[10px] tracking-[0.4em] uppercase italic flex items-center gap-2">
+                <ShieldCheck size={14} /> Chief Officer Status
+              </p>
+              <div className="h-px w-12 bg-moonlight/20" />
               <p className="text-[10px] tracking-[0.2em] uppercase font-bold text-moonlight/60">Tier Level: {userData.level}</p>
             </div>
           </div>
           <div className="text-right space-y-4">
-             <div className="flex gap-4 justify-end">
-               <button onClick={() => setRitualTitle("Premium Member")} className="text-[7px] uppercase tracking-widest opacity-10 hover:opacity-100 transition-opacity">演出：ランクアップ</button>
-               <button onClick={() => setIsGraceActive(true)} className="text-[7px] uppercase tracking-widest opacity-10 hover:opacity-100 transition-opacity">演出：ポイント獲得</button>
-             </div>
-             <div className="flex gap-2 justify-end">
+             <div className="flex gap-2 justify-end flex-wrap max-w-[300px]">
                {userData.titles.map((t) => (
-                 <span key={t} className={`px-3 py-1 border border-moonlight/20 text-[7px] tracking-[0.3em] uppercase ${getTitleColor(t)}`}>
+                 <span key={t} className={`px-4 py-1.5 border text-[7px] tracking-[0.4em] uppercase font-bold transition-all ${getTitleColor(t)}`}>
                    {t}
                  </span>
                ))}
              </div>
-             <div className="w-32 h-[1px] bg-moonlight/10 relative overflow-hidden ml-auto">
-                <motion.div initial={{ width: 0 }} animate={{ width: `${userData.exp}%` }} className="h-full bg-moonlight shadow-[0_0_5px_white]" />
+             <div className="w-48 h-[1px] bg-moonlight/10 relative overflow-hidden ml-auto">
+                <motion.div initial={{ width: 0 }} animate={{ width: `${userData.exp}%` }} className="h-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]" />
              </div>
           </div>
         </div>
@@ -105,43 +170,49 @@ export default function DashboardPage() {
           <div className="relative group">
             <HexaCardPreview name={userData.name} uid={userData.uid} rt={userData.rt_balance.toLocaleString()} personality={userData.personality} aura={userData.aura} />
             
-            <div className="mt-6 flex gap-4">
-              <Link href="/profile/edit" className="flex-1 py-4 border border-moonlight/10 bg-gothic-dark/30 hover:border-moonlight/30 transition-all text-[10px] tracking-[0.4em] uppercase text-center">
-                Edit Profile <span className="block text-[7px] opacity-40 mt-1">プロフィールの編集</span>
-              </Link>
-              <Link 
-                href={`/p/${userData.name.toLowerCase().replace(/\s+/g, '-')}`} 
-                target="_blank"
-                className="flex-1 py-4 border border-moonlight/10 bg-white/5 hover:bg-white/10 transition-all text-[10px] tracking-[0.4em] uppercase text-center"
-              >
-                View Card <span className="block text-[7px] opacity-40 mt-1">公開プレビュー</span>
-              </Link>
-              <button 
-                onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/p/${userData.name.toLowerCase().replace(/\s+/g, '-')}`);
-                  alert("URLをコピーしました");
-                }}
-                className="w-14 border border-moonlight/10 bg-white/5 hover:bg-white/10 transition-all flex items-center justify-center group"
-                title="URLをコピー"
-              >
-                <Share2 size={18} className="opacity-40 group-hover:opacity-100 transition-opacity" />
-              </button>
+            <div className="mt-8 flex flex-col md:flex-row gap-4">
+              <div className="flex-1 flex gap-4">
+                <Link href="/profile/edit" className="flex-1 py-4 border border-moonlight/10 bg-gothic-dark/30 hover:border-moonlight/30 transition-all text-[10px] tracking-[0.4em] uppercase text-center group">
+                  Edit Identity <span className="block text-[7px] opacity-40 mt-1 group-hover:opacity-100 transition-opacity">情報の調律</span>
+                </Link>
+                <Link 
+                  href={`/p/${userData.slug}`} 
+                  target="_blank"
+                  className="flex-1 py-4 border border-moonlight/10 bg-white/5 hover:bg-white/10 transition-all text-[10px] tracking-[0.4em] uppercase text-center group"
+                >
+                  Sanctum <span className="block text-[7px] opacity-40 mt-1 group-hover:opacity-100 transition-opacity">公開プレビュー</span>
+                </Link>
+              </div>
+              <div className="flex gap-4">
+                <DigitalIdentityOverlay user={{ name: userData.name, handle: userData.handle, role: userData.role, slug: userData.slug }} />
+                <button 
+                  onClick={() => {
+                    const url = `${window.location.origin}/p/${userData.slug}`;
+                    navigator.clipboard.writeText(url);
+                    alert("Identity URL copied to clipboard.");
+                  }}
+                  className="w-14 border border-moonlight/10 bg-white/5 hover:bg-white/10 transition-all flex items-center justify-center group"
+                >
+                  <Share2 size={18} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="p-4 border border-moonlight/5 bg-white/5 relative group">
+          <div className="p-6 border border-emerald-500/10 bg-emerald-500/[0.02] relative group overflow-hidden">
+             <div className="absolute right-0 top-0 w-32 h-32 bg-emerald-500/5 blur-[50px] pointer-events-none" />
              <div className="flex justify-between items-start mb-2">
-                <p className="text-[8px] uppercase opacity-30">Current Points (RT)</p>
+                <p className="text-[9px] uppercase tracking-[0.4em] text-emerald-400 font-bold">Resonance Energy (RT)</p>
                 <div className="relative cursor-help group/info">
-                  <div className="w-3 h-3 border border-moonlight/20 rounded-full flex items-center justify-center text-[7px] opacity-40 group-hover/info:opacity-100 transition-opacity">?</div>
-                  <div className="absolute right-0 bottom-6 w-48 p-3 bg-void border border-moonlight/20 shadow-2xl opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50">
-                    <p className="text-[8px] tracking-widest text-moonlight leading-relaxed uppercase">
-                      名刺交換やログインで蓄積されるエネルギーです。集めておくと、いいこと（限定アセットの交換等）があるかもしれません。
+                  <div className="w-4 h-4 border border-emerald-500/40 rounded-full flex items-center justify-center text-[8px] text-emerald-400 opacity-40 group-hover/info:opacity-100 transition-opacity">?</div>
+                  <div className="absolute right-0 bottom-8 w-64 p-4 bg-void border border-emerald-500/20 shadow-2xl opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50">
+                    <p className="text-[9px] tracking-widest text-moonlight leading-relaxed uppercase">
+                      現実の共鳴によって蓄積される純粋エネルギーです。システムの維持と、新たな称号の解禁に使用されます。
                     </p>
                   </div>
                 </div>
              </div>
-             <p className="text-xl font-extralight tracking-widest">{userData.rt_balance.toLocaleString()} <span className="text-[8px] opacity-40">RT</span></p>
+             <p className="text-3xl font-extralight tracking-[0.3em] text-emerald-400">{userData.rt_balance.toLocaleString()} <span className="text-xs opacity-40">RT</span></p>
           </div>
 
           <section>
