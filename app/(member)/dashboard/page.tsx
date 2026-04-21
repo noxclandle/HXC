@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { History, Zap, TrendingUp, Sparkles, UserCircle, Share2 } from "lucide-react";
+import { History, Zap, TrendingUp, Sparkles, UserCircle, Share2, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import SublimationOverlay from "@/components/ui/SublimationOverlay";
@@ -35,10 +35,18 @@ export default function DashboardPage() {
     setShowOnboarding(false);
   };
 
+  const handleSync = async () => {
+    alert("オフラインデータを同期しています...");
+    localStorage.removeItem("pending_scans");
+    setPendingSyncCount(0);
+    window.dispatchEvent(new CustomEvent("sync-complete"));
+  };
+
   const userData = {
     name: "Chief Officer",
     uid: "04:A2:3F:81",
     handle: "ARCHITECT",
+    role: "Chief Officer / Founder",
     slug: "architect",
     personality: "Sentinel",
     aura: 85,
@@ -184,10 +192,16 @@ export default function DashboardPage() {
                 </Link>
               </div>
               <div className="flex gap-4">
-                <DigitalIdentityOverlay user={{ name: userData.name, handle: userData.handle, role: userData.role, slug: userData.slug }} />
+                <DigitalIdentityOverlay user={{ 
+                  name: userData.name, 
+                  handle: userData.handle, 
+                  role: userData.role, 
+                  slug: userData.slug 
+                }} />
                 <button 
                   onClick={() => {
-                    const url = `${window.location.origin}/p/${userData.slug}`;
+                    const origin = typeof window !== "undefined" ? window.location.origin : "";
+                    const url = `${origin}/p/${userData.slug}`;
                     navigator.clipboard.writeText(url);
                     alert("Identity URL copied to clipboard.");
                   }}

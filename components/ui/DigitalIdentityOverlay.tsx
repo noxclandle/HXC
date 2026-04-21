@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { QrCode, X, Share2, ShieldCheck } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
@@ -19,7 +19,13 @@ interface DigitalCardProps {
  */
 export default function DigitalIdentityOverlay({ user }: DigitalCardProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const profileUrl = `${window.location.origin}/p/${user.slug}`;
+  const [profileUrl, setProfileUrl] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setProfileUrl(`${window.location.origin}/p/${user.slug}`);
+    }
+  }, [user.slug]);
 
   return (
     <>
