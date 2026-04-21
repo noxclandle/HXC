@@ -51,6 +51,38 @@ export default function LedgerPage() {
     }
   };
 
+  const [isScanning, setIsScanning] = useState(false);
+
+  const startScan = async () => {
+    if (!("NDEFReader" in window)) {
+      alert("NFC scanning is not supported on this browser/device.");
+      return;
+    }
+
+    try {
+      setIsScanning(true);
+      const reader = new (window as any).NDEFReader();
+      await reader.scan();
+
+      reader.addEventListener("reading", ({ serialNumber }: any) => {
+        // UIDをセットし、シリアルが空なら自動生成
+        const formattedUid = serialNumber.toUpperCase();
+        const autoSerial = `HXC-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+        
+        setNewCard(prev => ({
+          ...prev,
+          uid: formattedUid,
+          serial: prev.serial || autoSerial
+        }));
+        setIsScanning(false); // 1回読んだら一旦止める
+      });
+
+    } catch (error) {
+      console.error("NFC Scan Error:", error);
+      setIsScanning(false);
+    }
+  };
+
   const createSlot = async () => {
     if (!newCard.uid || !newCard.serial) return;
     try {
@@ -85,7 +117,16 @@ export default function LedgerPage() {
 
       {/* Slot Creation Form */}
       <section className="mb-16 p-8 border border-moonlight/10 bg-gothic-dark/20 backdrop-blur-md">
-        <h2 className="text-[10px] tracking-[0.4em] uppercase opacity-40 mb-6 font-bold">Create New Card Slot (新規カード枠の作成)</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-[10px] tracking-[0.4em] uppercase opacity-40 font-bold">Create New Card Slot (新規カード枠の作成)</h2>
+          <button 
+            onClick={startScan} 
+            disabled={isScanning}
+            className={`px-8 py-2 border ${isScanning ? "border-emerald-500 text-emerald-400 animate-pulse" : "border-moonlight/20 text-moonlight opacity-40 hover:opacity-100 hover:bg-white/5"} text-[9px] tracking-[0.4em] uppercase transition-all`}
+          >
+            {isScanning ? "Scanning..." : "Start Scan (スキャン開始)"}
+          </button>
+        </div>
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-1 space-y-1">
             <label className="text-[8px] uppercase opacity-30 tracking-widest">Physical UID</label>
@@ -107,6 +148,9 @@ export default function LedgerPage() {
             <button onClick={createSlot} className="px-12 py-3 bg-moonlight text-void text-[10px] font-bold uppercase tracking-[0.6em] hover:bg-white transition-all shadow-xl">Create</button>
           </div>
         </div>
+        <p className="mt-4 text-[9px] opacity-30 italic leading-relaxed">
+           * [Start Scan] を押し、物理カードをデバイスにタッチするとUIDが自動取得されます。シリアルは自動生成されますが、手動入力も可能です。
+        </p>
       </section>
 
       {/* Table Headers */}
