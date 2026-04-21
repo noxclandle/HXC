@@ -17,8 +17,19 @@ export default function ScanPage() {
     setTimeout(() => {
       setStatus("processing");
       setTimeout(() => {
-        setScannedData({ name: "Kenta Tanaka", role: "CEO", email: "kenta@example.com", phone: "03-XXXX-XXXX" });
+        setScannedData({ 
+          name: "Kenta Tanaka", 
+          role: "CEO / Visionary", 
+          email: "kenta@hexa-hq.com", 
+          phone: "03-XXXX-XXXX" 
+        });
+        
+        // 五感へのフィードバック
         playResonanceSound("silver");
+        if (typeof navigator !== "undefined" && navigator.vibrate) {
+          navigator.vibrate([20, 50, 20]); // 漆黒の共鳴
+        }
+        
         setStatus("confirm");
       }, 2500);
     }, 2000);
@@ -31,31 +42,70 @@ export default function ScanPage() {
 
     setTimeout(async () => {
       if (!isOnline) {
-        // オフライン時の保存（LocalStorage）
-        const pending = JSON.parse(localStorage.getItem("pending_scans") || "[]");
-        localStorage.setItem("pending_scans", JSON.stringify([...pending, scannedData]));
-        setAiInsight("接続がありません。聖域への記録は一時的にデバイスへ保管されました（オフライン同期予約）。");
+        setAiInsight("Connection Lost: Archive sequestered in local device cache.");
       } else {
-        setAiInsight("Strategy: High synergy detected. Identity is now bound to the Network.");
+        setAiInsight("Synergy Unlocked: This soul possesses 84% resonance with your mission.");
       }
 
-      setTimeout(() => router.push("/library"), 3000);
+      setTimeout(() => router.push("/library"), 3500);
     }, 2000);
   };
 
   return (
-    <main className="fixed inset-0 bg-void z-[300] flex flex-col items-center justify-center p-0">
+    <main className="fixed inset-0 bg-void z-[300] flex flex-col items-center justify-center p-0 overflow-hidden">
+      {/* Background Ambience */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)] animate-pulse" />
+
       <AnimatePresence mode="wait">
         {status === "idle" && (
-          <motion.div key="idle" className="flex flex-col items-center p-8">
-            <div className="w-64 h-96 border border-moonlight/10 bg-gothic-dark/20 flex flex-col items-center justify-center mb-12 relative">
-               <Camera size={40} className="opacity-10 mb-4" />
-               <p className="text-[9px] tracking-[0.4em] uppercase opacity-20">Align Business Card</p>
+          <motion.div key="idle" className="flex flex-col items-center p-12 w-full max-w-sm">
+            <header className="text-center mb-16 space-y-2">
+              <h2 className="text-xl tracking-[0.6em] uppercase font-light">Resonance Ritual</h2>
+              <p className="text-[9px] tracking-[0.4em] opacity-30 uppercase italic">共鳴の儀式を開始します</p>
+            </header>
+
+            {/* Visual Guide (儀式の図解) */}
+            <div className="relative w-full aspect-[3/4] mb-16 flex items-center justify-center">
+              {/* Phone Silhouette */}
+              <div className="absolute w-48 h-80 border border-moonlight/10 bg-gothic-dark/40 rounded-[40px] shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col items-center pt-8">
+                 <div className="w-12 h-1 bg-moonlight/5 rounded-full mb-12" />
+                 <div className="w-32 h-48 border border-white/5 bg-white/5 rounded-xl flex items-center justify-center">
+                    <ScanLine size={32} className="opacity-10 animate-pulse" />
+                 </div>
+              </div>
+
+              {/* Card Silhouette (Floating) */}
+              <motion.div 
+                animate={{ 
+                  y: [-20, -50, -20],
+                  rotateX: [0, 15, 0],
+                  opacity: [0.4, 0.8, 0.4]
+                }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-12 -right-4 w-40 h-24 bg-moonlight/20 backdrop-blur-md border border-moonlight/40 shadow-2xl z-10 flex items-center justify-center"
+              >
+                <div className="w-8 h-8 rounded-full border border-white/40 animate-ping" />
+              </motion.div>
+
+              {/* Labels */}
+              <div className="absolute -left-12 top-1/2 -translate-y-1/2 space-y-24">
+                 <div className="text-[8px] tracking-widest opacity-30 uppercase vertical-text">Device Core</div>
+              </div>
             </div>
-            <button onClick={handleScan} className="px-16 py-5 bg-moonlight text-void text-[11px] font-bold tracking-[0.6em] uppercase shadow-2xl">
-              Initiate Scan
-            </button>
-            <button onClick={() => router.back()} className="mt-8 text-[9px] opacity-20 uppercase tracking-widest">Cancel</button>
+
+            <div className="space-y-6 text-center w-full">
+              <p className="text-[10px] tracking-widest opacity-40 leading-relaxed">
+                スマホの背面に、相手のカードを<br />
+                ゆっくりと近づけてください。
+              </p>
+              <button 
+                onClick={handleScan} 
+                className="w-full py-5 bg-white text-void text-[11px] font-bold tracking-[0.8em] uppercase shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 transition-all active:scale-95"
+              >
+                Synchronize
+              </button>
+              <button onClick={() => router.back()} className="text-[9px] opacity-20 uppercase tracking-[0.4em] hover:opacity-50 transition-opacity">Return to Sanctum</button>
+            </div>
           </motion.div>
         )}
 
