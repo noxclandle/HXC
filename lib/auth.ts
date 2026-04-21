@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
-
-const prisma = new PrismaClient();
+import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -13,17 +12,29 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // チーフオフィサーの覚醒
-        if (credentials?.email === "str1yf5x@gmail.com" && credentials?.password === "2mbDoll5") {
-          return {
-            id: "chief-officer-id",
-            name: "Chief Officer",
-            email: "str1yf5x@gmail.com",
-            role: "chief_officer",
-            rank: "Architect",
-          };
-        }
-        return null;
+        if (!credentials?.email || !credentials?.password) return null;
+
+        // 1. データベースからユーザーを検索
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
+
+        if (!user) return null;
+
+        // 2. パスワードの照合
+        // シードデータの場合、平文の可能性があるので一時的に両方チェック
+        const isPasswordValid = await bcrypt.compare(credentials.password, user.password || "");
+        const isLegacyMatch = credentials.password === user.password;
+
+        if (!isPasswordValid && !isLegacyMatch) return null;
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          rank: user.rank,
+        };
       },
     }),
   ],
