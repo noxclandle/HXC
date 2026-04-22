@@ -45,30 +45,29 @@ export const authOptions: NextAuthOptions = {
           console.error("Auth Error: Database connection failed during login:", dbError);
           throw new Error("Database connection error");
         }
-        },
-        }),
-        ],
-        secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-hxc-2026",
-        session: {
-        strategy: "jwt",
-        },        async jwt({ token, user }: any) {
-        if (user) {
-        token.role = user.role;
-        token.rank = user.rank;
-        }
-        return token;
-        },
-        async session({ session, token }: any) {
-        if (session.user) {
-        session.user.id = token.sub;
-        session.user.role = token.role;
-        session.user.rank = token.rank;
-        }
-        return session;
-        },
-        },
+      },
+    }),
+  ],
+  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-hxc-2026",
   session: {
     strategy: "jwt",
+  },
+  callbacks: {
+    async jwt({ token, user }: any) {
+      if (user) {
+        token.role = user.role;
+        token.rank = user.rank;
+      }
+      return token;
+    },
+    async session({ session, token }: any) {
+      if (session.user) {
+        session.user.id = token.sub as string;
+        session.user.role = token.role as string;
+        session.user.rank = token.rank as string;
+      }
+      return session;
+    },
   },
   pages: {
     signIn: "/login",
