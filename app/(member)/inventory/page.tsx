@@ -26,8 +26,7 @@ const CATEGORIES = [
 ];
 
 export default function InventoryPage() {
-  const sessionData = useSession();
-  const session = sessionData?.data;
+  const { data: session, status } = useSession();
   const [activeCategory, setActiveCategory] = useState("frame");
   const [rtBalance, setRTBalance] = useState("0");
   
@@ -67,6 +66,27 @@ export default function InventoryPage() {
   }, []);
 
   const filteredAssets = assets.filter(a => a.type === activeCategory);
+
+  if (status === "loading") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-void">
+        <motion.div animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 2, repeat: Infinity }} className="text-[10px] tracking-[1em] uppercase opacity-40">
+          Syncing Treasury...
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    return (
+       <div className="flex min-h-screen items-center justify-center bg-void">
+          <div className="text-center space-y-6">
+            <p className="text-[10px] tracking-[0.4em] uppercase opacity-40">Vault Locked. Re-authenticate.</p>
+            <Link href="/login" className="block px-8 py-3 border border-white/10 text-[9px] uppercase tracking-widest hover:bg-white/5">Login</Link>
+          </div>
+       </div>
+    );
+  }
 
   if (!session) return null;
 
