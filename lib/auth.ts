@@ -49,7 +49,9 @@ export const authOptions: NextAuthOptions = {
         }),
         ],
         secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-hxc-2026",
-        callbacks: {        async jwt({ token, user }: any) {
+        session: {
+        strategy: "jwt",
+        },        async jwt({ token, user }: any) {
         if (user) {
         token.role = user.role;
         token.rank = user.rank;
