@@ -6,6 +6,7 @@ export default withAuth(
     return NextResponse.next();
   },
   {
+    secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-hxc-2026",
     callbacks: {
       authorized: () => true,
     },
