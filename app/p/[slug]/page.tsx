@@ -5,19 +5,23 @@ import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-mo
 import { Mail, Phone, Globe, Rotate3d, Twitter, Instagram, ExternalLink, ShieldCheck, MapPin, Loader2 } from "lucide-react";
 import { playResonanceSound } from "@/lib/audio/resonance";
 import { QRCodeSVG } from "qrcode.react";
-
 export default function PublicProfilePage({ params }: { params: { slug: string } }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // マウス/タッチ時の3D傾き効果
+  // マウス/タッチ時の3D傾き効果 (反転とは別の、わずかな傾き)
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const rotateX = useTransform(y, [-100, 100], [10, -10]);
-  const rotateY = useTransform(x, [-100, 100], [-10, 10]);
+  const rotateYBase = useTransform(x, [-100, 100], [-10, 10]);
+
+  // 反転角度を計算 (表は0度付近、裏は180度付近)
+  const finalRotateY = useTransform(rotateYBase, (val) => val + (isFlipped ? 180 : 0));
 
   useEffect(() => {
+    // ... fetch logic ...
+
     const fetchProfile = async () => {
       try {
         const res = await fetch(`/api/profile/${params.slug}`);
@@ -126,8 +130,7 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
         onMouseLeave={handleMouseLeave}
       >
         <motion.div
-          style={{ rotateX, rotateY }}
-          animate={{ rotateY: isFlipped ? 180 : 0 }}
+          style={{ rotateX, rotateY: finalRotateY }}
           transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
           className="relative w-full h-full preserve-3d"
         >
