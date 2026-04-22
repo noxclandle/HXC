@@ -36,19 +36,30 @@ export default function ScanPage() {
   };
 
   const handleArchive = async () => {
-    setAiInsight("Analyzing potential business synergy...");
+    setAiInsight("Synchronizing with the Great Archive...");
     
-    const isOnline = navigator.onLine;
+    try {
+      const res = await fetch("/api/contacts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...scannedData,
+          coord_x: Math.floor(Math.random() * 100),
+          coord_y: Math.floor(Math.random() * 100)
+        }),
+      });
 
-    setTimeout(async () => {
-      if (!isOnline) {
-        setAiInsight("Connection Lost: Archive sequestered in local device cache.");
+      if (res.ok) {
+        const result = await res.json();
+        setAiInsight(`Resonance Complete. Synergy: ${Math.floor(Math.random() * 20) + 70}% detected.`);
+        setTimeout(() => router.push("/library"), 3000);
       } else {
-        setAiInsight("Synergy Unlocked: This soul possesses 84% resonance with your mission.");
+        setAiInsight("Connection Severed: Failed to anchor the identity.");
       }
-
-      setTimeout(() => router.push("/library"), 3500);
-    }, 2000);
+    } catch (err) {
+      setAiInsight("Critical Error: The void rejected this resonance.");
+      console.error(err);
+    }
   };
 
   return (
