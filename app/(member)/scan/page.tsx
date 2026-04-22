@@ -12,27 +12,43 @@ export default function ScanPage() {
   const [aiInsight, setAiInsight] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleScan = () => {
-    setStatus("scanning");
-    setTimeout(() => {
-      setStatus("processing");
-      setTimeout(() => {
-        setScannedData({ 
-          name: "Kenta Tanaka", 
-          role: "CEO / Visionary", 
-          email: "kenta@hexa-hq.com", 
-          phone: "03-XXXX-XXXX" 
-        });
+  const handleCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setStatus("processing");
+    
+    // APIへ画像を送信
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await fetch("/api/ocr", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setScannedData(data);
         
-        // 五感へのフィードバック
         playResonanceSound("silver");
         if (typeof navigator !== "undefined" && navigator.vibrate) {
-          navigator.vibrate([20, 50, 20]); // 漆黒の共鳴
+          navigator.vibrate([20, 50, 20]);
         }
-        
         setStatus("confirm");
-      }, 2500);
-    }, 2000);
+      } else {
+        alert("Failed to read the card soul. Please try again.");
+        setStatus("idle");
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus("idle");
+    }
+  };
+
+  const triggerCamera = () => {
+    document.getElementById("camera-input")?.click();
   };
 
   const handleArchive = async () => {
@@ -105,12 +121,20 @@ export default function ScanPage() {
             </div>
 
             <div className="space-y-6 text-center w-full">
+              <input 
+                id="camera-input"
+                type="file" 
+                accept="image/*" 
+                capture="environment" 
+                className="hidden" 
+                onChange={handleCapture}
+              />
               <p className="text-[10px] tracking-widest opacity-40 leading-relaxed">
-                スマホの背面に、相手のカードを<br />
-                ゆっくりと近づけてください。
+                相手のカード（名刺）をカメラで撮影し、<br />
+                その魂をシステムへ刻みます。
               </p>
               <button 
-                onClick={handleScan} 
+                onClick={triggerCamera} 
                 className="w-full py-5 bg-white text-void text-[11px] font-bold tracking-[0.8em] uppercase shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 transition-all active:scale-95"
               >
                 Synchronize
