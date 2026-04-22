@@ -6,7 +6,7 @@ import { authOptions } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
 /**
- * アイテム購入API（現在は裏側のみ実装）
+ * アイテム購入API
  */
 export async function POST(req: NextRequest) {
   try {
@@ -24,15 +24,16 @@ export async function POST(req: NextRequest) {
         throw new Error("Insufficient RT");
       }
 
-      // 1. RTを減らす
+      // 現状の所持リストを取得して更新
+      const currentAssets = Array.isArray(user.owned_assets) ? user.owned_assets : [];
+      const updatedAssets = [...new Set([...currentAssets, assetId])];
+
+      // データベースを更新
       const updatedUser = await tx.user.update({
         where: { id: session.user.id },
         data: {
           rt_balance: { decrement: BigInt(cost) },
-          // 2. 所持リストに追加（Json型）
-          owned_assets: {
-            push: assetId
-          }
+          owned_assets: updatedAssets
         },
       });
 
