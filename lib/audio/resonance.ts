@@ -2,7 +2,7 @@
  * 名刺受信時の共鳴音を生成・再生する
  * 複数のオシレーターを重ね、神秘的な「共鳴」を演出する
  */
-export function playResonanceSound(type: "default" | "silver" | "void" = "default") {
+export function playResonanceSound(type: "default" | "silver" | "void" | "resonance" = "default") {
   if (typeof window === "undefined") return;
 
   const context = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -29,6 +29,12 @@ export function playResonanceSound(type: "default" | "silver" | "void" = "defaul
   };
 
   switch (type) {
+    case "resonance":
+      createOscillator(165, 0.15, 1.8); // 深みのある基音
+      createOscillator(330, 0.1, 1.4);  // 1オクターブ上
+      createOscillator(495, 0.05, 1.2); // 5度上の響き
+      createOscillator(660, 0.03, 1.0); // 2オクターブ上
+      break;
     case "void":
       createOscillator(110, 0.2, 2.0); // 深いベース
       createOscillator(220, 0.1, 1.5); // オクターブ
@@ -44,4 +50,3 @@ export function playResonanceSound(type: "default" | "silver" | "void" = "defaul
       createOscillator(660, 0.05, 1.2); // 5度上
   }
 }
-

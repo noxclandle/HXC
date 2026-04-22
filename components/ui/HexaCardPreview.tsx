@@ -29,15 +29,20 @@ export default function HexaCardPreview({ name, uid, rt, personality, aura, fram
   const rotateYBase = useTransform(x, [-100, 100], [-15, 15]);
   const finalRotateY = useTransform(rotateYBase, (val) => val + (isFlipped ? 180 : 0));
 
-  // 回転中の発光エフェクト
+  // 回転中の中間点（90度付近）での発光強度
   const glowOpacity = useTransform(finalRotateY, [0, 90, 180], [0, 1, 0]);
 
   const handleFlip = () => {
     if (isRotating) return;
     setIsRotating(true);
-    playResonanceSound("silver");
+    
+    // 音響効果の再生
+    playResonanceSound(isFlipped ? "silver" : "resonance");
+    
     setIsFlipped(!isFlipped);
     onFlip?.(!isFlipped);
+    
+    // モーション完了後にフラグを下ろす
     setTimeout(() => setIsRotating(false), 800);
   };
 
@@ -69,14 +74,18 @@ export default function HexaCardPreview({ name, uid, rt, personality, aura, fram
           width: "100%",
           height: "100%"
         }}
-        animate={{ scale: isRotating ? 0.95 : 1 }}
-        transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+        animate={{ scale: isRotating ? 0.92 : 1 }}
+        transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
         className="relative"
       >
-        {/* 回転中の中間発光層 */}
+        {/* 回転中の中間発光層（次元の裂け目） */}
         <motion.div 
-          style={{ opacity: glowOpacity, rotateY: 90 }}
-          className="absolute inset-0 bg-white/20 blur-2xl z-20 pointer-events-none"
+          style={{ 
+            opacity: glowOpacity,
+            rotateY: 90,
+            backfaceVisibility: "hidden"
+          }}
+          className="absolute inset-0 bg-emerald-400/40 blur-3xl z-20 pointer-events-none"
         />
 
         {/* 【表面】The Monolith */}
@@ -85,7 +94,6 @@ export default function HexaCardPreview({ name, uid, rt, personality, aura, fram
           style={{ 
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
-            transform: "rotateY(0deg)",
             zIndex: isFlipped ? 0 : 1
           }}
         >
@@ -98,15 +106,16 @@ export default function HexaCardPreview({ name, uid, rt, personality, aura, fram
                   <ShieldCheck size={28} className={frame === "Dynamic" ? "text-emerald-400" : "text-moonlight/40"} />
                </div>
                <div>
-                 <h3 className="text-[7px] tracking-[0.5em] uppercase opacity-30 mb-1">Entity Registered</h3>
+                 <h3 className="text-[7px] tracking-[0.4em] uppercase opacity-30">Entity Registered</h3>
+                 <p className="text-[6px] tracking-[0.2em] opacity-10 mb-1">登録済みの実体</p>
                  <p className="text-2xl tracking-[0.2em] uppercase font-extralight text-white">{name}</p>
                </div>
             </div>
             <div className="text-right flex flex-col items-end gap-1">
-               <span className="text-[9px] tracking-[0.4em] uppercase opacity-20 font-bold italic">Authenticated</span>
-               <div className="flex items-center gap-2 text-emerald-400 text-[10px] tracking-widest uppercase">
-                 <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_#34d399]" />
-                 Ready
+               <span className="text-[8px] tracking-[0.4em] uppercase opacity-20 font-bold italic">Authenticated</span>
+               <div className="flex items-center gap-2 text-emerald-400 text-[9px] tracking-widest uppercase">
+                 <div className="w-1 h-1 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_#34d399]" />
+                 Ready / 待機中
                </div>
             </div>
           </header>
@@ -114,16 +123,17 @@ export default function HexaCardPreview({ name, uid, rt, personality, aura, fram
           <footer className="relative z-10 flex justify-between items-end">
             <div className="space-y-4">
               <div>
-                <h3 className="text-[9px] tracking-[0.4em] uppercase opacity-30 mb-1">Hardware UID</h3>
-                <p className="font-mono text-[10px] tracking-[0.2em] text-moonlight/60">{uid}</p>
+                <h3 className="text-[8px] tracking-[0.4em] uppercase opacity-30">Hardware UID</h3>
+                <p className="font-mono text-[9px] tracking-[0.2em] text-moonlight/60">{uid}</p>
               </div>
               <div className="flex items-center gap-3 px-3 py-1 border border-white/5 bg-white/5 rounded-full w-fit">
-                 <Shield size={12} className="opacity-40" />
-                 <span className="text-[8px] uppercase tracking-[0.3em] opacity-60">{personality} Mode</span>
+                 <Shield size={10} className="opacity-40" />
+                 <span className="text-[7px] uppercase tracking-[0.3em] opacity-60">{personality} Mode</span>
               </div>
             </div>
-            <div className="flex flex-col items-end opacity-20">
-               <Rotate3d size={18} className="animate-pulse" />
+            <div className="flex flex-col items-end opacity-20 group-hover:opacity-40 transition-opacity">
+               <Rotate3d size={16} className="animate-pulse" />
+               <span className="text-[6px] uppercase tracking-widest mt-1">Flip Card / 反転</span>
             </div>
           </footer>
         </div>
@@ -145,7 +155,8 @@ export default function HexaCardPreview({ name, uid, rt, personality, aura, fram
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-[9px] tracking-[0.8em] uppercase opacity-30">Energy Core</h3>
+              <h3 className="text-[8px] tracking-[0.6em] uppercase opacity-30">Energy Core</h3>
+              <p className="text-[6px] tracking-[0.3em] opacity-10 uppercase mb-2">エネルギーコア</p>
               <p className="text-5xl font-extralight italic text-emerald-400 drop-shadow-[0_0_20px_rgba(52,211,153,0.3)]">
                 {rt}<span className="text-sm not-italic opacity-40 ml-3">RT</span>
               </p>
@@ -154,14 +165,14 @@ export default function HexaCardPreview({ name, uid, rt, personality, aura, fram
             <div className="w-16 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto" />
             
             <div className="space-y-4">
-               <p className="text-[8px] tracking-[0.5em] uppercase opacity-40 leading-loose">
+               <p className="text-[7px] tracking-[0.4em] uppercase opacity-40 leading-loose">
                  Synchronized by Hexa Relation<br />
                  Sanctum ID: {uid.substring(0,8)}
                </p>
-               <div className="flex justify-center gap-2 text-emerald-400/40">
-                  <Sparkles size={12} />
-                  <Sparkles size={12} />
-                  <Sparkles size={12} />
+               <div className="flex justify-center gap-2 text-emerald-400/20">
+                  <Sparkles size={10} />
+                  <Sparkles size={10} />
+                  <Sparkles size={10} />
                </div>
             </div>
           </div>
