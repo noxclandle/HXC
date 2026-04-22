@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
 };
 
+import ResonanceInteraction from "@/components/ui/ResonanceInteraction";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,6 +26,7 @@ export default function RootLayout({
       </head>
       <body className="bg-void text-moonlight">
         <GeometricBackground />
+        <ResonanceInteraction />
         {children}
       </body>
     </html>
