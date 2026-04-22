@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /**
- * 翠緑の閃光が画面を駆け、タップで聖域の波動（波紋）が広がる演出
+ * 翠緑の閃光が画面を駆け、クリックで空間を揺らす「翠緑の衝撃波」が広がる演出
  */
 export default function ResonanceInteraction() {
   const [pulses, setPulses] = useState<{ id: number; x: number; y: number }[]>([]);
@@ -16,18 +16,18 @@ export default function ResonanceInteraction() {
     setPulses((prev) => [...prev, { id, x, y }]);
     setTimeout(() => {
       setPulses((prev) => prev.filter((p) => p.id !== id));
-    }, 1500);
+    }, 2000);
   };
 
   const handleMouseMove = (e: MouseEvent) => {
     const id = nextId.current++;
-    setTrail((prev) => [...prev.slice(-25), { id, x: e.clientX, y: e.clientY }]);
+    setTrail((prev) => [...prev.slice(-40), { id, x: e.clientX, y: e.clientY }]);
   };
 
   const handleTouchMove = (e: TouchEvent) => {
     const id = nextId.current++;
     const touch = e.touches[0];
-    setTrail((prev) => [...prev.slice(-25), { id, x: touch.clientX, y: touch.clientY }]);
+    setTrail((prev) => [...prev.slice(-40), { id, x: touch.clientX, y: touch.clientY }]);
   };
 
   const handleMouseDown = (e: MouseEvent) => {
@@ -55,44 +55,54 @@ export default function ResonanceInteraction() {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
-      {/* 翠緑の閃光 (Trail) */}
+      {/* 翠緑の閃光 (Enhanced Trail) */}
       {trail.map((p) => (
         <motion.div
           key={p.id}
-          initial={{ opacity: 0.9, scale: 1.5 }}
+          initial={{ opacity: 1, scale: 2 }}
           animate={{ opacity: 0, scale: 0 }}
-          className="absolute w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_12px_#34d399] blur-[0.5px]"
-          style={{ left: p.x - 4, top: p.y - 4 }}
+          className="absolute w-3 h-3 rounded-full bg-emerald-300 shadow-[0_0_20px_#34d399,0_0_40px_#10b981] blur-[0.5px]"
+          style={{ left: p.x - 6, top: p.y - 6 }}
         />
       ))}
 
-      {/* 聖域の波動 (Ripple Pulse) */}
+      {/* 聖域の衝撃波 (Luminous Shockwave) */}
       <AnimatePresence>
         {pulses.map((p) => (
           <div key={p.id} className="absolute" style={{ left: p.x, top: p.y }}>
-             {/* Main Ring */}
+             {/* Core Flash */}
              <motion.div
                 initial={{ scale: 0, opacity: 1 }}
-                animate={{ scale: 12, opacity: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                className="w-16 h-16 -left-8 -top-8 absolute border-[1px] border-emerald-400/80 rounded-full shadow-[0_0_40px_rgba(52,211,153,0.3)]"
+                animate={{ scale: 5, opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-10 h-10 -left-5 -top-5 absolute bg-white blur-xl rounded-full"
              />
-             {/* Secondary Ring */}
+             
+             {/* Primary Shockwave */}
              <motion.div
-                initial={{ scale: 0, opacity: 0.6 }}
-                animate={{ scale: 8, opacity: 0 }}
+                initial={{ scale: 0, opacity: 1 }}
+                animate={{ scale: 25, opacity: 0 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.8, delay: 0.05, ease: "easeOut" }}
-                className="w-16 h-16 -left-8 -top-8 absolute border-[1px] border-emerald-300/40 rounded-full"
+                transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+                className="w-20 h-20 -left-10 -top-10 absolute border-[2px] border-emerald-400 shadow-[0_0_50px_rgba(52,211,153,0.6),inset_0_0_30px_rgba(52,211,153,0.4)] rounded-full"
              />
-             {/* Inner Glow */}
+
+             {/* Secondary Echo */}
              <motion.div
-                initial={{ scale: 0, opacity: 0.4 }}
-                animate={{ scale: 4, opacity: 0 }}
+                initial={{ scale: 0, opacity: 0.7 }}
+                animate={{ scale: 18, opacity: 0 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                className="w-16 h-16 -left-8 -top-8 absolute bg-emerald-500/10 blur-xl rounded-full"
+                transition={{ duration: 1.2, delay: 0.1, ease: "easeOut" }}
+                className="w-20 h-20 -left-10 -top-10 absolute border-[1px] border-emerald-300/50 rounded-full"
+             />
+
+             {/* Atmospheric Warp (Distortion Effect) */}
+             <motion.div
+                initial={{ scale: 0, opacity: 0.3 }}
+                animate={{ scale: 40, opacity: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 2, ease: "easeOut" }}
+                className="w-20 h-20 -left-10 -top-10 absolute bg-emerald-500/5 blur-[60px] rounded-full"
              />
           </div>
         ))}
