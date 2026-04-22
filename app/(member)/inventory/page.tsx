@@ -6,6 +6,8 @@ import { Shield, Music, Sparkles, UserCheck, ChevronRight, Check, Lock, Wallet, 
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
 
+export const dynamic = "force-dynamic";
+
 interface Asset {
   id: string;
   name: string;
@@ -24,7 +26,8 @@ const CATEGORIES = [
 ];
 
 export default function InventoryPage() {
-  const { data: session } = useSession();
+  const sessionData = useSession();
+  const session = sessionData?.data;
   const [activeCategory, setActiveCategory] = useState("frame");
   const [rtBalance, setRTBalance] = useState("0");
   

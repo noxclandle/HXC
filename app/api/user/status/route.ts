@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     }
 
     // セッション情報の名前が古い場合があるため、DBの値を優先
-    const titles = Array.isArray(user.titles) ? user.titles : [];
+    const titles = Array.isArray(user.unlocked_titles) ? user.unlocked_titles : [];
 
     return NextResponse.json({
       rt_balance: user.rt_balance.toString(),
