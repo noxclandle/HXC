@@ -12,35 +12,41 @@ interface Asset {
   type: "frame" | "sound" | "effect" | "angel";
   rarity: "common" | "rare" | "epic" | "mythic";
   description: string;
-  unlocked: boolean;
-}
+  import { Shield, Music, Sparkles, UserCheck, ChevronRight, Check, Lock, Wallet, Trophy } from "lucide-react";
 
-const CATEGORIES = [
-  { id: "frame", name: "Frames", icon: Shield },
-  { id: "sound", name: "Sounds", icon: Music },
-  { id: "effect", name: "Effects", icon: Sparkles },
-  { id: "angel", name: "Concierge", icon: UserCheck },
-];
+  const CATEGORIES = [
+    { id: "frame", name: "Frames", icon: Shield },
+    { id: "title", name: "Titles", icon: Trophy },
+    { id: "sound", name: "Sounds", icon: Music },
+    { id: "effect", name: "Effects", icon: Sparkles },
+    { id: "angel", name: "Concierge", icon: UserCheck },
+  ];
 
-export default function InventoryPage() {
-  const { data: session } = useSession();
-  const [activeCategory, setActiveCategory] = useState("frame");
-  const [rtBalance, setRTBalance] = useState("0");
-  
-  // 選択中の装備（プレビュー用）
-  const [equipped, setEquipped] = useState({
-    frame: "Obsidian",
-    sound: "Default",
-    effect: "None",
-    angel: "Classic"
-  });
+  export default function InventoryPage() {
+    const { data: session } = useSession();
+    const [activeCategory, setActiveCategory] = useState("frame");
+    const [rtBalance, setRTBalance] = useState("0");
 
-  const [assets, setAssets] = useState<Asset[]>([
-    { id: "Obsidian", name: "Obsidian Frame", type: "frame", rarity: "common", description: "漆黒の標準外枠。静寂を体現する。", unlocked: true },
-    { id: "Gold", name: "Aureum Gold", type: "frame", rarity: "rare", description: "黄金の輝きを纏った高貴な枠。", unlocked: true },
-    { id: "Dynamic", name: "Neural Emerald", type: "frame", rarity: "epic", description: "思考の波形に合わせて脈動する。", unlocked: false },
-    { id: "Silver", name: "Silver Resonance", type: "sound", rarity: "rare", description: "透明感のある銀の鈴の音。", unlocked: true },
-    { id: "Void", name: "Deep Void", type: "sound", rarity: "epic", description: "深淵から響く重厚な共鳴音。", unlocked: false },
+    // 選択中の装備（プレビュー用）
+    const [equipped, setEquipped] = useState({
+      frame: "Obsidian",
+      title: "Chief Officer",
+      sound: "Default",
+      effect: "None",
+      angel: "Classic"
+    });
+
+    const [assets, setAssets] = useState<Asset[]>([
+      { id: "Obsidian", name: "Obsidian Frame", type: "frame", rarity: "common", description: "漆黒の標準外枠。静寂を体現する。", unlocked: true },
+      { id: "Gold", name: "Aureum Gold", type: "frame", rarity: "rare", description: "黄金の輝きを纏った高貴な枠。", unlocked: true },
+      { id: "Dynamic", name: "Neural Emerald", type: "frame", rarity: "epic", description: "思考の波形に合わせて脈動する。", unlocked: false },
+      { id: "Chief Officer", name: "Chief Officer", type: "title", rarity: "mythic", description: "システムの最高権力者。全ての扉を開く。", unlocked: true },
+      { id: "Founder", name: "Founder", type: "title", rarity: "mythic", description: "始まりの1人。伝説の証。", unlocked: true },
+      { id: "Architect", name: "Architect", type: "title", rarity: "epic", description: "世界の構造を定義する者。", unlocked: true },
+      { id: "Initiate", name: "Initiate", type: "title", rarity: "common", description: "深淵に足を踏み入れたばかりの魂。", unlocked: true },
+      { id: "Silver", name: "Silver Resonance", type: "sound", rarity: "rare", description: "透明感のある銀の鈴の音。", unlocked: true },
+      { id: "Void", name: "Deep Void", type: "sound", rarity: "epic", description: "深淵から響く重厚な共鳴音。", unlocked: false },
+    ]);
   ]);
 
   useEffect(() => {
@@ -86,6 +92,11 @@ export default function InventoryPage() {
                 aura={85}
                 frame={equipped.frame}
               />
+              <div className="mt-4 flex justify-center">
+                 <span className="px-6 py-2 border border-emerald-500/20 text-emerald-400 text-[8px] uppercase tracking-[0.4em] font-bold bg-emerald-500/5">
+                   Selected Title: {equipped.title}
+                 </span>
+              </div>
            </div>
 
            <div className="space-y-4">
