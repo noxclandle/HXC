@@ -15,10 +15,7 @@ export async function GET(req: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {
-        cards: {
-          where: { status: "active" },
-          take: 1
-        }
+        card: true
       }
     });
 
@@ -33,7 +30,7 @@ export async function GET(req: NextRequest) {
       rt_balance: user.rt_balance.toString(),
       rank: user.rank,
       titles: titles,
-      uid: user.cards[0]?.uid || "NO CARD LINKED",
+      uid: user.card?.uid || "NO CARD LINKED",
       handle: user.handle_name || "",
       slug: user.handle_name || user.id
     });

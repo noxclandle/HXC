@@ -2,66 +2,70 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Music, Sparkles, UserCheck, ChevronRight, Check, Lock, Wallet } from "lucide-react";
+import { Shield, Music, Sparkles, UserCheck, ChevronRight, Check, Lock, Wallet, Trophy } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
 
 interface Asset {
   id: string;
   name: string;
-  type: "frame" | "sound" | "effect" | "angel";
+  type: "frame" | "sound" | "effect" | "angel" | "title";
   rarity: "common" | "rare" | "epic" | "mythic";
   description: string;
-  import { Shield, Music, Sparkles, UserCheck, ChevronRight, Check, Lock, Wallet, Trophy } from "lucide-react";
+  unlocked: boolean;
+}
 
-  const CATEGORIES = [
-    { id: "frame", name: "Frames", icon: Shield },
-    { id: "title", name: "Titles", icon: Trophy },
-    { id: "sound", name: "Sounds", icon: Music },
-    { id: "effect", name: "Effects", icon: Sparkles },
-    { id: "angel", name: "Concierge", icon: UserCheck },
-  ];
+const CATEGORIES = [
+  { id: "frame", name: "Frames", icon: Shield },
+  { id: "title", name: "Titles", icon: Trophy },
+  { id: "sound", name: "Sounds", icon: Music },
+  { id: "effect", name: "Effects", icon: Sparkles },
+  { id: "angel", name: "Concierge", icon: UserCheck },
+];
 
-  export default function InventoryPage() {
-    const { data: session } = useSession();
-    const [activeCategory, setActiveCategory] = useState("frame");
-    const [rtBalance, setRTBalance] = useState("0");
+export default function InventoryPage() {
+  const { data: session } = useSession();
+  const [activeCategory, setActiveCategory] = useState("frame");
+  const [rtBalance, setRTBalance] = useState("0");
+  
+  const [equipped, setEquipped] = useState({
+    frame: "Obsidian",
+    title: "Chief Officer",
+    sound: "Default",
+    effect: "None",
+    angel: "Classic"
+  });
 
-    // 選択中の装備（プレビュー用）
-    const [equipped, setEquipped] = useState({
-      frame: "Obsidian",
-      title: "Chief Officer",
-      sound: "Default",
-      effect: "None",
-      angel: "Classic"
-    });
-
-    const [assets, setAssets] = useState<Asset[]>([
-      { id: "Obsidian", name: "Obsidian Frame", type: "frame", rarity: "common", description: "漆黒の標準外枠。静寂を体現する。", unlocked: true },
-      { id: "Gold", name: "Aureum Gold", type: "frame", rarity: "rare", description: "黄金の輝きを纏った高貴な枠。", unlocked: true },
-      { id: "Dynamic", name: "Neural Emerald", type: "frame", rarity: "epic", description: "思考の波形に合わせて脈動する。", unlocked: false },
-      { id: "Chief Officer", name: "Chief Officer", type: "title", rarity: "mythic", description: "システムの最高権力者。全ての扉を開く。", unlocked: true },
-      { id: "Founder", name: "Founder", type: "title", rarity: "mythic", description: "始まりの1人。伝説の証。", unlocked: true },
-      { id: "Architect", name: "Architect", type: "title", rarity: "epic", description: "世界の構造を定義する者。", unlocked: true },
-      { id: "Initiate", name: "Initiate", type: "title", rarity: "common", description: "深淵に足を踏み入れたばかりの魂。", unlocked: true },
-      { id: "Silver", name: "Silver Resonance", type: "sound", rarity: "rare", description: "透明感のある銀の鈴の音。", unlocked: true },
-      { id: "Void", name: "Deep Void", type: "sound", rarity: "epic", description: "深淵から響く重厚な共鳴音。", unlocked: false },
-    ]);
+  const [assets, setAssets] = useState<Asset[]>([
+    { id: "Obsidian", name: "Obsidian Frame", type: "frame", rarity: "common", description: "漆黒の標準外枠。静寂を体現する。", unlocked: true },
+    { id: "Gold", name: "Aureum Gold", type: "frame", rarity: "rare", description: "黄金の輝きを纏った高貴な枠。", unlocked: true },
+    { id: "Dynamic", name: "Neural Emerald", type: "frame", rarity: "epic", description: "思考の波形に合わせて脈動する。", unlocked: false },
+    { id: "Chief Officer", name: "Chief Officer", type: "title", rarity: "mythic", description: "システムの最高権力者。全ての扉を開く。", unlocked: true },
+    { id: "Founder", name: "Founder", type: "title", rarity: "mythic", description: "始まりの1人。伝説の証。", unlocked: true },
+    { id: "Architect", name: "Architect", type: "title", rarity: "epic", description: "世界の構造を定義する者。", unlocked: true },
+    { id: "Initiate", name: "Initiate", type: "title", rarity: "common", description: "深淵に足を踏み入れたばかりの魂。", unlocked: true },
+    { id: "Silver", name: "Silver Resonance", type: "sound", rarity: "rare", description: "透明感のある銀の鈴の音。", unlocked: true },
+    { id: "Void", name: "Deep Void", type: "sound", rarity: "epic", description: "深淵から響く重厚な共鳴音。", unlocked: false },
   ]);
 
   useEffect(() => {
-    // 実際にはAPIからRT残高と所持アイテムを取得
     const fetchStats = async () => {
-      const res = await fetch("/api/user/status");
-      if (res.ok) {
-        const data = await res.json();
-        setRTBalance(data.rt_balance);
+      try {
+        const res = await fetch("/api/user/status");
+        if (res.ok) {
+          const data = await res.json();
+          setRTBalance(data.rt_balance);
+        }
+      } catch (err) {
+        console.error(err);
       }
     };
     fetchStats();
   }, []);
 
   const filteredAssets = assets.filter(a => a.type === activeCategory);
+
+  if (!session) return null;
 
   return (
     <div className="max-w-6xl mx-auto pt-32 px-6 pb-24 text-moonlight">
@@ -80,12 +84,11 @@ interface Asset {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-        {/* Left: Preview Area */}
         <div className="lg:col-span-5 sticky top-32 space-y-12">
            <div className="p-4 bg-white/5 border border-white/5 backdrop-blur-md">
               <h2 className="text-[9px] uppercase tracking-[0.4em] opacity-30 mb-8 text-center">Live Synchronized Preview</h2>
               <HexaCardPreview 
-                name={session?.user?.name || "ARCHITECT"} 
+                name={session.user?.name || "ARCHITECT"} 
                 uid="04:A2:3F:81:XX:XX:XX"
                 rt={Number(rtBalance).toLocaleString()}
                 personality="Sentinel"
@@ -112,9 +115,7 @@ interface Asset {
            </div>
         </div>
 
-        {/* Right: Asset Selection */}
         <div className="lg:col-span-7 space-y-8">
-           {/* Category Tabs */}
            <div className="flex border-b border-white/10 gap-8">
               {CATEGORIES.map((cat) => (
                 <button 
@@ -128,7 +129,6 @@ interface Asset {
               ))}
            </div>
 
-           {/* Asset List (Scrollable) */}
            <div className="space-y-4 max-h-[600px] overflow-y-auto pr-4 custom-scrollbar">
               <AnimatePresence mode="wait">
                 {filteredAssets.map((asset) => (
@@ -137,7 +137,7 @@ interface Asset {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    onClick={() => asset.unlocked && setEquipped({ ...equipped, [activeCategory]: asset.id })}
+                    onClick={() => asset.unlocked && setEquipped({ ...equipped, [activeCategory as keyof typeof equipped]: asset.id })}
                     className={`group p-6 border transition-all cursor-pointer flex justify-between items-center ${
                       equipped[activeCategory as keyof typeof equipped] === asset.id 
                       ? "border-emerald-500/50 bg-emerald-500/5" 

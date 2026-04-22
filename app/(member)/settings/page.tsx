@@ -48,7 +48,7 @@ export default function SettingsPage() {
                 rt={rtBalance.toLocaleString()} 
                 personality={personality} 
                 aura={aura}
-                background={activeBg}
+                frame={activeBg}
               />
             </div>
           </div>

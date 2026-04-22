@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
-import { Zap, Shield, Rotate3d, ShieldCheck, Sparkles } from "lucide-react";
+import { Hexagon, Zap, Shield, Rotate3d, ShieldCheck, Sparkles } from "lucide-react";
 import { playResonanceSound } from "@/lib/audio/resonance";
 
 interface HexaCardProps {
