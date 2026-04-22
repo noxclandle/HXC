@@ -13,8 +13,11 @@ import { useSession } from "next-auth/react";
 import MonthlyReport from "@/components/ui/MonthlyReport";
 import DigitalIdentityOverlay from "@/components/ui/DigitalIdentityOverlay";
 
+export const dynamic = "force-dynamic";
+
 export default function DashboardPage() {
-  const { data: session } = useSession();
+  const sessionData = useSession();
+  const session = sessionData?.data;
   const [isSublimating, setIsSublimating] = useState(false);
   const [isGraceActive, setIsGraceActive] = useState(false);
   const [ritualTitle, setRitualTitle] = useState<string | null>(null);
