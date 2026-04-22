@@ -220,6 +220,36 @@ export default function DashboardPage() {
              </p>
           </div>
 
+          {/* Equipped Assets Quick Access */}
+          <section className="space-y-6">
+            <div className="flex justify-between items-end border-b border-white/5 pb-4">
+              <div>
+                <h2 className="text-[11px] tracking-[0.6em] uppercase opacity-40 font-bold">Equipped Assets</h2>
+                <p className="text-[7px] tracking-[0.2em] opacity-20 mt-1 uppercase">現在の装備構成</p>
+              </div>
+              <Link href="/inventory" className="text-[8px] uppercase tracking-[0.4em] opacity-20 hover:opacity-100 transition-all flex items-center gap-2">
+                Manage Treasury <Trophy size={10} />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+               {[
+                 { label: "Frame", value: "Obsidian", icon: <ShieldCheck size={14}/>, sub: "外枠" },
+                 { label: "Title", value: realStats.titles[0] || "Initiate", icon: <Trophy size={14}/>, sub: "称号" },
+                 { label: "Sound", value: "Resonance", icon: <Zap size={14}/>, sub: "共鳴音" },
+                 { label: "Concierge", value: "Sentinel", icon: <UserCircle size={14}/>, sub: "執事" },
+               ].map((asset) => (
+                 <Link key={asset.label} href="/inventory" className="p-4 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] hover:border-white/10 transition-all group">
+                    <div className="flex items-center gap-3 mb-3 opacity-30 group-hover:opacity-100 transition-opacity">
+                       {asset.icon}
+                       <span className="text-[8px] uppercase tracking-widest">{asset.label}</span>
+                    </div>
+                    <p className="text-[10px] tracking-widest uppercase font-bold text-moonlight/80 mb-1">{asset.value}</p>
+                    <p className="text-[7px] opacity-20 uppercase">{asset.sub}</p>
+                 </Link>
+               ))}
+            </div>
+          </section>
+
           {/* Recent Connections */}
           <section className="space-y-8">
             <div className="flex justify-between items-end border-b border-white/5 pb-6">
