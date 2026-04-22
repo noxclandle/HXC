@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { History, Zap, TrendingUp, Sparkles, UserCircle, Share2, ShieldCheck, Briefcase } from "lucide-react";
+import { History, Zap, TrendingUp, Sparkles, UserCircle, Share2, ShieldCheck, Briefcase, Trophy } from "lucide-react";
 import Link from "next/link";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import SublimationOverlay from "@/components/ui/SublimationOverlay";
@@ -136,8 +136,10 @@ export default function DashboardPage() {
                 <Link href="/profile/edit" className="flex-1 py-4 border border-moonlight/10 bg-gothic-dark/30 hover:border-moonlight/30 transition-all text-[10px] tracking-[0.4em] uppercase text-center group">
                   Edit Identity <span className="block text-[7px] opacity-40 mt-1">情報の調律</span>
                 </Link>
-                <Link href="/inventory" className="flex-1 py-4 border border-moonlight/10 bg-emerald-500/5 hover:bg-emerald-500/10 transition-all text-[10px] tracking-[0.4em] uppercase text-center group">
-                  Treasury <span className="block text-[7px] opacity-40 mt-1">宝物庫</span>
+                <Link href="/inventory" className="flex-1 py-4 border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 shadow-[0_0_20px_rgba(52,211,153,0.1)] hover:shadow-[0_0_30px_rgba(52,211,153,0.2)] transition-all text-[10px] tracking-[0.4em] uppercase text-center group relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-emerald-500/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                  <Trophy size={14} className="mx-auto mb-2 text-emerald-400" />
+                  Treasury <span className="block text-[7px] opacity-60 mt-1">宝物庫</span>
                 </Link>
                 <Link href={`/p/${realStats.slug || "architect"}`} className="flex-1 py-4 border border-moonlight/10 bg-white/5 hover:bg-white/10 transition-all text-[10px] tracking-[0.4em] uppercase text-center group">
                   Sanctum <span className="block text-[7px] opacity-40 mt-1">聖域プレビュー</span>
