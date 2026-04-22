@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Shield, Music, Sparkles, UserCheck, ChevronRight, Check, Lock, Wallet, Trophy } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 

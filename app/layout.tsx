@@ -17,6 +17,7 @@ export const viewport: Viewport = {
 };
 
 import ResonanceInteraction from "@/components/ui/ResonanceInteraction";
+import NextAuthProvider from "@/components/providers/NextAuthProvider";
 
 export default function RootLayout({
   children,
@@ -31,9 +32,11 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body className="bg-void text-moonlight">
-        <GeometricBackground />
-        <ResonanceInteraction />
-        {children}
+        <NextAuthProvider>
+          <GeometricBackground />
+          <ResonanceInteraction />
+          {children}
+        </NextAuthProvider>
       </body>
     </html>
   );
