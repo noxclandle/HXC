@@ -9,10 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // 背景色を白（オフホワイト）ベースへ
-        void: "#F8F9FA", 
-        // テキスト色を濃いグレー/紺へ
-        moonlight: "#1E293B",
+        // 背景を再び漆黒へ
+        void: "#000000", 
+        // テキストを純白へ
+        moonlight: "#FFFFFF",
         azure: {
           400: "#60A5FA",
           500: "#3B82F6",
@@ -24,9 +24,9 @@ const config: Config = {
           600: "#6D432A",
         },
         gothic: {
-          dark: "#FFFFFF",
-          accent: "#E2E8F0",
-          silver: "#94A3B8",
+          dark: "#1A1A1A",
+          accent: "#4A4A4A",
+          silver: "#BDBDBD",
         },
       },
       backgroundImage: {
