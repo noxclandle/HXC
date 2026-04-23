@@ -2,15 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, Briefcase, Mail, Phone, Globe, Shield, Save, ArrowLeft, Camera, Sparkles } from "lucide-react";
+import { User, Briefcase, Mail, Phone, Globe, Shield, Save, ArrowLeft, Camera, Sparkles, Languages } from "lucide-react";
 import Link from "next/link";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/ResonanceToast";
+import { useRouter } from "next/navigation";
 
 export default function ProfileEditPage() {
   const { data: session } = useSession();
   const { showToast } = useToast();
+  const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -18,26 +20,28 @@ export default function ProfileEditPage() {
     email: "",
     website: "",
     bio: "",
-    handle: ""
+    reading: "" // handle_nameをこれにマッピング
   });
 
+  const fetchInitialData = async () => {
+    try {
+      // キャッシュを無効化して最新データを取得
+      const res = await fetch("/api/user/status", { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        setFormData({
+          name: data.name || session?.user?.name || "",
+          email: session?.user?.email || "",
+          reading: data.handle || "",
+          title: data.profile?.title || "",
+          website: data.profile?.website || "",
+          bio: data.profile?.bio || ""
+        });
+      }
+    } catch (e) { console.error(e); }
+  };
+
   useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        const res = await fetch("/api/user/status");
-        if (res.ok) {
-          const data = await res.json();
-          setFormData({
-            name: session?.user?.name || "",
-            email: session?.user?.email || "",
-            handle: data.handle || "",
-            title: data.profile?.title || "",
-            website: data.profile?.website || "",
-            bio: data.profile?.bio || ""
-          });
-        }
-      } catch (e) { console.error(e); }
-    };
     if (session) fetchInitialData();
   }, [session]);
 
@@ -49,11 +53,19 @@ export default function ProfileEditPage() {
       const res = await fetch("/api/profile/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          name: formData.name,
+          handle: formData.reading,
+          title: formData.title,
+          website: formData.website,
+          bio: formData.bio
+        })
       });
 
       if (res.ok) {
-        showToast("Identity Crystalized / プロフィールを保存しました", "success");
+        showToast("Identity Synchronized / 変更を記録しました", "success");
+        // サーバーサイドキャッシュも無効化
+        router.refresh();
       } else {
         showToast("Sync Failed / 保存に失敗しました", "error");
       }
@@ -65,14 +77,14 @@ export default function ProfileEditPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto pt-32 px-6 pb-24 relative">
-      <header className="mb-16 flex justify-between items-end text-moonlight">
+    <div className="max-w-6xl mx-auto pt-32 px-6 pb-24 relative text-moonlight">
+      <header className="mb-16 flex justify-between items-end">
         <div className="space-y-4">
           <Link href="/dashboard" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity mb-8">
             <ArrowLeft size={12} /> Back to Hub / 拠点へ戻る
           </Link>
           <h1 className="text-5xl tracking-[0.5em] uppercase font-extralight">Tune Identity</h1>
-          <p className="text-[10px] tracking-[0.4em] opacity-40 uppercase">情報の調律・プロフィール編集</p>
+          <p className="text-[10px] tracking-[0.4em] opacity-40 uppercase font-bold">プロフィールの調律</p>
         </div>
       </header>
 
@@ -80,16 +92,17 @@ export default function ProfileEditPage() {
         <div className="lg:col-span-5 sticky top-32 space-y-12">
            <div className="p-8 bg-white/[0.02] border border-white/5 shadow-2xl rounded-sm relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-azure-500/20 to-transparent" />
-              <h2 className="text-[9px] uppercase tracking-[0.6em] opacity-30 mb-10 text-center italic text-azure-400">Dynamic Preview / リアルタイムプレビュー</h2>
+              <h2 className="text-[9px] uppercase tracking-[0.6em] opacity-30 mb-10 text-center italic text-azure-400">Professional Preview</h2>
               <HexaCardPreview 
-                name={formData.name || "ARCHITECT"} 
+                name={formData.name || "NAME"} 
+                reading={formData.reading}
                 uid="04:XX:XX:XX:XX:XX:XX"
                 rt="1,000,150"
-                personality="Sentinel"
+                title={formData.title || "ASSOCIATE"}
                 aura={85}
                 frame="Obsidian"
               />
-              <p className="mt-8 text-center text-[7px] tracking-[0.2em] opacity-20 uppercase text-moonlight">Click the card to flip / クリックで反転を確認</p>
+              <p className="mt-8 text-center text-[7px] tracking-[0.2em] opacity-20 uppercase">Click card to verify flip / 反転を確認</p>
            </div>
         </div>
 
@@ -97,68 +110,68 @@ export default function ProfileEditPage() {
            <form onSubmit={handleSave} className="space-y-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                  <div className="space-y-3">
-                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
                        <User size={12} className="text-azure-500"/> Full Name / 氏名
                     </label>
                     <input 
                        type="text" 
                        value={formData.name}
                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                       className="w-full bg-gothic-dark border border-white/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm text-moonlight"
-                       placeholder="NAME"
+                       className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm"
+                       placeholder="漢字・英語"
                     />
                  </div>
 
                  <div className="space-y-3">
-                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
-                       <Sparkles size={12} className="text-bronze-500"/> Handle Name / 通称
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
+                       <Languages size={12} className="text-azure-400"/> Name Reading / ふりがな
                     </label>
                     <input 
                        type="text" 
-                       value={formData.handle}
-                       onChange={(e) => setFormData({...formData, handle: e.target.value})}
-                       className="w-full bg-gothic-dark border border-white/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm text-moonlight"
-                       placeholder="HANDLE"
+                       value={formData.reading}
+                       onChange={(e) => setFormData({...formData, reading: e.target.value})}
+                       className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm"
+                       placeholder="ひらがな・ROMAJI"
                     />
                  </div>
 
                  <div className="space-y-3">
-                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
                        <Briefcase size={12} className="text-azure-500"/> Professional Title / 肩書き
                     </label>
                     <input 
                        type="text" 
                        value={formData.title}
                        onChange={(e) => setFormData({...formData, title: e.target.value})}
-                       className="w-full bg-gothic-dark border border-white/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm text-moonlight"
-                       placeholder="TITLE"
+                       className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm"
+                       placeholder="役職・専門"
                     />
                  </div>
 
                  <div className="space-y-3">
-                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
-                       <Globe size={12} className="text-azure-500"/> Identity Anchor / ウェブサイト
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
+                       <Globe size={12} className="text-azure-500"/> Website / ウェブサイト
                     </label>
                     <input 
                        type="url" 
                        value={formData.website}
                        onChange={(e) => setFormData({...formData, website: e.target.value})}
-                       className="w-full bg-gothic-dark border border-white/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm text-moonlight"
+                       className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm"
                        placeholder="https://..."
                     />
                  </div>
               </div>
 
               <div className="space-y-3">
-                 <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
-                    <Shield size={12} className="text-bronze-500"/> Identity Core / 自己紹介
+                 <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
+                    <Shield size={12} className="text-bronze-500"/> Professional Bio / 自己紹介
                  </label>
                  <textarea 
                     rows={4}
                     value={formData.bio}
                     onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                    className="w-full bg-gothic-dark border border-white/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm resize-none text-moonlight"
-                    placeholder="Describe your essence..."
+                    className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm resize-none"
+                    placeholder="経歴や実績を記述してください"
                  />
               </div>
 
@@ -168,9 +181,9 @@ export default function ProfileEditPage() {
                    disabled={isSaving}
                    className={`w-full py-6 bg-azure-600 text-white font-bold text-[11px] tracking-[1.2em] uppercase shadow-2xl hover:bg-azure-500 transition-all active:scale-[0.98] flex items-center justify-center gap-4 relative overflow-hidden ${isSaving && 'opacity-50'}`}
                  >
-                    {isSaving ? "Crystalizing..." : (
+                    {isSaving ? "Synchronizing..." : (
                       <>
-                        <Save size={14} /> Commit Identity / 変更を保存
+                        <Save size={14} /> Commit Changes / 保存する
                       </>
                     )}
                     {isSaving && (
