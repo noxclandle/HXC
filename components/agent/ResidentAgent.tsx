@@ -59,7 +59,6 @@ export default function ResidentAgent() {
     setMessages([...messages, newMsg]);
     setInputText("");
     
-    // シミュレートされた応答
     setTimeout(() => {
       setMessages(prev => [...prev, { role: "agent", text: "主（あるじ）よ、その言葉は聖域の深淵へと刻まれました。解析には時間を要します。" }]);
     }, 1000);
@@ -85,7 +84,7 @@ export default function ResidentAgent() {
         {isOpen && (
           <motion.div initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.95 }} className="mb-4 w-80 bg-void/95 border border-moonlight/20 shadow-2xl backdrop-blur-xl overflow-hidden p-6 flex flex-col gap-6">
             <div className="flex justify-between items-center opacity-40">
-              <span className="text-[10px] tracking-[0.4em] uppercase italic flex items-center gap-2"><Info size={12}/> Concierge</span>
+              <span className="text-[10px] tracking-[0.4em] uppercase italic flex items-center gap-2 text-azure-400"><Info size={12}/> Concierge</span>
               <button onClick={() => { setMode("menu"); setIsOpen(false); }} className="hover:opacity-100 transition-opacity"><X size={14} /></button>
             </div>
             <div className="h-80 overflow-y-auto space-y-4 text-[11px] tracking-widest leading-relaxed text-moonlight pr-2 custom-scrollbar">
@@ -93,17 +92,16 @@ export default function ResidentAgent() {
                 <div className="space-y-6">
                   <p className="italic">&quot;{activeMessage}&quot;</p>
                   
-                  {/* Ambient Control */}
                   <div className="p-4 border border-moonlight/10 bg-white/[0.02] space-y-4">
                      <div className="flex justify-between items-center opacity-40">
                         <span className="text-[8px] uppercase tracking-[0.4em] flex items-center gap-2">
                            <Music2 size={12}/> Sanctuary Atmosphere
                         </span>
                         <div className="flex gap-4">
-                           <button onClick={() => toggleAmbient("space")} className={`transition-all ${ambientMode === 'space' ? 'text-emerald-400 opacity-100' : 'opacity-20 hover:opacity-100'}`}>
+                           <button onClick={() => toggleAmbient("space")} className={`transition-all ${ambientMode === 'space' ? 'text-azure-400 opacity-100' : 'opacity-20 hover:opacity-100'}`}>
                              <Zap size={14}/>
                            </button>
-                           <button onClick={() => toggleAmbient("rain")} className={`transition-all ${ambientMode === 'rain' ? 'text-emerald-400 opacity-100' : 'opacity-20 hover:opacity-100'}`}>
+                           <button onClick={() => toggleAmbient("rain")} className={`transition-all ${ambientMode === 'rain' ? 'text-azure-400 opacity-100' : 'opacity-20 hover:opacity-100'}`}>
                              <Volume2 size={14}/>
                            </button>
                            <button onClick={() => { ambientManager.setVolume(0); setAmbientMode("off"); }} className="opacity-20 hover:opacity-100 transition-opacity">
@@ -121,10 +119,10 @@ export default function ResidentAgent() {
                           key={item.label}
                           href={item.link}
                           onClick={() => setIsOpen(false)}
-                          className="w-full p-4 bg-gothic-dark border border-moonlight/5 text-[9px] tracking-[0.3em] uppercase text-left hover:border-moonlight/30 hover:bg-white/5 transition-all flex items-center justify-between group"
+                          className="w-full p-4 bg-gothic-dark border border-moonlight/5 text-[9px] tracking-[0.3em] uppercase text-left hover:border-azure-500/30 hover:bg-azure-500/5 transition-all flex items-center justify-between group"
                         >
                           <div className="flex items-center gap-4">
-                            <span className="opacity-20 group-hover:opacity-100 transition-opacity">{item.icon}</span>
+                            <span className="opacity-20 group-hover:opacity-100 transition-opacity text-azure-400">{item.icon}</span>
                             {item.label}
                           </div>
                           <span className="text-[7px] opacity-20 uppercase">{item.sub}</span>
@@ -133,13 +131,13 @@ export default function ResidentAgent() {
                         <button 
                           key={item.label} 
                           onClick={() => item.action ? item.action() : setActiveMessage(item.text || "")} 
-                          className="w-full p-4 bg-gothic-dark border border-moonlight/5 text-[9px] tracking-[0.3em] uppercase text-left hover:border-moonlight/30 hover:bg-white/5 transition-all flex items-center gap-4 group"
+                          className="w-full p-4 bg-gothic-dark border border-moonlight/5 text-[9px] tracking-[0.3em] uppercase text-left hover:border-azure-500/30 hover:bg-azure-500/5 transition-all flex items-center gap-4 group"
                         >
-                          <span className="opacity-20 group-hover:opacity-100 transition-opacity">{item.icon}</span>{item.label}
+                          <span className="opacity-20 group-hover:opacity-100 transition-opacity text-azure-400">{item.icon}</span>{item.label}
                         </button>
                       )
                     ))}
-                    <button onClick={() => setMode("chat")} className="w-full p-2 text-[8px] uppercase tracking-widest opacity-20 hover:opacity-100 transition-opacity text-center mt-4 border border-white/5 uppercase">Advanced Inquiry (AI)</button>
+                    <button onClick={() => setMode("chat")} className="w-full p-2 text-[8px] uppercase tracking-widest opacity-20 hover:opacity-100 transition-opacity text-center mt-4 border border-white/5 border-azure-500/10">Advanced Inquiry (AI)</button>
                   </div>
                 </div>
               ) : (
@@ -147,7 +145,7 @@ export default function ResidentAgent() {
                    <div className="flex-1 space-y-4 mb-4">
                      {messages.map((m, i) => (
                        <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                         <div className={`max-w-[85%] p-3 ${m.role === "user" ? "bg-moonlight text-void font-bold" : "bg-gothic-dark border border-moonlight/5"}`}>{m.text}</div>
+                         <div className={`max-w-[85%] p-3 ${m.role === "user" ? "bg-azure-500 text-white font-bold" : "bg-gothic-dark border border-moonlight/5"}`}>{m.text}</div>
                        </div>
                      ))}
                    </div>
@@ -158,9 +156,9 @@ export default function ResidentAgent() {
                        value={inputText}
                        onChange={(e) => setInputText(e.target.value)}
                        onKeyDown={(e) => e.key === "Enter" && handleSendChat()}
-                       className="flex-1 bg-transparent p-2 text-[10px] tracking-widest outline-none uppercase" 
+                       className="flex-1 bg-transparent p-2 text-[10px] tracking-widest outline-none uppercase text-azure-400" 
                      />
-                     <button onClick={handleSendChat} className="p-2 opacity-20 hover:opacity-100 transition-opacity">
+                     <button onClick={handleSendChat} className="p-2 opacity-20 hover:opacity-100 transition-opacity text-azure-400">
                         <Send size={14} />
                      </button>
                      <button onClick={() => setMode("menu")} className="text-[8px] opacity-20 uppercase ml-2">Back</button>
@@ -173,12 +171,12 @@ export default function ResidentAgent() {
       </AnimatePresence>
       <button onClick={() => setIsOpen(!isOpen)} className="relative group w-16 h-16 flex items-center justify-center">
         <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="relative">
-          {userLevel >= 10 && <motion.div animate={{ rotate: [-10, 10, -10], scale: [1, 1.1, 1] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -inset-6 border border-moonlight/10 rounded-full opacity-20 blur-sm" />}
-          {userLevel >= 20 && <motion.div animate={{ rotate: [10, -10, 10], scale: [1.1, 1.2, 1.1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute -inset-8 border border-moonlight/5 rounded-full opacity-10 blur-md" />}
-          <div className="w-8 h-8 bg-gradient-to-b from-moonlight/40 to-transparent rounded-full border border-moonlight/30 flex items-center justify-center backdrop-blur-md relative z-10">
-             <div className={`w-2 h-2 bg-moonlight rounded-full shadow-[0_0_10px_white] ${userLevel >= 30 ? 'animate-ping' : userLevel >= 20 ? 'animate-pulse' : ''}`} />
+          {userLevel >= 10 && <motion.div animate={{ rotate: [-10, 10, -10], scale: [1, 1.1, 1] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -inset-6 border border-azure-500/20 rounded-full opacity-20 blur-sm" />}
+          {userLevel >= 20 && <motion.div animate={{ rotate: [10, -10, 10], scale: [1.1, 1.2, 1.1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute -inset-8 border border-azure-500/10 rounded-full opacity-10 blur-md" />}
+          <div className="w-8 h-8 bg-gradient-to-b from-azure-400/40 to-transparent rounded-full border border-azure-500/30 flex items-center justify-center backdrop-blur-md relative z-10">
+             <div className={`w-2 h-2 bg-azure-200 rounded-full shadow-[0_0_10px_#60a5fa] ${userLevel >= 30 ? 'animate-ping' : userLevel >= 20 ? 'animate-pulse' : ''}`} />
           </div>
-          <motion.div animate={{ opacity: userLevel >= 15 ? [0.3, 0.6, 0.3] : [0.1, 0.3, 0.1], y: userLevel >= 15 ? [-18, -20, -18] : [-14, -16, -14] }} transition={{ duration: 3, repeat: Infinity }} className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-[1px] bg-moonlight shadow-[0_0_8px_white]" />
+          <motion.div animate={{ opacity: userLevel >= 15 ? [0.3, 0.6, 0.3] : [0.1, 0.3, 0.1], y: userLevel >= 15 ? [-18, -20, -18] : [-14, -16, -14] }} transition={{ duration: 3, repeat: Infinity }} className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-[1px] bg-azure-300 shadow-[0_0_8px_#60a5fa]" />
         </motion.div>
       </button>
     </div>
