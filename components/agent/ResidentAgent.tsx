@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Book, Camera, Zap, UserPlus, Info, Sparkles, Trophy } from "lucide-react";
+import { X, Book, Camera, Zap, UserPlus, Info, Sparkles, Trophy, Music2, Volume2, VolumeX } from "lucide-react";
 import Link from "next/link";
+import { ambientManager } from "@/lib/audio/ambient";
 
 export default function ResidentAgent() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,8 +13,28 @@ export default function ResidentAgent() {
   const [messages, setMessages] = useState<{ role: string; text: string }[]>([]);
   const [inputText, setInputText] = useState("");
   const [hasDaily, setHasDaily] = useState(false);
+  const [ambientMode, setAmbientMode] = useState<"off" | "space" | "rain">("off");
   
   const userLevel = 12;
+
+  useEffect(() => {
+    ambientManager.init();
+  }, []);
+
+  const toggleAmbient = (type: "space" | "rain") => {
+    if (ambientMode === type) {
+      ambientManager.setVolume(0);
+      setAmbientMode("off");
+      setActiveMessage("【沈黙】聖域が静寂に包まれました。");
+    } else {
+      ambientManager.init();
+      if (type === "space") ambientManager.playSpaceHum();
+      else ambientManager.playRain();
+      ambientManager.setVolume(0.12);
+      setAmbientMode(type);
+      setActiveMessage(`【共鳴】${type === 'space' ? '宇宙の鳴動' : '浄化の雨'}が聖域を満たします。`);
+    }
+  };
 
   const collectDaily = async () => {
     try {
@@ -52,10 +73,32 @@ export default function ResidentAgent() {
               <span className="text-[10px] tracking-[0.4em] uppercase italic flex items-center gap-2"><Info size={12}/> Concierge</span>
               <button onClick={() => { setMode("menu"); setIsOpen(false); }} className="hover:opacity-100 transition-opacity"><X size={14} /></button>
             </div>
-            <div className="h-80 overflow-y-auto space-y-4 text-[11px] tracking-widest leading-relaxed text-moonlight">
+            <div className="h-80 overflow-y-auto space-y-4 text-[11px] tracking-widest leading-relaxed text-moonlight pr-2 custom-scrollbar">
               {mode === "menu" ? (
                 <div className="space-y-6">
                   <p className="italic">&quot;{activeMessage}&quot;</p>
+                  
+                  {/* Ambient Control */}
+                  <div className="p-4 border border-moonlight/10 bg-white/[0.02] space-y-4">
+                     <div className="flex justify-between items-center opacity-40">
+                        <span className="text-[8px] uppercase tracking-[0.4em] flex items-center gap-2">
+                           <Music2 size={12}/> Sanctuary Atmosphere
+                        </span>
+                        <div className="flex gap-4">
+                           <button onClick={() => toggleAmbient("space")} className={`transition-all ${ambientMode === 'space' ? 'text-emerald-400 opacity-100' : 'opacity-20 hover:opacity-100'}`}>
+                             <Zap size={14}/>
+                           </button>
+                           <button onClick={() => toggleAmbient("rain")} className={`transition-all ${ambientMode === 'rain' ? 'text-emerald-400 opacity-100' : 'opacity-20 hover:opacity-100'}`}>
+                             <Volume2 size={14}/>
+                           </button>
+                           <button onClick={() => { ambientManager.setVolume(0); setAmbientMode("off"); }} className="opacity-20 hover:opacity-100 transition-opacity">
+                             <VolumeX size={14}/>
+                           </button>
+                        </div>
+                     </div>
+                     <p className="text-[6px] opacity-10 uppercase tracking-widest italic">聖域の環境音を調律できます</p>
+                  </div>
+
                   <div className="grid grid-cols-1 gap-2">
                     {helpMenu.filter(item => item.condition !== false).map((item) => (
                       item.link ? (
