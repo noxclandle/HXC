@@ -38,7 +38,7 @@ export default function InventoryPage() {
     frame: "Obsidian",
     title: "Chief Officer",
     sound: "Resonance",
-    pointer: "Emerald Hex",
+    pointer: "Pure White Hex",
     angel: "Sentinel"
   });
 
@@ -50,29 +50,43 @@ export default function InventoryPage() {
     { id: "Founder", name: "Founder", type: "title", rarity: "mythic", description: "始まりの1人。伝説の証。", unlocked: true },
     { id: "Silver", name: "Silver Resonance", type: "sound", rarity: "rare", description: "反転時：透明感のある銀の鈴の音。", unlocked: true },
     { id: "Resonance", name: "Pure Resonance", type: "sound", rarity: "epic", description: "反転時：空間を震わせる純粋な共鳴音。", unlocked: true },
-    { id: "Corporate Blue", name: "Corporate Blue", type: "pointer", rarity: "common", description: "標準的な蒼の六角形。信頼の基本色。", unlocked: true },
+    { id: "Pure White Hex", name: "Pure White Hex", type: "pointer", rarity: "common", description: "標準的な純白の六角形。最高純度の光。", unlocked: true },
     { id: "Bronze Trace", name: "Bronze Trace", type: "pointer", rarity: "rare", description: "通った跡に琥珀の残像を残す軌跡。", unlocked: false },
   ]);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchInitialData = async () => {
       try {
         const res = await fetch("/api/user/status");
         if (res.ok) {
           const data = await res.json();
           setRTBalance(data.rt_balance);
+          if (data.equipped) setEquipped(data.equipped);
         }
       } catch (err) { console.error(err); }
     };
-    fetchStats();
-  }, []);
+    if (session) fetchInitialData();
+  }, [session]);
 
   const handleCommit = async () => {
     setIsSaving(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/user/equip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ equipped })
+      });
+
+      if (res.ok) {
+        showToast("Treasury Synchronized / 装備を更新しました", "success");
+      } else {
+        showToast("Sync Failed / 保存に失敗しました", "error");
+      }
+    } catch (e) {
+      showToast("Connection Severed / 通信エラーが発生しました", "error");
+    } finally {
       setIsSaving(false);
-      showToast("Identity Synchronized / 聖域の装備を確定しました", "success");
-    }, 1500);
+    }
   };
 
   const handleSelectAsset = (asset: Asset) => {
@@ -90,7 +104,7 @@ export default function InventoryPage() {
       <div className="flex min-h-screen items-center justify-center bg-void">
         <motion.div animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 2, repeat: Infinity }} className="text-center">
           <div className="text-[10px] tracking-[1em] uppercase opacity-40 mb-2 text-azure-400/40">Syncing Treasury</div>
-          <div className="text-[7px] tracking-[0.2em] opacity-20 uppercase">宝物庫と同期中...</div>
+          <div className="text-[7px] tracking-[0.2em] opacity-20 uppercase text-moonlight">宝物庫と同期中...</div>
         </motion.div>
       </div>
     );
@@ -98,10 +112,10 @@ export default function InventoryPage() {
 
   if (status === "unauthenticated") {
     return (
-       <div className="flex min-h-screen items-center justify-center bg-void text-center">
+       <div className="flex min-h-screen items-center justify-center bg-void text-center text-moonlight">
           <div className="space-y-6">
             <p className="text-[10px] tracking-[0.4em] uppercase opacity-40">Vault Locked. Re-authenticate.</p>
-            <Link href="/login" className="block px-8 py-3 border border-white/10 text-[9px] uppercase tracking-widest hover:bg-white/5">Login</Link>
+            <Link href="/login" className="block px-8 py-3 border border-white/10 text-[9px] uppercase tracking-widest hover:bg-white/5 transition-all">Login</Link>
           </div>
        </div>
     );
@@ -129,7 +143,7 @@ export default function InventoryPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         <div className="lg:col-span-5 sticky top-32 space-y-12">
-           <div className="p-8 bg-white/[0.02] border border-white/5 backdrop-blur-xl relative overflow-hidden group">
+           <div className="p-8 bg-white/[0.02] border border-white/5 shadow-2xl rounded-sm relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-azure-500/20 to-transparent" />
               <h2 className="text-[9px] uppercase tracking-[0.6em] opacity-30 mb-10 text-center">Synchronized Preview</h2>
               <HexaCardPreview 
@@ -146,7 +160,7 @@ export default function InventoryPage() {
                     <span className="text-azure-400 font-bold">{equipped.title}</span>
                  </div>
                  <div className="flex justify-between items-center text-[8px] tracking-[0.3em] uppercase opacity-40">
-                    <span>Pointer Type</span>
+                    <span>Active Pointer</span>
                     <span>{equipped.pointer}</span>
                  </div>
               </div>
@@ -155,14 +169,14 @@ export default function InventoryPage() {
            <button 
              onClick={handleCommit}
              disabled={isSaving}
-             className={`w-full py-6 bg-white text-void font-bold text-[11px] tracking-[1.2em] uppercase shadow-2xl hover:bg-azure-50 transition-all active:scale-[0.98] relative overflow-hidden ${isSaving && 'opacity-50'}`}
+             className={`w-full py-6 bg-azure-600 text-white font-bold text-[11px] tracking-[1.2em] uppercase shadow-2xl hover:bg-azure-500 transition-all active:scale-[0.98] relative overflow-hidden ${isSaving && 'opacity-50'}`}
            >
               {isSaving ? "Synchronizing..." : "Commit Changes / 変更を確定"}
               {isSaving && (
                 <motion.div 
                   animate={{ left: ["-100%", "100%"] }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                  className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-azure-500/10 to-transparent"
+                  className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
                 />
               )}
            </button>
