@@ -11,16 +11,27 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, handle, title, website, bio, company, photo_url } = body;
+    const { name, handle, title, website, bio, company, photo_url, logo_url, orientation } = body;
 
-    // Userテーブルの基本フィールドと ai_config (Json) に保存
+    // 現在のユーザー情報を取得して Json フィールドを安全にマージ
+    const currentUser = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    const currentEquipped = (currentUser?.equipped_assets as any) || {};
+
     const updatedUser = await prisma.user.update({
       where: { email: session.user.email },
       data: {
         name: name,
         handle_name: handle,
         link_website: website,
-        photo_url: photo_url,
+        photo_url: photo_url, // 自画像
+        logo_url: logo_url,   // 会社ロゴ
+        equipped_assets: {
+          ...currentEquipped,
+          orientation: orientation // レイアウト設定を保存
+        },
         ai_config: {
           profile: {
             title: title,
