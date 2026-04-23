@@ -15,31 +15,53 @@ export default function ProfileEditPage() {
   const [formData, setFormData] = useState({
     name: "",
     title: "",
-    company: "",
     email: "",
-    phone: "",
     website: "",
     bio: "",
     handle: ""
   });
 
   useEffect(() => {
-    if (session?.user) {
-      setFormData(prev => ({
-        ...prev,
-        name: session.user.name || "",
-        email: session.user.email || ""
-      }));
-    }
+    const fetchInitialData = async () => {
+      try {
+        const res = await fetch("/api/user/status");
+        if (res.ok) {
+          const data = await res.json();
+          setFormData({
+            name: session?.user?.name || "",
+            email: session?.user?.email || "",
+            handle: data.handle || "",
+            title: data.profile?.title || "",
+            website: data.profile?.website || "",
+            bio: data.profile?.bio || ""
+          });
+        }
+      } catch (e) { console.error(e); }
+    };
+    if (session) fetchInitialData();
   }, [session]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    setTimeout(() => {
+
+    try {
+      const res = await fetch("/api/profile/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+
+      if (res.ok) {
+        showToast("Identity Crystalized / プロフィールを保存しました", "success");
+      } else {
+        showToast("Sync Failed / 保存に失敗しました", "error");
+      }
+    } catch (err) {
+      showToast("Connection Severed / 通信エラーが発生しました", "error");
+    } finally {
       setIsSaving(false);
-      showToast("Identity Crystalized / プロフィールを保存しました", "success");
-    }, 1500);
+    }
   };
 
   return (
@@ -55,7 +77,6 @@ export default function ProfileEditPage() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-        {/* Left: Preview with Flip Motion */}
         <div className="lg:col-span-5 sticky top-32 space-y-12">
            <div className="p-8 bg-white/[0.02] border border-white/5 shadow-2xl rounded-sm relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-azure-500/20 to-transparent" />
@@ -72,11 +93,9 @@ export default function ProfileEditPage() {
            </div>
         </div>
 
-        {/* Right: Edit Form */}
         <div className="lg:col-span-7">
            <form onSubmit={handleSave} className="space-y-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 {/* Name */}
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
                        <User size={12} className="text-azure-500"/> Full Name / 氏名
@@ -90,7 +109,6 @@ export default function ProfileEditPage() {
                     />
                  </div>
 
-                 {/* Handle */}
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
                        <Sparkles size={12} className="text-bronze-500"/> Handle Name / 通称
@@ -104,7 +122,6 @@ export default function ProfileEditPage() {
                     />
                  </div>
 
-                 {/* Title */}
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
                        <Briefcase size={12} className="text-azure-500"/> Professional Title / 肩書き
@@ -118,7 +135,6 @@ export default function ProfileEditPage() {
                     />
                  </div>
 
-                 {/* Website */}
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
                        <Globe size={12} className="text-azure-500"/> Identity Anchor / ウェブサイト
@@ -133,7 +149,6 @@ export default function ProfileEditPage() {
                  </div>
               </div>
 
-              {/* Bio */}
               <div className="space-y-3">
                  <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
                     <Shield size={12} className="text-bronze-500"/> Identity Core / 自己紹介

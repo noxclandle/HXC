@@ -10,28 +10,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
-    const { name, handle, title, website, bio } = body;
+    const { equipped } = await req.json();
 
-    // Userテーブルの基本フィールドと ai_config (Json) に保存
+    // 装備情報を equipped_assets に保存
     const updatedUser = await prisma.user.update({
       where: { email: session.user.email },
       data: {
-        name: name,
-        handle_name: handle,
-        link_website: website,
-        ai_config: {
-          profile: {
-            title: title,
-            bio: bio
-          }
-        }
+        equipped_assets: equipped
       }
     });
 
-    return NextResponse.json({ success: true, user: updatedUser });
+    return NextResponse.json({ success: true, equipped: updatedUser.equipped_assets });
   } catch (error: any) {
-    console.error("Profile update error:", error);
-    return NextResponse.json({ error: "Failed to update identity." }, { status: 500 });
+    console.error("Equip update error:", error);
+    return NextResponse.json({ error: "Failed to synchronize treasury." }, { status: 500 });
   }
 }
