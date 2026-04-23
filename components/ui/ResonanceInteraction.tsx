@@ -4,8 +4,8 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /**
- * 企業の色彩（Azure & Bronze）による共鳴演出
- * 知性を象徴する蒼色の結晶波動が広がる
+ * 純白の六角形相互作用 (Pure White Hex Resonance)
+ * 硬質な正六角形の結晶が画面を切り裂き、クリックで鋭い幾何学波動を放つ
  */
 export default function ResonanceInteraction() {
   const [pulses, setPulses] = useState<{ id: number; x: number; y: number }[]>([]);
@@ -17,7 +17,7 @@ export default function ResonanceInteraction() {
     setPulses((prev) => [...prev, { id, x, y }]);
     setTimeout(() => {
       setPulses((prev) => prev.filter((p) => p.id !== id));
-    }, 1200);
+    }, 1000);
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -54,55 +54,56 @@ export default function ResonanceInteraction() {
     };
   }, []);
 
+  // より完璧な正六角形のパス
   const hexPath = "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)";
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
-      {/* 企業の蒼（Azure）による六角形残光 */}
+      {/* 純白の六角形残光 (White Hex Trail) */}
       {trail.map((p) => (
         <motion.div
           key={p.id}
-          initial={{ opacity: 1, scale: 1.5, rotate: 0 }}
+          initial={{ opacity: 1, scale: 1.2, rotate: 0 }}
           animate={{ opacity: 0, scale: 0, rotate: 45 }}
-          className="absolute w-3 h-3 bg-azure-400 shadow-[0_0_12px_#60a5fa]"
+          className="absolute w-2.5 h-2.5 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)]"
           style={{ 
-            left: p.x - 6, 
-            top: p.y - 6,
+            left: p.x - 5, 
+            top: p.y - 5,
             clipPath: hexPath
           }}
         />
       ))}
 
-      {/* 蒼と琥珀（Bronze）の結晶波動 */}
+      {/* 純白の硬質六角波動 (Pure White Crystal Pulse) */}
       <AnimatePresence>
         {pulses.map((p) => (
           <div key={p.id} className="absolute" style={{ left: p.x, top: p.y }}>
-             {/* Core Light (Bronze tint) */}
+             {/* 中心フラッシュ (Hard White) */}
              <motion.div
                 initial={{ scale: 0, opacity: 1, rotate: 0 }}
-                animate={{ scale: 2.5, opacity: 0, rotate: 60 }}
-                transition={{ duration: 0.4 }}
-                className="w-10 h-10 -left-5 -top-5 absolute bg-azure-200/60 backdrop-blur-sm shadow-[0_0_20px_rgba(96,165,250,0.4)]"
+                animate={{ scale: 2, opacity: 0, rotate: 30 }}
+                transition={{ duration: 0.3 }}
+                className="w-10 h-10 -left-5 -top-5 absolute bg-white"
                 style={{ clipPath: hexPath }}
              />
              
-             {/* Primary Azure Wave */}
+             {/* メイン波動 (Hard Border Hex) - サイズをさらに抑制し密度向上 */}
              <motion.div
                 initial={{ scale: 0, opacity: 1, rotate: 0 }}
-                animate={{ scale: 10, opacity: 0, rotate: -30 }}
+                animate={{ scale: 8, opacity: 0, rotate: -20 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
-                className="w-16 h-16 -left-8 -top-8 absolute border-[2px] border-azure-500 shadow-[0_0_25px_rgba(59,130,246,0.5)]"
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="w-16 h-16 -left-8 -top-8 absolute border-[2px] border-white shadow-[0_0_20px_rgba(255,255,255,0.6)]"
                 style={{ clipPath: hexPath }}
              />
 
-             {/* Secondary Bronze Echo - 琥珀色の残響 */}
+             {/* セカンダリエコー (White Wireframe) */}
              <motion.div
-                initial={{ scale: 0, opacity: 0.5, rotate: 0 }}
-                animate={{ scale: 8, opacity: 0, rotate: 30 }}
+                initial={{ scale: 0, opacity: 0.4, rotate: 0 }}
+                animate={{ scale: 6, opacity: 0, rotate: 20 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.8, delay: 0.05, ease: "easeOut" }}
-                className="w-16 h-16 -left-8 -top-8 absolute border-[1px] border-bronze-400/40"
+                transition={{ duration: 0.6, delay: 0.05, ease: "easeOut" }}
+                className="w-16 h-16 -left-8 -top-8 absolute border-[1px] border-white/50"
                 style={{ clipPath: hexPath }}
              />
           </div>
