@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Book, Camera, Zap, UserPlus, Info, Sparkles } from "lucide-react";
+import { X, Book, Camera, Zap, UserPlus, Info, Sparkles, Trophy } from "lucide-react";
+import Link from "next/link";
 
 export default function ResidentAgent() {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,7 +11,6 @@ export default function ResidentAgent() {
   const [activeMessage, setActiveMessage] = useState("ご用件はありますか？聖域の各機能についてご案内いたします。");
   const [messages, setMessages] = useState<{ role: string; text: string }[]>([]);
   const [inputText, setInputText] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
   const [hasDaily, setHasDaily] = useState(false);
   
   const userLevel = 12;
@@ -38,9 +38,9 @@ export default function ResidentAgent() {
 
   const helpMenu = [
     { label: "Daily Light", icon: <Sparkles size={14}/>, action: collectDaily, condition: !hasDaily },
+    { label: "Treasury", icon: <Trophy size={14}/>, link: "/inventory", sub: "宝物庫" },
     { label: "Scan Card", icon: <Camera size={14}/>, text: getEvolvedMessage("【スキャン】紙の名刺をデジタル化し、ビジネス価値を解析します。", userLevel) },
     { label: "My Archive", icon: <Book size={14}/>, text: getEvolvedMessage("【名刺帳】繋がった人脈は「座標」として記録されます。", userLevel) },
-    { label: "About RT", icon: <Zap size={14}/>, text: getEvolvedMessage("【トークン】交流のエネルギーです。活動により蓄積されます。", userLevel) },
   ];
 
   return (
@@ -58,19 +58,33 @@ export default function ResidentAgent() {
                   <p className="italic">&quot;{activeMessage}&quot;</p>
                   <div className="grid grid-cols-1 gap-2">
                     {helpMenu.filter(item => item.condition !== false).map((item) => (
-                      <button 
-                        key={item.label} 
-                        onClick={() => item.action ? item.action() : setActiveMessage(item.text || "")} 
-                        className="w-full p-4 bg-gothic-dark border border-moonlight/5 text-[9px] tracking-[0.3em] uppercase text-left hover:border-moonlight/30 hover:bg-white/5 transition-all flex items-center gap-4 group"
-                      >
-                        <span className="opacity-20 group-hover:opacity-100 transition-opacity">{item.icon}</span>{item.label}
-                      </button>
+                      item.link ? (
+                        <Link 
+                          key={item.label}
+                          href={item.link}
+                          onClick={() => setIsOpen(false)}
+                          className="w-full p-4 bg-gothic-dark border border-moonlight/5 text-[9px] tracking-[0.3em] uppercase text-left hover:border-moonlight/30 hover:bg-white/5 transition-all flex items-center justify-between group"
+                        >
+                          <div className="flex items-center gap-4">
+                            <span className="opacity-20 group-hover:opacity-100 transition-opacity">{item.icon}</span>
+                            {item.label}
+                          </div>
+                          <span className="text-[7px] opacity-20 uppercase">{item.sub}</span>
+                        </Link>
+                      ) : (
+                        <button 
+                          key={item.label} 
+                          onClick={() => item.action ? item.action() : setActiveMessage(item.text || "")} 
+                          className="w-full p-4 bg-gothic-dark border border-moonlight/5 text-[9px] tracking-[0.3em] uppercase text-left hover:border-moonlight/30 hover:bg-white/5 transition-all flex items-center gap-4 group"
+                        >
+                          <span className="opacity-20 group-hover:opacity-100 transition-opacity">{item.icon}</span>{item.label}
+                        </button>
+                      )
                     ))}
-                    <button onClick={() => setMode("chat")} className="w-full p-2 text-[8px] uppercase tracking-widest opacity-20 hover:opacity-100 transition-opacity text-center mt-4">Advanced Inquiry (AI)</button>
+                    <button onClick={() => setMode("chat")} className="w-full p-2 text-[8px] uppercase tracking-widest opacity-20 hover:opacity-100 transition-opacity text-center mt-4 border border-white/5">Advanced Inquiry (AI)</button>
                   </div>
                 </div>
               ) : (
-                /* ... Advanced Chat UI ... */
                 <div className="flex flex-col h-full">
                    <div className="flex-1 space-y-4 mb-4">
                      {messages.map((m, i) => (

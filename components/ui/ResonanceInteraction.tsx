@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /**
- * 翠緑の閃光が画面を駆け、クリックで空間を揺らす「翠緑の衝撃波」が広がる演出
+ * 翠緑の六角形が画面を駆け、クリックで六角形の結晶波動が広がる演出
  */
 export default function ResonanceInteraction() {
   const [pulses, setPulses] = useState<{ id: number; x: number; y: number }[]>([]);
@@ -16,18 +16,18 @@ export default function ResonanceInteraction() {
     setPulses((prev) => [...prev, { id, x, y }]);
     setTimeout(() => {
       setPulses((prev) => prev.filter((p) => p.id !== id));
-    }, 2000);
+    }, 1500);
   };
 
   const handleMouseMove = (e: MouseEvent) => {
     const id = nextId.current++;
-    setTrail((prev) => [...prev.slice(-40), { id, x: e.clientX, y: e.clientY }]);
+    setTrail((prev) => [...prev.slice(-35), { id, x: e.clientX, y: e.clientY }]);
   };
 
   const handleTouchMove = (e: TouchEvent) => {
     const id = nextId.current++;
     const touch = e.touches[0];
-    setTrail((prev) => [...prev.slice(-40), { id, x: touch.clientX, y: touch.clientY }]);
+    setTrail((prev) => [...prev.slice(-35), { id, x: touch.clientX, y: touch.clientY }]);
   };
 
   const handleMouseDown = (e: MouseEvent) => {
@@ -53,56 +53,57 @@ export default function ResonanceInteraction() {
     };
   }, []);
 
+  // 六角形の形状定義
+  const hexPath = "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)";
+
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
-      {/* 翠緑の閃光 (Enhanced Trail) */}
+      {/* 翠緑の六角形残光 (Hex Trail) */}
       {trail.map((p) => (
         <motion.div
           key={p.id}
-          initial={{ opacity: 1, scale: 2 }}
-          animate={{ opacity: 0, scale: 0 }}
-          className="absolute w-3 h-3 rounded-full bg-emerald-300 shadow-[0_0_20px_#34d399,0_0_40px_#10b981] blur-[0.5px]"
-          style={{ left: p.x - 6, top: p.y - 6 }}
+          initial={{ opacity: 1, scale: 1.8, rotate: 0 }}
+          animate={{ opacity: 0, scale: 0, rotate: 90 }}
+          className="absolute w-3 h-3 bg-emerald-400 shadow-[0_0_15px_#34d399]"
+          style={{ 
+            left: p.x - 6, 
+            top: p.y - 6,
+            clipPath: hexPath
+          }}
         />
       ))}
 
-      {/* 聖域の衝撃波 (Luminous Shockwave) */}
+      {/* 六角形の衝撃波 (Hex Shockwave) */}
       <AnimatePresence>
         {pulses.map((p) => (
           <div key={p.id} className="absolute" style={{ left: p.x, top: p.y }}>
-             {/* Core Flash */}
+             {/* Core Flash (Hex) */}
              <motion.div
-                initial={{ scale: 0, opacity: 1 }}
-                animate={{ scale: 5, opacity: 0 }}
+                initial={{ scale: 0, opacity: 1, rotate: 0 }}
+                animate={{ scale: 3, opacity: 0, rotate: 30 }}
                 transition={{ duration: 0.5 }}
-                className="w-10 h-10 -left-5 -top-5 absolute bg-white blur-xl rounded-full"
+                className="w-8 h-8 -left-4 -top-4 absolute bg-white/80 blur-md"
+                style={{ clipPath: hexPath }}
              />
              
-             {/* Primary Shockwave */}
+             {/* Primary Hex Wave - サイズを適正化(scale 15) */}
              <motion.div
-                initial={{ scale: 0, opacity: 1 }}
-                animate={{ scale: 25, opacity: 0 }}
+                initial={{ scale: 0, opacity: 1, rotate: 0 }}
+                animate={{ scale: 15, opacity: 0, rotate: -15 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-                className="w-20 h-20 -left-10 -top-10 absolute border-[2px] border-emerald-400 shadow-[0_0_50px_rgba(52,211,153,0.6),inset_0_0_30px_rgba(52,211,153,0.4)] rounded-full"
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                className="w-16 h-16 -left-8 -top-8 absolute border-[1.5px] border-emerald-400 shadow-[0_0_30px_rgba(52,211,153,0.4)]"
+                style={{ clipPath: hexPath }}
              />
 
-             {/* Secondary Echo */}
+             {/* Secondary Echo (Hex) */}
              <motion.div
-                initial={{ scale: 0, opacity: 0.7 }}
-                animate={{ scale: 18, opacity: 0 }}
+                initial={{ scale: 0, opacity: 0.6, rotate: 0 }}
+                animate={{ scale: 10, opacity: 0, rotate: 15 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 1.2, delay: 0.1, ease: "easeOut" }}
-                className="w-20 h-20 -left-10 -top-10 absolute border-[1px] border-emerald-300/50 rounded-full"
-             />
-
-             {/* Atmospheric Warp (Distortion Effect) */}
-             <motion.div
-                initial={{ scale: 0, opacity: 0.3 }}
-                animate={{ scale: 40, opacity: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 2, ease: "easeOut" }}
-                className="w-20 h-20 -left-10 -top-10 absolute bg-emerald-500/5 blur-[60px] rounded-full"
+                transition={{ duration: 0.8, delay: 0.05, ease: "easeOut" }}
+                className="w-16 h-16 -left-8 -top-8 absolute border-[1px] border-emerald-300/30"
+                style={{ clipPath: hexPath }}
              />
           </div>
         ))}
