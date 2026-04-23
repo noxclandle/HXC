@@ -21,7 +21,7 @@ interface Asset {
 
 const CATEGORIES = [
   { id: "frame", name: "Frames", icon: Shield, sub: "外枠" },
-  { id: "title", name: "Titles", icon: Trophy, sub: "称号・実績" },
+  { id: "title", name: "Titles / Achievements", icon: Trophy, sub: "称号・実績" },
   { id: "pointer", name: "Pointers", icon: MousePointer2, sub: "軌跡" },
   { id: "sound", name: "Sounds", icon: Music, sub: "共鳴音" },
   { id: "angel", name: "Concierge", icon: UserCheck, sub: "案内役" },
@@ -42,13 +42,11 @@ export default function InventoryPage() {
     angel: "Sentinel"
   });
 
-  // 実績もすべて「title」として統合
   const [assets, setAssets] = useState<Asset[]>([
     { id: "Obsidian", name: "Obsidian Frame", type: "frame", rarity: "common", description: "標準的な外枠。ビジネスの誠実さを表現する。", unlocked: true },
     { id: "Gold", name: "Heritage Gold", type: "frame", rarity: "rare", description: "伝統を感じさせる落ち着いた黄金色。", unlocked: true },
     { id: "Dynamic", name: "Azure Pulse", type: "frame", rarity: "epic", description: "知性を感じさせる蒼い脈動。", unlocked: true },
     
-    // 通常称号と実績称号を統合
     { id: "ASSOCIATE", name: "ASSOCIATE", type: "title", rarity: "common", description: "初期称号。同盟の一員である証。", unlocked: true },
     { id: "PARTNER", name: "PARTNER", type: "title", rarity: "rare", description: "信頼を築いた者へ贈られる称号。", unlocked: true },
     { id: "DIRECTOR", name: "DIRECTOR", type: "title", rarity: "epic", description: "領域の進むべき方向を示す者。", unlocked: false },
@@ -62,6 +60,15 @@ export default function InventoryPage() {
     
     { id: "Resonance", name: "Pure Resonance", type: "sound", rarity: "epic", description: "標準的な共鳴音。", unlocked: true },
   ]);
+
+  const getRarityStyle = (rarity: Asset["rarity"]) => {
+    switch (rarity) {
+      case "mythic": return "text-amber-400 border-amber-500/20 bg-amber-500/5";
+      case "epic": return "text-purple-400 border-purple-500/20 bg-purple-500/5";
+      case "rare": return "text-azure-400 border-azure-500/20 bg-azure-500/5";
+      default: return "text-white/40 border-white/5 bg-white/[0.01]";
+    }
+  };
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -87,7 +94,7 @@ export default function InventoryPage() {
       });
 
       if (res.ok) {
-        showToast("Treasury Synchronized / 装備と実績称号を記録しました", "success");
+        showToast("Treasury Synchronized / 装備を記録しました", "success");
       } else {
         showToast("Error / 同期に失敗しました", "error");
       }
@@ -129,10 +136,7 @@ export default function InventoryPage() {
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-azure-500/20 to-transparent" />
               <HexaCardPreview 
                 name={session?.user?.name || "ARCHITECT"} 
-                uid="04:A2:3F:81:XX:XX:XX"
-                rt={Number(rtBalance).toLocaleString()}
                 title={equipped.title}
-                aura={85}
                 frame={equipped.frame}
               />
               <div className="mt-10 pt-8 border-t border-white/5 space-y-4">
@@ -173,7 +177,7 @@ export default function InventoryPage() {
                 >
                   <cat.icon size={18} className={activeCategory === cat.id ? "text-azure-400" : ""} />
                   <div className="text-center">
-                    <span className="block text-[8px] uppercase tracking-[0.3em] font-bold">{cat.name}</span>
+                    <span className="block text-[8px] uppercase tracking-[0.3em] font-bold">{cat.name.split(' / ')[0]}</span>
                     <span className="block text-[6px] opacity-40 uppercase tracking-widest mt-1">{cat.sub}</span>
                   </div>
                 </button>
@@ -195,7 +199,7 @@ export default function InventoryPage() {
                       onClick={() => handleSelectAsset(asset)}
                       className={`group p-6 border transition-all cursor-pointer flex justify-between items-center relative overflow-hidden ${
                         equipped[activeCategory as keyof typeof equipped] === asset.id 
-                        ? "border-azure-500/50 bg-azure-500/10" 
+                        ? "border-azure-500/50 bg-azure-500/10 shadow-[0_0_20px_rgba(59,130,246,0.05)]" 
                         : "border-white/5 bg-white/[0.01] hover:border-azure-500/20"
                       } ${!asset.unlocked && "opacity-40"}`}
                     >
@@ -210,6 +214,9 @@ export default function InventoryPage() {
                          <div>
                             <div className="flex items-center gap-3 mb-1">
                                <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold">{asset.name}</h3>
+                               <span className={`text-[7px] px-2 py-0.5 border uppercase tracking-widest font-bold ${getRarityStyle(asset.rarity)}`}>
+                                 {asset.rarity}
+                               </span>
                             </div>
                             <p className="text-[9px] tracking-widest opacity-40 uppercase leading-relaxed max-w-md">{asset.description}</p>
                          </div>

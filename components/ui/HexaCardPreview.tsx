@@ -2,25 +2,28 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
-import { Hexagon, Rotate3d, ShieldCheck, Sparkles } from "lucide-react";
+import { Rotate3d, Building2, User } from "lucide-react";
 import { playResonanceSound } from "@/lib/audio/resonance";
 
 interface HexaCardProps {
   name: string;
-  reading?: string; // ふりがな
-  uid: string;
-  rt: string;
+  reading?: string;
+  company?: string;
   title?: string;
-  aura: number;
+  photoUrl?: string;
+  orientation?: "horizontal" | "vertical";
   frame?: string;
   onFlip?: (isFlipped: boolean) => void;
 }
 
 /**
- * HXC プロフェッショナル名刺プレビュー
- * サイトの機能名を排除し、実務における「信頼」を可視化する。
+ * HXC プロフェッショナル名刺プレビュー (真実の調律版)
+ * アプリ専用のUIDや残高を排除し、純粋な「ビジネスの顔」として再構築。
  */
-export default function HexaCardPreview({ name, reading, uid, rt, title = "ASSOCIATE", aura, frame = "Obsidian", onFlip }: HexaCardProps) {
+export default function HexaCardPreview({ 
+  name, reading, company, title, photoUrl, 
+  orientation = "horizontal", frame = "Obsidian", onFlip 
+}: HexaCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isRotating, setIsRotating] = useState(false);
 
@@ -30,7 +33,7 @@ export default function HexaCardPreview({ name, reading, uid, rt, title = "ASSOC
   const rotateYBase = useTransform(x, [-100, 100], [-15, 15]);
   const finalRotateY = useTransform(rotateYBase, (val) => val + (isFlipped ? 180 : 0));
 
-  const glowOpacity = useTransform(finalRotateY, [0, 90, 180], [0, 0.8, 0]);
+  const glowOpacity = useTransform(finalRotateY, [0, 90, 180], [0, 0.4, 0]);
 
   const handleFlip = () => {
     if (isRotating) return;
@@ -43,15 +46,17 @@ export default function HexaCardPreview({ name, reading, uid, rt, title = "ASSOC
 
   const getFrameStyle = () => {
     switch (frame) {
-      case "Gold": return "border-bronze-400/50 shadow-[0_0_40px_rgba(139,94,60,0.2)]";
-      case "Dynamic": return "border-azure-500/50 shadow-[0_0_40px_rgba(59,130,246,0.2)]";
-      default: return "border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)]";
+      case "Gold": return "border-bronze-400/40 shadow-xl bg-[#0F1115]";
+      case "Dynamic": return "border-azure-500/40 shadow-xl bg-[#0A0C10]";
+      default: return "border-white/10 shadow-2xl bg-[#050505]";
     }
   };
 
+  const isVertical = orientation === "vertical";
+
   return (
     <div 
-      className="relative w-full max-w-md aspect-[1.6/1] cursor-pointer"
+      className={`relative cursor-pointer transition-all duration-500 ${isVertical ? "w-full max-w-[280px] aspect-[1/1.6]" : "w-full max-w-md aspect-[1.6/1]"}`}
       style={{ perspective: "2500px" }}
       onMouseMove={(e) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -62,105 +67,80 @@ export default function HexaCardPreview({ name, reading, uid, rt, title = "ASSOC
       onClick={handleFlip}
     >
       <motion.div
-        style={{ 
-          rotateX, 
-          rotateY: finalRotateY,
-          transformStyle: "preserve-3d",
-          width: "100%",
-          height: "100%"
-        }}
-        animate={{ scale: isRotating ? 0.95 : 1 }}
+        style={{ rotateX, rotateY: finalRotateY, transformStyle: "preserve-3d", width: "100%", height: "100%" }}
+        animate={{ scale: isRotating ? 0.96 : 1 }}
         transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
         className="relative"
       >
-        {/* 次元発光（純白） */}
-        <motion.div 
-          style={{ opacity: glowOpacity, rotateY: 90, backfaceVisibility: "hidden" }}
-          className="absolute inset-0 bg-white/20 blur-2xl z-20 pointer-events-none"
-        />
+        <motion.div style={{ opacity: glowOpacity, rotateY: 90, backfaceVisibility: "hidden" }} className="absolute inset-0 bg-white/10 blur-3xl z-20 pointer-events-none" />
 
-        {/* 【表面】Modern Business */}
+        {/* 【表面】Professional Face */}
         <div 
-          className={`absolute inset-0 bg-[#0A0A0A] overflow-hidden p-8 flex flex-col justify-between border ${getFrameStyle()}`}
+          className={`absolute inset-0 overflow-hidden p-8 flex flex-col justify-between border ${getFrameStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
-          <header className="relative z-10 flex justify-between items-start">
+          {/* Subtle Background Branding */}
+          <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none text-[40px] font-bold italic select-none">HXC</div>
+
+          <header className={`flex ${isVertical ? "flex-col gap-6" : "justify-between items-start"}`}>
             <div className="flex items-center gap-5">
-               <div className="w-12 h-12 border border-white/10 flex items-center justify-center bg-white/[0.03]">
-                  <ShieldCheck size={24} className="text-white/20" />
+               {/* Holder Photo */}
+               <div className="w-16 h-16 border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
+                  {photoUrl ? (
+                    <img src={photoUrl} alt={name} className="w-full h-full object-cover" />
+                  ) : (
+                    <User size={28} className="text-white/10" />
+                  )}
                </div>
                <div>
-                 <div className="flex flex-col mb-1">
-                   <h3 className="text-[7px] tracking-[0.4em] uppercase opacity-30 font-bold">Holder Name</h3>
-                   {reading && <span className="text-[8px] tracking-[0.2em] text-azure-400 font-medium">{reading}</span>}
+                 <div className="flex flex-col mb-2">
+                   {reading && <span className="text-[9px] tracking-[0.3em] text-azure-400 font-bold uppercase">{reading}</span>}
                  </div>
-                 <p className="text-2xl tracking-[0.15em] uppercase font-light text-white leading-none">{name}</p>
+                 <p className={`tracking-[0.1em] uppercase font-light text-white leading-none ${isVertical ? "text-xl" : "text-3xl"}`}>{name}</p>
                </div>
             </div>
-            <div className="text-right flex flex-col items-end">
-               <span className="text-[8px] tracking-[0.4em] uppercase opacity-20 font-bold mb-1 italic">Verified</span>
-               <div className="w-2 h-2 bg-white/10 rounded-full" />
-            </div>
+            {!isVertical && (
+               <div className="text-right flex flex-col items-end opacity-20">
+                  <span className="text-[6px] tracking-[0.4em] uppercase font-bold mb-1">Standard v1.0</span>
+                  <div className="w-4 h-[1px] bg-white" />
+               </div>
+            )}
           </header>
 
-          <footer className="relative z-10 flex justify-between items-end">
+          <footer className={`flex ${isVertical ? "flex-col gap-6" : "justify-between items-end"}`}>
             <div className="space-y-4">
-              <div>
-                <h3 className="text-[8px] tracking-[0.4em] uppercase opacity-20 font-bold mb-1">Identification</h3>
-                <p className="font-mono text-[9px] tracking-[0.2em] text-white/40">{uid}</p>
+              <div className="flex items-center gap-3 text-white/60">
+                <Building2 size={16} className="text-bronze-400 opacity-60" />
+                <span className="text-[11px] tracking-[0.3em] uppercase font-medium">{company || "NOT SPECIFIED"}</span>
               </div>
-              <div className="px-4 py-1.5 border border-white/5 bg-white/[0.02] w-fit">
-                 <span className="text-[7px] uppercase tracking-[0.4em] text-white/60">{title}</span>
+              <div className="px-5 py-2 border border-white/5 bg-white/[0.01] w-fit">
+                 <span className="text-[8px] tracking-[0.4em] uppercase text-white/40">{title || "ASSOCIATE"}</span>
               </div>
             </div>
-            <div className="flex flex-col items-end opacity-10 group-hover:opacity-40 transition-opacity">
-               <Rotate3d size={14} className="animate-pulse text-white" />
-               <span className="text-[5px] uppercase tracking-[0.3em] mt-1">Authenticity</span>
+            
+            <div className="flex flex-col items-end opacity-10 group-hover:opacity-30 transition-opacity">
+               <Rotate3d size={14} className="animate-pulse" />
+               <span className="text-[6px] tracking-[0.4em] uppercase mt-1">Identity Verified</span>
             </div>
           </footer>
         </div>
 
-        {/* 【裏面】Information Seal */}
+        {/* 【裏面】Simple Contact / Blank */}
         <div 
-          className={`absolute inset-0 bg-[#0F1115] p-8 flex flex-col justify-center items-center text-center border ${getFrameStyle()}`}
+          className={`absolute inset-0 p-8 flex flex-col justify-center items-center text-center border ${getFrameStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
         >
-          {/* Digital Wax Seal (Pure White) */}
-          <AnimatePresence>
-            {isFlipped && (
-              <motion.div 
-                initial={{ scale: 1.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.05]"
-              >
-                <div className="w-32 h-32 border border-white/20 flex items-center justify-center" style={{ clipPath: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)" }}>
-                   <Hexagon size={64} className="text-white" />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <div className="space-y-10 relative z-10 w-full">
-            <div className="space-y-3">
-              <h3 className="text-[8px] tracking-[0.8em] uppercase opacity-30 font-bold">Credit Balance</h3>
-              <p className="text-4xl font-extralight tracking-[0.1em] text-white">
-                {rt}<span className="text-xs opacity-20 ml-2 tracking-widest">CP</span>
-              </p>
+          <div className="space-y-8 relative z-10 w-full">
+            <div className="w-16 h-16 border border-white/5 mx-auto flex items-center justify-center bg-white/[0.01]">
+               <div className="w-1.5 h-1.5 bg-white/20 rounded-full" />
             </div>
-            
-            <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/10 to-transparent mx-auto" />
-            
-            <div className="space-y-4">
-               <p className="text-[7px] tracking-[0.4em] uppercase opacity-30 leading-loose">
-                 Hexa Relation Network<br />
-                 Global Protocol Standard
-               </p>
-               <div className="flex justify-center gap-3 text-white/10">
-                  <Sparkles size={8} />
-                  <Sparkles size={8} />
-                  <Sparkles size={8} />
-               </div>
+            <div className="space-y-2">
+               <p className="text-[10px] tracking-[0.5em] uppercase text-white/40">Professional Credentials</p>
+               <div className="h-px w-12 bg-white/10 mx-auto" />
             </div>
+            <p className="text-[8px] tracking-[0.4em] uppercase opacity-20 leading-loose max-w-[200px] mx-auto">
+              This identity is authenticated by the Hexa Relation Network Protocol.
+            </p>
           </div>
         </div>
       </motion.div>
