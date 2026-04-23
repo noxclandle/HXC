@@ -36,7 +36,6 @@ export default function ProfileEditPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    // 保存シミュレーション
     setTimeout(() => {
       setIsSaving(false);
       showToast("Identity Crystalized / プロフィールを保存しました", "success");
@@ -45,7 +44,7 @@ export default function ProfileEditPage() {
 
   return (
     <div className="max-w-6xl mx-auto pt-32 px-6 pb-24 relative">
-      <header className="mb-16 flex justify-between items-end">
+      <header className="mb-16 flex justify-between items-end text-moonlight">
         <div className="space-y-4">
           <Link href="/dashboard" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity mb-8">
             <ArrowLeft size={12} /> Back to Hub / 拠点へ戻る
@@ -58,9 +57,9 @@ export default function ProfileEditPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         {/* Left: Preview with Flip Motion */}
         <div className="lg:col-span-5 sticky top-32 space-y-12">
-           <div className="p-8 bg-white border border-black/5 shadow-xl rounded-sm relative overflow-hidden group">
+           <div className="p-8 bg-white/[0.02] border border-white/5 shadow-2xl rounded-sm relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-azure-500/20 to-transparent" />
-              <h2 className="text-[9px] uppercase tracking-[0.6em] opacity-30 mb-10 text-center italic text-azure-600">Dynamic Preview / リアルタイムプレビュー</h2>
+              <h2 className="text-[9px] uppercase tracking-[0.6em] opacity-30 mb-10 text-center italic text-azure-400">Dynamic Preview / リアルタイムプレビュー</h2>
               <HexaCardPreview 
                 name={formData.name || "ARCHITECT"} 
                 uid="04:XX:XX:XX:XX:XX:XX"
@@ -69,7 +68,7 @@ export default function ProfileEditPage() {
                 aura={85}
                 frame="Obsidian"
               />
-              <p className="mt-8 text-center text-[7px] tracking-[0.2em] opacity-20 uppercase">Click the card to flip / クリックで反転を確認</p>
+              <p className="mt-8 text-center text-[7px] tracking-[0.2em] opacity-20 uppercase text-moonlight">Click the card to flip / クリックで反転を確認</p>
            </div>
         </div>
 
@@ -79,56 +78,56 @@ export default function ProfileEditPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                  {/* Name */}
                  <div className="space-y-3">
-                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
                        <User size={12} className="text-azure-500"/> Full Name / 氏名
                     </label>
                     <input 
                        type="text" 
                        value={formData.name}
                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                       className="w-full bg-white border border-black/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm"
+                       className="w-full bg-gothic-dark border border-white/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm text-moonlight"
                        placeholder="NAME"
                     />
                  </div>
 
                  {/* Handle */}
                  <div className="space-y-3">
-                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
                        <Sparkles size={12} className="text-bronze-500"/> Handle Name / 通称
                     </label>
                     <input 
                        type="text" 
                        value={formData.handle}
                        onChange={(e) => setFormData({...formData, handle: e.target.value})}
-                       className="w-full bg-white border border-black/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm"
+                       className="w-full bg-gothic-dark border border-white/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm text-moonlight"
                        placeholder="HANDLE"
                     />
                  </div>
 
                  {/* Title */}
                  <div className="space-y-3">
-                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
                        <Briefcase size={12} className="text-azure-500"/> Professional Title / 肩書き
                     </label>
                     <input 
                        type="text" 
                        value={formData.title}
                        onChange={(e) => setFormData({...formData, title: e.target.value})}
-                       className="w-full bg-white border border-black/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm"
+                       className="w-full bg-gothic-dark border border-white/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm text-moonlight"
                        placeholder="TITLE"
                     />
                  </div>
 
                  {/* Website */}
                  <div className="space-y-3">
-                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
                        <Globe size={12} className="text-azure-500"/> Identity Anchor / ウェブサイト
                     </label>
                     <input 
                        type="url" 
                        value={formData.website}
                        onChange={(e) => setFormData({...formData, website: e.target.value})}
-                       className="w-full bg-white border border-black/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm"
+                       className="w-full bg-gothic-dark border border-white/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm text-moonlight"
                        placeholder="https://..."
                     />
                  </div>
@@ -136,14 +135,14 @@ export default function ProfileEditPage() {
 
               {/* Bio */}
               <div className="space-y-3">
-                 <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
+                 <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2 text-moonlight">
                     <Shield size={12} className="text-bronze-500"/> Identity Core / 自己紹介
                  </label>
                  <textarea 
                     rows={4}
                     value={formData.bio}
                     onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                    className="w-full bg-white border border-black/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm resize-none"
+                    className="w-full bg-gothic-dark border border-white/5 p-4 text-xs tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm resize-none text-moonlight"
                     placeholder="Describe your essence..."
                  />
               </div>
