@@ -14,7 +14,8 @@ model User {
   name              String?
   handle_name       String?
   alias_name        String?
-  photo_url         String?
+  photo_url         String?          // 自画像
+  logo_url          String?          // 会社ロゴ
   is_alias_active   Boolean          @default(false)
   is_alias_unlocked Boolean          @default(false)
   address           String?

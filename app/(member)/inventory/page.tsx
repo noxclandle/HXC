@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Music, Sparkles, UserCheck, Check, Lock, Wallet, Trophy, ArrowLeft, MousePointer2, Smartphone, Layout } from "lucide-react";
+import { Shield, Music, Sparkles, UserCheck, Check, Lock, Wallet, Trophy, ArrowLeft, MousePointer2 } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 interface Asset {
   id: string;
   name: string;
-  type: "frame" | "sound" | "effect" | "angel" | "title" | "pointer" | "orientation";
+  type: "frame" | "sound" | "effect" | "angel" | "title" | "pointer";
   rarity: "common" | "rare" | "epic" | "legendary" | "mythic";
   description: string;
   unlocked: boolean;
@@ -21,9 +21,9 @@ interface Asset {
 
 const CATEGORIES = [
   { id: "frame", name: "Frames", icon: Shield, sub: "外枠" },
-  { id: "orientation", name: "Layout", icon: Smartphone, sub: "縦・横" },
   { id: "title", name: "Titles / Achievements", icon: Trophy, sub: "称号・実績" },
   { id: "pointer", name: "Pointers", icon: MousePointer2, sub: "軌跡" },
+  { id: "sound", name: "Sounds", icon: Music, sub: "共鳴音" },
   { id: "angel", name: "Concierge", icon: UserCheck, sub: "案内役" },
 ];
 
@@ -48,9 +48,6 @@ export default function InventoryPage() {
     { id: "Gold", name: "Heritage Gold", type: "frame", rarity: "epic", description: "伝統を感じさせる落ち着いた黄金色。", unlocked: true },
     { id: "Dynamic", name: "Azure Pulse", type: "frame", rarity: "legendary", description: "知性を感じさせる蒼い脈動。", unlocked: true },
     
-    { id: "horizontal", name: "Horizontal Classic", type: "orientation", rarity: "common", description: "伝統的な横型の名刺レイアウト。", unlocked: true },
-    { id: "vertical", name: "Vertical Modern", type: "orientation", rarity: "rare", description: "スマホ閲覧に最適化された縦型レイアウト。", unlocked: true },
-
     { id: "ASSOCIATE", name: "ASSOCIATE", type: "title", rarity: "common", description: "初期称号。同盟の一員である証。", unlocked: true },
     { id: "CONNECTOR", name: "CONNECTOR", type: "title", rarity: "rare", description: "実績：10人との接続を記録した証。", unlocked: true },
     { id: "STRATEGIST", name: "STRATEGIST", type: "title", rarity: "epic", description: "実績：100人の人脈をアーカイブした証。", unlocked: true },
@@ -59,6 +56,10 @@ export default function InventoryPage() {
 
     { id: "Pure White Hex", name: "Pure White Hex", type: "pointer", rarity: "common", description: "純白の鋭い軌跡。", unlocked: true },
     { id: "Azure Trace", name: "Azure Trace", type: "pointer", rarity: "rare", description: "知的な蒼い軌跡。", unlocked: true },
+    
+    { id: "Resonance", name: "Pure Resonance", type: "sound", rarity: "epic", description: "反転時：空間を震わせる標準的な共鳴音。", unlocked: true },
+    { id: "Silver", name: "Silver Resonance", type: "sound", rarity: "rare", description: "反転時：透明感のある銀の鈴の音。", unlocked: true },
+    { id: "Void", name: "Deep Void", type: "sound", rarity: "mythic", description: "反転時：深淵から響く重厚な低音。", unlocked: false },
   ]);
 
   const getRarityStyle = (rarity: Asset["rarity"]) => {
@@ -96,7 +97,6 @@ export default function InventoryPage() {
 
       if (res.ok) {
         showToast("Treasury Synchronized / 装備を記録しました", "success");
-        window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
       } else {
         showToast("Error / 保存に失敗しました", "error");
       }
@@ -134,7 +134,7 @@ export default function InventoryPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         <div className="lg:col-span-5 sticky top-32 space-y-12">
-           <div className="p-8 bg-white/[0.02] border border-white/5 shadow-2xl relative overflow-hidden group">
+           <div className="p-8 bg-white/[0.02] border border-white/5 shadow-2xl relative overflow-hidden group flex justify-center">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-azure-500/20 to-transparent" />
               <HexaCardPreview 
                 name={session?.user?.name || "ARCHITECT"} 
@@ -142,12 +142,6 @@ export default function InventoryPage() {
                 frame={equipped.frame}
                 orientation={equipped.orientation}
               />
-              <div className="mt-10 pt-8 border-t border-white/5 space-y-4">
-                 <div className="flex justify-between items-center text-[8px] tracking-[0.3em] uppercase opacity-40">
-                    <span>Layout Mode</span>
-                    <span className="text-white font-bold">{equipped.orientation}</span>
-                 </div>
-              </div>
            </div>
            
            <button onClick={handleCommit} disabled={isSaving} className={`w-full py-6 bg-azure-600 text-white font-bold text-[11px] tracking-[1.2em] uppercase shadow-2xl hover:bg-azure-500 transition-all active:scale-[0.98] relative overflow-hidden ${isSaving && 'opacity-50'}`}>
@@ -177,7 +171,7 @@ export default function InventoryPage() {
               <AnimatePresence mode="wait">
                 <motion.div key={activeCategory} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="grid grid-cols-1 gap-4">
                   {filteredAssets.map((asset) => (
-                    <div key={asset.id} onClick={() => handleSelectAsset(asset)} className={`group p-6 border transition-all cursor-pointer flex justify-between items-center relative overflow-hidden ${equipped[activeCategory as keyof typeof equipped] === asset.id ? "border-white/40 bg-white/5 shadow-[0_0_20px_rgba(255,255,255,0.05)]" : "border-white/5 bg-white/[0.01] hover:border-azure-500/20"} ${!asset.unlocked && "opacity-40"}`}>
+                    <div key={asset.id} onClick={() => handleSelectAsset(asset)} className={`group p-6 border transition-all cursor-pointer flex justify-between items-center relative overflow-hidden ${equipped[activeCategory as keyof typeof equipped] === asset.id ? "border-white/40 bg-white/5" : "border-white/5 bg-white/[0.01] hover:border-azure-500/20"} ${!asset.unlocked && "opacity-40"}`}>
                       <div className="flex items-center gap-6">
                          <div className={`w-12 h-12 flex items-center justify-center border ${equipped[activeCategory as keyof typeof equipped] === asset.id ? "border-white text-white" : "border-white/10 opacity-40"}`}>
                             {asset.unlocked ? <Check size={16} /> : <Lock size={16} />}
