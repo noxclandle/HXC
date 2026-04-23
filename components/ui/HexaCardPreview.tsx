@@ -148,7 +148,28 @@ export default function HexaCardPreview({ name, uid, rt, personality, aura, fram
             zIndex: isFlipped ? 1 : 0
           }}
         >
-          <div className="space-y-10 relative">
+          {/* Digital Wax Seal (Hex-Seal) */}
+          <AnimatePresence>
+            {isFlipped && (
+              <motion.div 
+                initial={{ scale: 2, opacity: 0, rotate: -45 }}
+                animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+                className="absolute inset-0 flex items-center justify-center pointer-events-none"
+              >
+                <div className="w-32 h-32 border border-emerald-500/20 bg-emerald-500/5 backdrop-blur-sm relative flex items-center justify-center" style={{ clipPath: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)" }}>
+                   <Hexagon size={48} className="text-emerald-500/40 animate-pulse" />
+                   <motion.div 
+                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
+                     className="absolute inset-0 border border-emerald-400/30" 
+                     style={{ clipPath: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)", transform: "scale(0.85)" }}
+                   />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="space-y-10 relative z-10">
             {/* Background Decoration */}
             <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] scale-150 pointer-events-none">
                <Hexagon size={200} />
