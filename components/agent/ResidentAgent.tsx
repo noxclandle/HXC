@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Book, Camera, Zap, UserPlus, Info, Sparkles, Trophy, Music2, Volume2, VolumeX } from "lucide-react";
+import { X, Book, Camera, Zap, UserPlus, Info, Sparkles, Trophy, Music2, Volume2, VolumeX, Send } from "lucide-react";
 import Link from "next/link";
 import { ambientManager } from "@/lib/audio/ambient";
+import { useToast } from "@/components/ui/ResonanceToast";
 
 export default function ResidentAgent() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,6 +15,7 @@ export default function ResidentAgent() {
   const [inputText, setInputText] = useState("");
   const [hasDaily, setHasDaily] = useState(false);
   const [ambientMode, setAmbientMode] = useState<"off" | "space" | "rain">("off");
+  const { showToast } = useToast();
   
   const userLevel = 12;
 
@@ -43,11 +45,24 @@ export default function ResidentAgent() {
       if (data.success) {
         setActiveMessage(`【聖域の光】${data.amount} RT を授かりました。大切にお使いください。`);
         setHasDaily(true);
+        showToast(`Grace Received / 聖域の恩寵を受信 (+${data.amount} RT)`);
         window.dispatchEvent(new CustomEvent("rt-grace-received"));
       } else {
         setActiveMessage(data.message);
       }
     } catch (e) { console.error(e); }
+  };
+
+  const handleSendChat = () => {
+    if (!inputText.trim()) return;
+    const newMsg = { role: "user", text: inputText };
+    setMessages([...messages, newMsg]);
+    setInputText("");
+    
+    // シミュレートされた応答
+    setTimeout(() => {
+      setMessages(prev => [...prev, { role: "agent", text: "主（あるじ）よ、その言葉は聖域の深淵へと刻まれました。解析には時間を要します。" }]);
+    }, 1000);
   };
 
   const getEvolvedMessage = (baseMsg: string, level: number) => {
@@ -124,7 +139,7 @@ export default function ResidentAgent() {
                         </button>
                       )
                     ))}
-                    <button onClick={() => setMode("chat")} className="w-full p-2 text-[8px] uppercase tracking-widest opacity-20 hover:opacity-100 transition-opacity text-center mt-4 border border-white/5">Advanced Inquiry (AI)</button>
+                    <button onClick={() => setMode("chat")} className="w-full p-2 text-[8px] uppercase tracking-widest opacity-20 hover:opacity-100 transition-opacity text-center mt-4 border border-white/5 uppercase">Advanced Inquiry (AI)</button>
                   </div>
                 </div>
               ) : (
@@ -136,9 +151,19 @@ export default function ResidentAgent() {
                        </div>
                      ))}
                    </div>
-                   <div className="flex gap-2">
-                     <input type="text" placeholder="Ask..." className="flex-1 bg-transparent border-b border-moonlight/10 p-2 text-[10px] tracking-widest outline-none uppercase" />
-                     <button onClick={() => setMode("menu")} className="text-[8px] opacity-20 uppercase">Back</button>
+                   <div className="flex gap-2 border-t border-moonlight/10 pt-4">
+                     <input 
+                       type="text" 
+                       placeholder="Message..." 
+                       value={inputText}
+                       onChange={(e) => setInputText(e.target.value)}
+                       onKeyDown={(e) => e.key === "Enter" && handleSendChat()}
+                       className="flex-1 bg-transparent p-2 text-[10px] tracking-widest outline-none uppercase" 
+                     />
+                     <button onClick={handleSendChat} className="p-2 opacity-20 hover:opacity-100 transition-opacity">
+                        <Send size={14} />
+                     </button>
+                     <button onClick={() => setMode("menu")} className="text-[8px] opacity-20 uppercase ml-2">Back</button>
                    </div>
                 </div>
               )}

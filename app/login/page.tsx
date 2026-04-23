@@ -131,6 +131,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    onKeyDown={(e) => e.key === "Enter" && handleCredentialsLogin(e as any)}
                     className="w-full bg-gothic-dark/30 border border-moonlight/10 p-5 pl-14 text-xs tracking-[0.2em] focus:border-moonlight focus:bg-white/[0.05] outline-none transition-all"
                   />
                   <p className="absolute -bottom-5 left-0 text-[6px] tracking-[0.1em] opacity-20 uppercase">Secret Resonance Key</p>

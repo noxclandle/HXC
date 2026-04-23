@@ -18,6 +18,7 @@ export const viewport: Viewport = {
 
 import ResonanceInteraction from "@/components/ui/ResonanceInteraction";
 import NextAuthProvider from "@/components/providers/NextAuthProvider";
+import { ResonanceToastProvider } from "@/components/ui/ResonanceToast";
 
 export default function RootLayout({
   children,
@@ -33,9 +34,11 @@ export default function RootLayout({
       </head>
       <body className="bg-void text-moonlight">
         <NextAuthProvider>
-          <GeometricBackground />
-          <ResonanceInteraction />
-          {children}
+          <ResonanceToastProvider>
+            <GeometricBackground />
+            <ResonanceInteraction />
+            {children}
+          </ResonanceToastProvider>
         </NextAuthProvider>
       </body>
     </html>
