@@ -4,7 +4,8 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /**
- * 翠緑の六角形が画面を駆け、クリックで六角形の結晶波動が広がる演出
+ * 聖域の共鳴演出
+ * シャープな六角形の残光と、凝縮された結晶波動を生成する
  */
 export default function ResonanceInteraction() {
   const [pulses, setPulses] = useState<{ id: number; x: number; y: number }[]>([]);
@@ -16,18 +17,18 @@ export default function ResonanceInteraction() {
     setPulses((prev) => [...prev, { id, x, y }]);
     setTimeout(() => {
       setPulses((prev) => prev.filter((p) => p.id !== id));
-    }, 1500);
+    }, 1200);
   };
 
   const handleMouseMove = (e: MouseEvent) => {
     const id = nextId.current++;
-    setTrail((prev) => [...prev.slice(-35), { id, x: e.clientX, y: e.clientY }]);
+    setTrail((prev) => [...prev.slice(-30), { id, x: e.clientX, y: e.clientY }]);
   };
 
   const handleTouchMove = (e: TouchEvent) => {
     const id = nextId.current++;
     const touch = e.touches[0];
-    setTrail((prev) => [...prev.slice(-35), { id, x: touch.clientX, y: touch.clientY }]);
+    setTrail((prev) => [...prev.slice(-30), { id, x: touch.clientX, y: touch.clientY }]);
   };
 
   const handleMouseDown = (e: MouseEvent) => {
@@ -53,7 +54,7 @@ export default function ResonanceInteraction() {
     };
   }, []);
 
-  // 六角形の形状定義
+  // より鋭利な正六角形のパス
   const hexPath = "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)";
 
   return (
@@ -62,9 +63,9 @@ export default function ResonanceInteraction() {
       {trail.map((p) => (
         <motion.div
           key={p.id}
-          initial={{ opacity: 1, scale: 1.8, rotate: 0 }}
-          animate={{ opacity: 0, scale: 0, rotate: 90 }}
-          className="absolute w-3 h-3 bg-emerald-400 shadow-[0_0_15px_#34d399]"
+          initial={{ opacity: 1, scale: 1.5, rotate: 0 }}
+          animate={{ opacity: 0, scale: 0, rotate: 45 }}
+          className="absolute w-3 h-3 bg-emerald-400 shadow-[0_0_12px_#34d399]"
           style={{ 
             left: p.x - 6, 
             top: p.y - 6,
@@ -73,36 +74,36 @@ export default function ResonanceInteraction() {
         />
       ))}
 
-      {/* 六角形の衝撃波 (Hex Shockwave) */}
+      {/* 六角形の結晶波動 (Hex Crystal Pulse) */}
       <AnimatePresence>
         {pulses.map((p) => (
           <div key={p.id} className="absolute" style={{ left: p.x, top: p.y }}>
-             {/* Core Flash (Hex) */}
+             {/* Core Crystal */}
              <motion.div
                 initial={{ scale: 0, opacity: 1, rotate: 0 }}
-                animate={{ scale: 3, opacity: 0, rotate: 30 }}
-                transition={{ duration: 0.5 }}
-                className="w-8 h-8 -left-4 -top-4 absolute bg-white/80 blur-md"
+                animate={{ scale: 2.5, opacity: 0, rotate: 60 }}
+                transition={{ duration: 0.4 }}
+                className="w-10 h-10 -left-5 -top-5 absolute bg-white/60 backdrop-blur-sm"
                 style={{ clipPath: hexPath }}
              />
              
-             {/* Primary Hex Wave - サイズを適正化(scale 15) */}
+             {/* Main Hex Wave - サイズを縮小(scale 10) */}
              <motion.div
                 initial={{ scale: 0, opacity: 1, rotate: 0 }}
-                animate={{ scale: 15, opacity: 0, rotate: -15 }}
+                animate={{ scale: 10, opacity: 0, rotate: -30 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                className="w-16 h-16 -left-8 -top-8 absolute border-[1.5px] border-emerald-400 shadow-[0_0_30px_rgba(52,211,153,0.4)]"
+                transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+                className="w-16 h-16 -left-8 -top-8 absolute border-[2px] border-emerald-400 shadow-[0_0_25px_rgba(52,211,153,0.5)]"
                 style={{ clipPath: hexPath }}
              />
 
-             {/* Secondary Echo (Hex) */}
+             {/* Outward Ring (Hex) */}
              <motion.div
-                initial={{ scale: 0, opacity: 0.6, rotate: 0 }}
-                animate={{ scale: 10, opacity: 0, rotate: 15 }}
+                initial={{ scale: 0, opacity: 0.5, rotate: 0 }}
+                animate={{ scale: 7, opacity: 0, rotate: 30 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.8, delay: 0.05, ease: "easeOut" }}
-                className="w-16 h-16 -left-8 -top-8 absolute border-[1px] border-emerald-300/30"
+                transition={{ duration: 0.7, delay: 0.05, ease: "easeOut" }}
+                className="w-16 h-16 -left-8 -top-8 absolute border-[1px] border-emerald-300/40"
                 style={{ clipPath: hexPath }}
              />
           </div>

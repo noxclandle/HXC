@@ -2,17 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Music, Sparkles, UserCheck, ChevronRight, Check, Lock, Wallet, Trophy, ArrowLeft } from "lucide-react";
+import { Shield, Music, Sparkles, UserCheck, ChevronRight, Check, Lock, Wallet, Trophy, ArrowLeft, MousePointer2 } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useToast } from "@/components/ui/ResonanceToast";
 
 export const dynamic = "force-dynamic";
 
 interface Asset {
   id: string;
   name: string;
-  type: "frame" | "sound" | "effect" | "angel" | "title";
+  type: "frame" | "sound" | "effect" | "angel" | "title" | "pointer";
   rarity: "common" | "rare" | "epic" | "mythic";
   description: string;
   unlocked: boolean;
@@ -22,20 +23,22 @@ const CATEGORIES = [
   { id: "frame", name: "Frames", icon: Shield, sub: "外枠" },
   { id: "title", name: "Titles", icon: Trophy, sub: "称号" },
   { id: "sound", name: "Sounds", icon: Music, sub: "共鳴音" },
-  { id: "effect", name: "Effects", icon: Sparkles, sub: "演出" },
+  { id: "pointer", name: "Pointers", icon: MousePointer2, sub: "軌跡" },
   { id: "angel", name: "Concierge", icon: UserCheck, sub: "執事" },
 ];
 
 export default function InventoryPage() {
   const { data: session, status } = useSession();
+  const { showToast } = useToast();
   const [activeCategory, setActiveCategory] = useState("frame");
   const [rtBalance, setRTBalance] = useState("0");
+  const [isSaving, setIsSaving] = useState(false);
   
   const [equipped, setEquipped] = useState({
     frame: "Obsidian",
     title: "Chief Officer",
     sound: "Resonance",
-    effect: "None",
+    pointer: "Emerald Hex",
     angel: "Sentinel"
   });
 
@@ -45,11 +48,10 @@ export default function InventoryPage() {
     { id: "Dynamic", name: "Neural Emerald", type: "frame", rarity: "epic", description: "思考の波形に合わせて脈動する。", unlocked: false },
     { id: "Chief Officer", name: "Chief Officer", type: "title", rarity: "mythic", description: "システムの最高権力者。全ての扉を開く。", unlocked: true },
     { id: "Founder", name: "Founder", type: "title", rarity: "mythic", description: "始まりの1人。伝説の証。", unlocked: true },
-    { id: "Architect", name: "Architect", type: "title", rarity: "epic", description: "世界の構造を定義する者。", unlocked: true },
-    { id: "Initiate", name: "Initiate", type: "title", rarity: "common", description: "深淵に足を踏み入れたばかりの魂。", unlocked: true },
-    { id: "Silver", name: "Silver Resonance", type: "sound", rarity: "rare", description: "透明感のある銀の鈴の音。", unlocked: true },
-    { id: "Resonance", name: "Pure Resonance", type: "sound", rarity: "epic", description: "空間を震わせる純粋な共鳴音。", unlocked: true },
-    { id: "Void", name: "Deep Void", type: "sound", rarity: "mythic", description: "深淵から響く重厚な低音。", unlocked: false },
+    { id: "Silver", name: "Silver Resonance", type: "sound", rarity: "rare", description: "反転時：透明感のある銀の鈴の音。", unlocked: true },
+    { id: "Resonance", name: "Pure Resonance", type: "sound", rarity: "epic", description: "反転時：空間を震わせる純粋な共鳴音。", unlocked: true },
+    { id: "Emerald Hex", name: "Emerald Hex", type: "pointer", rarity: "common", description: "標準的な翠緑の六角形。聖域の基本色。", unlocked: true },
+    { id: "Void Trace", name: "Void Trace", type: "pointer", rarity: "rare", description: "通った跡が虚無へ消える紫の軌跡。", unlocked: false },
   ]);
 
   useEffect(() => {
@@ -60,12 +62,27 @@ export default function InventoryPage() {
           const data = await res.json();
           setRTBalance(data.rt_balance);
         }
-      } catch (err) {
-        console.error(err);
-      }
+      } catch (err) { console.error(err); }
     };
     fetchStats();
   }, []);
+
+  const handleCommit = async () => {
+    setIsSaving(true);
+    // 保存処理のシミュレーション
+    setTimeout(() => {
+      setIsSaving(false);
+      showToast("Identity Synchronized / 聖域の装備を確定しました", "success");
+    }, 1500);
+  };
+
+  const handleSelectAsset = (asset: Asset) => {
+    if (!asset.unlocked) {
+      showToast("Access Denied / このアセットは未解禁です", "error");
+      return;
+    }
+    setEquipped({ ...equipped, [activeCategory as keyof typeof equipped]: asset.id });
+  };
 
   const filteredAssets = assets.filter(a => a.type === activeCategory);
 
@@ -82,8 +99,8 @@ export default function InventoryPage() {
 
   if (status === "unauthenticated") {
     return (
-       <div className="flex min-h-screen items-center justify-center bg-void">
-          <div className="text-center space-y-6">
+       <div className="flex min-h-screen items-center justify-center bg-void text-center">
+          <div className="space-y-6">
             <p className="text-[10px] tracking-[0.4em] uppercase opacity-40">Vault Locked. Re-authenticate.</p>
             <Link href="/login" className="block px-8 py-3 border border-white/10 text-[9px] uppercase tracking-widest hover:bg-white/5">Login</Link>
           </div>
@@ -131,20 +148,30 @@ export default function InventoryPage() {
                     <span className="text-emerald-400 font-bold">{equipped.title}</span>
                  </div>
                  <div className="flex justify-between items-center text-[8px] tracking-[0.3em] uppercase opacity-40">
-                    <span>Active Resonance</span>
-                    <span>{equipped.sound}</span>
+                    <span>Pointer Type</span>
+                    <span>{equipped.pointer}</span>
                  </div>
               </div>
            </div>
            
-           <button className="w-full py-6 bg-white text-void font-bold text-[11px] tracking-[1.2em] uppercase shadow-2xl hover:bg-emerald-50 transition-all active:scale-[0.98]">
-              Commit Changes / 変更を確定
+           <button 
+             onClick={handleCommit}
+             disabled={isSaving}
+             className={`w-full py-6 bg-white text-void font-bold text-[11px] tracking-[1.2em] uppercase shadow-2xl hover:bg-emerald-50 transition-all active:scale-[0.98] relative overflow-hidden ${isSaving && 'opacity-50'}`}
+           >
+              {isSaving ? "Synchronizing..." : "Commit Changes / 変更を確定"}
+              {isSaving && (
+                <motion.div 
+                  animate={{ left: ["-100%", "100%"] }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent"
+                />
+              )}
            </button>
         </div>
 
         {/* Right: Asset Categories & List */}
         <div className="lg:col-span-7 space-y-10">
-           {/* Category Selection */}
            <div className="grid grid-cols-5 border-b border-white/5">
               {CATEGORIES.map((cat) => (
                 <button 
@@ -165,7 +192,6 @@ export default function InventoryPage() {
               ))}
            </div>
 
-           {/* Assets Grid */}
            <div className="space-y-4 max-h-[700px] overflow-y-auto pr-4 custom-scrollbar">
               <AnimatePresence mode="wait">
                 <motion.div 
@@ -178,12 +204,12 @@ export default function InventoryPage() {
                   {filteredAssets.map((asset) => (
                     <div 
                       key={asset.id} 
-                      onClick={() => asset.unlocked && setEquipped({ ...equipped, [activeCategory as keyof typeof equipped]: asset.id })}
+                      onClick={() => handleSelectAsset(asset)}
                       className={`group p-6 border transition-all cursor-pointer flex justify-between items-center relative overflow-hidden ${
                         equipped[activeCategory as keyof typeof equipped] === asset.id 
                         ? "border-emerald-500/50 bg-emerald-500/10 shadow-[0_0_20px_rgba(52,211,153,0.05)]" 
                         : "border-white/5 bg-white/[0.01] hover:border-white/20 hover:bg-white/[0.03]"
-                      } ${!asset.unlocked && "opacity-40"}`}
+                      } ${!asset.unlocked && "opacity-40 cursor-not-allowed"}`}
                     >
                       <div className="flex items-center gap-6">
                          <div className={`w-12 h-12 flex items-center justify-center border ${
@@ -204,21 +230,19 @@ export default function InventoryPage() {
                          </div>
                       </div>
                       
-                      {asset.unlocked ? (
-                        <div className="text-right">
-                           {equipped[activeCategory as keyof typeof equipped] === asset.id ? (
+                      <div className="text-right">
+                        {asset.unlocked ? (
+                           equipped[activeCategory as keyof typeof equipped] === asset.id ? (
                              <span className="text-emerald-400 text-[8px] tracking-[0.4em] font-bold uppercase italic">Active</span>
                            ) : (
                              <span className="text-[8px] tracking-[0.4em] opacity-20 uppercase group-hover:opacity-100 transition-opacity">Equip</span>
-                           )}
-                        </div>
-                      ) : (
-                        <div className="text-right">
+                           )
+                        ) : (
                            <span className="text-amber-400/60 text-[8px] tracking-[0.4em] font-bold uppercase flex items-center gap-2">
                              Locked <Wallet size={10} />
                            </span>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   ))}
                 </motion.div>
