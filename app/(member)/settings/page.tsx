@@ -42,10 +42,7 @@ export default function SettingsPage() {
             <div className="scale-90 origin-top">
               <HexaCardPreview 
                 name={session?.user?.name || "MEMBER"} 
-                uid="04:XX:YY:ZZ" 
-                rt={rtBalance.toLocaleString()} 
                 title={personality} 
-                aura={aura}
                 frame={activeBg}
               />
             </div>

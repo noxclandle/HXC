@@ -107,10 +107,7 @@ export default function DashboardPage() {
               <HexaCardPreview 
                 name={session.user?.name || "ARCHITECT"} 
                 reading={realStats.handle}
-                uid={realStats.uid} 
-                rt={Number(realStats.rt_balance).toLocaleString()} 
                 title={realStats.equipped.title} 
-                aura={85}
                 frame={realStats.equipped.frame}
               />
               

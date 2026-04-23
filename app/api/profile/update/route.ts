@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, handle, title, website, bio } = body;
+    const { name, handle, title, website, bio, company, photo_url } = body;
 
     // Userテーブルの基本フィールドと ai_config (Json) に保存
     const updatedUser = await prisma.user.update({
@@ -20,10 +20,12 @@ export async function POST(req: NextRequest) {
         name: name,
         handle_name: handle,
         link_website: website,
+        photo_url: photo_url,
         ai_config: {
           profile: {
             title: title,
-            bio: bio
+            bio: bio,
+            company: company
           }
         }
       }
