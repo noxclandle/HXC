@@ -15,9 +15,7 @@ export async function GET() {
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      include: {
-        card: true
-      }
+      include: { card: true }
     });
 
     if (!user) {
@@ -25,8 +23,6 @@ export async function GET() {
     }
 
     const titles = Array.isArray(user.unlocked_titles) ? user.unlocked_titles : [];
-    
-    // ai_config からプロフィール情報を抽出
     const aiConfig = (user.ai_config as any) || {};
     const profile = aiConfig.profile || {};
 
@@ -35,17 +31,15 @@ export async function GET() {
       rank: user.rank,
       titles: titles,
       uid: user.card?.uid || "NO CARD LINKED",
-      handle: user.handle_name || "",
+      handle: user.handle_name || "", // これを「ふりがな」として扱う
       slug: user.handle_name || user.id,
-      // 装備情報を追加
       equipped: user.equipped_assets || {
         frame: "Obsidian",
-        title: "Chief Officer",
+        title: "ASSOCIATE",
         sound: "Resonance",
         pointer: "Pure White Hex",
         angel: "Sentinel"
       },
-      // プロフィール詳細を追加
       profile: {
         title: profile.title || "",
         bio: profile.bio || "",

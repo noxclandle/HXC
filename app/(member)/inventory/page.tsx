@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Music, Sparkles, UserCheck, ChevronRight, Check, Lock, Wallet, Trophy, ArrowLeft, MousePointer2 } from "lucide-react";
+import { Shield, Music, Sparkles, UserCheck, ChevronRight, Check, Lock, Wallet, Trophy, ArrowLeft, MousePointer2, BadgeCheck } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 interface Asset {
   id: string;
   name: string;
-  type: "frame" | "sound" | "effect" | "angel" | "title" | "pointer";
+  type: "frame" | "sound" | "effect" | "angel" | "title" | "pointer" | "achievement";
   rarity: "common" | "rare" | "epic" | "mythic";
   description: string;
   unlocked: boolean;
@@ -21,10 +21,10 @@ interface Asset {
 
 const CATEGORIES = [
   { id: "frame", name: "Frames", icon: Shield, sub: "外枠" },
-  { id: "title", name: "Titles", icon: Trophy, sub: "称号" },
-  { id: "sound", name: "Sounds", icon: Music, sub: "共鳴音" },
+  { id: "title", name: "Titles / Achievements", icon: Trophy, sub: "称号・実績" },
   { id: "pointer", name: "Pointers", icon: MousePointer2, sub: "軌跡" },
-  { id: "angel", name: "Concierge", icon: UserCheck, sub: "執事" },
+  { id: "sound", name: "Sounds", icon: Music, sub: "共鳴音" },
+  { id: "angel", name: "Concierge", icon: UserCheck, sub: "案内役" },
 ];
 
 export default function InventoryPage() {
@@ -36,28 +36,33 @@ export default function InventoryPage() {
   
   const [equipped, setEquipped] = useState({
     frame: "Obsidian",
-    title: "Chief Officer",
+    title: "ASSOCIATE",
     sound: "Resonance",
     pointer: "Pure White Hex",
     angel: "Sentinel"
   });
 
   const [assets, setAssets] = useState<Asset[]>([
-    { id: "Obsidian", name: "Obsidian Frame", type: "frame", rarity: "common", description: "漆黒の標準外枠。静寂を体現する。", unlocked: true },
-    { id: "Gold", name: "Aureum Gold", type: "frame", rarity: "rare", description: "黄金の輝きを纏った高貴な枠。", unlocked: true },
-    { id: "Dynamic", name: "Neural Azure", type: "frame", rarity: "epic", description: "企業の意志を反映し、蒼く脈動する。", unlocked: false },
-    { id: "Chief Officer", name: "Chief Officer", type: "title", rarity: "mythic", description: "システムの最高権力者。全ての扉を開く。", unlocked: true },
-    { id: "Founder", name: "Founder", type: "title", rarity: "mythic", description: "始まりの1人。伝説の証。", unlocked: true },
-    { id: "Silver", name: "Silver Resonance", type: "sound", rarity: "rare", description: "反転時：透明感のある銀の鈴の音。", unlocked: true },
-    { id: "Resonance", name: "Pure Resonance", type: "sound", rarity: "epic", description: "反転時：空間を震わせる純粋な共鳴音。", unlocked: true },
-    { id: "Pure White Hex", name: "Pure White Hex", type: "pointer", rarity: "common", description: "標準的な純白の六角形。最高純度の光。", unlocked: true },
-    { id: "Bronze Trace", name: "Bronze Trace", type: "pointer", rarity: "rare", description: "通った跡に琥珀の残像を残す軌跡。", unlocked: false },
+    { id: "Obsidian", name: "Obsidian Frame", type: "frame", rarity: "common", description: "標準的な外枠。ビジネスの誠実さを表現する。", unlocked: true },
+    { id: "Gold", name: "Heritage Gold", type: "frame", rarity: "rare", description: "伝統を感じさせる落ち着いた黄金色。", unlocked: true },
+    { id: "Dynamic", name: "Azure Pulse", type: "frame", rarity: "epic", description: "知性を感じさせる蒼い脈動。", unlocked: true },
+    
+    { id: "ASSOCIATE", name: "ASSOCIATE", type: "title", rarity: "common", description: "初期称号。同盟の一員である証。", unlocked: true },
+    { id: "PARTNER", name: "PARTNER", type: "title", rarity: "rare", description: "信頼を築いた者へ贈られる称号。", unlocked: true },
+    { id: "DIRECTOR", name: "DIRECTOR", type: "title", rarity: "epic", description: "領域の進むべき方向を示す者。", unlocked: false },
+    { id: "CHIEF OFFICER", name: "CHIEF OFFICER", type: "title", rarity: "mythic", description: "最高権力者。全ての座標を掌握する。", unlocked: true },
+    { id: "FOUNDER", name: "FOUNDER", type: "title", rarity: "mythic", description: "始まりの四人の一人。伝説の血統。", unlocked: true },
+
+    { id: "Pure White Hex", name: "Pure White Hex", type: "pointer", rarity: "common", description: "純白の鋭い軌跡。", unlocked: true },
+    { id: "Azure Trace", name: "Azure Trace", type: "pointer", rarity: "rare", description: "知的な蒼い軌跡。", unlocked: true },
+    
+    { id: "Resonance", name: "Pure Resonance", type: "sound", rarity: "epic", description: "標準的な共鳴音。", unlocked: true },
   ]);
 
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const res = await fetch("/api/user/status");
+        const res = await fetch("/api/user/status", { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
           setRTBalance(data.rt_balance);
@@ -78,50 +83,25 @@ export default function InventoryPage() {
       });
 
       if (res.ok) {
-        showToast("Treasury Synchronized / 装備を更新しました", "success");
+        showToast("Synchronized / 装備を記録しました", "success");
       } else {
-        showToast("Sync Failed / 保存に失敗しました", "error");
+        showToast("Error / 同期に失敗しました", "error");
       }
-    } catch (e) {
-      showToast("Connection Severed / 通信エラーが発生しました", "error");
-    } finally {
-      setIsSaving(false);
-    }
+    } catch (e) { console.error(e); }
+    finally { setIsSaving(false); }
   };
 
   const handleSelectAsset = (asset: Asset) => {
     if (!asset.unlocked) {
-      showToast("Access Denied / このアセットは未解禁です", "error");
+      showToast("Access Denied / 未解禁のアセットです", "error");
       return;
     }
-    setEquipped({ ...equipped, [activeCategory as keyof typeof equipped]: asset.id });
+    setEquipped({ ...equipped, [activeCategory === "title" ? "title" : activeCategory]: asset.id });
   };
 
-  const filteredAssets = assets.filter(a => a.type === activeCategory);
+  const filteredAssets = assets.filter(a => (activeCategory === "title" ? (a.type === "title" || a.type === "achievement") : a.type === activeCategory));
 
-  if (status === "loading") {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-void">
-        <motion.div animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 2, repeat: Infinity }} className="text-center">
-          <div className="text-[10px] tracking-[1em] uppercase opacity-40 mb-2 text-azure-400/40">Syncing Treasury</div>
-          <div className="text-[7px] tracking-[0.2em] opacity-20 uppercase text-moonlight">宝物庫と同期中...</div>
-        </motion.div>
-      </div>
-    );
-  }
-
-  if (status === "unauthenticated") {
-    return (
-       <div className="flex min-h-screen items-center justify-center bg-void text-center text-moonlight">
-          <div className="space-y-6">
-            <p className="text-[10px] tracking-[0.4em] uppercase opacity-40">Vault Locked. Re-authenticate.</p>
-            <Link href="/login" className="block px-8 py-3 border border-white/10 text-[9px] uppercase tracking-widest hover:bg-white/5 transition-all">Login</Link>
-          </div>
-       </div>
-    );
-  }
-
-  if (!session) return null;
+  if (status === "loading") return null;
 
   return (
     <div className="max-w-7xl mx-auto pt-32 px-6 pb-24 text-moonlight">
@@ -130,27 +110,24 @@ export default function InventoryPage() {
           <Link href="/dashboard" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-30 hover:opacity-100 transition-opacity mb-8">
             <ArrowLeft size={12} /> Back to Hub / 拠点へ戻る
           </Link>
-          <h1 className="text-5xl tracking-[0.5em] uppercase font-extralight">Treasury</h1>
-          <p className="text-[10px] tracking-[0.4em] opacity-30 uppercase">宝物庫・アセット管理</p>
+          <h1 className="text-5xl tracking-[0.5em] uppercase font-extralight text-white">Treasury</h1>
+          <p className="text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold">宝物庫・装備管理</p>
         </div>
-        <div className="text-right space-y-2">
-          <p className="text-[9px] uppercase tracking-[0.5em] text-azure-400 opacity-60">RT Balance</p>
-          <p className="text-3xl font-extralight tracking-[0.2em] text-azure-400">
-            {Number(rtBalance).toLocaleString()} <span className="text-xs opacity-40 ml-1">RT</span>
-          </p>
+        <div className="text-right">
+           <p className="text-[9px] uppercase tracking-[0.5em] text-azure-400 opacity-60">Credit Balance</p>
+           <p className="text-3xl font-extralight tracking-[0.2em]">{Number(rtBalance).toLocaleString()} <span className="text-xs opacity-20">CP</span></p>
         </div>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         <div className="lg:col-span-5 sticky top-32 space-y-12">
-           <div className="p-8 bg-white/[0.02] border border-white/5 shadow-2xl rounded-sm relative overflow-hidden group">
+           <div className="p-8 bg-white/[0.02] border border-white/5 shadow-2xl relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-azure-500/20 to-transparent" />
-              <h2 className="text-[9px] uppercase tracking-[0.6em] opacity-30 mb-10 text-center">Synchronized Preview</h2>
               <HexaCardPreview 
-                name={session.user?.name || "ARCHITECT"} 
+                name={session?.user?.name || "ARCHITECT"} 
                 uid="04:A2:3F:81:XX:XX:XX"
                 rt={Number(rtBalance).toLocaleString()}
-                personality={equipped.angel}
+                title={equipped.title}
                 aura={85}
                 frame={equipped.frame}
               />
@@ -159,44 +136,20 @@ export default function InventoryPage() {
                     <span>Equipped Title</span>
                     <span className="text-azure-400 font-bold">{equipped.title}</span>
                  </div>
-                 <div className="flex justify-between items-center text-[8px] tracking-[0.3em] uppercase opacity-40">
-                    <span>Active Pointer</span>
-                    <span>{equipped.pointer}</span>
-                 </div>
               </div>
            </div>
-           
-           <button 
-             onClick={handleCommit}
-             disabled={isSaving}
-             className={`w-full py-6 bg-azure-600 text-white font-bold text-[11px] tracking-[1.2em] uppercase shadow-2xl hover:bg-azure-500 transition-all active:scale-[0.98] relative overflow-hidden ${isSaving && 'opacity-50'}`}
-           >
-              {isSaving ? "Synchronizing..." : "Commit Changes / 変更を確定"}
-              {isSaving && (
-                <motion.div 
-                  animate={{ left: ["-100%", "100%"] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                  className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                />
-              )}
+           <button onClick={handleCommit} disabled={isSaving} className={`w-full py-6 bg-azure-600 text-white font-bold text-[11px] tracking-[1.2em] uppercase shadow-2xl hover:bg-azure-500 transition-all active:scale-[0.98] relative overflow-hidden ${isSaving && 'opacity-50'}`}>
+              {isSaving ? "Crystalizing..." : "Commit Changes / 変更を記録"}
            </button>
         </div>
 
         <div className="lg:col-span-7 space-y-10">
            <div className="grid grid-cols-5 border-b border-white/5">
               {CATEGORIES.map((cat) => (
-                <button 
-                  key={cat.id} 
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`py-6 flex flex-col items-center gap-3 transition-all border-b-2 ${
-                    activeCategory === cat.id 
-                    ? "border-azure-500 opacity-100 bg-azure-500/5" 
-                    : "border-transparent opacity-20 hover:opacity-50"
-                  }`}
-                >
+                <button key={cat.id} onClick={() => setActiveCategory(cat.id)} className={`py-6 flex flex-col items-center gap-3 transition-all border-b-2 ${activeCategory === cat.id ? "border-azure-500 opacity-100 bg-azure-500/5" : "border-transparent opacity-20 hover:opacity-50"}`}>
                   <cat.icon size={18} className={activeCategory === cat.id ? "text-azure-400" : ""} />
                   <div className="text-center">
-                    <span className="block text-[8px] uppercase tracking-[0.3em] font-bold">{cat.name}</span>
+                    <span className="block text-[8px] uppercase tracking-[0.3em] font-bold">{cat.name.split(' / ')[0]}</span>
                     <span className="block text-[6px] opacity-40 uppercase tracking-widest mt-1">{cat.sub}</span>
                   </div>
                 </button>
@@ -205,54 +158,22 @@ export default function InventoryPage() {
 
            <div className="space-y-4 max-h-[700px] overflow-y-auto pr-4 custom-scrollbar">
               <AnimatePresence mode="wait">
-                <motion.div 
-                  key={activeCategory}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="grid grid-cols-1 gap-4"
-                >
+                <motion.div key={activeCategory} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="grid grid-cols-1 gap-4">
                   {filteredAssets.map((asset) => (
-                    <div 
-                      key={asset.id} 
-                      onClick={() => handleSelectAsset(asset)}
-                      className={`group p-6 border transition-all cursor-pointer flex justify-between items-center relative overflow-hidden ${
-                        equipped[activeCategory as keyof typeof equipped] === asset.id 
-                        ? "border-azure-500/50 bg-azure-500/10 shadow-[0_0_20px_rgba(59,130,246,0.05)]" 
-                        : "border-white/5 bg-white/[0.01] hover:border-azure-500/20 hover:bg-azure-500/[0.03]"
-                      } ${!asset.unlocked && "opacity-40 cursor-not-allowed"}`}
-                    >
+                    <div key={asset.id} onClick={() => handleSelectAsset(asset)} className={`group p-6 border transition-all cursor-pointer flex justify-between items-center relative overflow-hidden ${equipped[activeCategory === "title" ? "title" : (activeCategory as keyof typeof equipped)] === asset.id ? "border-azure-500/50 bg-azure-500/10" : "border-white/5 bg-white/[0.01] hover:border-azure-500/20"} ${!asset.unlocked && "opacity-40"}`}>
                       <div className="flex items-center gap-6">
-                         <div className={`w-12 h-12 flex items-center justify-center border ${
-                           equipped[activeCategory as keyof typeof equipped] === asset.id 
-                           ? "border-azure-400 text-azure-400" 
-                           : "border-white/10 opacity-40"
-                         }`}>
+                         <div className={`w-12 h-12 flex items-center justify-center border ${equipped[activeCategory === "title" ? "title" : (activeCategory as keyof typeof equipped)] === asset.id ? "border-azure-400 text-azure-400" : "border-white/10 opacity-40"}`}>
                             {asset.unlocked ? <Check size={16} /> : <Lock size={16} />}
                          </div>
                          <div>
                             <div className="flex items-center gap-3 mb-1">
                                <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold">{asset.name}</h3>
-                               <span className={`text-[6px] px-2 py-0.5 rounded-full border border-white/10 uppercase tracking-widest opacity-40`}>
-                                 {asset.rarity}
-                               </span>
                             </div>
                             <p className="text-[9px] tracking-widest opacity-40 uppercase leading-relaxed max-w-md">{asset.description}</p>
                          </div>
                       </div>
-                      
                       <div className="text-right">
-                        {asset.unlocked ? (
-                           equipped[activeCategory as keyof typeof equipped] === asset.id ? (
-                             <span className="text-azure-400 text-[8px] tracking-[0.4em] font-bold uppercase italic">Active</span>
-                           ) : (
-                             <span className="text-[8px] tracking-[0.4em] opacity-20 uppercase group-hover:opacity-100 transition-opacity">Equip</span>
-                           )
-                        ) : (
-                           <span className="text-bronze-400/60 text-[8px] tracking-[0.4em] font-bold uppercase flex items-center gap-2">
-                             Locked <Wallet size={10} />
-                           </span>
-                        )}
+                        {asset.unlocked ? (equipped[activeCategory === "title" ? "title" : (activeCategory as keyof typeof equipped)] === asset.id ? <span className="text-azure-400 text-[8px] tracking-[0.4em] font-bold uppercase italic">Active</span> : <span className="text-[8px] tracking-[0.4em] opacity-20 uppercase group-hover:opacity-100">Equip</span>) : <Wallet size={12} className="text-bronze-400 opacity-40"/>}
                       </div>
                     </div>
                   ))}
