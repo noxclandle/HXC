@@ -17,6 +17,7 @@ export default function DashboardPage() {
   const { showToast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
   const [realStats, setRealStatus] = useState({
+    name: "",
     rt_balance: "0",
     rank: "Initiate",
     titles: [] as string[],
@@ -131,7 +132,7 @@ export default function DashboardPage() {
              <div className="flex flex-col items-center">
                 <div className={`relative ${isUpdating ? 'opacity-20' : ''} transition-all duration-700 min-h-[250px] flex items-center justify-center w-full`}>
                    <HexaCardPreview 
-                     name={session?.user?.name || "ARCHITECT"} 
+                     name={realStats.name || session?.user?.name || "ARCHITECT"} 
                      reading={realStats.handle}
                      company={realStats.profile?.company}
                      title={realStats.equipped.title} 
@@ -139,8 +140,7 @@ export default function DashboardPage() {
                      faceUrl={realStats.photo_url}
                      frame={realStats.equipped.frame}
                      orientation={realStats.equipped.orientation}
-                   />
-                   {isUpdating && <div className="absolute inset-0 flex items-center justify-center"><Sparkles className="animate-spin text-azure-400" /></div>}
+                   />                   {isUpdating && <div className="absolute inset-0 flex items-center justify-center"><Sparkles className="animate-spin text-azure-400" /></div>}
                 </div>
                 
                 <div className="mt-12 grid grid-cols-2 gap-4 w-full">
