@@ -27,22 +27,27 @@ export async function GET() {
     const profile = aiConfig.profile || {};
 
     return NextResponse.json({
+      name: user.name || session.user.name || "ARCHITECT",
       rt_balance: user.rt_balance.toString(),
       rank: user.rank,
       titles: titles,
       uid: user.card?.uid || "NO CARD LINKED",
-      handle: user.handle_name || "", // これを「ふりがな」として扱う
+      handle: user.handle_name || "", // ふりがな
       slug: user.handle_name || user.id,
+      logo_url: user.logo_url || "",
+      photo_url: user.photo_url || "",
       equipped: user.equipped_assets || {
         frame: "Obsidian",
         title: "ASSOCIATE",
         sound: "Resonance",
         pointer: "Pure White Hex",
-        angel: "Sentinel"
+        angel: "Sentinel",
+        orientation: "horizontal"
       },
       profile: {
         title: profile.title || "",
         bio: profile.bio || "",
+        company: profile.company || "",
         website: user.link_website || ""
       }
     });

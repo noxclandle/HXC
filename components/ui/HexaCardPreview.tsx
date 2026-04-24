@@ -87,7 +87,7 @@ export default function HexaCardPreview({
                   <div className="w-12 h-12 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
                      {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={20} className="text-white/10" />}
                   </div>
-                  <p className="text-[11px] tracking-[0.2em] uppercase text-white font-medium whitespace-nowrap overflow-hidden text-ellipsis text-left">{company || "CORPORATION"}</p>
+                  <p className="text-[11px] tracking-[0.2em] uppercase text-white font-medium text-left">{company || "CORPORATION"}</p>
                </div>
 
                <div className="space-y-2 w-full overflow-hidden px-4">
@@ -108,7 +108,7 @@ export default function HexaCardPreview({
                     <div className="w-14 h-14 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
                        {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={20} className="text-white/10" />}
                     </div>
-                    <p className="text-[12px] tracking-[0.3em] uppercase text-white/80 font-medium whitespace-nowrap overflow-hidden text-ellipsis">{company || "CORPORATION"}</p>
+                    <p className="text-[12px] tracking-[0.3em] uppercase text-white/80 font-medium leading-relaxed">{company || "CORPORATION"}</p>
                  </div>
                  <div className="text-right opacity-5 text-[10px] font-bold italic">STANDARD HXC</div>
               </header>
