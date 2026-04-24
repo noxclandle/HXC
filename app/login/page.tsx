@@ -29,7 +29,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError("Invalid Credentials / 認証に失敗しました");
       } else if (result?.ok) {
-        router.push("/dashboard");
+        router.push("/hub");
       }
     } catch (err) {
       setError("Connection Severed / 接続が遮断されました");

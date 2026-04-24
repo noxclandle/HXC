@@ -31,7 +31,7 @@ export async function GET(req: NextRequest, { params }: { params: { uid: string 
   if (card.status === "active") {
     // 所有者本人がログインしている場合 -> ダッシュボード（編集画面）へ
     if (session?.user?.id === card.user_id) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      return NextResponse.redirect(new URL("/hub", req.url));
     }
     
     // 他人の場合（または未ログイン） -> その人の公開電子名刺へ
