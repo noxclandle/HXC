@@ -24,8 +24,8 @@ export default function ProfileEditPage() {
     company: "",
     website: "",
     bio: "",
-    logoUrl: "", // 表面ロゴ
-    faceUrl: "", // 裏面写真
+    logoUrl: "", 
+    faceUrl: "",
     orientation: "horizontal" as "horizontal" | "vertical"
   });
   
@@ -70,7 +70,8 @@ export default function ProfileEditPage() {
           ...formData,
           handle: formData.reading,
           photo_url: formData.faceUrl,
-          logo_url: formData.logoUrl
+          logo_url: formData.logoUrl,
+          orientation: formData.orientation
         })
       });
 
@@ -116,6 +117,16 @@ export default function ProfileEditPage() {
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-azure-500/20 to-transparent" />
               <h2 className="text-[9px] uppercase tracking-[0.6em] opacity-30 mb-10 italic text-azure-400 font-bold">Synchronized Reflection</h2>
               
+              {/* 【全画面共通】レイアウト即時切替ボタン */}
+              <div className="absolute top-6 right-6 z-30 flex gap-2 p-1 bg-white/5 border border-white/5 opacity-40 group-hover:opacity-100 transition-opacity">
+                 <button type="button" onClick={() => setFormData({...formData, orientation: 'horizontal'})} className={`p-1.5 transition-all ${formData.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
+                    <Layout size={12}/>
+                 </button>
+                 <button type="button" onClick={() => setFormData({...formData, orientation: 'vertical'})} className={`p-1.5 transition-all ${formData.orientation === 'vertical' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
+                    <Smartphone size={12}/>
+                 </button>
+              </div>
+
               <HexaCardPreview 
                 name={formData.name || "NAME"} 
                 reading={formData.reading}
@@ -126,15 +137,6 @@ export default function ProfileEditPage() {
                 frame={equipped.frame}
                 orientation={formData.orientation}
               />
-              
-              <div className="mt-10 flex gap-4 w-full">
-                 <button onClick={() => setFormData({...formData, orientation: 'horizontal'})} className={`flex-1 py-3 border text-[9px] tracking-[0.3em] uppercase transition-all flex items-center justify-center gap-2 ${formData.orientation === 'horizontal' ? 'border-azure-500 bg-azure-500/10' : 'border-white/5 opacity-40 hover:opacity-100'}`}>
-                    <Layout size={12}/> Horizontal
-                 </button>
-                 <button onClick={() => setFormData({...formData, orientation: 'vertical'})} className={`flex-1 py-3 border text-[9px] tracking-[0.3em] uppercase transition-all flex items-center justify-center gap-2 ${formData.orientation === 'vertical' ? 'border-azure-500 bg-azure-500/10' : 'border-white/5 opacity-40 hover:opacity-100'}`}>
-                    <Smartphone size={12}/> Vertical
-                 </button>
-              </div>
            </div>
 
            <div className="p-6 border border-azure-500/20 bg-azure-500/5 space-y-4">
@@ -149,10 +151,9 @@ export default function ProfileEditPage() {
            </div>
         </div>
 
-        {/* Right: Dual Image Uploads & Form */}
+        {/* Right: Edit Form */}
         <div className="lg:col-span-7">
            <form onSubmit={handleSave} className="space-y-12">
-              {/* Dual Upload Section */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 border-b border-white/5 pb-12">
                  <div className="space-y-6">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
@@ -165,7 +166,7 @@ export default function ProfileEditPage() {
                              <button type="button" onClick={() => setFormData({...formData, logoUrl: ""})} className="text-white/60 hover:text-white"><RotateCcw size={14}/></button>
                           </div>
                        </div>
-                       <button type="button" onClick={() => logoInputRef.current?.click()} className="px-4 py-2 border border-white/10 bg-white/[0.02] text-[8px] tracking-[0.2em] uppercase hover:border-bronze-400 transition-all">Upload Logo</button>
+                       <button type="button" onClick={() => logoInputRef.current?.click()} className="px-4 py-2 border border-white/10 bg-white/[0.02] text-[8px] tracking-[0.2em] uppercase hover:border-bronze-400 transition-all text-white/60">Upload Logo</button>
                        <input type="file" ref={logoInputRef} onChange={(e) => handleFileChange('logo', e)} accept="image/*" className="hidden" />
                     </div>
                  </div>
@@ -180,7 +181,7 @@ export default function ProfileEditPage() {
                              <button type="button" onClick={() => setFormData({...formData, faceUrl: ""})} className="text-white/60 hover:text-white"><RotateCcw size={14}/></button>
                           </div>
                        </div>
-                       <button type="button" onClick={() => faceInputRef.current?.click()} className="px-4 py-2 border border-white/10 bg-white/[0.02] text-[8px] tracking-[0.2em] uppercase hover:border-azure-400 transition-all">Upload Face</button>
+                       <button type="button" onClick={() => faceInputRef.current?.click()} className="px-4 py-2 border border-white/10 bg-white/[0.02] text-[8px] tracking-[0.2em] uppercase hover:border-azure-400 transition-all text-white/60">Upload Face</button>
                        <input type="file" ref={faceInputRef} onChange={(e) => handleFileChange('face', e)} accept="image/*" className="hidden" />
                     </div>
                  </div>

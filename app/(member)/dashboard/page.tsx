@@ -2,17 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Book, Share2, ShieldCheck, Trophy, LayoutGrid, Zap, UserCircle, Sparkles, ChevronRight } from "lucide-react";
+import { Camera, Book, Share2, ShieldCheck, Trophy, LayoutGrid, Zap, UserCircle, Sparkles, ChevronRight, Smartphone, Layout } from "lucide-react";
 import Link from "next/link";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
 import MonthlyReport from "@/components/ui/MonthlyReport";
 import ConstellationView from "@/components/ui/ConstellationView";
+import { useToast } from "@/components/ui/ResonanceToast";
 
 export const dynamic = "force-dynamic";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
+  const { showToast } = useToast();
+  const [isUpdating, setIsUpdating] = useState(false);
   const [realStats, setRealStatus] = useState({
     rt_balance: "0",
     rank: "Initiate",
@@ -22,12 +25,7 @@ export default function DashboardPage() {
     slug: "",
     logo_url: "",
     photo_url: "",
-    profile: {
-      title: "",
-      bio: "",
-      company: "",
-      website: ""
-    },
+    profile: { title: "", bio: "", company: "", website: "" },
     equipped: {
       frame: "Obsidian",
       title: "ASSOCIATE",
@@ -72,6 +70,25 @@ export default function DashboardPage() {
     }
   }, [session]);
 
+  // その場でレイアウトを保存・更新する
+  const updateOrientation = async (orient: "horizontal" | "vertical") => {
+    if (realStats.equipped.orientation === orient) return;
+    setIsUpdating(true);
+    try {
+      const newEquipped = { ...realStats.equipped, orientation: orient };
+      const res = await fetch("/api/user/equip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ equipped: newEquipped })
+      });
+      if (res.ok) {
+        setRealStatus({ ...realStats, equipped: newEquipped });
+        showToast(`Layout Fixed / 形式を固定しました (${orient})`, "success");
+      }
+    } catch (e) { console.error(e); }
+    finally { setIsUpdating(false); }
+  };
+
   if (status === "loading") return null;
 
   return (
@@ -114,24 +131,38 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
         <div className="lg:col-span-8 space-y-16">
           
-          {/* 【最優先】Identity Reflection (自分の名刺) */}
+          {/* 【最優先：主の命】Identity Reflection (自分の名刺) */}
           <section className="space-y-8">
             <div className="flex justify-between items-end border-b border-white/5 pb-4">
                <h2 className="text-[10px] tracking-[0.5em] uppercase opacity-30 font-bold italic">Identity Reflection / あなたの証</h2>
-               <Link href={`/p/${realStats.slug}`} className="text-[8px] uppercase tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity flex items-center gap-2">Public View <Share2 size={10}/></Link>
+               <div className="flex items-center gap-6">
+                  {/* その場でレイアウトを切り替えるボタン */}
+                  <div className="flex gap-2 p-1 bg-white/5 border border-white/5">
+                     <button onClick={() => updateOrientation('horizontal')} className={`p-1.5 transition-all ${realStats.equipped.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'opacity-20 hover:opacity-100'}`} title="Horizontal">
+                        <Layout size={12}/>
+                     </button>
+                     <button onClick={() => updateOrientation('vertical')} className={`p-1.5 transition-all ${realStats.equipped.orientation === 'vertical' ? 'bg-azure-600 text-white' : 'opacity-20 hover:opacity-100'}`} title="Vertical">
+                        <Smartphone size={12}/>
+                     </button>
+                  </div>
+                  <Link href={`/p/${realStats.slug}`} className="text-[8px] uppercase tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity flex items-center gap-2 border-l border-white/10 pl-6">Public View <Share2 size={10}/></Link>
+               </div>
             </div>
             
             <div className="flex flex-col items-center">
-              <HexaCardPreview 
-                name={session?.user?.name || "ARCHITECT"} 
-                reading={realStats.handle}
-                company={realStats.profile?.company}
-                title={realStats.equipped.title} 
-                logoUrl={realStats.logo_url}
-                faceUrl={realStats.photo_url}
-                frame={realStats.equipped.frame}
-                orientation={realStats.equipped.orientation}
-              />
+              <div className={`relative ${isUpdating ? 'opacity-40 grayscale' : ''} transition-all duration-500`}>
+                <HexaCardPreview 
+                  name={session?.user?.name || "ARCHITECT"} 
+                  reading={realStats.handle}
+                  company={realStats.profile?.company}
+                  title={realStats.equipped.title} 
+                  logoUrl={realStats.logo_url}
+                  faceUrl={realStats.photo_url}
+                  frame={realStats.equipped.frame}
+                  orientation={realStats.equipped.orientation}
+                />
+                {isUpdating && <div className="absolute inset-0 flex items-center justify-center"><Sparkles className="animate-spin text-azure-400" /></div>}
+              </div>
               
               <div className="mt-12 flex gap-4 w-full">
                  <Link href="/profile/edit" className="flex-1 py-5 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all text-center group flex flex-col items-center gap-1">
@@ -155,7 +186,7 @@ export default function DashboardPage() {
              <ConstellationView contacts={contacts} />
           </section>
 
-          {/* Recent List (実用的なリスト) */}
+          {/* Recent List */}
           <section className="space-y-6">
              <h2 className="text-[10px] tracking-[0.5em] uppercase opacity-30 font-bold italic">Recent Archive / 直近の同調</h2>
              <div className="grid grid-cols-1 gap-3">
