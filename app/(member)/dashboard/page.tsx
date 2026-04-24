@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Book, Share2, ShieldCheck, Trophy, LayoutGrid, Zap, UserCircle, Sparkles } from "lucide-react";
+import { Camera, Book, Share2, ShieldCheck, Trophy, LayoutGrid, Zap, UserCircle, Sparkles, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
@@ -20,6 +20,14 @@ export default function DashboardPage() {
     uid: "UNSYNCED",
     handle: "",
     slug: "",
+    logo_url: "",
+    photo_url: "",
+    profile: {
+      title: "",
+      bio: "",
+      company: "",
+      website: ""
+    },
     equipped: {
       frame: "Obsidian",
       title: "ASSOCIATE",
@@ -47,7 +55,6 @@ export default function DashboardPage() {
       const res = await fetch("/api/contacts/list", { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
-        // 星座表示用に座標をランダム生成 (実データがない場合のフォールバック)
         const mapped = data.map((c: any) => ({
           ...c,
           x: Math.random() * 80 + 10,
@@ -106,18 +113,11 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
         <div className="lg:col-span-8 space-y-16">
-          {/* Identity Constellation */}
-          <section className="space-y-6">
-             <div className="flex justify-between items-end border-b border-white/5 pb-4">
-                <h2 className="text-[10px] tracking-[0.5em] uppercase opacity-30 font-bold italic">Network Constellation / 人脈の星図</h2>
-                <Link href="/library" className="text-[8px] uppercase tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity">Expand Universe</Link>
-             </div>
-             <ConstellationView contacts={contacts} />
-          </section>
-
+          
+          {/* 【最優先】Identity Reflection (自分の名刺) */}
           <section className="space-y-8">
             <div className="flex justify-between items-end border-b border-white/5 pb-4">
-               <h2 className="text-[10px] tracking-[0.5em] uppercase opacity-30 font-bold italic">Identity Reflection / 名刺プレビュー</h2>
+               <h2 className="text-[10px] tracking-[0.5em] uppercase opacity-30 font-bold italic">Identity Reflection / あなたの証</h2>
                <Link href={`/p/${realStats.slug}`} className="text-[8px] uppercase tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity flex items-center gap-2">Public View <Share2 size={10}/></Link>
             </div>
             
@@ -125,22 +125,59 @@ export default function DashboardPage() {
               <HexaCardPreview 
                 name={session?.user?.name || "ARCHITECT"} 
                 reading={realStats.handle}
+                company={realStats.profile?.company}
                 title={realStats.equipped.title} 
+                logoUrl={realStats.logo_url}
+                faceUrl={realStats.photo_url}
                 frame={realStats.equipped.frame}
                 orientation={realStats.equipped.orientation}
               />
               
               <div className="mt-12 flex gap-4 w-full">
                  <Link href="/profile/edit" className="flex-1 py-5 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all text-center group flex flex-col items-center gap-1">
-                    <span className="text-[9px] tracking-[0.4em] uppercase">Tune Identity</span>
+                    <span className="text-[9px] tracking-[0.4em] uppercase font-bold">Tune Identity</span>
                     <span className="text-[7px] opacity-20 uppercase tracking-[0.2em]">プロフィールの調律</span>
                  </Link>
                  <Link href="/inventory" className="flex-1 py-5 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all text-center group flex flex-col items-center gap-1">
-                    <span className="text-[9px] tracking-[0.4em] uppercase">Treasury</span>
+                    <span className="text-[9px] tracking-[0.4em] uppercase font-bold">Treasury</span>
                     <span className="text-[7px] opacity-20 uppercase tracking-[0.2em]">宝物庫・装備</span>
                  </Link>
               </div>
             </div>
+          </section>
+
+          {/* 【次点】Network Constellation (人脈の可視化) */}
+          <section className="space-y-6">
+             <div className="flex justify-between items-end border-b border-white/5 pb-4">
+                <h2 className="text-[10px] tracking-[0.5em] uppercase opacity-30 font-bold italic">Network Constellation / 人脈の星図</h2>
+                <Link href="/library" className="text-[8px] uppercase tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity flex items-center gap-2">Open Archive <ChevronRight size={10}/></Link>
+             </div>
+             <ConstellationView contacts={contacts} />
+          </section>
+
+          {/* Recent List (実用的なリスト) */}
+          <section className="space-y-6">
+             <h2 className="text-[10px] tracking-[0.5em] uppercase opacity-30 font-bold italic">Recent Archive / 直近の同調</h2>
+             <div className="grid grid-cols-1 gap-3">
+                {contacts.length > 0 ? contacts.slice(0, 3).map((c) => (
+                   <div key={c.id} className="p-5 border border-white/5 bg-white/[0.01] flex justify-between items-center group hover:border-azure-500/30 transition-all">
+                      <div className="flex items-center gap-4">
+                         <div className="w-10 h-10 border border-white/10 flex items-center justify-center bg-white/[0.02]">
+                            <UserCircle size={20} className="opacity-20" />
+                         </div>
+                         <div>
+                            <p className="text-[11px] tracking-widest uppercase font-bold text-white/80">{c.name}</p>
+                            <p className="text-[8px] tracking-widest opacity-30 uppercase">{c.handle}</p>
+                         </div>
+                      </div>
+                      <Link href="/library" className="opacity-0 group-hover:opacity-100 transition-opacity text-azure-400"><ChevronRight size={16}/></Link>
+                   </div>
+                )) : (
+                   <div className="py-12 border border-dashed border-white/5 text-center text-[9px] uppercase tracking-[0.5em] opacity-20 italic">
+                      No records found in the archive
+                   </div>
+                )}
+             </div>
           </section>
         </div>
 
