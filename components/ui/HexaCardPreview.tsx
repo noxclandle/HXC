@@ -18,9 +18,8 @@ interface HexaCardProps {
 }
 
 /**
- * HXC 実務特化型名刺 (真実の調律版)
- * 表面: ロゴ + 会社名 + 氏名
- * 裏面: 自画像 + 証明
+ * HXC 実務特化型名刺 (最終調整版)
+ * 氏名のサイズを黄金比に調律し、一行表示を厳守。
  */
 export default function HexaCardPreview({ 
   name, reading, company, title, logoUrl, faceUrl,
@@ -91,9 +90,9 @@ export default function HexaCardPreview({
                   <p className="text-[12px] tracking-[0.3em] uppercase text-white font-medium whitespace-nowrap overflow-hidden text-ellipsis">{company || "CORPORATION"}</p>
                </div>
 
-               <div className="space-y-2 w-full overflow-hidden">
+               <div className="space-y-2 w-full overflow-hidden px-4">
                   {reading && <p className="text-[9px] tracking-[0.4em] text-azure-400 font-bold uppercase truncate">{reading}</p>}
-                  <h2 className="text-4xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis">{name}</h2>
+                  <h2 className="text-2xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis">{name}</h2>
                   <div className="h-px w-8 bg-azure-500/30 mx-auto mt-4" />
                </div>
 
@@ -114,11 +113,11 @@ export default function HexaCardPreview({
                  <div className="text-right opacity-5 text-[10px] font-bold italic">STANDARD HXC</div>
               </header>
               <footer className="flex justify-between items-end">
-                <div className="overflow-hidden max-w-[80%]">
+                <div className="overflow-hidden max-w-[85%] px-2">
                    <div className="flex flex-col mb-2">
                      {reading && <span className="text-[9px] tracking-[0.3em] text-azure-400 font-bold uppercase truncate">{reading}</span>}
                    </div>
-                   <h2 className="text-5xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis">{name}</h2>
+                   <h2 className="text-3xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis">{name}</h2>
                    <div className="mt-4 px-4 py-1.5 border border-white/5 bg-white/[0.01] w-fit">
                       <span className="text-[8px] tracking-[0.4em] uppercase text-white/40">{title || "ASSOCIATE"}</span>
                    </div>
@@ -135,15 +134,9 @@ export default function HexaCardPreview({
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
         >
           <div className="space-y-8 relative z-10 w-full flex flex-col items-center">
-            {/* Face Photo on Back */}
             <div className="w-32 h-32 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl">
-               {faceUrl ? (
-                 <img src={faceUrl} alt="Portrait" className="w-full h-full object-cover" />
-               ) : (
-                 <User size={48} className="text-white/5" />
-               )}
+               {faceUrl ? <img src={faceUrl} alt="Portrait" className="w-full h-full object-cover" /> : <User size={48} className="text-white/5" />}
             </div>
-            
             <div className="space-y-4">
                <p className="text-[9px] tracking-[0.5em] uppercase text-white/30">Verified Entity Portrait</p>
                <div className="h-px w-12 bg-white/10 mx-auto" />
