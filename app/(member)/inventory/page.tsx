@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Music, Sparkles, UserCheck, Check, Lock, Wallet, Trophy, ArrowLeft, MousePointer2 } from "lucide-react";
+import { Shield, Music, Sparkles, UserCheck, Check, Lock, Wallet, Trophy, ArrowLeft, MousePointer2, Smartphone, Layout } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -68,7 +68,7 @@ export default function InventoryPage() {
       case "legendary": return "text-rose-500 border-rose-500/20 bg-rose-500/5";
       case "epic": return "text-orange-500 border-orange-500/20 bg-orange-500/5";
       case "rare": return "text-purple-400 border-purple-500/20 bg-purple-500/5";
-      default: return "text-white/40 border-white/5 bg-white/[0.01]";
+      case "common": return "text-white/40 border-white/5 bg-white/[0.01]";
     }
   };
 
@@ -97,6 +97,7 @@ export default function InventoryPage() {
 
       if (res.ok) {
         showToast("Treasury Synchronized / 装備を記録しました", "success");
+        window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
       } else {
         showToast("Error / 保存に失敗しました", "error");
       }
@@ -134,14 +135,31 @@ export default function InventoryPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         <div className="lg:col-span-5 sticky top-32 space-y-12">
-           <div className="p-8 bg-white/[0.02] border border-white/5 shadow-2xl relative overflow-hidden group flex justify-center">
+           <div className="p-8 bg-white/[0.02] border border-white/5 shadow-2xl relative overflow-hidden group flex flex-col items-center">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-azure-500/20 to-transparent" />
+              
+              {/* 【全画面共通】レイアウト即時切替ボタン */}
+              <div className="absolute top-6 right-6 z-30 flex gap-2 p-1 bg-white/5 border border-white/5 opacity-40 group-hover:opacity-100 transition-opacity">
+                 <button onClick={() => setEquipped({...equipped, orientation: 'horizontal'})} className={`p-1.5 transition-all ${equipped.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
+                    <Layout size={12}/>
+                 </button>
+                 <button onClick={() => setEquipped({...equipped, orientation: 'vertical'})} className={`p-1.5 transition-all ${equipped.orientation === 'vertical' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
+                    <Smartphone size={12}/>
+                 </button>
+              </div>
+
               <HexaCardPreview 
                 name={session?.user?.name || "ARCHITECT"} 
                 title={equipped.title}
                 frame={equipped.frame}
                 orientation={equipped.orientation}
               />
+              <div className="mt-10 pt-8 border-t border-white/5 space-y-4 w-full">
+                 <div className="flex justify-between items-center text-[8px] tracking-[0.3em] uppercase opacity-40">
+                    <span>Active Title</span>
+                    <span className="text-azure-400 font-bold">{equipped.title}</span>
+                 </div>
+              </div>
            </div>
            
            <button onClick={handleCommit} disabled={isSaving} className={`w-full py-6 bg-azure-600 text-white font-bold text-[11px] tracking-[1.2em] uppercase shadow-2xl hover:bg-azure-500 transition-all active:scale-[0.98] relative overflow-hidden ${isSaving && 'opacity-50'}`}>
@@ -161,7 +179,7 @@ export default function InventoryPage() {
                 >
                   <cat.icon size={18} className={activeCategory === cat.id ? "text-azure-400" : ""} />
                   <div className="text-center">
-                    <span className="block text-[8px] uppercase tracking-[0.3em] font-bold">{cat.name}</span>
+                    <span className="block text-[8px] uppercase tracking-[0.3em] font-bold">{cat.name.split(' / ')[0]}</span>
                   </div>
                 </button>
               ))}
