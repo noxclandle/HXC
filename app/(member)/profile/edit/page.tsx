@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, Building2, Globe, Shield, Save, ArrowLeft, Languages, Camera, Info, Upload, RotateCcw, Smartphone, Layout } from "lucide-react";
+import { User, Building2, Globe, Shield, Save, ArrowLeft, Languages, Camera, Info, Upload, RotateCcw, Smartphone, Layout, Phone, Mail } from "lucide-react";
 import Link from "next/link";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
@@ -24,6 +24,8 @@ export default function ProfileEditPage() {
     company: "",
     website: "",
     bio: "",
+    phone: "",
+    email: "",
     logoUrl: "", 
     faceUrl: "",
     orientation: "horizontal" as "horizontal" | "vertical"
@@ -46,6 +48,8 @@ export default function ProfileEditPage() {
           company: data.profile?.company || "",
           website: data.profile?.website || "",
           bio: data.profile?.bio || "",
+          phone: data.profile?.phone || "",
+          email: data.profile?.contact_email || "",
           logoUrl: data.logo_url || "",
           faceUrl: data.photo_url || "",
           orientation: data.equipped?.orientation || "horizontal"
@@ -132,6 +136,8 @@ export default function ProfileEditPage() {
                 reading={formData.reading}
                 company={formData.company}
                 title={formData.title || equipped.title}
+                phone={formData.phone}
+                email={formData.email}
                 logoUrl={formData.logoUrl}
                 faceUrl={formData.faceUrl}
                 frame={equipped.frame}
@@ -204,6 +210,26 @@ export default function ProfileEditPage() {
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Professional Title / 肩書き</label>
                     <input type="text" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm" placeholder="役職・専門" />
                  </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-white/5 pt-12">
+                 <div className="space-y-3">
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
+                       <Phone size={12} className="text-azure-400"/> Phone / 電話番号
+                    </label>
+                    <input type="tel" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none shadow-sm" placeholder="090-XXXX-XXXX" />
+                 </div>
+                 <div className="space-y-3">
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
+                       <Mail size={12} className="text-azure-400"/> Contact Email / 連絡用メール
+                    </label>
+                    <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none shadow-sm" placeholder="contact@example.com" />
+                 </div>
+              </div>
+
+              <div className="space-y-3">
+                 <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Professional Bio / 自己紹介</label>
+                 <textarea rows={4} value={formData.bio} onChange={(e) => setFormData({...formData, bio: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm focus:border-azure-400 outline-none resize-none shadow-sm" placeholder="実績や専門分野" />
               </div>
 
               <div className="pt-8">

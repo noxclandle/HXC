@@ -11,9 +11,8 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, handle, title, website, bio, company, photo_url, logo_url, orientation } = body;
+    const { name, handle, title, website, bio, company, photo_url, logo_url, orientation, phone, email: contactEmail } = body;
 
-    // 現在のユーザー情報を取得して Json フィールドを安全にマージ
     const currentUser = await prisma.user.findUnique({
       where: { email: session.user.email }
     });
@@ -26,17 +25,20 @@ export async function POST(req: NextRequest) {
         name: name,
         handle_name: handle,
         link_website: website,
-        photo_url: photo_url, // 自画像
+        photo_url: photo_url, // 顔写真
         logo_url: logo_url,   // 会社ロゴ
+        phone: phone,         // 電話番号をUserテーブルの既存カラムに保存
+        // 連絡用メールアドレスは ai_config 内に保存（認証用メールと分けるため）
         equipped_assets: {
           ...currentEquipped,
-          orientation: orientation // レイアウト設定を保存
+          orientation: orientation
         },
         ai_config: {
           profile: {
             title: title,
             bio: bio,
-            company: company
+            company: company,
+            contact_email: contactEmail
           }
         }
       }
