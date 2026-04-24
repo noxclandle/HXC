@@ -21,7 +21,7 @@ export default function MonthlyDeepDivePage() {
           <h1 className="text-2xl tracking-[0.4em] uppercase mb-2">Monthly Deep Dive</h1>
           <p className="text-[10px] tracking-widest opacity-40 uppercase italic">月次分析レポート</p>
         </div>
-        <Link href="/dashboard" className="opacity-40 hover:opacity-100 transition-opacity">
+        <Link href="/hub" className="opacity-40 hover:opacity-100 transition-opacity">
           <ArrowLeft size={20} />
         </Link>
       </header>

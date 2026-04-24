@@ -2,7 +2,7 @@
   "name": "Hexa Card",
   "short_name": "Hexa",
   "description": "Premium Business Networking Sanctum",
-  "start_url": "/dashboard",
+  "start_url": "/hub",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",

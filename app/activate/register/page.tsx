@@ -22,7 +22,7 @@ function RegisterContent() {
   const [step, setStep] = useState(0);
 
   const handleComplete = () => {
-    router.push("/dashboard");
+    router.push("/hub");
   };
 
   return (

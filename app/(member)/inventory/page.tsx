@@ -121,7 +121,7 @@ export default function InventoryPage() {
     <div className="max-w-7xl mx-auto pt-32 px-6 pb-24 text-moonlight">
       <header className="mb-20 flex justify-between items-end">
         <div className="space-y-4">
-          <Link href="/dashboard" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-30 hover:opacity-100 transition-opacity mb-8">
+          <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-30 hover:opacity-100 transition-opacity mb-8">
             <ArrowLeft size={12} /> Back to Hub / 拠点へ戻る
           </Link>
           <h1 className="text-5xl tracking-[0.5em] uppercase font-extralight text-white">Treasury</h1>
