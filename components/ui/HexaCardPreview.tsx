@@ -18,8 +18,8 @@ interface HexaCardProps {
 }
 
 /**
- * HXC 実務特化型名刺 (最終調整版)
- * 氏名のサイズを黄金比に調律し、一行表示を厳守。
+ * HXC 実務特化型名刺 (最終レイアウト版)
+ * ロゴの右側に会社名を配置。実務上の美しさと信頼を追求。
  */
 export default function HexaCardPreview({ 
   name, reading, company, title, logoUrl, faceUrl,
@@ -83,11 +83,11 @@ export default function HexaCardPreview({
           {isVertical ? (
             /* 縦型レイアウト */
             <div className="h-full p-10 flex flex-col items-center justify-between text-center">
-               <div className="space-y-4">
-                  <div className="w-16 h-16 border border-white/5 mx-auto flex items-center justify-center bg-white/[0.02] overflow-hidden">
-                     {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={24} className="text-white/10" />}
+               <div className="flex flex-row items-center justify-center gap-4 w-full">
+                  <div className="w-12 h-12 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
+                     {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={20} className="text-white/10" />}
                   </div>
-                  <p className="text-[12px] tracking-[0.3em] uppercase text-white font-medium whitespace-nowrap overflow-hidden text-ellipsis">{company || "CORPORATION"}</p>
+                  <p className="text-[11px] tracking-[0.2em] uppercase text-white font-medium whitespace-nowrap overflow-hidden text-ellipsis text-left">{company || "CORPORATION"}</p>
                </div>
 
                <div className="space-y-2 w-full overflow-hidden px-4">
@@ -104,11 +104,11 @@ export default function HexaCardPreview({
             /* 横型レイアウト */
             <div className="h-full p-10 flex flex-col justify-between">
               <header className="flex justify-between items-start">
-                 <div className="space-y-4">
-                    <div className="w-14 h-14 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden">
+                 <div className="flex flex-row items-center gap-4 max-w-[80%]">
+                    <div className="w-14 h-14 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
                        {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={20} className="text-white/10" />}
                     </div>
-                    <p className="text-[11px] tracking-[0.3em] uppercase text-white/80 font-medium whitespace-nowrap overflow-hidden text-ellipsis">{company || "CORPORATION"}</p>
+                    <p className="text-[12px] tracking-[0.3em] uppercase text-white/80 font-medium whitespace-nowrap overflow-hidden text-ellipsis">{company || "CORPORATION"}</p>
                  </div>
                  <div className="text-right opacity-5 text-[10px] font-bold italic">STANDARD HXC</div>
               </header>
