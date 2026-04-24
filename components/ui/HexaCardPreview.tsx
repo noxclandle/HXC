@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
-import { Rotate3d, Building2, User } from "lucide-react";
+import { Rotate3d, Building2, User, Phone, Mail } from "lucide-react";
 import { playResonanceSound } from "@/lib/audio/resonance";
 
 interface HexaCardProps {
@@ -10,6 +10,8 @@ interface HexaCardProps {
   reading?: string;
   company?: string;
   title?: string;
+  phone?: string;
+  email?: string;
   logoUrl?: string; // 表面: 会社ロゴ
   faceUrl?: string; // 裏面: 顔写真
   orientation?: "horizontal" | "vertical";
@@ -18,11 +20,13 @@ interface HexaCardProps {
 }
 
 /**
- * HXC 実務特化型名刺 (最終レイアウト版)
- * ロゴの右側に会社名を配置。実務上の美しさと信頼を追求。
+ * HXC 実務特化型名刺 (横型黄金比版)
+ * 1. ロゴ/会社名を上部へ
+ * 2. 肩書きを名前の上へ
+ * 3. 名前、その下に連絡先
  */
 export default function HexaCardPreview({ 
-  name, reading, company, title, logoUrl, faceUrl,
+  name, reading, company, title, phone, email, logoUrl, faceUrl,
   orientation = "horizontal", frame = "Obsidian", onFlip 
 }: HexaCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -81,7 +85,7 @@ export default function HexaCardPreview({
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
           {isVertical ? (
-            /* 縦型レイアウト */
+            /* 縦型レイアウト (既存を維持) */
             <div className="h-full p-10 flex flex-col items-center justify-between text-center">
                <div className="flex flex-row items-center justify-center gap-4 w-full">
                   <div className="w-12 h-12 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
@@ -89,40 +93,55 @@ export default function HexaCardPreview({
                   </div>
                   <p className="text-[11px] tracking-[0.2em] uppercase text-white font-medium text-left">{company || "CORPORATION"}</p>
                </div>
-
                <div className="space-y-2 w-full overflow-hidden px-4">
                   {reading && <p className="text-[9px] tracking-[0.4em] text-azure-400 font-bold uppercase truncate">{reading}</p>}
                   <h2 className="text-2xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis">{name}</h2>
                   <div className="h-px w-8 bg-azure-500/30 mx-auto mt-4" />
                </div>
-
                <div className="px-4 py-1.5 border border-white/5 bg-white/[0.01]">
                   <span className="text-[8px] tracking-[0.4em] uppercase text-white/40">{title || "ASSOCIATE"}</span>
                </div>
             </div>
           ) : (
-            /* 横型レイアウト */
-            <div className="h-full p-10 flex flex-col justify-between">
-              <header className="flex justify-between items-start">
-                 <div className="flex flex-row items-center gap-4 max-w-[80%]">
-                    <div className="w-14 h-14 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
-                       {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={20} className="text-white/10" />}
-                    </div>
-                    <p className="text-[12px] tracking-[0.3em] uppercase text-white/80 font-medium leading-relaxed">{company || "CORPORATION"}</p>
+            /* 【修正】横型レイアウト：実務黄金比 */
+            <div className="h-full p-8 flex flex-col justify-between">
+              {/* 1. 上部：ロゴと会社名（より高い位置へ） */}
+              <header className="flex flex-row items-center gap-4 pt-2">
+                 <div className="w-12 h-12 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
+                    {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={18} className="text-white/10" />}
                  </div>
-                 <div className="text-right opacity-5 text-[10px] font-bold italic">STANDARD HXC</div>
+                 <p className="text-[11px] tracking-[0.3em] uppercase text-white/80 font-medium leading-tight">{company || "CORPORATION"}</p>
               </header>
-              <footer className="flex justify-between items-end">
-                <div className="overflow-hidden max-w-[85%] px-2">
-                   <div className="flex flex-col mb-2">
-                     {reading && <span className="text-[9px] tracking-[0.3em] text-azure-400 font-bold uppercase truncate">{reading}</span>}
-                   </div>
-                   <h2 className="text-3xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis">{name}</h2>
-                   <div className="mt-4 px-4 py-1.5 border border-white/5 bg-white/[0.01] w-fit">
-                      <span className="text-[8px] tracking-[0.4em] uppercase text-white/40">{title || "ASSOCIATE"}</span>
+
+              {/* 2. 中央：肩書き -> ふりがな -> 名前 */}
+              <main className="flex flex-col gap-2">
+                <div className="space-y-1">
+                   <p className="text-[9px] tracking-[0.4em] uppercase text-white/30 font-bold">{title || "ASSOCIATE"}</p>
+                   <div className="flex flex-col">
+                      {reading && <span className="text-[8px] tracking-[0.3em] text-azure-400 font-bold uppercase mb-1">{reading}</span>}
+                      <h2 className="text-3xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis">{name}</h2>
                    </div>
                 </div>
-                <div className="opacity-10 mb-1"><Rotate3d size={20} className="animate-pulse" /></div>
+
+                {/* 3. 下部：連絡先情報 */}
+                <div className="mt-4 flex gap-6 opacity-40">
+                   {phone && (
+                     <div className="flex items-center gap-2">
+                        <Phone size={10} className="text-azure-400" />
+                        <span className="font-mono text-[9px] tracking-widest">{phone}</span>
+                     </div>
+                   )}
+                   {email && (
+                     <div className="flex items-center gap-2">
+                        <Mail size={10} className="text-azure-400" />
+                        <span className="font-mono text-[9px] tracking-widest uppercase">{email}</span>
+                     </div>
+                   )}
+                </div>
+              </main>
+
+              <footer className="flex justify-end opacity-5">
+                <div className="text-[10px] font-bold italic">STANDARD HXC</div>
               </footer>
             </div>
           )}

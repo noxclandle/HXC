@@ -32,7 +32,7 @@ export async function GET() {
       rank: user.rank,
       titles: titles,
       uid: user.card?.uid || "NO CARD LINKED",
-      handle: user.handle_name || "", // ふりがな
+      handle: user.handle_name || "", 
       slug: user.handle_name || user.id,
       logo_url: user.logo_url || "",
       photo_url: user.photo_url || "",
@@ -48,7 +48,9 @@ export async function GET() {
         title: profile.title || "",
         bio: profile.bio || "",
         company: profile.company || "",
-        website: user.link_website || ""
+        website: user.link_website || "",
+        phone: user.phone || "",
+        contact_email: profile.contact_email || ""
       }
     });
   } catch (error: any) {
