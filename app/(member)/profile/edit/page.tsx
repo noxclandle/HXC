@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, Building2, Globe, Shield, Save, ArrowLeft, Languages, Camera, Info, Upload, RotateCcw, Smartphone, Layout, Phone, Mail } from "lucide-react";
+import { User, Building2, Globe, Shield, Save, ArrowLeft, Languages, Camera, Info, Upload, RotateCcw, Smartphone, Layout, Phone, Mail, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 import Link from "next/link";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
@@ -28,7 +28,10 @@ export default function ProfileEditPage() {
     email: "",
     logoUrl: "", 
     faceUrl: "",
-    orientation: "horizontal" as "horizontal" | "vertical"
+    orientation: "horizontal" as "horizontal" | "vertical",
+    alignHeader: "center" as "left" | "center" | "right",
+    alignMain: "center" as "left" | "center" | "right",
+    alignFooter: "center" as "left" | "center" | "right"
   });
   
   const [equipped, setEquipped] = useState({
@@ -52,7 +55,10 @@ export default function ProfileEditPage() {
           email: data.profile?.contact_email || "",
           logoUrl: data.logo_url || "",
           faceUrl: data.photo_url || "",
-          orientation: data.equipped?.orientation || "horizontal"
+          orientation: data.equipped?.orientation || "horizontal",
+          alignHeader: data.equipped?.alignHeader || "center",
+          alignMain: data.equipped?.alignMain || "center",
+          alignFooter: data.equipped?.alignFooter || "center"
         });
         if (data.equipped) setEquipped({ ...equipped, ...data.equipped });
       }
@@ -74,8 +80,7 @@ export default function ProfileEditPage() {
           ...formData,
           handle: formData.reading,
           photo_url: formData.faceUrl,
-          logo_url: formData.logoUrl,
-          orientation: formData.orientation
+          logo_url: formData.logoUrl
         })
       });
 
@@ -102,6 +107,28 @@ export default function ProfileEditPage() {
     }
   };
 
+  const AlignmentControl = ({ label, current, field }: { label: string, current: string, field: string }) => (
+    <div className="flex flex-col gap-2">
+       <span className="text-[7px] uppercase tracking-[0.2em] opacity-30">{label} Alignment</span>
+       <div className="flex gap-1 bg-white/5 border border-white/5 p-1 w-fit">
+          {[
+            { id: "left", icon: AlignLeft },
+            { id: "center", icon: AlignCenter },
+            { id: "right", icon: AlignRight }
+          ].map((a) => (
+            <button 
+              key={a.id} 
+              type="button"
+              onClick={() => setFormData({...formData, [field]: a.id})}
+              className={`p-1.5 transition-all ${current === a.id ? 'bg-azure-600 text-white' : 'opacity-20 hover:opacity-100'}`}
+            >
+              <a.icon size={10} />
+            </button>
+          ))}
+       </div>
+    </div>
+  );
+
   return (
     <div className="max-w-7xl mx-auto pt-32 px-6 pb-24 relative text-moonlight">
       <header className="mb-16 flex justify-between items-end">
@@ -121,7 +148,6 @@ export default function ProfileEditPage() {
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-azure-500/20 to-transparent" />
               <h2 className="text-[9px] uppercase tracking-[0.6em] opacity-30 mb-10 italic text-azure-400 font-bold">Synchronized Reflection</h2>
               
-              {/* 【全画面共通】レイアウト即時切替ボタン */}
               <div className="absolute top-6 right-6 z-30 flex gap-2 p-1 bg-white/5 border border-white/5 opacity-40 group-hover:opacity-100 transition-opacity">
                  <button type="button" onClick={() => setFormData({...formData, orientation: 'horizontal'})} className={`p-1.5 transition-all ${formData.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
                     <Layout size={12}/>
@@ -142,7 +168,19 @@ export default function ProfileEditPage() {
                 faceUrl={formData.faceUrl}
                 frame={equipped.frame}
                 orientation={formData.orientation}
+                alignHeader={formData.alignHeader}
+                alignMain={formData.alignMain}
+                alignFooter={formData.alignFooter}
               />
+
+              {/* 縦型限定：配置コントロール */}
+              {formData.orientation === "vertical" && (
+                <div className="mt-10 grid grid-cols-3 gap-6 w-full pt-8 border-t border-white/5">
+                   <AlignmentControl label="Logo" current={formData.alignHeader} field="alignHeader" />
+                   <AlignmentControl label="Name" current={formData.alignMain} field="alignMain" />
+                   <AlignmentControl label="Contacts" current={formData.alignFooter} field="alignFooter" />
+                </div>
+              )}
            </div>
 
            <div className="p-6 border border-azure-500/20 bg-azure-500/5 space-y-4">
@@ -151,7 +189,7 @@ export default function ProfileEditPage() {
                  <p className="text-[10px] tracking-[0.2em] uppercase font-bold">Advisory / 助言</p>
               </div>
               <p className="text-[11px] leading-relaxed opacity-60 italic">
-                 「表面に会社を、裏面にあなたを。」<br />
+                 「表面に組織を、裏面にあなたを。」<br />
                  自画像を登録することで、名刺交換の後に相手があなたという存在を思い出す助けとなります。ビジネスの種を、確実な記憶として定着させましょう。
               </p>
            </div>
@@ -160,13 +198,14 @@ export default function ProfileEditPage() {
         {/* Right: Edit Form */}
         <div className="lg:col-span-7">
            <form onSubmit={handleSave} className="space-y-12">
+              {/* Dual Upload Section */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 border-b border-white/5 pb-12">
                  <div className="space-y-6">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
                        <Building2 size={12} className="text-bronze-500"/> Company Logo / 会社ロゴ
                     </label>
                     <div className="flex items-center gap-6">
-                       <div className="w-20 h-20 border border-white/10 flex items-center justify-center bg-white/[0.03] overflow-hidden group relative">
+                       <div className="w-20 h-20 border border-white/10 flex items-center justify-center bg-white/[0.03] overflow-hidden group relative text-white">
                           {formData.logoUrl ? <img src={formData.logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={24} className="text-white/5" />}
                           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                              <button type="button" onClick={() => setFormData({...formData, logoUrl: ""})} className="text-white/60 hover:text-white"><RotateCcw size={14}/></button>
@@ -181,7 +220,7 @@ export default function ProfileEditPage() {
                        <Camera size={12} className="text-azure-500"/> Holder Portrait / 顔写真
                     </label>
                     <div className="flex items-center gap-6">
-                       <div className="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.03] overflow-hidden group relative">
+                       <div className="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.03] overflow-hidden group relative text-white">
                           {formData.faceUrl ? <img src={formData.faceUrl} alt="Face" className="w-full h-full object-cover" /> : <User size={24} className="text-white/5" />}
                           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                              <button type="button" onClick={() => setFormData({...formData, faceUrl: ""})} className="text-white/60 hover:text-white"><RotateCcw size={14}/></button>
@@ -196,19 +235,19 @@ export default function ProfileEditPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Full Name / 氏名</label>
-                    <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm" placeholder="漢字・英語" />
+                    <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm text-white" placeholder="漢字・英語" />
                  </div>
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Reading / ふりがな</label>
-                    <input type="text" value={formData.reading} onChange={(e) => setFormData({...formData, reading: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm" placeholder="ひらがな" />
+                    <input type="text" value={formData.reading} onChange={(e) => setFormData({...formData, reading: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm text-white" placeholder="ひらがな" />
                  </div>
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Company / 所属企業</label>
-                    <input type="text" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-bronze-400 outline-none transition-all shadow-sm" placeholder="企業名" />
+                    <input type="text" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-bronze-400 outline-none transition-all shadow-sm text-white" placeholder="企業名" />
                  </div>
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Professional Title / 肩書き</label>
-                    <input type="text" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm" placeholder="役職・専門" />
+                    <input type="text" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none transition-all shadow-sm text-white" placeholder="役職・専門" />
                  </div>
               </div>
 
@@ -217,19 +256,19 @@ export default function ProfileEditPage() {
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
                        <Phone size={12} className="text-azure-400"/> Phone / 電話番号
                     </label>
-                    <input type="tel" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none shadow-sm" placeholder="090-XXXX-XXXX" />
+                    <input type="tel" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none shadow-sm text-white" placeholder="090-XXXX-XXXX" />
                  </div>
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2">
                        <Mail size={12} className="text-azure-400"/> Contact Email / 連絡用メール
                     </label>
-                    <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none shadow-sm" placeholder="contact@example.com" />
+                    <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none shadow-sm text-white" placeholder="contact@example.com" />
                  </div>
               </div>
 
               <div className="space-y-3">
                  <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Professional Bio / 自己紹介</label>
-                 <textarea rows={4} value={formData.bio} onChange={(e) => setFormData({...formData, bio: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm focus:border-azure-400 outline-none resize-none shadow-sm" placeholder="実績や専門分野" />
+                 <textarea rows={4} value={formData.bio} onChange={(e) => setFormData({...formData, bio: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm focus:border-azure-400 outline-none resize-none shadow-sm text-white" placeholder="実績や専門分野" />
               </div>
 
               <div className="pt-8">
