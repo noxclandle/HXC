@@ -14,8 +14,8 @@ interface HexaCardProps {
   title?: string;
   phone?: string;
   email?: string;
-  logoUrl?: string;
-  faceUrl?: string;
+  logoUrl?: string; // 表面: 会社ロゴ
+  faceUrl?: string; // 裏面: 顔写真
   orientation?: "horizontal" | "vertical";
   alignHeader?: Alignment; // 縦型限定: ロゴ・社名の揃え
   alignMain?: Alignment;   // 縦型限定: 肩書き・氏名の揃え
@@ -24,6 +24,10 @@ interface HexaCardProps {
   onFlip?: (isFlipped: boolean) => void;
 }
 
+/**
+ * HXC 実務特化型名刺 (真・黄金比版)
+ * 縦型: 氏名を中央に固定し、3ブロックの独立整列を実現。
+ */
 export default function HexaCardPreview({ 
   name, reading, company, title, phone, email, logoUrl, faceUrl,
   orientation = "horizontal", 
@@ -35,8 +39,8 @@ export default function HexaCardPreview({
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const rotateX = useTransform(y, [-100, 100], [12, -12]);
-  const rotateYBase = useTransform(x, [-100, 100], [-12, 12]);
+  const rotateX = useTransform(y, [-100, 100], [10, -10]);
+  const rotateYBase = useTransform(x, [-100, 100], [-10, 10]);
   const finalRotateY = useTransform(rotateYBase, (val) => val + (isFlipped ? 180 : 0));
 
   const glowOpacity = useTransform(finalRotateY, [0, 90, 180], [0, 0.4, 0]);
@@ -86,33 +90,40 @@ export default function HexaCardPreview({
       >
         <motion.div style={{ opacity: glowOpacity, rotateY: 90, backfaceVisibility: "hidden" }} className="absolute inset-0 bg-white/10 blur-3xl z-20 pointer-events-none" />
 
+        {/* 【表面】Professional Face */}
         <div 
           className={`absolute inset-0 overflow-hidden border ${getFrameStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
           {isVertical ? (
-            /* 【進化】縦型レイアウト：個別整列対応 */
-            <div className="h-full p-10 flex flex-col justify-between">
+            /* 【究極の縦型】垂直中央配置と三段階整列 */
+            <div className="h-full p-10 flex flex-col">
                {/* 1. 上部：ロゴ -> 会社名 */}
-               <div className={`flex flex-col gap-4 ${getAlignClass(alignHeader)}`}>
-                  <div className="w-16 h-16 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
+               <div className={`flex flex-col gap-4 w-full ${getAlignClass(alignHeader)}`}>
+                  <div className="w-14 h-14 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
                      {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={24} className="text-white/10" />}
                   </div>
-                  <p className="text-[11px] tracking-[0.3em] uppercase text-white font-medium leading-relaxed">{company || "CORPORATION"}</p>
+                  <p className="text-[11px] tracking-[0.2em] uppercase text-white font-medium leading-relaxed">{company || "CORPORATION"}</p>
                </div>
 
-               {/* 2. 中央：肩書き -> 氏名 (中央寄せ固定かつ個別整列) */}
-               <div className={`space-y-3 w-full overflow-hidden flex flex-col ${getAlignClass(alignMain)}`}>
+               {/* 可変スペーサー：名前を中央に押し下げる */}
+               <div className="flex-1" />
+
+               {/* 2. 中央：肩書き -> 氏名 (ここが名刺の絶対中心) */}
+               <div className={`space-y-4 w-full overflow-hidden flex flex-col ${getAlignClass(alignMain)}`}>
                   <p className="text-[9px] tracking-[0.4em] uppercase text-white/30 font-bold">{title || "ASSOCIATE"}</p>
-                  <div className="flex flex-col gap-1 w-full">
+                  <div className="flex flex-col gap-2 w-full">
                      {reading && <p className="text-[10px] tracking-[0.3em] text-azure-400 font-bold uppercase truncate">{reading}</p>}
-                     <h2 className="text-2xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis">{name}</h2>
+                     <h2 className="text-3xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis">{name}</h2>
                   </div>
-                  <div className="h-px w-8 bg-azure-500/30 mt-4" />
+                  <div className="h-px w-10 bg-azure-500/30 mt-4" />
                </div>
+
+               {/* 可変スペーサー：名前を中央に押し上げる */}
+               <div className="flex-1" />
 
                {/* 3. 下部：連絡先 */}
-               <div className={`space-y-3 opacity-40 flex flex-col ${getAlignClass(alignFooter)}`}>
+               <div className={`space-y-3 opacity-40 flex flex-col w-full ${getAlignClass(alignFooter)}`}>
                   {phone && (
                      <div className="flex items-center gap-2">
                         <Phone size={10} className="text-azure-400" />
@@ -122,13 +133,13 @@ export default function HexaCardPreview({
                   {email && (
                      <div className="flex items-center gap-2">
                         <Mail size={10} className="text-azure-400" />
-                        <span className="font-mono text-[9px] tracking-[0.1em] uppercase truncate max-w-[200px]">{email}</span>
+                        <span className="font-mono text-[9px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span>
                      </div>
                   )}
                </div>
             </div>
           ) : (
-            /* 横型レイアウト (完成済み) */
+            /* 横型レイアウト */
             <div className="h-full p-8 flex flex-col justify-between">
               <header className="flex flex-row items-center gap-4 pt-2">
                  <div className="w-12 h-12 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
@@ -166,6 +177,7 @@ export default function HexaCardPreview({
           )}
         </div>
 
+        {/* 【裏面】Identity Verification + Face Photo */}
         <div 
           className={`absolute inset-0 p-8 flex flex-col justify-center items-center text-center border ${getFrameStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
