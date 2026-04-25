@@ -73,9 +73,23 @@ export default function ResidentAgent() {
   const helpMenu = [
     { label: "Daily Light", icon: <Sparkles size={14}/>, action: collectDaily, condition: !hasDaily },
     { label: "Treasury", icon: <Trophy size={14}/>, link: "/inventory", sub: "宝物庫" },
-    { label: "Scan Card", icon: <Camera size={14}/>, text: getEvolvedMessage("【スキャン】紙の名刺をデジタル化し、ビジネス価値を解析します。", userLevel) },
-    { label: "My Archive", icon: <Book size={14}/>, text: getEvolvedMessage("【名刺帳】繋がった人脈は「座標」として記録されます。", userLevel) },
+    { label: "How to Use", icon: <Info size={14}/>, action: () => setMode("chat"), sub: "使いかた" },
   ];
+
+  const supportFaqs = [
+    { q: "名刺の作り方は？", a: "左上のメニューから「Profile Edit」を選んでください。名前、ロゴ、顔写真などを設定して「Commit」を押せば完成です。" },
+    { q: "RTを貯めるには？", a: "毎日天使に話しかけて「Daily Light」を受け取るか、新しい名刺交換（スキャン）を行うことで貯めることができます。" },
+    { q: "縦型と横型はどう変える？", a: "編集画面や宝物庫のプレビュー右上にあるアイコンで、いつでも切り替えが可能です。" },
+    { q: "管理者に問い合わせたい", a: "不具合やご要望は、公式サポート（support@hexa-card.io）までお気軽にご連絡ください。" },
+  ];
+
+  const handleFaqClick = (faq: { q: string, a: string }) => {
+    setMessages(prev => [
+      ...prev, 
+      { role: "user", text: faq.q },
+      { role: "agent", text: faq.a }
+    ]);
+  };
 
   return (
     <div className="fixed bottom-8 right-8 z-[200]">
@@ -83,7 +97,7 @@ export default function ResidentAgent() {
         {isOpen && (
           <motion.div initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.95 }} className="mb-4 w-80 bg-void/95 border border-yellow-500/20 shadow-2xl backdrop-blur-xl overflow-hidden p-6 flex flex-col gap-6">
             <div className="flex justify-between items-center opacity-40">
-              <span className="text-[10px] tracking-[0.4em] uppercase italic flex items-center gap-2 text-yellow-400"><Info size={12}/> Concierge</span>
+              <span className="text-[10px] tracking-[0.4em] uppercase italic flex items-center gap-2 text-yellow-400"><Info size={12}/> Concierge / Help</span>
               <button onClick={() => { setMode("menu"); setIsOpen(false); }} className="hover:opacity-100 transition-opacity"><X size={14} /></button>
             </div>
             <div className="h-80 overflow-y-auto space-y-4 text-[11px] tracking-widest leading-relaxed text-moonlight pr-2 custom-scrollbar">
@@ -110,27 +124,35 @@ export default function ResidentAgent() {
                           <span className="text-[7px] opacity-20 uppercase">{item.sub}</span>
                         </Link>
                       ) : (
-                        <button key={item.label} onClick={() => item.action ? item.action() : setActiveMessage(item.text || "")} className="w-full p-4 bg-gothic-dark border border-moonlight/5 text-[9px] tracking-[0.3em] uppercase text-left hover:border-yellow-500/30 hover:bg-white/5 transition-all flex items-center gap-4 group">
-                          <span className="opacity-20 group-hover:opacity-100 transition-opacity text-yellow-400">{item.icon}</span>{item.label}
+                        <button key={item.label} onClick={() => item.action ? item.action() : setActiveMessage(item.text || "")} className="w-full p-4 bg-gothic-dark border border-moonlight/5 text-[9px] tracking-[0.3em] uppercase text-left hover:border-yellow-500/30 hover:bg-white/5 transition-all flex items-center justify-between group">
+                          <div className="flex items-center gap-4"><span className="opacity-20 group-hover:opacity-100 transition-opacity text-yellow-400">{item.icon}</span>{item.label}</div>
+                          <span className="text-[7px] opacity-20 uppercase">{item.sub}</span>
                         </button>
                       )
                     ))}
-                    <button onClick={() => setMode("chat")} className="w-full p-2 text-[8px] uppercase tracking-widest opacity-20 hover:opacity-100 transition-opacity text-center mt-4 border border-white/5 border-yellow-500/10">Advanced Inquiry (AI)</button>
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col h-full">
-                   <div className="flex-1 space-y-4 mb-4">
+                <div className="flex flex-col h-full space-y-6">
+                   <div className="space-y-2">
+                     <p className="opacity-40 text-[9px] uppercase tracking-[0.2em] mb-4">FAQ / よくある質問</p>
+                     {supportFaqs.map((faq, i) => (
+                       <button key={i} onClick={() => handleFaqClick(faq)} className="w-full p-3 bg-white/[0.02] border border-white/5 text-left text-[9px] hover:border-yellow-500/40 transition-all">
+                         Q: {faq.q}
+                       </button>
+                     ))}
+                   </div>
+
+                   <div className="flex-1 space-y-4 min-h-[100px] border-t border-white/5 pt-4">
                      {messages.map((m, i) => (
                        <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                         <div className={`max-w-[85%] p-3 ${m.role === "user" ? "bg-yellow-500 text-void font-bold" : "bg-gothic-dark border border-moonlight/5"}`}>{m.text}</div>
+                         <div className={`max-w-[85%] p-3 ${m.role === "user" ? "bg-yellow-500 text-void font-bold" : "bg-white/[0.05] border border-white/5"}`}>{m.text}</div>
                        </div>
                      ))}
                    </div>
-                   <div className="flex gap-2 border-t border-moonlight/10 pt-4">
-                     <input type="text" placeholder="Message..." value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSendChat()} className="flex-1 bg-transparent p-2 text-[10px] tracking-widest outline-none uppercase text-yellow-400" />
-                     <button onClick={handleSendChat} className="p-2 opacity-20 hover:opacity-100 transition-opacity text-yellow-400"><Send size={14} /></button>
-                     <button onClick={() => setMode("menu")} className="text-[8px] opacity-20 uppercase ml-2">Back</button>
+                   
+                   <div className="pt-4 border-t border-white/5">
+                     <button onClick={() => setMode("menu")} className="w-full p-2 text-[8px] opacity-40 uppercase tracking-widest hover:opacity-100">Back to Menu</button>
                    </div>
                 </div>
               )}
