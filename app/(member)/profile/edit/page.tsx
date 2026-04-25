@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Building2, Globe, Shield, Save, ArrowLeft, Languages, Camera, Info, Upload, RotateCcw, Smartphone, Layout, Phone, Mail, AlignLeft, AlignCenter, AlignRight, AlertTriangle } from "lucide-react";
 import Link from "next/link";
-import HexaCardPreview, { Alignment, FieldAlignments } from "@/components/ui/HexaCardPreview";
+import HexaCardPreview, { Alignment } from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/ResonanceToast";
 import { useRouter } from "next/navigation";
@@ -19,8 +19,13 @@ export default function ProfileEditPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
 
-  const defaultAlign: FieldAlignments = {
-    company: "center", title: "center", name: "center", reading: "center", phone: "center", email: "center"
+  const defaultAlign = {
+    company: "center" as Alignment, 
+    title: "center" as Alignment, 
+    name: "center" as Alignment, 
+    reading: "center" as Alignment, 
+    phone: "center" as Alignment, 
+    email: "center" as Alignment
   };
 
   const [formData, setFormData] = useState({
@@ -33,31 +38,32 @@ export default function ProfileEditPage() {
   
   const [equipped, setEquipped] = useState({ frame: "Obsidian", title: "ASSOCIATE" });
 
+  const fetchInitialData = async () => {
+    try {
+      const res = await fetch("/api/user/status", { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        setFormData({
+          name: data.name || session?.user?.name || "",
+          reading: data.handle || "",
+          title: data.profile?.title || "",
+          company: data.profile?.company || "",
+          website: data.profile?.website || "",
+          bio: data.profile?.bio || "",
+          phone: data.profile?.phone || "",
+          email: data.profile?.contact_email || "",
+          logoUrl: data.logo_url || "",
+          faceUrl: data.photo_url || "",
+          orientation: data.equipped?.orientation || "horizontal",
+          hAlign: data.equipped?.hAlign || { ...defaultAlign },
+          vAlign: data.equipped?.vAlign || { ...defaultAlign }
+        });
+        if (data.equipped) setEquipped({ ...equipped, ...data.equipped });
+      }
+    } catch (e) { console.error(e); }
+  };
+
   useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        const res = await fetch("/api/user/status", { cache: 'no-store' });
-        if (res.ok) {
-          const data = await res.json();
-          setFormData({
-            name: data.name || session?.user?.name || "",
-            reading: data.handle || "",
-            title: data.profile?.title || "",
-            company: data.profile?.company || "",
-            website: data.profile?.website || "",
-            bio: data.profile?.bio || "",
-            phone: data.profile?.phone || "",
-            email: data.profile?.contact_email || "",
-            logoUrl: data.logo_url || "",
-            faceUrl: data.photo_url || "",
-            orientation: data.equipped?.orientation || "horizontal",
-            hAlign: data.equipped?.hAlign || { ...defaultAlign },
-            vAlign: data.equipped?.vAlign || { ...defaultAlign }
-          });
-          if (data.equipped) setEquipped({ ...equipped, ...data.equipped });
-        }
-      } catch (e) { console.error(e); }
-    };
     if (session) fetchInitialData();
   }, [session]);
 
@@ -66,7 +72,7 @@ export default function ProfileEditPage() {
     setIsDirty(true);
   };
 
-  const updateAlign = (field: keyof FieldAlignments, align: Alignment) => {
+  const updateAlign = (field: string, align: Alignment) => {
     const key = formData.orientation === 'horizontal' ? 'hAlign' : 'vAlign';
     setFormData(prev => ({
       ...prev,
@@ -114,8 +120,8 @@ export default function ProfileEditPage() {
     }
   };
 
-  const AlignButtons = ({ field }: { field: keyof FieldAlignments }) => {
-    const currentAlign = formData.orientation === 'horizontal' ? formData.hAlign[field] : formData.vAlign[field];
+  const AlignButtons = ({ field }: { field: string }) => {
+    const currentAlign = formData.orientation === 'horizontal' ? (formData.hAlign as any)[field] : (formData.vAlign as any)[field];
     return (
       <div className="flex gap-1 bg-white/5 border border-white/5 p-1 w-fit mt-3">
         {[
@@ -135,22 +141,25 @@ export default function ProfileEditPage() {
     );
   };
 
+  const currentAligns = formData.orientation === 'horizontal' ? formData.hAlign : formData.vAlign;
+
   return (
     <div className="max-w-7xl mx-auto pt-32 px-6 pb-24 relative text-moonlight">
       <AnimatePresence>
         {isDirty && (
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-8 py-3 bg-rose-600 text-white text-[10px] tracking-[0.2em] font-bold uppercase shadow-2xl flex items-center gap-3">
-             <AlertTriangle size={14} /> Unsaved Changes / 変更を保存するには下部のコミットを押してください
+             <AlertTriangle size={14} /> Unsaved Changes / 変更を保存するには下部の調律を完了を押してください
           </motion.div>
         )}
       </AnimatePresence>
 
       <header className="mb-16 flex justify-between items-end">
         <div className="space-y-4">
-          <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity mb-8">
+          <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity mb-8 text-white">
             <ArrowLeft size={12} /> Back to Hub / 拠点へ戻る
           </Link>
           <h1 className="text-5xl tracking-[0.5em] uppercase font-extralight text-white">Tune Identity</h1>
+          <p className="text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold text-white">プロフィールの調律</p>
         </div>
       </header>
 
@@ -167,24 +176,18 @@ export default function ProfileEditPage() {
                  </button>
               </div>
               <HexaCardPreview 
-                name={formData.name || "NAME"} 
-                reading={formData.reading}
-                company={formData.company}
-                title={formData.title || equipped.title}
-                phone={formData.phone}
-                email={formData.email}
-                logoUrl={formData.logoUrl}
-                faceUrl={formData.faceUrl}
-                frame={equipped.frame}
-                orientation={formData.orientation}
-                alignHeader={formData.orientation === 'horizontal' ? formData.hAlign.company : formData.vAlign.company}
-                alignMain={formData.orientation === 'horizontal' ? formData.hAlign.name : formData.vAlign.name}
-                alignFooter={formData.orientation === 'horizontal' ? formData.hAlign.phone : formData.vAlign.phone}
+                name={formData.name || "NAME"} reading={formData.reading} company={formData.company} title={formData.title || equipped.title} phone={formData.phone} email={formData.email} bio={formData.bio} logoUrl={formData.logoUrl} faceUrl={formData.faceUrl} frame={equipped.frame} orientation={formData.orientation}
+                alignName={currentAligns.name} alignReading={currentAligns.reading} alignCompany={currentAligns.company} alignTitle={currentAligns.title} alignPhone={currentAligns.phone} alignEmail={currentAligns.email}
               />
            </div>
-           <div className="p-6 border border-azure-500/20 bg-azure-500/5 space-y-4">
-              <div className="flex items-center gap-3 text-azure-400"><Info size={16} /><p className="text-[10px] tracking-[0.2em] uppercase font-bold">Advisory / 助言</p></div>
-              <p className="text-[11px] opacity-60 italic">「表面に組織を、裏面にあなたを。」</p>
+           <div className="p-8 border border-azure-500/20 bg-azure-500/5 space-y-6">
+              <div className="flex items-center gap-3 text-azure-400"><Info size={20} /><p className="text-[11px] tracking-[0.2em] uppercase font-bold text-white">Advisory / 助言</p></div>
+              <p className="text-[12px] leading-relaxed opacity-80 italic text-white font-medium">
+                 「名刺交換には名前と顔が一致しないという問題が古来からあります、顔写真を設定しておくとお相手はあなたを忘れることが減り、印象に残りやすいです！」
+              </p>
+              <p className="text-[10px] opacity-40 uppercase tracking-widest pt-4 border-t border-white/5">
+                 表面に組織の信頼を、裏面にあなたの個性を。
+              </p>
            </div>
         </div>
 
@@ -194,7 +197,7 @@ export default function ProfileEditPage() {
                  <div className="space-y-6">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2"><Building2 size={12} className="text-bronze-500"/> Company Logo / 会社ロゴ</label>
                     <div className="flex items-center gap-6">
-                       <div className="w-20 h-20 border border-white/10 flex items-center justify-center bg-white/[0.03] overflow-hidden group relative text-white">
+                       <div className="w-20 h-20 border border-white/10 flex items-center justify-center bg-white/[0.03] overflow-hidden group relative">
                           {formData.logoUrl ? <img src={formData.logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={24} className="text-white/5" />}
                           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                              <button type="button" onClick={() => updateField('logoUrl', '')} className="text-white/60 hover:text-white"><RotateCcw size={14}/></button>
@@ -207,7 +210,7 @@ export default function ProfileEditPage() {
                  <div className="space-y-6">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2"><Camera size={12} className="text-azure-500"/> Holder Portrait / 顔写真</label>
                     <div className="flex items-center gap-6">
-                       <div className="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.03] overflow-hidden group relative text-white">
+                       <div className="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.03] overflow-hidden group relative">
                           {formData.faceUrl ? <img src={formData.faceUrl} alt="Face" className="w-full h-full object-cover" /> : <User size={24} className="text-white/5" />}
                           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                              <button type="button" onClick={() => updateField('faceUrl', '')} className="text-white/60 hover:text-white"><RotateCcw size={14}/></button>
@@ -222,22 +225,22 @@ export default function ProfileEditPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Full Name / 氏名</label>
-                    <input type="text" value={formData.name} onChange={(e) => updateField('name', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none" placeholder="漢字・英語" />
+                    <input type="text" value={formData.name} onChange={(e) => updateField('name', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="漢字・英語" />
                     <AlignButtons field="name" />
                  </div>
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Reading / ふりがな</label>
-                    <input type="text" value={formData.reading} onChange={(e) => updateField('reading', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none" placeholder="ひらがな" />
+                    <input type="text" value={formData.reading} onChange={(e) => updateField('reading', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="ひらがな" />
                     <AlignButtons field="reading" />
                  </div>
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Company / 所属企業</label>
-                    <input type="text" value={formData.company} onChange={(e) => updateField('company', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-bronze-400 outline-none" placeholder="企業名" />
+                    <input type="text" value={formData.company} onChange={(e) => updateField('company', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-bronze-400 outline-none text-white" placeholder="企業名" />
                     <AlignButtons field="company" />
                  </div>
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Professional Title / 肩書き</label>
-                    <input type="text" value={formData.title} onChange={(e) => updateField('title', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none" placeholder="役職・専門" />
+                    <input type="text" value={formData.title} onChange={(e) => updateField('title', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="役職・専門" />
                     <AlignButtons field="title" />
                  </div>
               </div>
@@ -245,14 +248,19 @@ export default function ProfileEditPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 border-t border-white/5 pt-12">
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2"><Phone size={12} className="text-azure-400"/> Phone / 電話番号</label>
-                    <input type="tel" value={formData.phone} onChange={(e) => updateField('phone', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none" placeholder="090-XXXX-XXXX" />
+                    <input type="tel" value={formData.phone} onChange={(e) => updateField('phone', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="090-XXXX-XXXX" />
                     <AlignButtons field="phone" />
                  </div>
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2"><Mail size={12} className="text-azure-400"/> Contact Email / 連絡用メール</label>
-                    <input type="email" value={formData.email} onChange={(e) => updateField('email', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none" placeholder="contact@example.com" />
+                    <input type="email" value={formData.email} onChange={(e) => updateField('email', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="contact@example.com" />
                     <AlignButtons field="email" />
                  </div>
+              </div>
+
+              <div className="space-y-3">
+                 <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Professional Bio / 自由記入（名刺裏面）</label>
+                 <textarea rows={4} value={formData.bio} onChange={(e) => updateField('bio', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm focus:border-azure-400 outline-none resize-none text-white" placeholder="信念や得意分野、ポートフォリオへの導線など自由にご記入ください" />
               </div>
 
               <div className="pt-8">
