@@ -25,6 +25,16 @@ export async function GET() {
     const titles = Array.isArray(user.unlocked_titles) ? user.unlocked_titles : [];
     const aiConfig = (user.ai_config as any) || {};
     const profile = aiConfig.profile || {};
+    const equipped = (user.equipped_assets as any) || {};
+
+    const defaultAlign = {
+      company: "center",
+      title: "center",
+      name: "center",
+      reading: "center",
+      phone: "center",
+      email: "center"
+    };
 
     return NextResponse.json({
       name: user.name || session.user.name || "ARCHITECT",
@@ -36,16 +46,13 @@ export async function GET() {
       slug: user.handle_name || user.id,
       logo_url: user.logo_url || "",
       photo_url: user.photo_url || "",
-      equipped: user.equipped_assets || {
-        frame: "Obsidian",
-        title: "ASSOCIATE",
-        sound: "Resonance",
-        pointer: "Pure White Hex",
-        angel: "Sentinel",
-        orientation: "horizontal",
-        alignHeader: "center",
-        alignMain: "center",
-        alignFooter: "center"
+      equipped: {
+        ...equipped,
+        frame: equipped.frame || "Obsidian",
+        title: equipped.title || "ASSOCIATE",
+        orientation: equipped.orientation || "horizontal",
+        hAlign: equipped.hAlign || defaultAlign,
+        vAlign: equipped.vAlign || defaultAlign
       },
       profile: {
         title: profile.title || "",

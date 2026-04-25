@@ -44,6 +44,14 @@ export default function SettingsPage() {
                 name={session?.user?.name || "MEMBER"} 
                 title={personality} 
                 frame={activeBg}
+                alignments={{
+                  company: "center",
+                  title: "center",
+                  name: "center",
+                  reading: "center",
+                  phone: "center",
+                  email: "center"
+                }}
               />
             </div>
           </div>

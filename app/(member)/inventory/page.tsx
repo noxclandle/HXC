@@ -153,6 +153,14 @@ export default function InventoryPage() {
                 title={equipped.title}
                 frame={equipped.frame}
                 orientation={equipped.orientation}
+                alignments={{
+                  company: "center",
+                  title: "center",
+                  name: "center",
+                  reading: "center",
+                  phone: "center",
+                  email: "center"
+                }}
               />
               <div className="mt-10 pt-8 border-t border-white/5 space-y-4 w-full">
                  <div className="flex justify-between items-center text-[8px] tracking-[0.3em] uppercase opacity-40">

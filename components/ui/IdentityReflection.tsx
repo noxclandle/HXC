@@ -75,6 +75,11 @@ export default function IdentityReflection({ user, onUpdate }: IdentityReflectio
                faceUrl={user.photo_url}
                frame={user.equipped.frame}
                orientation={user.equipped.orientation}
+               alignments={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign || {
+                 company: "center", title: "center", name: "center", reading: "center", phone: "center", email: "center"
+               }) : (user.equipped.vAlign || {
+                 company: "center", title: "center", name: "center", reading: "center", phone: "center", email: "center"
+               })}
              />
              {isUpdating && <div className="absolute inset-0 flex items-center justify-center"><Sparkles className="animate-spin text-azure-400" /></div>}
           </div>
