@@ -107,19 +107,20 @@ export default function HexaCardPreview({
                   <p className={`text-[11px] tracking-[0.2em] uppercase text-white font-medium leading-relaxed w-full ${getAlignClass(alignCompany)}`}>{company || "CORPORATION"}</p>
                </div>
 
-               <div className="flex-[1.5]" /> {/* 上部の余白を少し多めに取って中央へ寄せる */}
+               <div className="flex-1" /> {/* 上部の余白 */}
 
                {/* 中央: メインコンテンツ (肩書き・名前) */}
-               <div className="space-y-5 w-full flex flex-col py-4">
+               {/* py-2とspace-y-3でコンパクトにし、氏名の位置を上げる */}
+               <div className="space-y-3 w-full flex flex-col py-2">
                   <p className={`text-[9px] tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title || "ASSOCIATE"}</p>
                   <div className="flex flex-col gap-2 w-full">
                      {reading && <p className={`text-[10px] tracking-[0.3em] text-azure-400 font-bold uppercase truncate w-full ${getAlignClass(alignReading)}`}>{reading}</p>}
                      <h2 className={`text-2xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`}>{name}</h2>
                   </div>
-                  <div className={`h-px w-10 bg-azure-500/30 mt-2 ${alignName === 'left' ? 'self-start' : alignName === 'right' ? 'self-end' : 'self-center'}`} />
+                  <div className={`h-px w-10 bg-azure-500/30 mt-1 ${alignName === 'left' ? 'self-start' : alignName === 'right' ? 'self-end' : 'self-center'}`} />
                </div>
 
-               <div className="flex-1" />
+               <div className="flex-[2]" /> {/* 下部の余白を大きくして、氏名を中央へ押し上げる */}
 
                {/* 下部: 連絡先 */}
                <div className="space-y-3 opacity-40 flex flex-col w-full pb-2">
