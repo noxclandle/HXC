@@ -42,7 +42,10 @@ export async function GET() {
         sound: "Resonance",
         pointer: "Pure White Hex",
         angel: "Sentinel",
-        orientation: "horizontal"
+        orientation: "horizontal",
+        alignHeader: "center",
+        alignMain: "center",
+        alignFooter: "center"
       },
       profile: {
         title: profile.title || "",
