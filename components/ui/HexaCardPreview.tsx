@@ -25,8 +25,8 @@ interface HexaCardProps {
 }
 
 /**
- * HXC 実務特化型名刺 (真・黄金比版)
- * 縦型: 氏名を中央に固定し、3ブロックの独立整列を実現。
+ * HXC 実務特化型名刺 (真・黄金比版 v2)
+ * 縦型: 氏名を幾何学的な絶対中央に固定し、全ブロックで厳格な整列を保証。
  */
 export default function HexaCardPreview({ 
   name, reading, company, title, phone, email, logoUrl, faceUrl,
@@ -96,8 +96,8 @@ export default function HexaCardPreview({
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
           {isVertical ? (
-            /* 【究極の縦型】垂直中央配置と三段階整列 */
-            <div className="h-full p-10 flex flex-col">
+            /* 【究極の縦型】垂直中央配置と三段階・全階層整列 */
+            <div className="h-full p-10 flex flex-col items-center">
                {/* 1. 上部：ロゴ -> 会社名 */}
                <div className={`flex flex-col gap-4 w-full ${getAlignClass(alignHeader)}`}>
                   <div className="w-14 h-14 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
@@ -106,20 +106,20 @@ export default function HexaCardPreview({
                   <p className="text-[11px] tracking-[0.2em] uppercase text-white font-medium leading-relaxed">{company || "CORPORATION"}</p>
                </div>
 
-               {/* 可変スペーサー：名前を中央に押し下げる */}
+               {/* 上部スペーサー */}
                <div className="flex-1" />
 
                {/* 2. 中央：肩書き -> 氏名 (ここが名刺の絶対中心) */}
-               <div className={`space-y-4 w-full overflow-hidden flex flex-col ${getAlignClass(alignMain)}`}>
+               <div className={`space-y-5 w-full overflow-hidden flex flex-col ${getAlignClass(alignMain)}`}>
                   <p className="text-[9px] tracking-[0.4em] uppercase text-white/30 font-bold">{title || "ASSOCIATE"}</p>
-                  <div className="flex flex-col gap-2 w-full">
+                  <div className={`flex flex-col gap-2 w-full ${getAlignClass(alignMain)}`}>
                      {reading && <p className="text-[10px] tracking-[0.3em] text-azure-400 font-bold uppercase truncate">{reading}</p>}
-                     <h2 className="text-3xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis">{name}</h2>
+                     <h2 className="text-2xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis">{name}</h2>
                   </div>
                   <div className="h-px w-10 bg-azure-500/30 mt-4" />
                </div>
 
-               {/* 可変スペーサー：名前を中央に押し上げる */}
+               {/* 下部スペーサー */}
                <div className="flex-1" />
 
                {/* 3. 下部：連絡先 */}
@@ -139,7 +139,7 @@ export default function HexaCardPreview({
                </div>
             </div>
           ) : (
-            /* 横型レイアウト */
+            /* 横型レイアウト (完成済み) */
             <div className="h-full p-8 flex flex-col justify-between">
               <header className="flex flex-row items-center gap-4 pt-2">
                  <div className="w-12 h-12 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
