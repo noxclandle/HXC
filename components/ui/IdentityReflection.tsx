@@ -64,22 +64,24 @@ export default function IdentityReflection({ user, onUpdate }: IdentityReflectio
        
        <div className="flex flex-col items-center">
           <div className={`relative ${isUpdating ? 'opacity-20' : ''} transition-all duration-700 min-h-[250px] flex items-center justify-center w-full`}>
-             <HexaCardPreview 
-               name={user.name} 
+             <HexaCardPreview
+               name={user.name}
                reading={user.reading}
                company={user.profile?.company}
-               title={user.equipped.title} 
+               title={user.equipped.title}
                phone={user.profile?.phone}
                email={user.profile?.contact_email}
                logoUrl={user.logo_url}
                faceUrl={user.photo_url}
                frame={user.equipped.frame}
                orientation={user.equipped.orientation}
-               alignHeader={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.company || "center") : (user.equipped.vAlign?.company || "center")}
-               alignMain={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.name || "center") : (user.equipped.vAlign?.name || "center")}
-               alignFooter={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.phone || "center") : (user.equipped.vAlign?.phone || "center")}
-             />
-             {isUpdating && <div className="absolute inset-0 flex items-center justify-center"><Sparkles className="animate-spin text-azure-400" /></div>}
+               alignCompany={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.company || "center") : (user.equipped.vAlign?.company || "center")}
+               alignName={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.name || "center") : (user.equipped.vAlign?.name || "center")}
+               alignReading={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.reading || "center") : (user.equipped.vAlign?.reading || "center")}
+               alignTitle={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.title || "center") : (user.equipped.vAlign?.title || "center")}
+               alignPhone={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.phone || "center") : (user.equipped.vAlign?.phone || "center")}
+               alignEmail={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.email || "center") : (user.equipped.vAlign?.email || "center")}
+             />             {isUpdating && <div className="absolute inset-0 flex items-center justify-center"><Sparkles className="animate-spin text-azure-400" /></div>}
           </div>
           
           <div className="mt-12 grid grid-cols-2 gap-4 w-full">
