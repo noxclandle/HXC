@@ -60,6 +60,9 @@ export default function HexaCardPreview({
     switch (frame) {
       case "Gold": return "border-bronze-400/40 shadow-xl bg-[#0F1115]";
       case "Dynamic": return "border-azure-500/40 shadow-xl bg-[#0A0C10]";
+      case "Sakura": return "border-rose-400/40 shadow-[0_0_20px_rgba(251,113,133,0.1)] bg-[#0D0A0B]";
+      case "Emerald": return "border-emerald-400/40 shadow-[0_0_20px_rgba(52,211,153,0.1)] bg-[#0A0D0B]";
+      case "Platinum": return "border-slate-300 shadow-[0_0_25px_rgba(255,255,255,0.05)] bg-[#050505] ring-1 ring-white/10 ring-inset";
       default: return "border-white/10 shadow-2xl bg-[#050505]";
     }
   };

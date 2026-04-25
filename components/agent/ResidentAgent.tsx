@@ -124,7 +124,7 @@ export default function ResidentAgent() {
                           <span className="text-[7px] opacity-20 uppercase">{item.sub}</span>
                         </Link>
                       ) : (
-                        <button key={item.label} onClick={() => item.action ? item.action() : setActiveMessage(item.text || "")} className="w-full p-4 bg-gothic-dark border border-moonlight/5 text-[9px] tracking-[0.3em] uppercase text-left hover:border-yellow-500/30 hover:bg-white/5 transition-all flex items-center justify-between group">
+                        <button key={item.label} onClick={() => item.action && item.action()} className="w-full p-4 bg-gothic-dark border border-moonlight/5 text-[9px] tracking-[0.3em] uppercase text-left hover:border-yellow-500/30 hover:bg-white/5 transition-all flex items-center justify-between group">
                           <div className="flex items-center gap-4"><span className="opacity-20 group-hover:opacity-100 transition-opacity text-yellow-400">{item.icon}</span>{item.label}</div>
                           <span className="text-[7px] opacity-20 uppercase">{item.sub}</span>
                         </button>

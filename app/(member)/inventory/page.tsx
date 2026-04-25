@@ -17,6 +17,7 @@ interface Asset {
   rarity: "common" | "rare" | "epic" | "legendary" | "mythic";
   description: string;
   unlocked: boolean;
+  cost?: number;
 }
 
 const CATEGORIES = [
@@ -45,8 +46,11 @@ export default function InventoryPage() {
 
   const [assets, setAssets] = useState<Asset[]>([
     { id: "Obsidian", name: "Obsidian Frame", type: "frame", rarity: "common", description: "標準的な外枠。ビジネスの誠実さを表現する。", unlocked: true },
-    { id: "Gold", name: "Heritage Gold", type: "frame", rarity: "epic", description: "伝統を感じさせる落ち着いた黄金色。", unlocked: true },
-    { id: "Dynamic", name: "Azure Pulse", type: "frame", rarity: "legendary", description: "知性を感じさせる蒼い脈動。", unlocked: true },
+    { id: "Gold", name: "Heritage Gold", type: "frame", rarity: "epic", description: "伝統を感じさせる落ち着いた黄金色。", unlocked: true, cost: 5000 },
+    { id: "Dynamic", name: "Azure Pulse", type: "frame", rarity: "legendary", description: "知性を感じさせる蒼い脈動。", unlocked: true, cost: 10000 },
+    { id: "Sakura", name: "Sakura Aura", type: "frame", rarity: "rare", description: "優雅なピンクの残響。親しみやすさを演出する。", unlocked: true, cost: 3000 },
+    { id: "Emerald", name: "Emerald Pulse", type: "frame", rarity: "rare", description: "生命力溢れる緑の輝き。成長と調和の証。", unlocked: true, cost: 3000 },
+    { id: "Platinum", name: "Platinum Edge", type: "frame", rarity: "epic", description: "精巧な装飾が施された銀の縁。洗練されたプロフェッショナルへ。", unlocked: true, cost: 8000 },
     
     { id: "ASSOCIATE", name: "ASSOCIATE", type: "title", rarity: "common", description: "初期称号。同盟の一員である証。", unlocked: true },
     { id: "CONNECTOR", name: "CONNECTOR", type: "title", rarity: "rare", description: "実績：10人との接続を記録した証。", unlocked: true },
@@ -72,6 +76,8 @@ export default function InventoryPage() {
     }
   };
 
+  const [profile, setProfile] = useState<any>(null);
+
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
@@ -79,6 +85,7 @@ export default function InventoryPage() {
         if (res.ok) {
           const data = await res.json();
           setRTBalance(data.rt_balance);
+          setProfile(data);
           if (data.equipped) setEquipped({ ...equipped, ...data.equipped });
         }
       } catch (err) { console.error(err); }
@@ -149,8 +156,14 @@ export default function InventoryPage() {
               </div>
 
               <HexaCardPreview 
-                name={session?.user?.name || "ARCHITECT"} 
+                name={profile?.name || session?.user?.name || "ARCHITECT"} 
+                reading={profile?.handle || profile?.reading}
+                company={profile?.profile?.company}
                 title={equipped.title}
+                phone={profile?.profile?.phone}
+                email={profile?.profile?.contact_email || profile?.email}
+                logoUrl={profile?.logo_url}
+                faceUrl={profile?.photo_url}
                 frame={equipped.frame}
                 orientation={equipped.orientation}
                 alignCompany="center"
