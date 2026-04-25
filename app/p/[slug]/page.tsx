@@ -32,12 +32,12 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
 
   const handleSaveContact = () => {
     if (!data) return;
-    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${data.name}\nTEL:${data.phone || ""}\nEMAIL:${data.contact_email || data.email || ""}\nORG:${data.profile?.company || ""}\nEND:VCARD`;
+    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${data.name || "MEMBER"}\nTEL:${data.phone || ""}\nEMAIL:${data.contact_email || data.email || ""}\nORG:${data.profile?.company || ""}\nEND:VCARD`;
     const blob = new Blob([vcard], { type: "text/vcard" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${data.handle_name || data.name}.vcf`;
+    a.download = `${data.handle_name || data.name || 'contact'}.vcf`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -54,19 +54,22 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
     </div>
   );
 
-  const equipped = data.equipped_assets || {
-    frame: "Obsidian",
-    title: "ASSOCIATE",
-    orientation: "horizontal",
-    hAlign: { company: "center", title: "center", name: "center", reading: "center", phone: "center", email: "center" },
-    vAlign: { company: "center", title: "center", name: "center", reading: "center", phone: "center", email: "center" }
+  // データの欠落に対する鉄壁のガード
+  const defaultAlign = { company: "center", title: "center", name: "center", reading: "center", phone: "center", email: "center" };
+  const rawEquipped = data.equipped_assets || {};
+  
+  const equipped = {
+    frame: rawEquipped.frame || "Obsidian",
+    title: rawEquipped.title || "ASSOCIATE",
+    orientation: rawEquipped.orientation || "horizontal",
+    hAlign: rawEquipped.hAlign || defaultAlign,
+    vAlign: rawEquipped.vAlign || defaultAlign
   };
 
   const alignments = equipped.orientation === 'horizontal' ? equipped.hAlign : equipped.vAlign;
 
   return (
     <main className="min-h-screen bg-void text-moonlight relative flex flex-col items-center justify-center p-6 overflow-hidden">
-      {/* 聖域の背景と演出 */}
       <GeometricBackground />
       <ResonanceInteraction />
 
@@ -78,7 +81,6 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
            <h1 className="text-xl tracking-[0.4em] uppercase font-extralight text-white/80">同調された実体</h1>
         </header>
 
-        {/* 名刺プレビュー（最新レイアウト同期） */}
         <div className="flex flex-col items-center gap-4">
           <HexaCardPreview 
             name={data.name || "NAME"}
@@ -90,13 +92,12 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
             logoUrl={data.logo_url}
             faceUrl={data.photo_url}
             frame={equipped.frame}
-            orientation={equipped.orientation}
+            orientation={equipped.orientation as any}
             alignments={alignments}
           />
           <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 mt-4 italic">Tap card to verify secondary surface / 反転して本人を確認</p>
         </div>
 
-        {/* アクション導線 */}
         <div className="w-full max-w-sm space-y-4 pt-8">
            <button 
              onClick={handleSaveContact}
@@ -108,7 +109,12 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
            <div className="flex gap-4">
               <button 
                 onClick={() => {
-                  navigator.share({ title: data.name, url: window.location.href }).catch(() => {});
+                  if (navigator.share) {
+                    navigator.share({ title: data.name, url: window.location.href }).catch(() => {});
+                  } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert("URL Copied.");
+                  }
                 }}
                 className="flex-1 py-4 border border-white/10 bg-white/[0.02] text-[9px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all flex items-center justify-center gap-3"
               >
@@ -116,7 +122,7 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
               </button>
               <Link 
                 href="/login"
-                className="flex-1 py-4 border border-white/10 bg-white/[0.02] text-[9px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all flex items-center justify-center gap-3"
+                className="flex-1 py-4 border border-white/10 bg-white/[0.02] text-[9px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all flex items-center justify-center gap-3 text-center"
               >
                  Join Network
               </Link>
