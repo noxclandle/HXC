@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Phone, Download, Share2, Loader2, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { Mail, Phone, Download, Share2, Loader2, ArrowRight, ShieldCheck, Sparkles, Smartphone, Layers, Network } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import GeometricBackground from "@/components/background/GeometricBackground";
 import ResonanceInteraction from "@/components/ui/ResonanceInteraction";
@@ -31,27 +31,20 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
 
   const handleSaveContact = () => {
     if (!data) return;
-    
     let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${data.name || "MEMBER"}\nTEL:${data.phone || ""}\nEMAIL:${data.contact_email || data.email || ""}\nORG:${data.profile?.company || ""}`;
-    
-    // 自画像をBase64形式で埋め込む
     if (data.photo_url && data.photo_url.startsWith('data:image/')) {
       const parts = data.photo_url.split(',');
-      const meta = parts[0]; // data:image/jpeg;base64
       const base64Data = parts[1];
-      const type = meta.split(':')[1].split(';')[0].split('/')[1].toUpperCase(); // JPEG, PNG etc
+      const type = parts[0].split(':')[1].split(';')[0].split('/')[1].toUpperCase();
       vcard += `\nPHOTO;ENCODING=b;TYPE=${type}:${base64Data}`;
     }
-    
     vcard += `\nEND:VCARD`;
-    
     const blob = new Blob([vcard], { type: "text/vcard" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = `${data.handle_name || data.name || 'contact'}.vcf`;
     a.click();
-    window.URL.revokeObjectURL(url);
   };
 
   if (loading) return (
@@ -68,7 +61,6 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
 
   const defaultAlign = { company: "center", title: "center", name: "center", reading: "center", phone: "center", email: "center" };
   const rawEquipped = data.equipped_assets || {};
-  
   const equipped = {
     frame: rawEquipped.frame || "Obsidian",
     title: rawEquipped.title || "ASSOCIATE",
@@ -76,7 +68,6 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
     hAlign: rawEquipped.hAlign || defaultAlign,
     vAlign: rawEquipped.vAlign || defaultAlign
   };
-
   const alignments = equipped.orientation === 'horizontal' ? equipped.hAlign : equipped.vAlign;
 
   return (
@@ -84,7 +75,6 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
       <GeometricBackground />
       <ResonanceInteraction />
 
-      {/* Main Content Area */}
       <div className="relative z-10 w-full flex flex-col items-center pt-24 pb-32 px-6">
         
         {/* Header Section */}
@@ -98,7 +88,7 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
            <h1 className="text-2xl tracking-[0.4em] uppercase font-extralight text-white/90">同調された実体</h1>
         </motion.header>
 
-        {/* Card Display Section (PCで拡大) */}
+        {/* Card Display Section */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
@@ -117,10 +107,10 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
             orientation={equipped.orientation as any}
             alignments={alignments}
           />
-          <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 italic">Tap card to verify secondary surface / 反転して本人を確認</p>
+          <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 italic">Tap card to verify portrait / 反転して本人を確認</p>
         </motion.div>
 
-        {/* Action Controls */}
+        {/* Primary Action */}
         <div className="w-full max-w-sm space-y-6 mt-20">
            <button 
              onClick={handleSaveContact}
@@ -128,50 +118,72 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
            >
               <Download size={14} className="group-hover:translate-y-1 transition-transform" /> Save Contact / 連絡先を保存
            </button>
-           
-           <button 
-             onClick={() => {
-               if (navigator.share) {
-                 navigator.share({ title: data.name, url: window.location.href }).catch(() => {});
-               } else {
-                 navigator.clipboard.writeText(window.location.href);
-                 alert("Anchor URL Copied.");
-               }
-             }}
-             className="w-full py-5 border border-white/10 bg-white/[0.02] text-[10px] tracking-[0.6em] uppercase hover:bg-white/5 transition-all flex items-center justify-center gap-3"
-           >
-              <Share2 size={12} /> Share Identity
-           </button>
+           <div className="flex gap-4">
+              <button 
+                onClick={() => {
+                  if (navigator.share) navigator.share({ title: data.name, url: window.location.href });
+                  else { navigator.clipboard.writeText(window.location.href); alert("Copied."); }
+                }}
+                className="flex-1 py-4 border border-white/10 bg-white/[0.02] text-[9px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all flex items-center justify-center gap-3"
+              >
+                 <Share2 size={12} /> Share
+              </button>
+           </div>
         </div>
 
-        {/* CTA Section (LP風) */}
+        {/* Mini LP Section (あなたも始めてみませんか？) */}
         <motion.section 
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="w-full max-w-3xl mt-48 pt-24 border-t border-white/5 text-center space-y-12"
+          className="w-full max-w-4xl mt-64 pt-32 border-t border-white/5 space-y-32"
         >
-           <div className="space-y-6">
-              <div className="flex justify-center gap-3 text-azure-400/40 mb-8">
-                 <ShieldCheck size={24} strokeWidth={1} />
-                 <Hexagon size={24} strokeWidth={1} />
-                 <Sparkles size={24} strokeWidth={1} />
+           {/* Introduction */}
+           <div className="text-center space-y-12">
+              <div className="flex justify-center gap-6 text-azure-400/40 mb-12">
+                 <Smartphone size={32} strokeWidth={1} />
+                 <Layers size={32} strokeWidth={1} />
+                 <Network size={32} strokeWidth={1} />
               </div>
-              <h2 className="text-2xl md:text-3xl tracking-[0.3em] font-extralight uppercase text-white/80 leading-relaxed">
-                 あなたも、次世代の<br className="md:hidden" />デジタル名刺を<br />始めてみませんか？
+              <h2 className="text-3xl md:text-5xl tracking-[0.2em] font-extralight uppercase text-white/90 leading-tight">
+                 あなたも、次世代の<br />デジタル名刺を<br />始めてみませんか？
               </h2>
-              <p className="text-[11px] tracking-[0.2em] leading-loose opacity-40 uppercase max-w-lg mx-auto">
-                 Hexa Cardは、物理的な手触りとデジタルの無限性を融合させた、最高級のアイデンティティ管理プラットフォームです。信頼を可視化し、人脈を星座に変える体験を。
+              <p className="text-[12px] tracking-[0.3em] leading-loose opacity-40 uppercase max-w-xl mx-auto italic">
+                 Hexa Cardは、物理的な手触りとデジタルの無限性を融合させた、<br className="hidden md:block" />
+                 最高級のアイデンティティ管理プラットフォームです。
               </p>
            </div>
 
-           <Link 
-             href="/"
-             className="inline-flex items-center gap-4 px-12 py-5 bg-white text-void font-bold text-[10px] tracking-[1em] uppercase hover:bg-azure-50 hover:scale-105 transition-all shadow-2xl group"
-           >
-              Discover More / 詳細を見る <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
-           </Link>
+           {/* Features Grid */}
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 px-6">
+              {[
+                { title: "Physical Sync", desc: "物理カードとデジタルが1:1で同調。タップ一つで相手の記憶に刻まれます。", icon: <Smartphone size={20}/> },
+                { title: "Total Control", desc: "デザイン、配置、ロゴ、自画像。すべてをあなたの意志で調律可能。", icon: <Layers size={20}/> },
+                { title: "Star Chart", desc: "繋がった人脈は「星座」として記録され、あなたの影響力を可視化します。", icon: <Sparkles size={20}/> },
+              ].map((f, i) => (
+                <div key={i} className="space-y-4 p-8 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all group">
+                   <div className="text-azure-400 opacity-40 group-hover:opacity-100 transition-opacity mb-6">{f.icon}</div>
+                   <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-white/80">{f.title}</h3>
+                   <p className="text-[9px] tracking-widest leading-loose opacity-40 uppercase">{f.desc}</p>
+                </div>
+              ))}
+           </div>
+
+           {/* Final CTA */}
+           <div className="text-center py-20 bg-azure-500/[0.02] border border-azure-500/10 backdrop-blur-sm relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-azure-500/5 to-transparent -translate-x-full animate-[shimmer_5s_infinite]" />
+              <div className="space-y-8 relative z-10">
+                 <h3 className="text-xl tracking-[0.5em] uppercase font-light text-white/70">Elevate Your Presence</h3>
+                 <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase">信頼を可視化し、人脈を資産に変えるために。</p>
+                 <Link 
+                   href="/"
+                   className="inline-flex items-center gap-6 px-16 py-6 bg-white text-void font-bold text-[11px] tracking-[1.2em] uppercase hover:bg-azure-50 transition-all shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:scale-105 active:scale-95 group"
+                 >
+                    Join Sanctum / 詳細を見る <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
+                 </Link>
+              </div>
+           </div>
         </motion.section>
 
-        <footer className="mt-32 opacity-10 text-center pb-12">
+        <footer className="mt-48 opacity-10 text-center pb-12">
            <p className="text-[8px] tracking-[1em] uppercase font-bold">Hexa Relation Network Protocol v1.0</p>
         </footer>
       </div>
