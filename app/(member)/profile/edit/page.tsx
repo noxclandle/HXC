@@ -167,8 +167,19 @@ export default function ProfileEditPage() {
                  </button>
               </div>
               <HexaCardPreview 
-                name={formData.name || "NAME"} reading={formData.reading} company={formData.company} title={formData.title || equipped.title} phone={formData.phone} email={formData.email} logoUrl={formData.logoUrl} faceUrl={formData.faceUrl} frame={equipped.frame} orientation={formData.orientation}
-                alignments={formData.orientation === 'horizontal' ? formData.hAlign : formData.vAlign}
+                name={formData.name || "NAME"} 
+                reading={formData.reading}
+                company={formData.company}
+                title={formData.title || equipped.title}
+                phone={formData.phone}
+                email={formData.email}
+                logoUrl={formData.logoUrl}
+                faceUrl={formData.faceUrl}
+                frame={equipped.frame}
+                orientation={formData.orientation}
+                alignHeader={formData.orientation === 'horizontal' ? formData.hAlign.company : formData.vAlign.company}
+                alignMain={formData.orientation === 'horizontal' ? formData.hAlign.name : formData.vAlign.name}
+                alignFooter={formData.orientation === 'horizontal' ? formData.hAlign.phone : formData.vAlign.phone}
               />
            </div>
            <div className="p-6 border border-azure-500/20 bg-azure-500/5 space-y-4">

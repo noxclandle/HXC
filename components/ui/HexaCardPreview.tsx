@@ -16,7 +16,7 @@ export interface FieldAlignments {
   email: Alignment;
 }
 
-interface HexaCardProps {
+export interface HexaCardProps {
   name: string;
   reading?: string;
   company?: string;
@@ -26,15 +26,21 @@ interface HexaCardProps {
   logoUrl?: string;
   faceUrl?: string;
   orientation?: "horizontal" | "vertical";
-  alignments: FieldAlignments;
+  // 柔軟な整列指定
+  alignHeader?: Alignment;
+  alignMain?: Alignment;
+  alignFooter?: Alignment;
   frame?: string;
   onFlip?: (isFlipped: boolean) => void;
 }
 
+/**
+ * HXC プロフェッショナル名刺 (最終安定・高耐久版)
+ */
 export default function HexaCardPreview({ 
   name, reading, company, title, phone, email, logoUrl, faceUrl,
   orientation = "horizontal", 
-  alignments,
+  alignHeader = "center", alignMain = "center", alignFooter = "center",
   frame = "Obsidian", onFlip 
 }: HexaCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -65,7 +71,7 @@ export default function HexaCardPreview({
     }
   };
 
-  const getAlignClass = (align: Alignment) => {
+  const getAlignClass = (align: Alignment = "center") => {
     if (align === "left") return "items-start text-left";
     if (align === "right") return "items-end text-right";
     return "items-center text-center";
@@ -93,98 +99,71 @@ export default function HexaCardPreview({
       >
         <motion.div style={{ opacity: glowOpacity, rotateY: 90, backfaceVisibility: "hidden" }} className="absolute inset-0 bg-white/10 blur-3xl z-20 pointer-events-none" />
 
+        {/* 【表面】 */}
         <div 
           className={`absolute inset-0 overflow-hidden border ${getFrameStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
           {isVertical ? (
-            /* 縦型レイアウト: 3段グリッド + 個別整列 */
-            <div className="h-full p-10 grid grid-rows-[1fr_auto_1fr] items-center">
-               <div className={`self-start flex flex-col gap-4 w-full ${getAlignClass(alignments.company)}`}>
+            <div className="h-full p-10 flex flex-col">
+               <div className={`flex flex-col gap-4 w-full ${getAlignClass(alignHeader)}`}>
                   <div className="w-14 h-14 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
                      {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={24} className="text-white/10" />}
                   </div>
                   <p className="text-[11px] tracking-[0.2em] uppercase text-white font-medium leading-relaxed">{company || "CORPORATION"}</p>
                </div>
-
-               <div className={`space-y-5 w-full overflow-hidden flex flex-col ${getAlignClass(alignments.name)}`}>
-                  <p className={`text-[9px] tracking-[0.4em] uppercase text-white/30 font-bold ${getAlignClass(alignments.title)}`}>{title || "ASSOCIATE"}</p>
-                  <div className={`flex flex-col gap-2 w-full ${getAlignClass(alignments.name)}`}>
+               <div className="flex-1" />
+               <div className={`space-y-5 w-full overflow-hidden flex flex-col ${getAlignClass(alignMain)}`}>
+                  <p className="text-[9px] tracking-[0.4em] uppercase text-white/30 font-bold">{title || "ASSOCIATE"}</p>
+                  <div className={`flex flex-col gap-2 w-full ${getAlignClass(alignMain)}`}>
                      {reading && <p className="text-[10px] tracking-[0.3em] text-azure-400 font-bold uppercase truncate">{reading}</p>}
                      <h2 className="text-2xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis">{name}</h2>
                   </div>
-                  <div className="h-px w-10 bg-azure-500/30 mt-4 mx-auto" style={{ margin: alignments.name === 'center' ? '1rem auto 0' : alignments.name === 'left' ? '1rem auto 0 0' : '1rem 0 0 auto' }} />
+                  <div className="h-px w-10 bg-azure-500/30 mt-4" style={{ margin: alignMain === 'center' ? '1rem auto 0' : alignMain === 'right' ? '1rem 0 0 auto' : '1rem auto 0 0' }} />
                </div>
-
-               <div className={`self-end space-y-3 opacity-40 flex flex-col w-full ${getAlignClass(alignments.phone)}`}>
-                  {phone && (
-                     <div className="flex items-center gap-2">
-                        <Phone size={10} className="text-azure-400" />
-                        <span className="font-mono text-[9px] tracking-[0.2em]">{phone}</span>
-                     </div>
-                  )}
-                  {email && (
-                     <div className={`flex items-center gap-2 ${getAlignClass(alignments.email)}`}>
-                        <Mail size={10} className="text-azure-400" />
-                        <span className="font-mono text-[9px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span>
-                     </div>
-                  )}
+               <div className="flex-1" />
+               <div className={`space-y-3 opacity-40 flex flex-col w-full ${getAlignClass(alignFooter)}`}>
+                  {phone && <div className="flex items-center gap-2"><Phone size={10} className="text-azure-400" /><span className="font-mono text-[9px] tracking-[0.2em]">{phone}</span></div>}
+                  {email && <div className="flex items-center gap-2"><Mail size={10} className="text-azure-400" /><span className="font-mono text-[9px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span></div>}
                </div>
             </div>
           ) : (
-            /* 横型レイアウト: 個別整列対応 */
-            <div className="h-full p-10 flex flex-col justify-between">
-              <header className={`flex flex-row items-center gap-4 pt-2 ${getAlignClass(alignments.company)}`}>
+            <div className="h-full p-8 flex flex-col justify-between">
+              <header className="flex flex-row items-center gap-4 pt-2">
                  <div className="w-12 h-12 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
                     {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={18} className="text-white/10" />}
                  </div>
                  <p className="text-[11px] tracking-[0.3em] uppercase text-white/80 font-medium leading-tight">{company || "CORPORATION"}</p>
               </header>
-              <main className={`flex flex-col gap-2 ${getAlignClass(alignments.name)}`}>
-                <div className={`space-y-1 ${getAlignClass(alignments.title)}`}>
+              <main className="flex flex-col gap-2">
+                <div className="space-y-1">
                    <p className="text-[9px] tracking-[0.4em] uppercase text-white/30 font-bold">{title || "ASSOCIATE"}</p>
-                   <div className={`flex flex-col ${getAlignClass(alignments.name)}`}>
+                   <div className="flex flex-col">
                       {reading && <span className="text-[8px] tracking-[0.3em] text-azure-400 font-bold uppercase mb-1">{reading}</span>}
                       <h2 className="text-3xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis">{name}</h2>
                    </div>
                 </div>
-                <div className={`mt-4 flex gap-6 opacity-40 ${getAlignClass(alignments.phone)}`}>
-                   {phone && (
-                     <div className="flex items-center gap-2">
-                        <Phone size={10} className="text-azure-400" />
-                        <span className="font-mono text-[9px] tracking-widest">{phone}</span>
-                     </div>
-                   )}
-                   {email && (
-                     <div className="flex items-center gap-2">
-                        <Mail size={10} className="text-azure-400" />
-                        <span className="font-mono text-[9px] tracking-widest uppercase">{email}</span>
-                     </div>
-                   )}
+                <div className="mt-4 flex gap-6 opacity-40">
+                   {phone && <div className="flex items-center gap-2"><Phone size={10} /><span className="font-mono text-[9px] tracking-widest">{phone}</span></div>}
+                   {email && <div className="flex items-center gap-2"><Mail size={10} /><span className="font-mono text-[9px] tracking-widest uppercase">{email}</span></div>}
                 </div>
               </main>
-              <footer className="flex justify-end opacity-5">
-                <div className="text-[10px] font-bold italic">STANDARD HXC</div>
-              </footer>
+              <footer className="flex justify-end opacity-5"><div className="text-[10px] font-bold italic">STANDARD HXC</div></footer>
             </div>
           )}
         </div>
 
+        {/* 【裏面】Portrait */}
         <div 
           className={`absolute inset-0 p-8 flex flex-col justify-center items-center text-center border ${getFrameStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
         >
-          <div className="space-y-8 relative z-10 w-full flex flex-col items-center">
-            <div className="w-32 h-32 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl">
-               {faceUrl ? <img src={faceUrl} alt="Portrait" className="w-full h-full object-cover" /> : <User size={48} className="text-white/5" />}
-            </div>
-            <div className="space-y-4">
-               <p className="text-[9px] tracking-[0.5em] uppercase text-white/30">Verified Entity Portrait</p>
-               <div className="h-px w-12 bg-white/10 mx-auto" />
-               <p className="text-[7px] tracking-[0.4em] uppercase opacity-20 leading-loose max-w-[200px] mx-auto">
-                 The physical reflection of this identity<br />is secured by Hexa Network.
-               </p>
-            </div>
+          <div className="w-32 h-32 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl mb-8">
+             {faceUrl ? <img src={faceUrl} alt="Portrait" className="w-full h-full object-cover" /> : <User size={48} className="text-white/5" />}
+          </div>
+          <div className="space-y-4">
+             <p className="text-[9px] tracking-[0.5em] uppercase text-white/30">Verified Entity Portrait</p>
+             <p className="text-[7px] tracking-[0.4em] uppercase opacity-20 leading-loose max-w-[200px] mx-auto">Physical identity secured via Hexa Network.</p>
           </div>
         </div>
       </motion.div>
