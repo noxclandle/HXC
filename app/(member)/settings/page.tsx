@@ -44,9 +44,12 @@ export default function SettingsPage() {
                 name={session?.user?.name || "MEMBER"} 
                 title={personality} 
                 frame={activeBg}
-                alignHeader="center"
-                alignMain="center"
-                alignFooter="center"
+                alignCompany="center"
+                alignName="center"
+                alignReading="center"
+                alignTitle="center"
+                alignPhone="center"
+                alignEmail="center"
               />
             </div>
           </div>
