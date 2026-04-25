@@ -92,9 +92,12 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
             faceUrl={data.photo_url}
             frame={rawEquipped.frame}
             orientation={currentOrientation}
-            alignHeader={currentAligns.company || defaultAlign}
-            alignMain={currentAligns.name || defaultAlign}
-            alignFooter={currentAligns.phone || defaultAlign}
+            alignCompany={currentAligns.company || defaultAlign}
+            alignName={currentAligns.name || defaultAlign}
+            alignReading={currentAligns.reading || defaultAlign}
+            alignTitle={currentAligns.title || defaultAlign}
+            alignPhone={currentAligns.phone || defaultAlign}
+            alignEmail={currentAligns.email || defaultAlign}
           />
         </motion.div>
 
