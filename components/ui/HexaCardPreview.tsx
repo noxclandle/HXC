@@ -98,15 +98,19 @@ export default function HexaCardPreview({
         >
           {isVertical ? (
             /* 縦型レイアウト */
-            <div className="h-full p-10 flex flex-col">
+            <div className="h-full p-10 flex flex-col items-center">
+               {/* 上部: 所属・ロゴ */}
                <div className={`flex flex-col gap-4 w-full ${getAlignClass(alignCompany)}`}>
                   <div className="w-14 h-14 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
                      {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={24} className="text-white/10" />}
                   </div>
                   <p className={`text-[11px] tracking-[0.2em] uppercase text-white font-medium leading-relaxed w-full ${getAlignClass(alignCompany)}`}>{company || "CORPORATION"}</p>
                </div>
-               <div className="flex-1" />
-               <div className="space-y-5 w-full flex flex-col">
+
+               <div className="flex-[1.5]" /> {/* 上部の余白を少し多めに取って中央へ寄せる */}
+
+               {/* 中央: メインコンテンツ (肩書き・名前) */}
+               <div className="space-y-5 w-full flex flex-col py-4">
                   <p className={`text-[9px] tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title || "ASSOCIATE"}</p>
                   <div className="flex flex-col gap-2 w-full">
                      {reading && <p className={`text-[10px] tracking-[0.3em] text-azure-400 font-bold uppercase truncate w-full ${getAlignClass(alignReading)}`}>{reading}</p>}
@@ -114,8 +118,11 @@ export default function HexaCardPreview({
                   </div>
                   <div className={`h-px w-10 bg-azure-500/30 mt-2 ${alignName === 'left' ? 'self-start' : alignName === 'right' ? 'self-end' : 'self-center'}`} />
                </div>
+
                <div className="flex-1" />
-               <div className="space-y-3 opacity-40 flex flex-col w-full">
+
+               {/* 下部: 連絡先 */}
+               <div className="space-y-3 opacity-40 flex flex-col w-full pb-2">
                   {phone && <div className={`flex items-center gap-2 w-full ${getAlignClass(alignPhone)}`}><Phone size={10} className="text-azure-400" /><span className="font-mono text-[9px] tracking-[0.2em]">{phone}</span></div>}
                   {email && <div className={`flex items-center gap-2 w-full ${getAlignClass(alignEmail)}`}><Mail size={10} className="text-azure-400" /><span className="font-mono text-[9px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span></div>}
                </div>
