@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, handle, title, website, bio, company, photo_url, logo_url, orientation, phone, email: contactEmail, alignHeader, alignMain, alignFooter } = body;
+    const { name, handle, title, website, bio, company, photo_url, logo_url, orientation, phone, email, hAlign, vAlign } = body;
 
     const currentUser = await prisma.user.findUnique({
       where: { email: session.user.email }
@@ -31,16 +31,15 @@ export async function POST(req: NextRequest) {
         equipped_assets: {
           ...currentEquipped,
           orientation: orientation,
-          alignHeader: alignHeader || "center",
-          alignMain: alignMain || "center",
-          alignFooter: alignFooter || "center"
+          hAlign: hAlign,
+          vAlign: vAlign
         },
         ai_config: {
           profile: {
             title: title,
             bio: bio,
             company: company,
-            contact_email: contactEmail
+            contact_email: email
           }
         }
       }
