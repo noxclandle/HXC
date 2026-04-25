@@ -31,7 +31,20 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
 
   const handleSaveContact = () => {
     if (!data) return;
-    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${data.name || "MEMBER"}\nTEL:${data.phone || ""}\nEMAIL:${data.contact_email || data.email || ""}\nORG:${data.profile?.company || ""}\nEND:VCARD`;
+    
+    let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${data.name || "MEMBER"}\nTEL:${data.phone || ""}\nEMAIL:${data.contact_email || data.email || ""}\nORG:${data.profile?.company || ""}`;
+    
+    // 自画像をBase64形式で埋め込む
+    if (data.photo_url && data.photo_url.startsWith('data:image/')) {
+      const parts = data.photo_url.split(',');
+      const meta = parts[0]; // data:image/jpeg;base64
+      const base64Data = parts[1];
+      const type = meta.split(':')[1].split(';')[0].split('/')[1].toUpperCase(); // JPEG, PNG etc
+      vcard += `\nPHOTO;ENCODING=b;TYPE=${type}:${base64Data}`;
+    }
+    
+    vcard += `\nEND:VCARD`;
+    
     const blob = new Blob([vcard], { type: "text/vcard" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
