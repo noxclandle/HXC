@@ -5,16 +5,18 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
   try {
     const slug = params.slug;
     
-    // slugを元にユーザーを検索。
-    // 本来は slug 専用のカラム (alias_name等) で検索しますが、簡易的に handle_name を小文字にしたものと照合します
+    // 特定のスラッグ「architect」または、DB内の handle_name / name で検索
     const user = await prisma.user.findFirst({
       where: {
         OR: [
           { handle_name: { equals: slug, mode: "insensitive" } },
-          { name: { equals: slug.replace(/-/g, " "), mode: "insensitive" } }
+          { name: { equals: slug.replace(/-/g, " "), mode: "insensitive" } },
+          // チーフオフィサーへの特別バイパス (slugがarchitectの場合)
+          slug === "architect" ? { email: "str1yf5x@gmail.com" } : {}
         ]
       },
       select: {
+        id: true,
         name: true,
         handle_name: true,
         rank: true,
@@ -22,10 +24,10 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
         phone: true,
         email: true,
         photo_url: true,
-        link_x: true,
-        link_instagram: true,
+        logo_url: true, // 会社ロゴを追加
         link_website: true,
         ai_config: true,
+        equipped_assets: true, // 配置情報を追加
       }
     });
 
@@ -33,7 +35,20 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       return NextResponse.json({ error: "Identity not found." }, { status: 404 });
     }
 
-    return NextResponse.json(user);
+    // クライアント側で使いやすい形式に整形
+    const aiConfig = (user.ai_config as any) || {};
+    const profile = aiConfig.profile || {};
+
+    return NextResponse.json({
+      ...user,
+      profile: {
+        company: profile.company || "",
+        title: profile.title || "",
+        bio: profile.bio || "",
+        website: user.link_website || "",
+        contact_email: profile.contact_email || user.email || ""
+      }
+    });
   } catch (error: any) {
     console.error("Profile fetch error:", error);
     return NextResponse.json({ error: "Failed to fetch profile." }, { status: 500 });
