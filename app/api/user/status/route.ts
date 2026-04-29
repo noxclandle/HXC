@@ -23,6 +23,13 @@ export async function GET() {
     }
 
     const titles = Array.isArray(user.unlocked_titles) ? user.unlocked_titles : [];
+    const ownedAssets = Array.isArray(user.owned_assets) ? user.owned_assets : [];
+    
+    const assetPricesConfig = await prisma.systemConfig.findUnique({
+      where: { key: 'asset_prices' }
+    });
+    const assetPrices = assetPricesConfig?.value || {};
+
     const aiConfig = (user.ai_config as any) || {};
     const profile = aiConfig.profile || {};
     const equipped = (user.equipped_assets as any) || {};
@@ -39,8 +46,11 @@ export async function GET() {
     return NextResponse.json({
       name: user.name || session.user.name || "ARCHITECT",
       rt_balance: user.rt_balance.toString(),
+      exp: user.exp.toString(),
       rank: user.rank,
       titles: titles,
+      owned_assets: ownedAssets,
+      asset_prices: assetPrices,
       uid: user.card?.uid || "NO CARD LINKED",
       handle: user.handle_name || "", 
       slug: user.handle_name || user.id,
@@ -59,6 +69,10 @@ export async function GET() {
         bio: profile.bio || "",
         company: profile.company || "",
         website: user.link_website || "",
+        link_x: user.link_x || "",
+        link_instagram: user.link_instagram || "",
+        link_line: user.link_line || "",
+        link_facebook: user.link_facebook || "",
         phone: user.phone || "",
         contact_email: profile.contact_email || ""
       }

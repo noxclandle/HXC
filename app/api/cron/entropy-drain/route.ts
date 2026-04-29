@@ -1,14 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { executeRTTransaction } from "@/lib/rt/engine";
-
-const prisma = new PrismaClient();
 
 /**
  * 全ユーザーのEntropy Drain（日々の維持費）を計算し実行する
  * セキュリティのため、実際にはCronジョブなどからの認証済みリクエストのみ許可する
  */
 export async function POST(req: NextRequest) {
+  // Security check: Ensure CRON_SECRET is present and matches the authorization header
+  const authHeader = req.headers.get("authorization");
+  if (
+    process.env.NODE_ENV === "production" &&
+    authHeader !== `Bearer ${process.env.CRON_SECRET}`
+  ) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const users = await prisma.user.findMany({
       where: { role: "member" },

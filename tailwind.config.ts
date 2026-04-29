@@ -38,11 +38,27 @@ const config: Config = {
         'geometry-pulse': 'pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'shimmer': 'shimmer 3s infinite linear',
         'slow-spin': 'spin 30s linear infinite',
+        'fall': 'fall 10s linear infinite',
+        'glitch': 'glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite',
       },
       keyframes: {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
+        },
+        fall: {
+          '0%': { transform: 'translateY(-10vh) translateX(-5vw) rotate(0deg)', opacity: '0' },
+          '10%': { opacity: '0.3' },
+          '90%': { opacity: '0.3' },
+          '100%': { transform: 'translateY(110vh) translateX(20vw) rotate(360deg)', opacity: '0' },
+        },
+        glitch: {
+          '0%': { transform: 'translate(0)' },
+          '20%': { transform: 'translate(-2px, 2px)' },
+          '40%': { transform: 'translate(-2px, -2px)' },
+          '60%': { transform: 'translate(2px, 2px)' },
+          '80%': { transform: 'translate(2px, -2px)' },
+          '100%': { transform: 'translate(0)' },
         },
       },
     },

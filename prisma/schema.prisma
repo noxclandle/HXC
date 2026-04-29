@@ -25,7 +25,10 @@ model User {
   link_x            String?          // X (Twitter) URL
   link_instagram    String?          // Instagram URL
   link_website      String?          // Website URL
+  link_line         String?          // LINE URL/ID
+  link_facebook     String?          // Facebook URL
   rt_balance        BigInt           @default(0)
+  exp               BigInt           @default(0)      // 累計経験値
   last_daily_at     DateTime?        // 最後にデイリーボーナスを受け取った日時
   ai_config         Json?
   owned_assets      Json?
@@ -116,4 +119,52 @@ model ScheduledTask {
   created_at   DateTime @default(now())
 
   @@map("scheduled_tasks")
+}
+
+model SystemConfig {
+  key        String   @id
+  value      Json
+  updated_at DateTime @updatedAt
+
+  @@map("system_configs")
+}
+
+model Report {
+  id              String   @id @default(uuid()) @db.Uuid
+  reporter_id     String?  @db.Uuid
+  target_user_id  String   @db.Uuid
+  reason          String
+  details         String?
+  status          String   @default("pending")
+  created_at      DateTime @default(now())
+
+  @@map("reports")
+}
+
+model Announcement {
+  id           String   @id @default(uuid()) @db.Uuid
+  title        String
+  content      String
+  type         String   @default("update")
+  is_published Boolean  @default(true)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@map("announcements")
+}
+
+model Order {
+  id                String   @id @default(uuid()) @db.Uuid
+  stripe_session_id String?  @unique
+  tier              String   // Classic, Custom, Executive, Apex
+  variant           String?  // 色（Silver, Gold等）
+  price             Int      // 支払額
+  customer_email    String
+  customer_name     String
+  shipping_address  Json?    // 配送先情報
+  status            String   @default("paid") // paid, processing, shipped, completed
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("orders")
 }

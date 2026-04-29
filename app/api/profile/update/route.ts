@@ -11,7 +11,11 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, handle, title, website, bio, company, photo_url, logo_url, orientation, phone, email, hAlign, vAlign } = body;
+    const { 
+      name, handle, title, website, bio, company, photo_url, logo_url, 
+      orientation, phone, email, hAlign, vAlign,
+      link_x, link_instagram, link_line, link_facebook
+    } = body;
 
     const currentUser = await prisma.user.findUnique({
       where: { email: session.user.email }
@@ -25,6 +29,10 @@ export async function POST(req: NextRequest) {
         name: name,
         handle_name: handle,
         link_website: website,
+        link_x: link_x,
+        link_instagram: link_instagram,
+        link_line: link_line,
+        link_facebook: link_facebook,
         photo_url: photo_url,
         logo_url: logo_url,
         phone: phone,

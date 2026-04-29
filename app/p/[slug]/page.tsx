@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Phone, Download, Share2, Loader2, ArrowRight, ShieldCheck, Sparkles, Smartphone, Layers, Network, ChevronDown } from "lucide-react";
+import { Mail, Phone, Download, Share2, Loader2, ArrowRight, ShieldCheck, Sparkles, Smartphone, Layers, Network, AlertCircle, ChevronDown } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import GeometricBackground from "@/components/background/GeometricBackground";
 import ResonanceInteraction from "@/components/ui/ResonanceInteraction";
@@ -11,6 +11,9 @@ import Link from "next/link";
 export default function PublicProfilePage({ params }: { params: { slug: string } }) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showReport, setShowReport] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [reporting, setReporting] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -47,6 +50,22 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
     a.click();
   };
 
+  const handleReport = async () => {
+    if (!reportReason) return;
+    setReporting(true);
+    try {
+      const res = await fetch("/api/report", {
+        method: "POST",
+        body: JSON.stringify({ targetUserId: data.id, reason: reportReason })
+      });
+      if (res.ok) {
+        alert("Report submitted.");
+        setShowReport(false);
+      }
+    } catch (e) { console.error(e); }
+    finally { setReporting(false); }
+  };
+
   if (loading) return (
     <div className="min-h-screen bg-void flex items-center justify-center">
       <Loader2 className="animate-spin text-azure-400/20" size={32} />
@@ -70,6 +89,34 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
       <GeometricBackground />
       <ResonanceInteraction />
 
+      <button onClick={() => setShowReport(true)} className="fixed top-8 right-8 z-50 p-3 border border-white/5 bg-white/[0.02] text-white/20 hover:text-rose-500 hover:border-rose-500/20 transition-all group" title="Report Identity">
+         <AlertCircle size={16} />
+      </button>
+
+      {/* Report Modal */}
+      <AnimatePresence>
+        {showReport && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-void/90 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className="max-w-md w-full bg-[#0a0a0a] border border-white/10 p-8 space-y-6">
+               <h3 className="text-sm tracking-[0.4em] uppercase font-bold text-white">Report Identity</h3>
+               <p className="text-[10px] tracking-widest opacity-40 leading-relaxed">
+                  不適切なコンテンツや利用規約違反を報告します。管理者が内容を精査し、必要に応じて処置を行います。
+               </p>
+               <textarea 
+                 value={reportReason}
+                 onChange={(e) => setReportReason(e.target.value)}
+                 className="w-full bg-white/5 border border-white/10 p-4 text-[11px] tracking-widest outline-none focus:border-rose-500 transition-all h-32 resize-none text-white font-sans"
+                 placeholder="詳細な理由を記載してください"
+               />
+               <div className="flex gap-4">
+                  <button onClick={() => setShowReport(false)} className="flex-1 py-3 border border-white/10 text-[9px] uppercase tracking-widest text-white/40">Cancel</button>
+                  <button onClick={handleReport} disabled={reporting} className="flex-1 py-3 bg-rose-600 text-white font-bold text-[9px] uppercase tracking-[0.3em]">{reporting ? "Sending..." : "Submit Report"}</button>
+               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center px-6">
         <motion.header initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center space-y-2 mb-20">
            <p className="text-[9px] tracking-[0.8em] uppercase opacity-20 font-bold text-white">Identity Verification</p>
@@ -91,6 +138,14 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
             logoUrl={data.logo_url}
             faceUrl={data.photo_url}
             frame={rawEquipped.frame}
+            background={rawEquipped.background}
+            effect={rawEquipped.effect}
+            fontFamily={rawEquipped.fontFamily || rawEquipped.font}
+            sound={rawEquipped.sound}
+            link_x={data.link_x}
+            link_instagram={data.link_instagram}
+            link_line={data.link_line}
+            link_facebook={data.link_facebook}
             orientation={currentOrientation}
             alignCompany={currentAligns.company || defaultAlign}
             alignName={currentAligns.name || defaultAlign}

@@ -23,6 +23,8 @@ export async function GET(req: NextRequest) {
         role: true,
         rt_balance: true,
         created_at: true,
+        owned_assets: true,
+        unlocked_titles: true,
       },
       orderBy: { created_at: "desc" },
     });

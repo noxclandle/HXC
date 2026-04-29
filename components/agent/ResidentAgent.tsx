@@ -15,13 +15,40 @@ export default function ResidentAgent() {
   const [inputText, setInputText] = useState("");
   const [hasDaily, setHasDaily] = useState(false);
   const [ambientMode, setAmbientMode] = useState<"off" | "space" | "rain">("off");
+  const [userExp, setUserExp] = useState(0);
   const { showToast } = useToast();
   
-  const userLevel = 12;
+  const level = Math.floor(Math.sqrt(userExp / 10)) + 1; // 10, 40, 90, 160... でレベルアップ
+
+  const fetchStatus = async () => {
+    try {
+      const res = await fetch("/api/user/status");
+      if (res.ok) {
+        const data = await res.json();
+        setUserExp(Number(data.exp));
+      }
+    } catch (e) { console.error(e); }
+  };
 
   useEffect(() => {
     ambientManager.init();
+    fetchStatus();
+    window.addEventListener("rt-grace-received", fetchStatus);
+    window.addEventListener("hxc-assets-updated", fetchStatus);
+    return () => {
+      window.removeEventListener("rt-grace-received", fetchStatus);
+      window.removeEventListener("hxc-assets-updated", fetchStatus);
+    };
   }, []);
+
+  const getEvolutionStage = (lv: number) => {
+    if (lv >= 30) return { name: "Seraph", color: "text-rose-400", glow: "shadow-[0_0_50px_rgba(255,255,255,0.8)]" };
+    if (lv >= 20) return { name: "Archangel", color: "text-orange-400", glow: "shadow-[0_0_35px_rgba(255,255,255,0.6)]" };
+    if (lv >= 10) return { name: "Guardian", color: "text-azure-400", glow: "shadow-[0_0_25px_rgba(255,255,255,0.4)]" };
+    return { name: "Sentinel", color: "text-yellow-400", glow: "shadow-[0_0_15px_rgba(255,255,255,0.3)]" };
+  };
+
+  const stage = getEvolutionStage(level);
 
   const toggleAmbient = (type: "space" | "rain") => {
     if (ambientMode === type) {
@@ -96,9 +123,26 @@ export default function ResidentAgent() {
       <AnimatePresence>
         {isOpen && (
           <motion.div initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.95 }} className="mb-4 w-80 bg-void/95 border border-yellow-500/20 shadow-2xl backdrop-blur-xl overflow-hidden p-6 flex flex-col gap-6">
-            <div className="flex justify-between items-center opacity-40">
-              <span className="text-[10px] tracking-[0.4em] uppercase italic flex items-center gap-2 text-yellow-400"><Info size={12}/> Concierge / Help</span>
-              <button onClick={() => { setMode("menu"); setIsOpen(false); }} className="hover:opacity-100 transition-opacity"><X size={14} /></button>
+            <div className="flex flex-col gap-3">
+               <div className="flex justify-between items-center opacity-40">
+                  <span className="text-[10px] tracking-[0.4em] uppercase italic flex items-center gap-2 text-yellow-400"><Info size={12}/> Concierge / Help</span>
+                  <button onClick={() => setIsOpen(false)} className="hover:text-white transition-colors"><X size={14}/></button>
+               </div>
+
+               {/* Sacred Evolution Progress */}
+               <div className="p-3 bg-white/[0.03] border border-white/5 space-y-2">
+                  <div className="flex justify-between items-end">
+                     <span className={`text-[8px] uppercase tracking-widest font-bold ${stage.color}`}>{stage.name} <span className="opacity-40 text-white">/ Stage {level}</span></span>
+                     <span className="text-[7px] opacity-30 font-mono">{userExp} EXP</span>
+                  </div>
+                  <div className="h-[2px] w-full bg-white/5 overflow-hidden">
+                     <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(100, (userExp % 100) / 100 * 100)}%` }}
+                        className={`h-full bg-gradient-to-r from-transparent to-white/40`}
+                     />
+                  </div>
+               </div>
             </div>
             <div className="h-80 overflow-y-auto space-y-4 text-[11px] tracking-widest leading-relaxed text-moonlight pr-2 custom-scrollbar">
               {mode === "menu" ? (
@@ -162,14 +206,19 @@ export default function ResidentAgent() {
       </AnimatePresence>
       <button onClick={() => setIsOpen(!isOpen)} className="relative group w-16 h-16 flex items-center justify-center">
         <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="relative">
-          {/* 天使の輝き: 黄色と溢れ出す白い光 */}
-          <motion.div animate={{ rotate: [-10, 10, -10], scale: [1.2, 1.5, 1.2], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -inset-10 bg-white rounded-full blur-2xl pointer-events-none" />
+          {/* 天使の輝き: 進化段階に応じた光 */}
+          <motion.div animate={{ rotate: [-10, 10, -10], scale: [1.2, 1.5, 1.2], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className={`absolute -inset-10 bg-white rounded-full blur-2xl pointer-events-none ${stage.glow}`} />
           <motion.div animate={{ rotate: [10, -10, 10], scale: [1, 1.4, 1], opacity: [0.4, 0.8, 0.4] }} transition={{ duration: 2, repeat: Infinity }} className="absolute -inset-6 border-2 border-white rounded-full blur-lg pointer-events-none" />
-          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 4, repeat: Infinity }} className="absolute -inset-12 bg-yellow-400 rounded-full blur-3xl pointer-events-none" />
-          <div className="w-8 h-8 bg-gradient-to-b from-yellow-200 via-yellow-400 to-yellow-600 rounded-full border border-yellow-200/50 flex items-center justify-center backdrop-blur-md relative z-10 shadow-[0_0_30px_rgba(255,255,255,1)]">
+          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 4, repeat: Infinity }} className={`absolute -inset-12 rounded-full blur-3xl pointer-events-none ${level >= 20 ? 'bg-orange-400' : level >= 10 ? 'bg-azure-400' : 'bg-yellow-400'}`} />
+          
+          <div className={`w-8 h-8 bg-gradient-to-b ${level >= 30 ? 'from-rose-200 via-rose-400 to-rose-600' : level >= 20 ? 'from-orange-200 via-orange-400 to-orange-600' : level >= 10 ? 'from-azure-200 via-azure-400 to-azure-600' : 'from-yellow-200 via-yellow-400 to-yellow-600'} rounded-full border border-white/50 flex items-center justify-center backdrop-blur-md relative z-10`}>
              <div className="w-3 h-3 bg-white rounded-full shadow-[0_0_20px_white] animate-pulse" />
           </div>
-          <motion.div animate={{ opacity: [0.6, 1, 0.6], y: [-20, -25, -20], scaleX: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }} className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] bg-white shadow-[0_0_15px_white,0_0_30px_white]" />
+          
+          {/* 進化に応じた追加パーツ */}
+          {level >= 10 && <motion.div animate={{ opacity: [0.6, 1, 0.6], y: [-20, -25, -20], scaleX: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }} className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] bg-white shadow-[0_0_15px_white,0_0_30px_white]" />}
+          {level >= 20 && <motion.div animate={{ opacity: [0.4, 0.8, 0.4], rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="absolute -inset-4 border border-white/20 rounded-full border-dashed" />}
+          {level >= 30 && <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.1, 0.3, 0.1] }} transition={{ duration: 2, repeat: Infinity }} className="absolute -inset-20 bg-rose-500/20 rounded-full blur-3xl" />}
         </motion.div>
       </button>
     </div>

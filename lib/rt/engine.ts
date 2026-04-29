@@ -1,20 +1,25 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 /**
  * RTの増減を実行し、履歴を記録する
  */
 export async function executeRTTransaction(userId: string, amount: number, type: "earn" | "spend" | "transfer", description: string) {
   return await prisma.$transaction(async (tx) => {
-    // 1. ユーザーの残高を更新
+    // 1. ユーザーの残高とEXPを更新
+    const updateData: any = {
+      rt_balance: {
+        increment: BigInt(amount),
+      },
+    };
+
+    // 獲得（earn）の場合のみEXPも増やす
+    if (type === "earn" && amount > 0) {
+      updateData.exp = { increment: BigInt(amount) };
+    }
+
     const user = await tx.user.update({
       where: { id: userId },
-      data: {
-        rt_balance: {
-          increment: BigInt(amount),
-        },
-      },
+      data: updateData,
     });
 
     // 残高不足チェック（消費の場合）

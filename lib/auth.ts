@@ -27,9 +27,8 @@ export const authOptions: NextAuthOptions = {
 
           // 2. パスワードの照合
           const isPasswordValid = await bcrypt.compare(credentials.password, user.password || "");
-          const isLegacyMatch = credentials.password === user.password;
 
-          if (!isPasswordValid && !isLegacyMatch) {
+          if (!isPasswordValid) {
             console.error("Auth Error: Invalid password for ->", credentials.email);
             return null;
           }
@@ -48,7 +47,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-hxc-2026",
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
   },
