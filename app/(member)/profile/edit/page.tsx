@@ -31,6 +31,7 @@ export default function ProfileEditPage() {
   const [formData, setFormData] = useState({
     name: "", reading: "", title: "", company: "", website: "", bio: "", phone: "", email: "",
     logoUrl: "", faceUrl: "",
+    link_x: "", link_instagram: "", link_line: "", link_facebook: "",
     orientation: "horizontal" as "horizontal" | "vertical",
     hAlign: { ...defaultAlign },
     vAlign: { ...defaultAlign }
@@ -54,6 +55,10 @@ export default function ProfileEditPage() {
           email: data.profile?.contact_email || "",
           logoUrl: data.logo_url || "",
           faceUrl: data.photo_url || "",
+          link_x: data.profile?.link_x || "",
+          link_instagram: data.profile?.link_instagram || "",
+          link_line: data.profile?.link_line || "",
+          link_facebook: data.profile?.link_facebook || "",
           orientation: data.equipped?.orientation || "horizontal",
           hAlign: data.equipped?.hAlign || { ...defaultAlign },
           vAlign: data.equipped?.vAlign || { ...defaultAlign }
@@ -177,6 +182,7 @@ export default function ProfileEditPage() {
               </div>
               <HexaCardPreview 
                 name={formData.name || "NAME"} reading={formData.reading} company={formData.company} title={formData.title || equipped.title} phone={formData.phone} email={formData.email} bio={formData.bio} logoUrl={formData.logoUrl} faceUrl={formData.faceUrl} frame={equipped.frame} orientation={formData.orientation}
+                link_x={formData.link_x} link_instagram={formData.link_instagram} link_line={formData.link_line} link_facebook={formData.link_facebook}
                 alignName={currentAligns.name} alignReading={currentAligns.reading} alignCompany={currentAligns.company} alignTitle={currentAligns.title} alignPhone={currentAligns.phone} alignEmail={currentAligns.email}
               />
            </div>
@@ -261,6 +267,25 @@ export default function ProfileEditPage() {
               <div className="space-y-3">
                  <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Professional Bio / 自由記入（名刺裏面）</label>
                  <textarea rows={4} value={formData.bio} onChange={(e) => updateField('bio', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm focus:border-azure-400 outline-none resize-none text-white" placeholder="信念や得意分野、ポートフォリオへの導線など自由にご記入ください" />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 border-t border-white/5 pt-12">
+                 <div className="space-y-3">
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">X (Twitter) URL</label>
+                    <input type="text" value={formData.link_x} onChange={(e) => updateField('link_x', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="https://x.com/your-id" />
+                 </div>
+                 <div className="space-y-3">
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Instagram URL</label>
+                    <input type="text" value={formData.link_instagram} onChange={(e) => updateField('link_instagram', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="https://instagram.com/your-id" />
+                 </div>
+                 <div className="space-y-3">
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">LINE URL/ID</label>
+                    <input type="text" value={formData.link_line} onChange={(e) => updateField('link_line', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="LINEのリンクまたはID" />
+                 </div>
+                 <div className="space-y-3">
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Facebook URL</label>
+                    <input type="text" value={formData.link_facebook} onChange={(e) => updateField('link_facebook', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="https://facebook.com/your-profile" />
+                 </div>
               </div>
 
               <div className="pt-8">

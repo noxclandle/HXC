@@ -74,6 +74,14 @@ export default function IdentityReflection({ user, onUpdate }: IdentityReflectio
                logoUrl={user.logo_url}
                faceUrl={user.photo_url}
                frame={user.equipped.frame}
+               background={user.equipped.background}
+               effect={user.equipped.effect}
+               fontFamily={user.equipped.fontFamily || user.equipped.font}
+               sound={user.equipped.sound}
+               link_x={user.profile?.link_x}
+               link_instagram={user.profile?.link_instagram}
+               link_line={user.profile?.link_line}
+               link_facebook={user.profile?.link_facebook}
                orientation={user.equipped.orientation}
                alignCompany={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.company || "center") : (user.equipped.vAlign?.company || "center")}
                alignName={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.name || "center") : (user.equipped.vAlign?.name || "center")}

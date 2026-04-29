@@ -19,8 +19,8 @@ export default function AdminLayout({
             <div className="text-sm tracking-[0.4em] uppercase font-light">Hexa Card Ledger <span className="text-[10px] opacity-40">v0.1</span></div>
           </Link>
           <div className="flex gap-8 text-[10px] uppercase tracking-widest opacity-60">
-             <a href="/admin/ledger" className="hover:opacity-100 transition-opacity">Ledger</a>
-             <a href="/admin/users" className="hover:opacity-100 transition-opacity">Users</a>
+             <a href="/admin/ledger" className="hover:opacity-100 transition-opacity">中央台帳</a>
+             <a href="/admin/users" className="hover:opacity-100 transition-opacity">ユーザー管理</a>
           </div>
         </div>
       </nav>

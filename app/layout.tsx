@@ -19,6 +19,7 @@ export const viewport: Viewport = {
 import ResonanceInteraction from "@/components/ui/ResonanceInteraction";
 import NextAuthProvider from "@/components/providers/NextAuthProvider";
 import { ResonanceToastProvider } from "@/components/ui/ResonanceToast";
+import Footer from "@/components/ui/Footer";
 
 export default function RootLayout({
   children,
@@ -32,12 +33,15 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className="bg-void text-moonlight">
+      <body className="bg-void text-moonlight min-h-screen flex flex-col">
         <NextAuthProvider>
           <ResonanceToastProvider>
             <GeometricBackground />
             <ResonanceInteraction />
-            {children}
+            <main className="flex-grow">
+              {children}
+            </main>
+            <Footer />
           </ResonanceToastProvider>
         </NextAuthProvider>
       </body>

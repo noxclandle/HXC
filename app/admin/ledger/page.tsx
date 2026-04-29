@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, ShieldAlert, CreditCard, RotateCcw, Lock } from "lucide-react";
+import { Search, ShieldAlert, CreditCard, RotateCcw, Lock, Package, CheckCircle, Truck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function LedgerPage() {
   const [cards, setCards] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingOrders, setLoadingOrders] = useState(true);
   const [newCard, setNewCard] = useState({ uid: "", serial: "" });
 
   const fetchLedger = async () => {
@@ -23,13 +25,41 @@ export default function LedgerPage() {
     }
   };
 
+  const fetchOrders = async () => {
+    try {
+      const res = await fetch("/api/admin/order/list");
+      if (res.ok) {
+        const data = await res.json();
+        setOrders(data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
+
+  const updateOrderStatus = async (id: string, status: string) => {
+    try {
+      const res = await fetch("/api/admin/order/update", {
+        method: "POST",
+        body: JSON.stringify({ id, status })
+      });
+      if (res.ok) {
+        fetchOrders();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchLedger();
+    fetchOrders();
   }, []);
 
   const toggleStatus = async (uid: string, currentStatus: string) => {
     const nextStatus = currentStatus === "active" ? "suspended" : "active";
-    // UIを即時更新（楽観的アップデート）
     setCards(cards.map(c => c.uid === uid ? { ...c, status: nextStatus } : c));
     
     try {
@@ -38,7 +68,7 @@ export default function LedgerPage() {
         body: JSON.stringify({ uid, status: nextStatus })
       });
     } catch (e) {
-      fetchLedger(); // エラー時は再取得
+      fetchLedger();
     }
   };
 
@@ -55,7 +85,7 @@ export default function LedgerPage() {
 
   const startScan = async () => {
     if (!("NDEFReader" in window)) {
-      alert("NFC scanning is not supported on this browser/device.");
+      alert("このブラウザ/デバイスはNFCスキャンに対応していません。");
       return;
     }
 
@@ -65,7 +95,6 @@ export default function LedgerPage() {
       await reader.scan();
 
       reader.addEventListener("reading", ({ serialNumber }: any) => {
-        // UIDをセットし、シリアルが空なら自動生成
         const formattedUid = serialNumber.toUpperCase();
         const autoSerial = `HXC-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
         
@@ -74,7 +103,7 @@ export default function LedgerPage() {
           uid: formattedUid,
           serial: prev.serial || autoSerial
         }));
-        setIsScanning(false); // 1回読んだら一旦止める
+        setIsScanning(false);
       });
 
     } catch (error) {
@@ -95,7 +124,7 @@ export default function LedgerPage() {
         setNewCard({ uid: "", serial: "" });
       } else {
         const err = await res.json();
-        alert(err.error || "Failed to create slot.");
+        alert(err.error || "スロットの作成に失敗しました。");
       }
     } catch (err) {
       console.error(err);
@@ -110,10 +139,78 @@ export default function LedgerPage() {
             <CreditCard className="text-moonlight opacity-40" size={20} />
             Central Asset Ledger
           </h1>
-          <p className="text-[10px] tracking-widest opacity-40 uppercase mt-2">中央台帳：物理カードの登録と管理</p>
+          <p className="text-[10px] tracking-widest opacity-40 uppercase mt-2">中央台帳：物理カードの登録、注文管理、およびペアリング</p>
         </div>
-        <a href="/docs/NTAG_SETUP_GUIDE.md" target="_blank" className="text-[8px] uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity underline underline-offset-8">Setup Manual</a>
+        <a href="/docs/NTAG_SETUP_GUIDE.md" target="_blank" className="text-[8px] uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity underline underline-offset-8">セットアップマニュアル</a>
       </header>
+
+      {/* Orders Section */}
+      <section className="mb-20">
+        <div className="flex items-center gap-4 mb-8">
+          <Package className="text-azure-400 opacity-60" size={18} />
+          <h2 className="text-[11px] tracking-[0.5em] uppercase font-bold">Pending Orders (未発送の注文)</h2>
+          <span className="px-2 py-0.5 bg-azure-500/10 text-azure-400 text-[9px] rounded font-mono">
+            {orders.filter(o => o.status !== 'completed').length}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-5 p-4 border-b border-white/5 text-[9px] uppercase tracking-[0.2em] opacity-30 font-bold">
+           <div>注文日 / 顧客</div>
+           <div>プラン / バリアント</div>
+           <div>ステータス</div>
+           <div>配送先</div>
+           <div className="text-right">アクション</div>
+        </div>
+
+        <div className="space-y-1 mt-2">
+          {loadingOrders ? (
+            <div className="py-12 text-center text-[10px] uppercase opacity-20 tracking-widest">注文データを同期中...</div>
+          ) : orders.length === 0 ? (
+            <div className="py-12 text-center text-[10px] uppercase opacity-10 tracking-widest italic">注文履歴はありません</div>
+          ) : (
+            orders.map((order) => (
+              <div key={order.id} className="grid grid-cols-5 p-5 bg-white/[0.02] border border-white/5 items-center text-xs">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] text-white opacity-80">{order.customer_name}</span>
+                  <span className="text-[8px] opacity-30">{new Date(order.created_at).toLocaleDateString()}</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] tracking-wider text-azure-300">{order.tier}</span>
+                  <span className="text-[8px] opacity-30 uppercase">{order.variant || 'Standard'}</span>
+                </div>
+                <div>
+                   <span className={`text-[9px] px-2 py-0.5 rounded border ${
+                     order.status === 'paid' ? 'border-amber-500/20 text-amber-500 bg-amber-500/5' : 
+                     order.status === 'shipped' ? 'border-azure-500/20 text-azure-500 bg-azure-500/5' : 
+                     'border-emerald-500/20 text-emerald-400 bg-emerald-500/5'
+                   } uppercase tracking-tighter`}>
+                     {order.status === 'paid' ? '支払い済み' : order.status === 'shipped' ? '発送済み' : '完了'}
+                   </span>
+                </div>
+                <div className="text-[9px] opacity-40 truncate pr-4" title={JSON.stringify(order.shipping_address)}>
+                   {order.customer_email}
+                </div>
+                <div className="flex justify-end gap-4">
+                   <button 
+                     onClick={() => updateOrderStatus(order.id, 'shipped')}
+                     className="p-2 hover:bg-white/5 text-azure-400/60 hover:text-azure-400 transition-all" 
+                     title="発送済みに更新"
+                   >
+                      <Truck size={14} />
+                   </button>
+                   <button 
+                     onClick={() => updateOrderStatus(order.id, 'completed')}
+                     className="p-2 hover:bg-white/5 text-emerald-400/60 hover:text-emerald-400 transition-all" 
+                     title="完了としてマーク"
+                   >
+                      <CheckCircle size={14} />
+                   </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
 
       {/* Slot Creation Form */}
       <section className="mb-16 p-8 border border-moonlight/10 bg-gothic-dark/20 backdrop-blur-md">
@@ -124,12 +221,12 @@ export default function LedgerPage() {
             disabled={isScanning}
             className={`px-8 py-2 border ${isScanning ? "border-emerald-500 text-emerald-400 animate-pulse" : "border-moonlight/20 text-moonlight opacity-40 hover:opacity-100 hover:bg-white/5"} text-[9px] tracking-[0.4em] uppercase transition-all`}
           >
-            {isScanning ? "Scanning..." : "Start Scan (スキャン開始)"}
+            {isScanning ? "スキャン中..." : "スキャン開始"}
           </button>
         </div>
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-1 space-y-1">
-            <label className="text-[8px] uppercase opacity-30 tracking-widest">Physical UID</label>
+            <label className="text-[8px] uppercase opacity-30 tracking-widest">物理 UID</label>
             <input
               type="text" placeholder="04:A2:3F:..." value={newCard.uid}
               onChange={(e) => setNewCard({ ...newCard, uid: e.target.value })}
@@ -137,7 +234,7 @@ export default function LedgerPage() {
             />
           </div>
           <div className="flex-1 space-y-1">
-            <label className="text-[8px] uppercase opacity-30 tracking-widest">Serial Number</label>
+            <label className="text-[8px] uppercase opacity-30 tracking-widest">シリアル番号</label>
             <input
               type="text" placeholder="HXC-2026-XXXX" value={newCard.serial}
               onChange={(e) => setNewCard({ ...newCard, serial: e.target.value })}
@@ -145,27 +242,32 @@ export default function LedgerPage() {
             />
           </div>
           <div className="flex items-end">
-            <button onClick={createSlot} className="px-12 py-3 bg-moonlight text-void text-[10px] font-bold uppercase tracking-[0.6em] hover:bg-white transition-all shadow-xl">Create</button>
+            <button onClick={createSlot} className="px-12 py-3 bg-moonlight text-void text-[10px] font-bold uppercase tracking-[0.6em] hover:bg-white transition-all shadow-xl">作成</button>
           </div>
         </div>
         <p className="mt-4 text-[9px] opacity-30 italic leading-relaxed">
-           * [Start Scan] を押し、物理カードをデバイスにタッチするとUIDが自動取得されます。シリアルは自動生成されますが、手動入力も可能です。
+           * [スキャン開始] を押し、物理カードをデバイスにタッチするとUIDが自動取得されます。シリアルは自動生成されますが、手動入力も可能です。
         </p>
       </section>
 
+      <div className="flex items-center gap-4 mb-8">
+          <CreditCard className="text-moonlight opacity-40" size={18} />
+          <h2 className="text-[11px] tracking-[0.5em] uppercase font-bold">Inventory Ledger (在庫台帳)</h2>
+      </div>
+
       {/* Table Headers */}
       <div className="grid grid-cols-5 p-6 border-b border-moonlight/10 text-[10px] uppercase tracking-[0.3em] opacity-40 mb-2 font-bold bg-white/5">
-         <div>UID</div>
-         <div>Serial Number</div>
-         <div>Status</div>
-         <div>Linked Identity</div>
+         <div>UID (物理ID)</div>
+         <div>Serial (シリアル)</div>
+         <div>Status (状態)</div>
+         <div>Identity (紐付けユーザー)</div>
          <div className="text-right">Action</div>
       </div>
 
       {/* Ledger Rows */}
       <div className="space-y-1">
         {loading ? (
-          <div className="py-24 text-center animate-pulse text-[10px] uppercase opacity-20 tracking-widest">Synchronizing Registry...</div>
+          <div className="py-24 text-center animate-pulse text-[10px] uppercase opacity-20 tracking-widest">台帳を同期中...</div>
         ) : (
           <AnimatePresence>
             {cards.map((c) => (
@@ -177,8 +279,10 @@ export default function LedgerPage() {
               >
                 <div className="tracking-widest">{c.uid}</div>
                 <div className="opacity-60">{c.serial}</div>
-                <div className={`uppercase text-[10px] tracking-[0.2em] font-sans font-bold ${statusColor(c.status)}`}>{c.status}</div>
-                <div className="opacity-40 font-sans uppercase text-[10px] tracking-widest">{c.user}</div>
+                <div className={`uppercase text-[10px] tracking-[0.2em] font-sans font-bold ${statusColor(c.status)}`}>
+                  {c.status === 'active' ? '有効' : c.status === 'suspended' ? '停止中' : c.status === 'unissued' ? '未発行' : '無効'}
+                </div>
+                <div className="opacity-40 font-sans uppercase text-[10px] tracking-widest">{c.user || '---'}</div>
                 <div className="flex justify-end gap-6">
                    {c.status !== "unissued" && (
                      <button 
@@ -186,7 +290,7 @@ export default function LedgerPage() {
                        className="flex items-center gap-2 text-[8px] uppercase tracking-widest border border-moonlight/20 px-4 py-1.5 hover:bg-white/5 transition-all group"
                      >
                        {c.status === "active" ? <Lock size={10} className="opacity-40 group-hover:opacity-100" /> : <RotateCcw size={10} className="opacity-40 group-hover:opacity-100" />}
-                       {c.status === "active" ? "Suspend" : "Resume"}
+                       {c.status === "active" ? "停止" : "再開"}
                      </button>
                    )}
                    <button className="text-rose-500/40 hover:text-rose-500 transition-colors"><ShieldAlert size={16} /></button>

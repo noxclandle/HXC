@@ -6,6 +6,15 @@ import { executeRTTransaction } from "@/lib/rt/engine";
  * 予約されたタスクを処理する定期実行API
  */
 export async function POST(req: NextRequest) {
+  // Security check: Ensure CRON_SECRET is present and matches the authorization header
+  const authHeader = req.headers.get("authorization");
+  if (
+    process.env.NODE_ENV === "production" &&
+    authHeader !== `Bearer ${process.env.CRON_SECRET}`
+  ) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const tasks = await prisma.scheduledTask.findMany({
       where: {

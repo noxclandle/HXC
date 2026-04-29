@@ -1,24 +1,23 @@
 import { prisma } from "@/lib/prisma";
 
 export const TITLES = {
-  INITIATE: "Initiate",
-  OBSERVER: "Observer",
-  COLLECTOR: "Collector",
-  MESSENGER: "Messenger",
-  CONNECTOR: "Connector",
-  DATA_ENTRY: "Data Entry",
-  TECH_LEAD: "Tech Lead",
-  VOYAGER: "Void Voyager",
-  HEADHUNTER: "Headhunter",
-  GILDED_SOUL: "Gilded Soul",
-  SOVEREIGN: "The Sovereign",
-  ARCHITECT: "Architect",
-  CHIEF: "Chief Officer"
+  ASSOCIATE: "ASSOCIATE",     // 初期
+  INITIATE: "Initiate",       // アカウント作成
+  OBSERVER: "Observer",       // 閲覧
+  COLLECTOR: "Collector",     // 10 connections
+  MESSENGER: "Messenger",     // 20 connections
+  CONNECTOR: "Connector",     // 称号としてのコネクター
+  STRATEGIST: "Strategist",   // 100 connections (New)
+  TECH_LEAD: "Tech Lead",     // エンジニア系
+  VOYAGER: "Void Voyager",    // 50 connections
+  HEADHUNTER: "Headhunter",   // 社長系
+  GILDED_SOUL: "Gilded Soul", // 50,000 CP保有
+  SOVEREIGN: "The Sovereign", // 重役多数
+  MASTERMIND: "Mastermind",   // 究極 (New)
+  ARCHITECT: "Architect",     // 管理者級
+  CHIEF: "Chief Officer"      // システム全権
 };
 
-/**
- * 称号の解禁チェック
- */
 export async function checkAndAwardTitles(userId: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -27,7 +26,7 @@ export async function checkAndAwardTitles(userId: string) {
 
   if (!user) return [];
 
-  const currentTitles = (user.unlocked_titles as string[]) || ["Initiate"];
+  const currentTitles = (user.unlocked_titles as string[]) || ["ASSOCIATE"];
   const newTitles: string[] = [];
 
   const resonanceCount = user.contacts.length;
@@ -36,23 +35,17 @@ export async function checkAndAwardTitles(userId: string) {
   const balance = Number(user.rt_balance);
 
   // --- 解禁ロジック ---
-  
-  // Scans
   if (resonanceCount >= 10 && !currentTitles.includes(TITLES.COLLECTOR)) newTitles.push(TITLES.COLLECTOR);
   if (resonanceCount >= 20 && !currentTitles.includes(TITLES.MESSENGER)) newTitles.push(TITLES.MESSENGER);
   if (resonanceCount >= 50 && !currentTitles.includes(TITLES.VOYAGER)) newTitles.push(TITLES.VOYAGER);
+  if (resonanceCount >= 100 && !currentTitles.includes(TITLES.STRATEGIST)) newTitles.push(TITLES.STRATEGIST);
   
-  // Executive Focus (Gold/Red)
   if (highValueCount >= 5 && !currentTitles.includes(TITLES.HEADHUNTER)) newTitles.push(TITLES.HEADHUNTER);
   if (highValueCount >= 30 && !currentTitles.includes(TITLES.SOVEREIGN)) newTitles.push(TITLES.SOVEREIGN);
 
-  // Technical Focus (Purple)
   if (techCount >= 10 && !currentTitles.includes(TITLES.TECH_LEAD)) newTitles.push(TITLES.TECH_LEAD);
-
-  // Points (Gold)
   if (balance >= 50000 && !currentTitles.includes(TITLES.GILDED_SOUL)) newTitles.push(TITLES.GILDED_SOUL);
 
-  // 更新処理
   if (newTitles.length > 0) {
     await prisma.user.update({
       where: { id: userId },
