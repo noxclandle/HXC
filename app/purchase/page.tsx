@@ -276,26 +276,38 @@ export default function PurchasePage() {
           )}
         </AnimatePresence>
         
-        <footer className="mt-32 text-center space-y-8">
-          <div className="max-w-md mx-auto p-6 border border-white/5 bg-zinc-950/30">
-            <p className="text-[10px] tracking-[0.2em] text-white/60 leading-relaxed mb-4">
-              ご入金確認後、カードの製造・発行手続きに入ります。<br />
-              お手元に届くまで通常【2週間前後】のお時間をいただいております。
-            </p>
-            <div className="h-[1px] w-8 bg-white/10 mx-auto mb-4" />
-            <p className="text-[9px] tracking-[0.1em] text-white/40">
-              製品に関するお問い合わせ、または法人での一括購入をご検討の方は
-              <a href="/report" className="text-white/60 hover:text-white underline ml-1 transition-colors">
-                サポートデスク
-              </a>
-              までご連絡ください。
-            </p>
+        <footer className="mt-40 pb-20 border-t border-white/[0.03] pt-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 text-left opacity-40 hover:opacity-80 transition-opacity duration-1000">
+            <div className="space-y-4">
+              <h4 className="text-[10px] tracking-[0.4em] uppercase text-white font-bold">Delivery</h4>
+              <p className="text-[9px] tracking-[0.2em] leading-relaxed">
+                決済完了後、厳格な検品を経て発行されます。<br />
+                通常、お手元に届くまで二週間前後の猶予を頂戴しております。
+              </p>
+            </div>
+            <div className="space-y-4">
+              <h4 className="text-[10px] tracking-[0.4em] uppercase text-white font-bold">Inquiry</h4>
+              <p className="text-[9px] tracking-[0.2em] leading-relaxed">
+                製品仕様、または法人導入に関するご相談は、<br />
+                <a href="/report" className="underline underline-offset-4 hover:text-white transition-colors">サポートデスク</a>にて承ります。
+              </p>
+            </div>
+            <div className="space-y-4">
+              <h4 className="text-[10px] tracking-[0.4em] uppercase text-white font-bold">Legal</h4>
+              <nav className="flex flex-col gap-2 text-[9px] tracking-[0.2em]">
+                <a href="#" className="hover:text-white transition-colors">特定商取引法に基づく表記</a>
+                <a href="#" className="hover:text-white transition-colors">利用規約</a>
+                <a href="#" className="hover:text-white transition-colors">プライバシーポリシー</a>
+              </nav>
+            </div>
           </div>
 
-          <p className="text-[9px] tracking-[0.4em] text-white/20 uppercase max-w-md mx-auto leading-loose pt-8">
-            HXC 2026. THE HIGHEST STANDARD OF BUSINESS NETWORKING. <br />
-            STRICTLY PROHIBITED TO REDISTRIBUTE WITHOUT AUTHORIZATION.
-          </p>
+          <div className="mt-24 text-center">
+            <p className="text-[8px] tracking-[0.5em] text-white/10 uppercase leading-loose">
+              HXC © 2026. THE HIGHEST STANDARD OF BUSINESS NETWORKING.<br />
+              ALL RIGHTS RESERVED. NO UNAUTHORIZED REPRODUCTION.
+            </p>
+          </div>
         </footer>
       </div>
     </div>
