@@ -7,14 +7,25 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_mock", {
 
 export async function POST(req: NextRequest) {
   try {
-    const { tier, variant, price } = await req.json();
+    const { tier, variant } = await req.json();
 
-    if (!tier || !price) {
+    if (!tier) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Replace ¥ and commas, then convert to number
-    const numericPrice = parseInt(price.replace(/¥|,/g, ""), 10);
+    // 厳格な価格マッピング
+    const PRICE_MAP: Record<string, number> = {
+      "Classic": 5000,
+      "Pastel": 10000,
+      "Executive": 30000,
+      "Apex": 1000000
+    };
+
+    const numericPrice = PRICE_MAP[tier];
+
+    if (!numericPrice) {
+      return NextResponse.json({ error: "Invalid tier" }, { status: 400 });
+    }
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],

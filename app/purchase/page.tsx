@@ -276,36 +276,24 @@ export default function PurchasePage() {
           )}
         </AnimatePresence>
         
-        <footer className="mt-40 pb-20 border-t border-white/[0.03] pt-20">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 text-left opacity-40 hover:opacity-80 transition-opacity duration-1000">
-            <div className="space-y-4">
-              <h4 className="text-[10px] tracking-[0.4em] uppercase text-white font-bold">Delivery</h4>
-              <p className="text-[9px] tracking-[0.2em] leading-relaxed">
-                決済完了後、厳格な検品を経て発行されます。<br />
-                通常、お手元に届くまで二週間前後の猶予を頂戴しております。
-              </p>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-[10px] tracking-[0.4em] uppercase text-white font-bold">Inquiry</h4>
-              <p className="text-[9px] tracking-[0.2em] leading-relaxed">
-                製品仕様、または法人導入に関するご相談は、<br />
-                <a href="/report" className="underline underline-offset-4 hover:text-white transition-colors">サポートデスク</a>にて承ります。
-              </p>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-[10px] tracking-[0.4em] uppercase text-white font-bold">Legal</h4>
-              <nav className="flex flex-col gap-2 text-[9px] tracking-[0.2em]">
-                <a href="#" className="hover:text-white transition-colors">特定商取引法に基づく表記</a>
-                <a href="#" className="hover:text-white transition-colors">利用規約</a>
-                <a href="#" className="hover:text-white transition-colors">プライバシーポリシー</a>
-              </nav>
-            </div>
+        <footer className="mt-60 pb-20 text-center space-y-12">
+          <div className="flex flex-wrap justify-center gap-x-12 gap-y-4 text-[9px] tracking-[0.3em] uppercase text-white/20">
+            <a href="/report" className="hover:text-white/60 transition-colors">Support Desk</a>
+            <a href="#" className="hover:text-white/60 transition-colors">Term of Service</a>
+            <a href="#" className="hover:text-white/60 transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-white/60 transition-colors">Legal Notation</a>
           </div>
 
-          <div className="mt-24 text-center">
-            <p className="text-[8px] tracking-[0.5em] text-white/10 uppercase leading-loose">
-              HXC © 2026. THE HIGHEST STANDARD OF BUSINESS NETWORKING.<br />
-              ALL RIGHTS RESERVED. NO UNAUTHORIZED REPRODUCTION.
+          <div className="space-y-8">
+            <p className="text-[8px] tracking-[0.2em] text-white/10 uppercase leading-relaxed max-w-sm mx-auto">
+              決済完了後、通常二週間前後での発行となります。<br />
+              厳格な審査と検品を経て、貴方の元へ届けられます。
+            </p>
+            
+            <div className="h-[1px] w-8 bg-white/5 mx-auto" />
+
+            <p className="text-[8px] tracking-[0.5em] text-white/5 uppercase">
+              HXC © 2026. THE HIGHEST STANDARD.
             </p>
           </div>
         </footer>
