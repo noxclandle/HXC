@@ -277,13 +277,6 @@ export default function PurchasePage() {
         </AnimatePresence>
         
         <footer className="mt-60 pb-20 text-center space-y-12">
-          <div className="flex flex-wrap justify-center gap-x-12 gap-y-4 text-[9px] tracking-[0.3em] uppercase text-white/20">
-            <a href="/report" className="hover:text-white/60 transition-colors">Support Desk</a>
-            <a href="#" className="hover:text-white/60 transition-colors">Term of Service</a>
-            <a href="#" className="hover:text-white/60 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white/60 transition-colors">Legal Notation</a>
-          </div>
-
           <div className="space-y-8">
             <p className="text-[8px] tracking-[0.2em] text-white/10 uppercase leading-relaxed max-w-sm mx-auto">
               決済完了後、通常二週間前後での発行となります。<br />
