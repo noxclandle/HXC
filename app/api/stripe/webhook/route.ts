@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2024-04-10",
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_mock", {
+  apiVersion: "2026-04-22.dahlia" as any,
 });
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
@@ -30,12 +30,13 @@ export async function POST(req: NextRequest) {
       const customerName = customNameField?.text?.value || session.customer_details?.name || "Unknown";
       
       const customerEmail = session.customer_details?.email || "";
-      const shippingAddress = session.shipping_details?.address || {};
+      const shippingAddress = (session as any).shipping_details?.address || {};
 
       const tier = session.metadata?.tier || "unknown";
       const variant = session.metadata?.variant || "";
       const price = session.amount_total || 0;
 
+      // 1. Create the order
       await prisma.order.create({
         data: {
           stripe_session_id: session.id,
@@ -49,7 +50,32 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      console.log(`Successfully created order for session: ${session.id}`);
+      // 2. If it's an Apex Black tier, try to automatically grant black_member role
+      if (tier === "Apex Black" && customerEmail) {
+        const existingUser = await prisma.user.findUnique({
+          where: { email: customerEmail }
+        });
+
+        if (existingUser) {
+          const currentAssets = (existingUser.owned_assets as string[]) || [];
+          const currentTitles = (existingUser.unlocked_titles as string[]) || [];
+          
+          const newAssets = Array.from(new Set([...currentAssets, "ImperialGold"]));
+          const newTitles = Array.from(new Set([...currentTitles, "APEX"]));
+
+          await prisma.user.update({
+             where: { id: existingUser.id },
+             data: { 
+               role: 'black_member',
+               owned_assets: newAssets,
+               unlocked_titles: newTitles
+             }
+          });
+          console.log(`Automatically upgraded user ${existingUser.email} to black_member and granted exclusive assets.`);
+        }
+      }
+
+      console.log(`Successfully processed session: ${session.id}`);
     } catch (dbError) {
       console.error("Failed to save order to database:", dbError);
       return NextResponse.json({ error: "Database error" }, { status: 500 });

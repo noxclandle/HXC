@@ -10,7 +10,7 @@ import { executeRTTransaction } from "@/lib/rt/engine";
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    const allowedRoles = ["chief_officer", "architect"];
+    const allowedRoles = ["mastermind", "chief_officer", "architect"];
     
     if (!session?.user?.id || !allowedRoles.includes((session.user as any).role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });

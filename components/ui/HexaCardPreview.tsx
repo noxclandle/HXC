@@ -73,6 +73,7 @@ export default function HexaCardPreview({
       case "Sakura": return "border-rose-400/40 shadow-[0_0_20px_rgba(251,113,133,0.1)]";
       case "Emerald": return "border-emerald-400/40 shadow-[0_0_20px_rgba(52,211,153,0.1)]";
       case "Platinum": return "border-[3px] border-slate-500 shadow-[0_0_30px_rgba(255,255,255,0.3)] ring-1 ring-white/20 ring-inset";
+      case "ImperialGold": return "border-[4px] border-amber-500/80 shadow-[0_0_50px_rgba(245,158,11,0.4)] ring-2 ring-amber-300/30 ring-inset bg-amber-900/5";
       default: return "border-white/10 shadow-2xl";
     }
   };

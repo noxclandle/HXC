@@ -59,6 +59,7 @@ export default function InventoryPage() {
     { id: "Sakura", name: "Sakura Aura", type: "frame", rarity: "rare", description: "優雅なピンクの残響。親しみやすさを演出する。", cost: 3000, unlocked: false },
     { id: "Emerald", name: "Emerald Pulse", type: "frame", rarity: "rare", description: "生命力溢れる緑の輝き。成長と調和の証。", cost: 3000, unlocked: false },
     { id: "Platinum", name: "Platinum Edge", type: "frame", rarity: "epic", description: "精巧な装飾が施された銀の縁。洗練されたプロフェッショナルへ。", cost: 8000, unlocked: false },
+    { id: "ImperialGold", name: "Imperial Gold", type: "frame", rarity: "legendary", description: "Black Member限定。圧倒的な存在感を放つ極厚の黄金フレーム。", cost: 999999, unlocked: false },
     
     // Backgrounds
     { id: "Default", name: "Deep Void", type: "background", rarity: "common", description: "標準の漆黒背景。", unlocked: true },

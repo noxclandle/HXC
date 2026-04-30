@@ -52,6 +52,7 @@ export default function UsersAdminPage() {
 
   const roleIcon = (role: string) => {
     switch (role) {
+      case "mastermind": return <Crown size={14} className="text-purple-500" />;
       case "chief_officer": return <Crown size={14} className="text-rose-500" />;
       case "architect": return <Lock size={14} className="text-emerald-400" />;
       default: return <UserIcon size={14} className="opacity-20" />;
@@ -114,7 +115,7 @@ export default function UsersAdminPage() {
             />
           </div>
           <div className="flex gap-2">
-            {["All", "chief_officer", "architect", "member"].map((r) => (
+            {["All", "mastermind", "chief_officer", "architect", "black_member", "member"].map((r) => (
               <button 
                 key={r}
                 onClick={() => setFilterRank(r)}
@@ -246,6 +247,14 @@ export default function UsersAdminPage() {
                <div className="mt-12 pt-10 border-t border-white/5 space-y-6">
                   <h3 className="text-[10px] tracking-[0.3em] uppercase opacity-40 flex items-center gap-2"><Crown size={12}/> 特権管理操作</h3>
                   <div className="flex flex-wrap gap-4">
+                     {inspectUser.role !== 'mastermind' && (
+                        <button 
+                           onClick={() => handleUpdateRole(inspectUser.id, 'mastermind', true)}
+                           className="px-6 py-3 border border-purple-500/30 text-purple-400 text-[9px] uppercase tracking-widest font-bold hover:bg-purple-500/10 transition-all"
+                        >
+                           Mastermind に昇格
+                        </button>
+                     )}
                      {inspectUser.role !== 'chief_officer' && (
                         <button 
                            onClick={() => handleUpdateRole(inspectUser.id, 'chief_officer', true)}
@@ -260,6 +269,14 @@ export default function UsersAdminPage() {
                            className="px-6 py-3 border border-emerald-500/30 text-emerald-400 text-[9px] uppercase tracking-widest font-bold hover:bg-emerald-500/10 transition-all"
                         >
                            Architect 権限を付与
+                        </button>
+                     )}
+                     {inspectUser.role !== 'black_member' && (
+                        <button 
+                           onClick={() => handleUpdateRole(inspectUser.id, 'black_member')}
+                           className="px-6 py-3 border border-amber-500/30 text-amber-500 text-[9px] uppercase tracking-widest font-bold hover:bg-amber-500/10 transition-all"
+                        >
+                           Black Member に設定
                         </button>
                      )}
                      {inspectUser.role !== 'member' && (

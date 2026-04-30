@@ -9,7 +9,7 @@ import { authOptions } from "@/lib/auth";
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    const allowedRoles = ["chief_officer", "architect"];
+    const allowedRoles = ["mastermind", "chief_officer", "architect"];
     
     if (!session?.user?.id || !allowedRoles.includes((session.user as any).role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
