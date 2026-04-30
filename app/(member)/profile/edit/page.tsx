@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, Building2, Globe, Shield, Save, ArrowLeft, Languages, Camera, Info, Upload, RotateCcw, Smartphone, Layout, Phone, Mail, AlignLeft, AlignCenter, AlignRight, AlertTriangle } from "lucide-react";
+import { User, Building2, Globe, Shield, Save, ArrowLeft, Languages, Camera, Info, Upload, RotateCcw, Smartphone, Layout, Phone, Mail, AlignLeft, AlignCenter, AlignRight, AlertTriangle, Type } from "lucide-react";
 import Link from "next/link";
 import HexaCardPreview, { Alignment } from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
@@ -37,7 +37,7 @@ export default function ProfileEditPage() {
     vAlign: { ...defaultAlign }
   });
   
-  const [equipped, setEquipped] = useState({ frame: "Obsidian", title: "ASSOCIATE" });
+  const [equipped, setEquipped] = useState({ frame: "Obsidian", title: "ASSOCIATE", fontFamily: "Standard" });
 
   const fetchInitialData = async () => {
     try {
@@ -63,7 +63,7 @@ export default function ProfileEditPage() {
           hAlign: data.equipped?.hAlign || { ...defaultAlign },
           vAlign: data.equipped?.vAlign || { ...defaultAlign }
         });
-        if (data.equipped) setEquipped({ ...equipped, ...data.equipped });
+        if (data.equipped) setEquipped(prev => ({ ...prev, ...data.equipped }));
       }
     } catch (e) { console.error(e); }
   };
@@ -90,6 +90,13 @@ export default function ProfileEditPage() {
     e.preventDefault();
     setIsSaving(true);
     try {
+      // 装備情報も一緒に保存
+      await fetch("/api/user/equip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ equipped })
+      });
+
       const res = await fetch("/api/profile/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -184,8 +191,29 @@ export default function ProfileEditPage() {
                 name={formData.name || "NAME"} reading={formData.reading} company={formData.company} title={formData.title || equipped.title} phone={formData.phone} email={formData.email} bio={formData.bio} logoUrl={formData.logoUrl} faceUrl={formData.faceUrl} frame={equipped.frame} orientation={formData.orientation}
                 link_x={formData.link_x} link_instagram={formData.link_instagram} link_line={formData.link_line} link_facebook={formData.link_facebook}
                 alignName={currentAligns.name} alignReading={currentAligns.reading} alignCompany={currentAligns.company} alignTitle={currentAligns.title} alignPhone={currentAligns.phone} alignEmail={currentAligns.email}
+                fontFamily={equipped.fontFamily}
               />
            </div>
+
+           <div className="p-8 border border-white/5 bg-white/[0.02] space-y-6">
+              <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold flex items-center gap-2"><Type size={12} className="text-azure-500"/> Typography / 書体選択</label>
+              <div className="grid grid-cols-2 gap-2">
+                 {["Standard", "Overlord", "Mecha", "Ninja", "Future"].map((f) => (
+                    <button
+                      key={f}
+                      type="button"
+                      onClick={() => {
+                        setEquipped(prev => ({ ...prev, fontFamily: f }));
+                        setIsDirty(true);
+                      }}
+                      className={`py-3 px-4 border text-[10px] tracking-widest uppercase transition-all ${equipped.fontFamily === f ? 'border-azure-500 bg-azure-500/10 text-azure-400' : 'border-white/5 hover:border-white/20 opacity-40 hover:opacity-100'}`}
+                    >
+                      {f}
+                    </button>
+                 ))}
+              </div>
+           </div>
+
            <div className="p-8 border border-azure-500/20 bg-azure-500/5 space-y-6">
               <div className="flex items-center gap-3 text-azure-400"><Info size={20} /><p className="text-[11px] tracking-[0.2em] uppercase font-bold text-white">Advisory / 助言</p></div>
               <p className="text-[12px] leading-relaxed opacity-80 italic text-white font-medium">

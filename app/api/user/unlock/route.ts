@@ -42,19 +42,19 @@ export async function POST(req: NextRequest) {
     }
 
     // トランザクションで残高減算とアセット追加を同時に行う
-    const updatedUser = await prisma.$transaction([
+    const [updatedUser] = await prisma.$transaction([
       prisma.user.update({
         where: { email: session.user.email },
         data: {
-          rt_balance: { decrement: cost },
-          owned_assets: [...ownedAssets, assetId]
+          rt_balance: { decrement: BigInt(cost) },
+          owned_assets: Array.from(new Set([...ownedAssets, assetId]))
         }
       }),
       prisma.rTTransaction.create({
         data: {
           user_id: user.id,
-          amount: -cost,
-          type: "unlock",
+          amount: BigInt(-cost),
+          type: "spend",
           description: `Unlocked asset: ${assetId} (${rarity})`
         }
       })
@@ -62,8 +62,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ 
       success: true, 
-      rt_balance: updatedUser[0].rt_balance.toString(),
-      owned_assets: updatedUser[0].owned_assets 
+      rt_balance: updatedUser.rt_balance.toString(),
+      owned_assets: updatedUser.owned_assets 
     });
 
   } catch (error: any) {
