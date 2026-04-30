@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    const allowedRoles = ["chief_officer", "architect"];
+    const allowedRoles = ["mastermind", "chief_officer", "architect"];
     
     if (!session?.user?.id || !allowedRoles.includes(session.user.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -28,7 +28,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    const allowedRoles = ["chief_officer", "architect"];
+    const allowedRoles = ["mastermind", "chief_officer", "architect"];
     
     if (!session?.user?.id || !allowedRoles.includes(session.user.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });

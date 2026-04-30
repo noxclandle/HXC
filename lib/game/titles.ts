@@ -15,7 +15,8 @@ export const TITLES = {
   SOVEREIGN: "The Sovereign", // 重役多数
   MASTERMIND: "Mastermind",   // 究極 (New)
   ARCHITECT: "Architect",     // 管理者級
-  CHIEF: "Chief Officer"      // システム全権
+  CHIEF: "Chief Officer",     // システム全権
+  APEX: "APEX"                // ブラックカード保有者
 };
 
 export async function checkAndAwardTitles(userId: string) {

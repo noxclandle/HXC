@@ -77,6 +77,38 @@ export default function PurchasePage() {
     setSelection({ tier: tierId, variant: defaultVariant });
   };
 
+  const [loading, setLoading] = useState(false);
+
+  const handleCheckout = async () => {
+    if (!selection.tier) return;
+    setLoading(true);
+
+    try {
+      const selectedTierData = tiers.find(t => t.id === selection.tier);
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tier: selectedTierData?.name,
+          variant: selection.variant,
+          price: selectedTierData?.price,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Failed to initiate checkout.");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred during checkout.");
+      setLoading(false);
+    }
+  };
+
   const selectedTierData = tiers.find(t => t.id === selection.tier);
 
   return (
@@ -252,23 +284,6 @@ export default function PurchasePage() {
             </p>
             <div className="h-[1px] w-8 bg-white/10 mx-auto mb-4" />
             <p className="text-[9px] tracking-[0.1em] text-white/40">
-              製品に関するお問い合わせ、または法人での一括購入をご検討の方は
-              <a href="/report" className="text-white/60 hover:text-white underline ml-1 transition-colors">
-                サポートデスク
-              </a>
-              までご連絡ください。
-            </p>
-          </div>
-
-          <p className="text-[9px] tracking-[0.4em] text-white/20 uppercase max-w-md mx-auto leading-loose pt-8">
-            HXC 2026. THE HIGHEST STANDARD OF BUSINESS NETWORKING. <br />
-            STRICTLY PROHIBITED TO REDISTRIBUTE WITHOUT AUTHORIZATION.
-          </p>
-        </footer>
-      </div>
-    </div>
-  );
-}">
               製品に関するお問い合わせ、または法人での一括購入をご検討の方は
               <a href="/report" className="text-white/60 hover:text-white underline ml-1 transition-colors">
                 サポートデスク
