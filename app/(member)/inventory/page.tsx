@@ -24,7 +24,6 @@ const CATEGORIES = [
   { id: "frame", name: "Frames", icon: Shield, sub: "外枠" },
   { id: "background", name: "Backgrounds", icon: Palette, sub: "背景" },
   { id: "effect", name: "Effects", icon: Sparkles, sub: "エフェクト" },
-  { id: "fontFamily", name: "Typography", icon: Type, sub: "書体" },
   { id: "title", name: "Titles", icon: Trophy, sub: "称号" },
   { id: "pointer", name: "Pointers", icon: MousePointer2, sub: "軌跡" },
   { id: "sound", name: "Sounds", icon: Music, sub: "音響" },
@@ -36,6 +35,7 @@ export default function InventoryPage() {
   const [activeCategory, setActiveCategory] = useState("frame");
   const [rtBalance, setRTBalance] = useState("0");
   const [isSaving, setIsSaving] = useState(false);
+  const [unlockingAsset, setUnlockingAsset] = useState<string | null>(null);
   const [ownedAssets, setOwnedAssets] = useState<string[]>([]);
   const [assetPrices, setAssetPrices] = useState<Record<string, number>>({});
   
@@ -52,7 +52,7 @@ export default function InventoryPage() {
   });
 
   const [assets, setAssets] = useState<Asset[]>([
-    // ... rest of assets unchanged
+    // Frames
     { id: "Obsidian", name: "Obsidian Frame", type: "frame", rarity: "common", description: "標準的な外枠。ビジネスの誠実さを表現する。", unlocked: true },
     { id: "Gold", name: "Heritage Gold", type: "frame", rarity: "epic", description: "伝統を感じさせる落ち着いた黄金色。", cost: 5000, unlocked: false },
     { id: "Dynamic", name: "Azure Pulse", type: "frame", rarity: "legendary", description: "知性を感じさせる蒼い脈動。", cost: 10000, unlocked: false },
@@ -74,13 +74,6 @@ export default function InventoryPage() {
     { id: "Glitch", name: "Digital Glitch", type: "effect", rarity: "rare", description: "時折発生するノイズと走査線。高度なセキュリティを演出。", cost: 3000, unlocked: false },
     { id: "Starfield", name: "Starfield Particles", type: "effect", rarity: "legendary", description: "奥行きを感じさせる星屑のパーティクル。", cost: 8000, unlocked: false },
     { id: "Petals", name: "Falling Petals", type: "effect", rarity: "rare", description: "静かに舞い散る桜の花びら。", cost: 3000, unlocked: false },
-
-    // Fonts (Anime inspired)
-    { id: "Standard", name: "Standard Sans", type: "fontFamily", rarity: "common", description: "読みやすさを重視した標準書体。", unlocked: true },
-    { id: "Overlord", name: "Royal Serif", type: "fontFamily", rarity: "rare", description: "圧倒的な威厳を放つ重厚なセリフ体。", cost: 2500, unlocked: false },
-    { id: "Mecha", name: "Unit-01", type: "fontFamily", rarity: "epic", description: "SFアニメのコンソールを彷彿とさせる角ばった書体。", cost: 4000, unlocked: false },
-    { id: "Ninja", name: "Shinobi Brush", type: "fontFamily", rarity: "epic", description: "力強い筆致の和風書体。忍びの魂を刻む。", cost: 4000, unlocked: false },
-    { id: "Future", name: "Neo Tokyo", type: "fontFamily", rarity: "legendary", description: "未来都市のネオンサインのようなモダンな書体。", cost: 7000, unlocked: false },
 
     { id: "ASSOCIATE", name: "ASSOCIATE", type: "title", rarity: "common", description: "初期称号。同盟の一員である証。", unlocked: true },
     { id: "CONNECTOR", name: "CONNECTOR", type: "title", rarity: "rare", description: "実績：10人との接続を記録した証。", unlocked: false },
@@ -144,8 +137,11 @@ export default function InventoryPage() {
   };
 
   const handleUnlock = async (asset: Asset) => {
+    if (unlockingAsset) return;
+    
     const cost = assetPrices[asset.rarity] || 0;
     if (confirm(`Unlock ${asset.name} for ${cost.toLocaleString()} RT?`)) {
+      setUnlockingAsset(asset.id);
       try {
         const res = await fetch("/api/user/unlock", {
           method: "POST",
@@ -157,10 +153,23 @@ export default function InventoryPage() {
           showToast(`Unlocked: ${asset.name}`, "success");
           setRTBalance(data.rt_balance);
           setOwnedAssets(data.owned_assets);
+          
+          // 即座に装備して保存
+          const newEquipped = { ...equipped, [activeCategory as keyof typeof equipped]: asset.id };
+          setEquipped(newEquipped);
+          
+          await fetch("/api/user/equip", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ equipped: newEquipped })
+          });
+          
+          window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
         } else {
           showToast(data.error || "Unlock failed", "error");
         }
       } catch (err) { console.error(err); }
+      finally { setUnlockingAsset(null); }
     }
   };
 
@@ -203,7 +212,6 @@ export default function InventoryPage() {
            <div className="p-8 bg-white/[0.02] border border-white/5 shadow-2xl relative overflow-hidden group flex flex-col items-center">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-azure-500/20 to-transparent" />
               
-              {/* 【全画面共通】レイアウト即時切替ボタン */}
               <div className="absolute top-6 right-6 z-30 flex gap-2 p-1 bg-white/5 border border-white/5 opacity-40 group-hover:opacity-100 transition-opacity">
                  <button onClick={() => setEquipped({...equipped, orientation: 'horizontal'})} className={`p-1.5 transition-all ${equipped.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
                     <Layout size={12}/>
@@ -294,7 +302,9 @@ export default function InventoryPage() {
                           ) : (
                             <div className="flex flex-col items-end gap-1">
                               <span className="text-[10px] font-mono text-white tracking-widest">{cost.toLocaleString()} RT</span>
-                              <span className="text-[7px] tracking-[0.2em] opacity-40 uppercase font-bold">Unlock</span>
+                              <span className="text-[7px] tracking-[0.2em] opacity-40 uppercase font-bold">
+                                {unlockingAsset === asset.id ? "Unlocking..." : "Unlock"}
+                              </span>
                             </div>
                           )}
                         </div>
