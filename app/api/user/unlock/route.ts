@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       prisma.rTTransaction.create({
         data: {
           user_id: user.id,
-          amount: BigInt(-cost),
+          amount: -cost,
           type: "spend",
           description: `Unlocked asset: ${assetId} (${rarity})`
         }
