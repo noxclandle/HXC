@@ -84,57 +84,88 @@ function ActivateContent() {
 
       {step === "verifying" && (
         <motion.div key="verifying" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center">
-          <div className="relative mb-12">
-            <motion.div initial={{ rotate: 0 }} animate={{ rotate: 360 }} transition={{ duration: 4, ease: "linear", repeat: Infinity }} className="text-moonlight/40">
-              <Hexagon size={160} strokeWidth={0.5} />
-            </motion.div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Loader2 className="animate-spin text-moonlight" size={32} />
-            </div>
+          <div className="relative mb-16">
+             {/* Exciting Loading Animation */}
+             <motion.div
+               initial={{ scale: 0.8, opacity: 0 }}
+               animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+               className="absolute inset-0 bg-azure-500 blur-[100px] rounded-full"
+             />
+             <motion.div
+               initial={{ rotate: 0 }}
+               animate={{ rotate: 360 }}
+               transition={{ duration: 8, ease: "linear", repeat: Infinity }}
+               className="text-white/10"
+             >
+               <Hexagon size={240} strokeWidth={0.2} />
+             </motion.div>
+             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+               <Loader2 className="animate-spin text-azure-400" size={40} />
+               <span className="text-[8px] tracking-[1em] uppercase text-azure-400 animate-pulse font-bold ml-[1em]">Establishing Identity</span>
+             </div>
           </div>
-          <h2 className="text-2xl tracking-[0.3em] uppercase mb-4">Authenticating</h2>
-          <p className="text-gothic-silver text-xs tracking-widest">聖域の記録と照合中...</p>
+          <div className="space-y-2">
+             <h2 className="text-2xl tracking-[0.4em] uppercase font-extralight">Syncing Protocol</h2>
+             <p className="text-white/30 text-[9px] tracking-[0.2em] uppercase">物理と仮想の境界線を透過中...</p>
+          </div>
         </motion.div>
       )}
 
       {step === "success" && (
-        <motion.div key="success" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center max-w-sm w-full">
-          <CheckCircle2 size={80} className="text-moonlight mb-8" />
-          <h2 className="text-3xl tracking-[0.4em] uppercase mb-4 text-white">Detected</h2>
-          <p className="text-gothic-silver text-[10px] tracking-widest mb-12 leading-relaxed">
-             物理デバイスの識別子を確認しました。<br />
-             このカードにあなたのアイデンティティを刻みますか？
-          </p>
-          <div className="flex flex-col gap-4 w-full px-6">
-            <Link href={`/activate/register?uid=${uid}&serial=${serial}`} className="w-full py-4 bg-white text-void font-bold text-[10px] tracking-[0.4em] uppercase flex items-center justify-center gap-3 hover:bg-azure-50 transition-all shadow-xl">
-              <UserPlus size={14} /> Create New Identity
-            </Link>
-            {session ? (
-              <button
-                onClick={async () => {
-                  try {
-                    const res = await fetch("/api/user/equip-card", {
-                      method: "POST",
-                      body: JSON.stringify({ uid })
-                    });
-                    if (res.ok) {
-                      router.push("/hub");
-                    } else {
-                      const data = await res.json();
-                      alert(data.error || "Sync failed");
-                    }
-                  } catch (e) { console.error(e); }
-                }}
-                className="w-full py-4 border border-white/20 text-white/60 font-bold text-[10px] tracking-[0.4em] uppercase flex items-center justify-center gap-3 hover:border-white hover:text-white transition-all"
-              >
-                <LinkIcon size={14} /> Sync with My Account
-              </button>
-            ) : (
-              <Link href="/login" className="w-full py-4 border border-white/10 text-white/40 text-[9px] tracking-[0.4em] uppercase flex items-center justify-center gap-3 hover:border-white/20 transition-all">
-                Login to Sync
+        <motion.div key="success" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center max-w-sm w-full relative">
+          {/* White Flash Effect */}
+          <motion.div 
+             initial={{ opacity: 1, scale: 0 }}
+             animate={{ opacity: 0, scale: 10 }}
+             transition={{ duration: 0.8, ease: "easeOut" }}
+             className="absolute inset-0 bg-white rounded-full z-50 pointer-events-none"
+          />
+
+          <motion.div
+             initial={{ scale: 0.9, y: 20, filter: "brightness(2)" }}
+             animate={{ scale: 1, y: 0, filter: "brightness(1)" }}
+             transition={{ duration: 1, ease: "easeOut" }}
+             className="flex flex-col items-center w-full"
+          >
+            <CheckCircle2 size={80} className="text-azure-400 mb-8" />
+            <h2 className="text-3xl tracking-[0.4em] uppercase mb-4 text-white">Detected</h2>
+            <p className="text-gothic-silver text-[10px] tracking-widest mb-12 leading-relaxed">
+               物理デバイスの識別子を確認しました。<br />
+               このカードにあなたのアイデンティティを刻みますか？
+            </p>
+
+            <div className="flex flex-col gap-4 w-full px-6">
+              <Link href={`/activate/register?uid=${uid}&serial=${serial}`} className="w-full py-4 bg-white text-void font-bold text-[10px] tracking-[0.4em] uppercase flex items-center justify-center gap-3 hover:bg-azure-50 transition-all shadow-xl">
+                <UserPlus size={14} /> Create New Identity
               </Link>
-            )}
-          </div>
+              {session ? (
+                <button
+                  onClick={async () => {
+                    try {
+                      const res = await fetch("/api/user/equip-card", {
+                        method: "POST",
+                        body: JSON.stringify({ uid })
+                      });
+                      if (res.ok) {
+                        router.push("/hub");
+                      } else {
+                        const data = await res.json();
+                        alert(data.error || "Sync failed");
+                      }
+                    } catch (e) { console.error(e); }
+                  }}
+                  className="w-full py-4 border border-white/20 text-white/60 font-bold text-[10px] tracking-[0.4em] uppercase flex items-center justify-center gap-3 hover:border-white hover:text-white transition-all"
+                >
+                  <LinkIcon size={14} /> Sync with My Account
+                </button>
+              ) : (
+                <Link href="/login" className="w-full py-4 border border-white/10 text-white/40 text-[9px] tracking-[0.4em] uppercase flex items-center justify-center gap-3 hover:border-white/20 transition-all">
+                  Login to Sync
+                </Link>
+              )}
+            </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
