@@ -42,6 +42,14 @@ export async function POST(req: NextRequest) {
       create: { key: 'asset_prices', value: newPrices }
     });
 
+    await prisma.auditLog.create({
+      data: {
+        user_id: session.user.id,
+        action: "CONFIG_SYNCHRONIZED",
+        details: { key: 'asset_prices', value: newPrices }
+      }
+    });
+
     return NextResponse.json({ success: true, value: updated.value });
   } catch (error: any) {
     console.error("Config update error:", error);

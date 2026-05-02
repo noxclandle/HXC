@@ -3,7 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
-export async function POST(req: NextRequest) {
+export const dynamic = "force-dynamic";
+
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     const allowedRoles = ["mastermind", "chief_officer", "architect"];
@@ -12,24 +14,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { id } = await req.json();
-
-    await prisma.announcement.delete({
-      where: { id }
-    });
-
-    await prisma.auditLog.create({
-      data: {
-        user_id: session.user.id,
-        action: "BROADCAST_PURGED",
-        details: { id }
+    const logs = await prisma.auditLog.findMany({
+      take: 50,
+      orderBy: { created_at: "desc" },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+          }
+        }
       }
     });
 
-    return NextResponse.json({ success: true });
-
+    return NextResponse.json(logs);
   } catch (error: any) {
-    console.error("News delete error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("Fetch audit logs error:", error);
+    return NextResponse.json({ error: "Failed to fetch logs." }, { status: 500 });
   }
 }

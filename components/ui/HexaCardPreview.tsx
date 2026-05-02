@@ -74,6 +74,7 @@ export default function HexaCardPreview({
       case "Emerald": return "border-emerald-400/40 shadow-[0_0_20px_rgba(52,211,153,0.1)]";
       case "Platinum": return "border-[3px] border-slate-500 shadow-[0_0_30px_rgba(255,255,255,0.3)] ring-1 ring-white/20 ring-inset";
       case "ImperialGold": return "border-[4px] border-amber-500/80 shadow-[0_0_50px_rgba(245,158,11,0.4)] ring-2 ring-amber-300/30 ring-inset bg-amber-900/5";
+      case "BlackCard": return "border-[2px] border-zinc-900 ring-1 ring-zinc-800/50 ring-inset shadow-[0_30px_60px_rgba(0,0,0,1)]";
       default: return "border-white/10 shadow-2xl";
     }
   };
@@ -82,9 +83,14 @@ export default function HexaCardPreview({
     const bg = background || "Default";
     switch (bg) {
       case "Carbon": return "bg-[#0A0A0A] bg-[radial-gradient(#1a1a1a_1px,transparent_1px)] bg-[size:4px_4px]";
-      case "CyberGrid": return "bg-[#050505] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]";
-      case "BrushedMetal": return "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900";
+      case "MonochromeGrid": return "bg-[#050505] bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:16px_16px]";
+      case "BrushedMetal": return "bg-zinc-800 bg-[linear-gradient(105deg,#27272a_0%,#52525b_25%,#27272a_50%,#52525b_75%,#27272a_100%)] before:absolute before:inset-0 before:bg-[linear-gradient(to_right,transparent,rgba(255,255,255,0.1),transparent)] before:pointer-events-none";
+      case "SilkBlur": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:to-transparent before:blur-[60px] before:opacity-50 before:pointer-events-none";
       case "Nebula": return "bg-[#050505] bg-[radial-gradient(circle_at_50%_50%,rgba(76,29,149,0.15),transparent_50%),radial-gradient(circle_at_80%_20%,rgba(30,58,138,0.15),transparent_40%)]";
+      case "CrimsonVelvet": return "bg-[#1a0505] bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.1),transparent_70%)] before:absolute before:inset-0 before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] before:mix-blend-overlay before:pointer-events-none";
+      case "IceGlass": return "bg-[#0a0f15] before:absolute before:inset-0 before:backdrop-blur-[20px] before:bg-white/[0.02] before:border before:border-white/10 before:pointer-events-none";
+      case "BrandedHex": return "bg-[#080808] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+CjxwYXRoIGQ9Ik0zMCAwbDE1IDI2djI2TDMwIDYwIDE1IDUybDAtMjZ6IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjA1IiBzdHJva2Utd2lkdGg9IjAuNSIvPgo8L3N2Zz4=')] bg-[size:30px_30px]";
+      case "BlackCard": return "bg-[#030303] bg-[radial-gradient(ellipse_at_top,#1a1a1a,transparent_80%)]";
       default: return "bg-[#050505]";
     }
   };
@@ -132,18 +138,21 @@ export default function HexaCardPreview({
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
           {/* Effects Layer */}
-          {effect === "Hologram" && (
-            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent mix-blend-overlay pointer-events-none animate-shimmer bg-[length:200%_100%]" />
+          {effect === "Aethereal" && (
+            <div className="absolute inset-0 pointer-events-none mix-blend-screen opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMCAwaDF2MUgwem0yIDyaDF2MUgyeiIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIwLjUiLz4KPC9zdmc+')] animate-[shimmer_5s_linear_infinite]" />
           )}
           {effect === "Glitch" && (
             <div className="absolute inset-0 pointer-events-none">
-               <div className="absolute inset-0 bg-white/5 mix-blend-overlay animate-glitch" />
-               <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[size:100%_2px,3px_100%] pointer-events-none" />
+               <div className="absolute inset-0 bg-white/10 mix-blend-overlay animate-pulse opacity-70" />
+               <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0)_50%,rgba(255,255,255,0.1)_50%)] bg-[size:100%_2px] opacity-40 pointer-events-none" />
+               <div className="absolute inset-x-0 h-[1px] bg-white/30 animate-[scan_3s_linear_infinite]" />
             </div>
           )}
-          {effect === "Starfield" && (
+          {effect === "Interference" && (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <div className="absolute inset-0 bg-[radial-gradient(white_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 animate-pulse" />
+              <div className="absolute inset-0 border-[2px] border-white/20 rounded-full scale-0 opacity-0 animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite]" />
+              <div className="absolute inset-0 border-[1px] border-white/10 rounded-full scale-0 opacity-0 animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite_1.5s]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-white/[0.03] to-transparent animate-pulse" />
             </div>
           )}
           {effect === "Petals" && (
@@ -175,7 +184,7 @@ export default function HexaCardPreview({
                </div>
                <div className="flex-1" />
                <div className="space-y-3 w-full flex flex-col py-2">
-                  <p className={`text-[9px] tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title || "ASSOCIATE"}</p>
+                  {title && <p className={`text-[9px] tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title}</p>}
                   <div className="flex flex-col gap-2 w-full">
                      {reading && <p className={`text-[10px] tracking-[0.3em] text-azure-400 font-bold uppercase truncate w-full ${getAlignClass(alignReading)}`}>{reading}</p>}
                      <h2 className={`text-2xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`}>{name}</h2>
@@ -200,7 +209,7 @@ export default function HexaCardPreview({
               </header>
               <main className="flex flex-col gap-3 w-full">
                 <div className="flex flex-col gap-1 w-full">
-                   <p className={`text-[9px] tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title || "ASSOCIATE"}</p>
+                   {title && <p className={`text-[9px] tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title}</p>}
                    <div className="flex flex-col w-full">
                       {reading && <span className={`text-[8px] tracking-[0.3em] text-azure-400 font-bold uppercase mb-1 w-full ${getAlignClass(alignReading)}`}>{reading}</span>}
                       <h2 className={`text-3xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`}>{name}</h2>

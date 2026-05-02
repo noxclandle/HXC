@@ -18,7 +18,7 @@ export default function InvitationPage() {
     },
     { 
       title: "Silent Luxury", 
-      desc: "漆黒と月光。哲学に基づく一切の無駄を省いたUIが、持ち主の品格を語ります。", 
+      desc: "静寂と月光。哲学に基づく一切の無駄を省いたUIが、持ち主の確かな品格を証明します。", 
       icon: <Zap className="opacity-40" /> 
     }
   ];
@@ -33,8 +33,8 @@ export default function InvitationPage() {
         <img src="/logo.png" className="w-24 h-24 mb-16 opacity-40 animate-pulse" />
         <h1 className="text-4xl md:text-5xl tracking-[0.2em] uppercase font-extralight mb-8 italic">Hexa Card</h1>
         <p className="text-sm tracking-[0.3em] opacity-40 leading-relaxed uppercase">
-          紙の呪縛を解き放ち、<br />
-          あなたの存在を「聖域」へ同期せよ。
+          物理的な制約を超え、<br />
+          あなたのアイデンティティを世界へ拡張する。
         </p>
       </motion.div>
 
@@ -62,7 +62,7 @@ export default function InvitationPage() {
       >
         <div className="text-center space-y-2">
           <p className="text-[10px] tracking-[0.6em] uppercase opacity-40">Ready to Synchronize?</p>
-          <p className="text-[8px] tracking-[0.2em] uppercase opacity-20 italic">あなたも、この美しき深淵の一員になりませんか。</p>
+          <p className="text-[8px] tracking-[0.2em] uppercase opacity-20 italic">新たな次元の繋がりを、あなたにも。</p>
         </div>
         
         <Link 
@@ -72,10 +72,6 @@ export default function InvitationPage() {
           Join the Void
         </Link>
       </motion.div>
-
-      <footer className="mt-48 text-[9px] tracking-[0.5em] opacity-10 uppercase">
-        Hexa Card. All rights reserved.
-      </footer>
     </main>
   );
 }

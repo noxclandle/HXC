@@ -23,8 +23,10 @@ export default function ResonanceInteraction() {
         const equippedPointer = data.equipped?.pointer || "Pure White Hex";
         switch (equippedPointer) {
           case "Azure Trace": setPointerColor("#3B82F6"); break; // 蒼
-          case "Emerald Hex": setPointerColor("#10B981"); break; // 翠
-          case "Bronze Trace": setPointerColor("#B48B5E"); break; // 琥珀
+          case "Gold Trace": setPointerColor("#F59E0B"); break; // 黄金
+          case "Emerald Trace": setPointerColor("#10B981"); break; // 翠
+          case "Violet Trace": setPointerColor("#8B5CF6"); break; // 紫
+          case "Crimson Trace": setPointerColor("#EF4444"); break; // 真紅
           default: setPointerColor("#FFFFFF"); // 白
         }
       }
