@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, CreditCard, Shield, Star, Crown, Check, ArrowRight } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";

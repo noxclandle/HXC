@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
     await prisma.auditLog.create({
       data: {
-        user_id: session.user.id,
+        user_id: session?.user?.id || null,
         action: "AUTHORITY_UPDATED",
         details: { targetUserId: userId, newRole: role, grantChief: grantChiefTitle }
       }
