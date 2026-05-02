@@ -50,14 +50,14 @@ export default function MemberHubPage() {
       </div>
     ) : (
       <div className="max-w-7xl mx-auto pt-24 px-6 pb-24 relative text-moonlight">
-        <header className="mb-12 flex justify-between items-start">
+        <header className="mb-12 flex flex-col md:flex-row justify-between items-start gap-8">
           <div className="space-y-4">
             <h1 className="text-3xl tracking-[0.4em] uppercase font-extralight mb-2 text-white">Member Hub</h1>
             <p className="text-[10px] tracking-[0.4em] uppercase opacity-40">System Dashboard</p>
           </div>
-          <div className="flex items-start gap-8">
+          <div className="flex items-start gap-8 w-full md:w-auto justify-between md:justify-end">
              {/* Stats & Status */}
-             <div className="text-right flex flex-col items-end">
+             <div className="text-left md:text-right flex flex-col items-start md:items-end w-full">
                 {/* Title Badge */}
                 <div className="mb-4 px-3 py-1.5 border border-azure-500/30 bg-azure-500/[0.05] text-azure-400 text-[8px] tracking-[0.4em] font-bold uppercase flex items-center gap-2">
                    <ShieldCheck size={10} /> {realStats.equipped?.title || "ASSOCIATE"}
@@ -65,7 +65,7 @@ export default function MemberHubPage() {
                 
                 <p className="text-[9px] uppercase tracking-[0.5em] text-white/30 mb-1">Relation Token</p>
                 <p className="text-2xl font-extralight tracking-[0.1em] text-white">{Number(realStats.rt_balance).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
-                <div className="mt-2 flex justify-end items-center gap-2 opacity-40">
+                <div className="mt-2 flex justify-start md:justify-end items-center gap-2 opacity-40">
                    <span className="text-[7px] uppercase tracking-widest font-bold">Total EXP</span>
                    <span className="text-[10px] font-mono tracking-tighter text-white">{Number(realStats.exp).toLocaleString()}</span>
                 </div>

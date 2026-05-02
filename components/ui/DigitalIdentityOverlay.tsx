@@ -46,6 +46,11 @@ export default function DigitalIdentityOverlay({ user }: DigitalCardProps) {
   if (bg === "Nebula") bgClass = "bg-[#050505] bg-[radial-gradient(circle_at_50%_50%,rgba(76,29,149,0.15),transparent_50%),radial-gradient(circle_at_80%_20%,rgba(30,58,138,0.15),transparent_40%)]";
   if (bg === "CrimsonVelvet") bgClass = "bg-[#1a0505] bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.1),transparent_70%)] before:absolute before:inset-0 before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] before:mix-blend-overlay before:pointer-events-none";
   if (bg === "IceGlass") bgClass = "bg-[#0a0f15] before:absolute before:inset-0 before:backdrop-blur-[20px] before:bg-white/[0.02] before:border before:border-white/10 before:pointer-events-none";
+  if (bg === "Stardust") bgClass = "bg-[#050508] bg-[radial-gradient(white_0.5px,transparent_0.5px)] bg-[size:20px_20px] opacity-90";
+  if (bg === "RoyalGold") bgClass = "bg-[#0f0a05] bg-[radial-gradient(circle_at_50%_50%,rgba(180,139,94,0.15),transparent_70%)] before:absolute before:inset-0 before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyIiBoZWlnaHQ9IjIiPgo8cmVjdCB3aWR0aD0iMiIgaGVpZ2h0PSIyIiBmaWxsPSIjYmI5OTVlIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] before:pointer-events-none";
+  if (bg === "MidnightMist") bgClass = "bg-gradient-to-b from-[#0a0a0a] via-[#1a1a1a] to-[#0a0a0a] before:absolute before:inset-0 before:bg-white/[0.02] before:blur-xl before:pointer-events-none";
+  if (bg === "DigitalFlow") bgClass = "bg-[#020202] bg-[linear-gradient(rgba(59,130,246,0.03)_1px,transparent_1px)] bg-[size:100%_4px]";
+  if (bg === "PrismFractal") bgClass = "bg-[#050505] before:absolute before:inset-0 before:bg-gradient-to-tr before:from-rose-500/5 before:via-azure-500/5 before:to-emerald-500/5 before:pointer-events-none";
 
   let frameClass = "border-moonlight/20";
   if (frame === "Gold") frameClass = "border-bronze-400/40";
