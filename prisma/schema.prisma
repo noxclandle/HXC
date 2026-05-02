@@ -30,6 +30,7 @@ model User {
   rt_balance        BigInt           @default(0)
   exp               BigInt           @default(0)      // 累計経験値
   last_daily_at     DateTime?        // 最後にデイリーボーナスを受け取った日時
+  last_read_news_at DateTime?        // 最後にニュースを既読にした日時
   ai_config         Json?
   owned_assets      Json?
   equipped_assets   Json?            // 現在装備中のアセット (frame, title, sound, etc.)

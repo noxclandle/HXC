@@ -38,6 +38,14 @@ export async function POST(req: NextRequest) {
       }
     });
 
+    await prisma.auditLog.create({
+      data: {
+        user_id: session.user.id,
+        action: "AUTHORITY_UPDATED",
+        details: { targetUserId: userId, newRole: role, grantChief: grantChiefTitle }
+      }
+    });
+
     return NextResponse.json({ success: true, role: updatedUser.role, titles: updatedUser.unlocked_titles });
 
   } catch (error: any) {

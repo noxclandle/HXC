@@ -19,6 +19,14 @@ export async function POST(req: NextRequest) {
       data: { status: "resolved" }
     });
 
+    await prisma.auditLog.create({
+      data: {
+        user_id: session.user.id,
+        action: "REPORT_RESOLVED",
+        details: { id }
+      }
+    });
+
     return NextResponse.json({ success: true, status: updated.status });
 
   } catch (error: any) {

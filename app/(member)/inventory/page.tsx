@@ -38,6 +38,7 @@ export default function InventoryPage() {
   const [unlockingAsset, setUnlockingAsset] = useState<string | null>(null);
   const [ownedAssets, setOwnedAssets] = useState<string[]>([]);
   const [assetPrices, setAssetPrices] = useState<Record<string, number>>({});
+  const [previewAsset, setPreviewAsset] = useState<Asset | null>(null);
   
   const [equipped, setEquipped] = useState({
     frame: "Obsidian",
@@ -62,30 +63,35 @@ export default function InventoryPage() {
     { id: "ImperialGold", name: "Imperial Gold", type: "frame", rarity: "legendary", description: "Black Member限定。圧倒的な存在感を放つ極厚の黄金フレーム。", cost: 999999, unlocked: false },
     
     // Backgrounds
-    { id: "Default", name: "Deep Void", type: "background", rarity: "common", description: "標準の漆黒背景。", unlocked: true },
-    { id: "Carbon", name: "Carbon Fiber", type: "background", rarity: "rare", description: "軽量で強靭なカーボン調の質感。", cost: 2000, unlocked: false },
-    { id: "CyberGrid", name: "Cyber Grid", type: "background", rarity: "epic", description: "電脳世界を想起させるネオンの格子状背景。", cost: 4500, unlocked: false },
+    { id: "Default", name: "Solid Void", type: "background", rarity: "common", description: "標準の無地背景。情報の透過性を最大化する。", unlocked: true },
+    { id: "Carbon", name: "Carbon Fiber", type: "background", rarity: "rare", description: "強靭なカーボン調のテクスチャ。", cost: 2000, unlocked: false },
+    { id: "MonochromeGrid", name: "Monochrome Grid", type: "background", rarity: "epic", description: "計算された緻密なグリッド線。理知的な印象を与える。", cost: 4500, unlocked: false },
     { id: "BrushedMetal", name: "Brushed Metal", type: "background", rarity: "rare", description: "鈍く光るヘアライン加工の金属質。", cost: 3500, unlocked: false },
-    { id: "Nebula", name: "Cosmic Nebula", type: "background", rarity: "legendary", description: "星雲の揺らめきを閉じ込めた幻想的な背景。", cost: 9000, unlocked: false },
+    { id: "Nebula", name: "Cosmic Nebula", type: "background", rarity: "legendary", description: "深い宇宙を思わせる青の階調。", cost: 9000, unlocked: false },
+    { id: "SilkBlur", name: "Silk Blur", type: "background", rarity: "legendary", description: "微かな光の拡散。シルクのような滑らかな空間を演出。", cost: 9000, unlocked: false },
 
     // Effects
-    { id: "None", name: "Clean", type: "effect", rarity: "common", description: "追加効果なし。", unlocked: true },
-    { id: "Hologram", name: "Prism Hologram", type: "effect", rarity: "epic", description: "角度によって虹色に変化するホログラム加工。", cost: 6000, unlocked: false },
-    { id: "Glitch", name: "Digital Glitch", type: "effect", rarity: "rare", description: "時折発生するノイズと走査線。高度なセキュリティを演出。", cost: 3000, unlocked: false },
-    { id: "Starfield", name: "Starfield Particles", type: "effect", rarity: "legendary", description: "奥行きを感じさせる星屑のパーティクル。", cost: 8000, unlocked: false },
-    { id: "Petals", name: "Falling Petals", type: "effect", rarity: "rare", description: "静かに舞い散る桜の花びら。", cost: 3000, unlocked: false },
+    { id: "None", name: "Clean", type: "effect", rarity: "common", description: "追加効果なし。純粋な情報を提示する。", unlocked: true },
+    { id: "Aethereal", name: "Aethereal Diffusion", type: "effect", rarity: "epic", description: "微弱なノイズによる透過エフェクト。存在の境界を曖昧にする。", cost: 6000, unlocked: false },
+    { id: "Glitch", name: "Digital Glitch", type: "effect", rarity: "rare", description: "時折発生するグリッチノイズ。技術的な洗練を演出。", cost: 3000, unlocked: false },
+    { id: "Interference", name: "Signal Interference", type: "effect", rarity: "legendary", description: "波紋のようなシグナル干渉。静かな存在感を放つ。", cost: 8000, unlocked: false },
+    { id: "Petals", name: "Falling Petals", type: "effect", rarity: "rare", description: "静かに舞い散る花びら。余白の美を強調する。", cost: 3000, unlocked: false },
 
-    { id: "ASSOCIATE", name: "ASSOCIATE", type: "title", rarity: "common", description: "初期称号。同盟の一員である証。", unlocked: true },
+    { id: "ASSOCIATE", name: "ASSOCIATE", type: "title", rarity: "common", description: "初期称号。ネットワークの一員である証。", unlocked: true },
     { id: "CONNECTOR", name: "CONNECTOR", type: "title", rarity: "rare", description: "実績：10人との接続を記録した証。", unlocked: false },
     { id: "STRATEGIST", name: "STRATEGIST", type: "title", rarity: "epic", description: "実績：100人の人脈をアーカイブした証。", unlocked: false },
-    { id: "MASTERMIND", name: "MASTERMIND", type: "title", rarity: "mythic", description: "至高実績：聖域の全真理を解明した究極の知性。", unlocked: false },
-    { id: "CHIEF OFFICER", name: "CHIEF OFFICER", type: "title", rarity: "mythic", description: "至高実績：システムの全権を掌握せし権力者。", unlocked: false },
+    { id: "MASTERMIND", name: "MASTERMIND", type: "title", rarity: "mythic", description: "至高実績：ネットワークの構造を解明した知性。", unlocked: false },
+    { id: "CHIEF OFFICER", name: "CHIEF OFFICER", type: "title", rarity: "mythic", description: "至高実績：システムの運営に関与する権限。", unlocked: false },
 
     { id: "Pure White Hex", name: "Pure White Hex", type: "pointer", rarity: "common", description: "純白の鋭い軌跡。", unlocked: true },
     { id: "Azure Trace", name: "Azure Trace", type: "pointer", rarity: "rare", description: "知的な蒼い軌跡。", unlocked: false },
+    { id: "Gold Trace", name: "Golden Aura", type: "pointer", rarity: "epic", description: "格式高い黄金の軌跡。", cost: 5000, unlocked: false },
+    { id: "Emerald Trace", name: "Emerald Pulse", type: "pointer", rarity: "rare", description: "生命力ある緑の軌跡。", cost: 3000, unlocked: false },
+    { id: "Violet Trace", name: "Violet Resonance", type: "pointer", rarity: "epic", description: "神秘的な紫の軌跡。", cost: 4500, unlocked: false },
+    { id: "Crimson Trace", name: "Crimson Ember", type: "pointer", rarity: "legendary", description: "情熱的な真紅의 軌跡。", cost: 8000, unlocked: false },
     { id: "resonance", name: "Pure Resonance", type: "sound", rarity: "epic", description: "反転時：空間を震わせる標準的な共鳴音。", unlocked: false },
     { id: "silver", name: "Silver Resonance", type: "sound", rarity: "rare", description: "反転時：透明感のある銀の鈴の音。", unlocked: false },
-    { id: "void", name: "Deep Void", type: "sound", rarity: "mythic", description: "反転時：深淵から響く重厚な低音。", unlocked: false },
+    { id: "void", name: "Deep Resonance", type: "sound", rarity: "mythic", description: "反転時：重厚で静かな低音。", unlocked: false },
   ]);
 
   const getRarityStyle = (rarity: Asset["rarity"]) => {
@@ -117,17 +123,17 @@ export default function InventoryPage() {
     if (session) fetchInitialData();
   }, [session]);
 
-  const handleCommit = async () => {
+  const handleCommit = async (customEquipped?: any) => {
     setIsSaving(true);
     try {
       const res = await fetch("/api/user/equip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ equipped })
+        body: JSON.stringify({ equipped: customEquipped || equipped })
       });
 
       if (res.ok) {
-        showToast("Treasury Synchronized / 装備を記録しました", "success");
+        showToast("Synchronized / 装備を同期しました", "success");
         window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
       } else {
         showToast("Error / 保存に失敗しました", "error");
@@ -157,14 +163,7 @@ export default function InventoryPage() {
           // 即座に装備して保存
           const newEquipped = { ...equipped, [activeCategory as keyof typeof equipped]: asset.id };
           setEquipped(newEquipped);
-          
-          await fetch("/api/user/equip", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ equipped: newEquipped })
-          });
-          
-          window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
+          handleCommit(newEquipped);
         } else {
           showToast(data.error || "Unlock failed", "error");
         }
@@ -180,12 +179,19 @@ export default function InventoryPage() {
       handleUnlock(asset);
       return;
     }
-    setEquipped({ ...equipped, [activeCategory as keyof typeof equipped]: asset.id });
+    const newEquipped = { ...equipped, [activeCategory as keyof typeof equipped]: asset.id };
+    setEquipped(newEquipped);
+    handleCommit(newEquipped);
   };
 
   const filteredAssets = assets.filter(a => a.type === activeCategory);
 
   if (status === "loading") return null;
+
+  const displayEquipped = {
+    ...equipped,
+    ...(previewAsset ? { [previewAsset.type]: previewAsset.id } : {})
+  };
 
   return (
     <div className="max-w-7xl mx-auto pt-32 px-6 pb-24 text-moonlight">
@@ -213,10 +219,18 @@ export default function InventoryPage() {
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-azure-500/20 to-transparent" />
               
               <div className="absolute top-6 right-6 z-30 flex gap-2 p-1 bg-white/5 border border-white/5 opacity-40 group-hover:opacity-100 transition-opacity">
-                 <button onClick={() => setEquipped({...equipped, orientation: 'horizontal'})} className={`p-1.5 transition-all ${equipped.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
+                 <button onClick={() => {
+                   const newEquipped = {...equipped, orientation: 'horizontal' as const};
+                   setEquipped(newEquipped);
+                   handleCommit(newEquipped);
+                 }} className={`p-1.5 transition-all ${equipped.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
                     <Layout size={12}/>
                  </button>
-                 <button onClick={() => setEquipped({...equipped, orientation: 'vertical'})} className={`p-1.5 transition-all ${equipped.orientation === 'vertical' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
+                 <button onClick={() => {
+                   const newEquipped = {...equipped, orientation: 'vertical' as const};
+                   setEquipped(newEquipped);
+                   handleCommit(newEquipped);
+                 }} className={`p-1.5 transition-all ${equipped.orientation === 'vertical' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
                     <Smartphone size={12}/>
                  </button>
               </div>
@@ -225,17 +239,17 @@ export default function InventoryPage() {
                 name={profile?.name || session?.user?.name || "ARCHITECT"} 
                 reading={profile?.handle || profile?.reading}
                 company={profile?.profile?.company}
-                title={equipped.title}
+                title={profile?.profile?.title}
                 phone={profile?.profile?.phone}
                 email={profile?.profile?.contact_email || profile?.email}
                 logoUrl={profile?.logo_url}
                 faceUrl={profile?.photo_url}
-                frame={equipped.frame}
-                background={equipped.background}
-                effect={equipped.effect}
-                fontFamily={equipped.fontFamily}
-                sound={equipped.sound}
-                orientation={equipped.orientation}
+                frame={displayEquipped.frame}
+                background={displayEquipped.background}
+                effect={displayEquipped.effect}
+                fontFamily={displayEquipped.fontFamily}
+                sound={displayEquipped.sound}
+                orientation={displayEquipped.orientation}
                 alignCompany="center"
                 alignName="center"
                 alignReading="center"
@@ -245,15 +259,13 @@ export default function InventoryPage() {
               />
               <div className="mt-10 pt-8 border-t border-white/5 space-y-4 w-full">
                  <div className="flex justify-between items-center text-[8px] tracking-[0.3em] uppercase opacity-40">
-                    <span>Active Title</span>
-                    <span className="text-azure-400 font-bold">{equipped.title}</span>
+                    <span>Identity Status</span>
+                    <span className="text-azure-400 font-bold uppercase tracking-widest">
+                       {previewAsset ? "Preview Mode" : "Authorized"}
+                    </span>
                  </div>
               </div>
            </div>
-           
-           <button onClick={handleCommit} disabled={isSaving} className={`w-full py-6 bg-azure-600 text-white font-bold text-[11px] tracking-[1.2em] uppercase shadow-2xl hover:bg-azure-500 transition-all active:scale-[0.98] relative overflow-hidden ${isSaving && 'opacity-50'}`}>
-              {isSaving ? "Synchronizing..." : "Commit Changes / 変更を記録"}
-           </button>
         </div>
 
         <div className="lg:col-span-7 space-y-10">
@@ -283,7 +295,13 @@ export default function InventoryPage() {
                     const cost = assetPrices[asset.rarity] || 0;
 
                     return (
-                      <div key={asset.id} onClick={() => handleSelectAsset(asset)} className={`group p-6 border transition-all cursor-pointer flex justify-between items-center relative overflow-hidden ${isActive ? "border-white/40 bg-white/5" : "border-white/5 bg-white/[0.01] hover:border-azure-500/20"} ${!isUnlocked && "opacity-60"}`}>
+                      <div 
+                        key={asset.id} 
+                        onClick={() => handleSelectAsset(asset)} 
+                        onMouseEnter={() => setPreviewAsset(asset)}
+                        onMouseLeave={() => setPreviewAsset(null)}
+                        className={`group p-6 border transition-all cursor-pointer flex justify-between items-center relative overflow-hidden ${isActive ? "border-white/40 bg-white/5" : "border-white/5 bg-white/[0.01] hover:border-azure-500/20"} ${!isUnlocked && "opacity-60"}`}
+                      >
                         <div className="flex items-center gap-6">
                            <div className={`w-12 h-12 flex items-center justify-center border ${isActive ? "border-white text-white" : "border-white/10 opacity-40"}`}>
                               {isUnlocked ? <Check size={16} /> : <Lock size={16} />}

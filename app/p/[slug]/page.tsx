@@ -125,27 +125,27 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
 
         <motion.div 
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="flex flex-col items-center gap-12 lg:scale-110 xl:scale-125 transition-transform duration-1000"
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+          className="w-full flex flex-col items-center gap-12 lg:scale-110 xl:scale-125 transition-transform duration-1000"
         >
           <HexaCardPreview 
             name={data.name || "NAME"}
-            reading={data.handle_name}
-            company={data.profile?.company}
-            title={data.profile?.title || rawEquipped.title}
-            phone={data.phone}
-            email={data.contact_email || data.email}
-            logoUrl={data.logo_url}
-            faceUrl={data.photo_url}
-            frame={rawEquipped.frame}
-            background={rawEquipped.background}
-            effect={rawEquipped.effect}
-            fontFamily={rawEquipped.fontFamily || rawEquipped.font}
-            sound={rawEquipped.sound}
-            link_x={data.link_x}
-            link_instagram={data.link_instagram}
-            link_line={data.link_line}
-            link_facebook={data.link_facebook}
+            reading={data.handle_name || ""}
+            company={data.profile?.company || ""}
+            title={data.profile?.title || ""}
+            phone={data.phone || ""}
+            email={data.contact_email || data.email || ""}
+            logoUrl={data.logo_url || ""}
+            faceUrl={data.photo_url || ""}
+            frame={rawEquipped.frame || "Obsidian"}
+            background={rawEquipped.background || "Default"}
+            effect={rawEquipped.effect || "None"}
+            fontFamily={rawEquipped.fontFamily || rawEquipped.font || "Standard"}
+            sound={rawEquipped.sound || "resonance"}
+            link_x={data.link_x || ""}
+            link_instagram={data.link_instagram || ""}
+            link_line={data.link_line || ""}
+            link_facebook={data.link_facebook || ""}
             orientation={currentOrientation}
             alignCompany={currentAligns.company || defaultAlign}
             alignName={currentAligns.name || defaultAlign}
@@ -201,7 +201,7 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
             <div className="space-y-8 relative z-10 text-white">
                <h3 className="text-xl tracking-[0.5em] uppercase font-light opacity-70">Elevate Your Presence</h3>
                <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase">信頼を可視化し、人脈を資産に変えるために。</p>
-               <Link href="/" className="inline-flex items-center gap-6 px-16 py-6 bg-white text-void font-bold text-[11px] tracking-[1.2em] uppercase hover:bg-azure-50 transition-all shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:scale-105 active:scale-95 group">Join Sanctum / 詳しく見る <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" /></Link>
+               <Link href="/purchase" className="inline-flex items-center gap-6 px-16 py-6 bg-white text-void font-bold text-[11px] tracking-[1.2em] uppercase hover:bg-azure-50 transition-all shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:scale-105 active:scale-95 group">Order Your Identity / カードを申し込む <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" /></Link>
             </div>
          </div>
       </motion.section>

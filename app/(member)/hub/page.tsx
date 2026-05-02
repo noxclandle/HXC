@@ -14,12 +14,14 @@ export default function MemberHubPage() {
   const { data: session, status } = useSession();
   const [realStats, setRealStatus] = useState<any>(null);
   const [contacts, setContacts] = useState<any[]>([]);
+  const [latestNews, setLatestNews] = useState<any>(null);
 
   const fetchData = async () => {
     try {
-      const [statusRes, contactsRes] = await Promise.all([
+      const [statusRes, contactsRes, newsRes] = await Promise.all([
         fetch("/api/user/status", { cache: "no-store" }),
-        fetch("/api/contacts/list", { cache: "no-store" })
+        fetch("/api/contacts/list", { cache: "no-store" }),
+        fetch("/api/news", { cache: "no-store" })
       ]);
       if (statusRes.ok) setRealStatus(await statusRes.json());
       if (contactsRes.ok) {
@@ -29,6 +31,10 @@ export default function MemberHubPage() {
           x: Math.random() * 80 + 10,
           y: Math.random() * 80 + 10
         })));
+      }
+      if (newsRes.ok) {
+        const nData = await newsRes.json();
+        if (nData.length > 0) setLatestNews(nData[0]);
       }
     } catch (err) { console.error(err); }
   };
@@ -47,16 +53,22 @@ export default function MemberHubPage() {
         <header className="mb-12 flex justify-between items-start">
           <div className="space-y-4">
             <h1 className="text-3xl tracking-[0.4em] uppercase font-extralight mb-2 text-white">Member Hub</h1>
-            <div className="flex items-center gap-4 text-azure-400 text-[9px] tracking-[0.3em] font-bold uppercase italic">
-              <ShieldCheck size={12} /> {realStats.equipped?.title || "ASSOCIATE"}
-            </div>
+            <p className="text-[10px] tracking-[0.4em] uppercase opacity-40">System Dashboard</p>
           </div>
-          <div className="text-right">
-             <p className="text-[9px] uppercase tracking-[0.5em] text-white/30 mb-1">Relation Token</p>
-             <p className="text-2xl font-extralight tracking-[0.1em] text-white">{Number(realStats.rt_balance).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
-             <div className="mt-2 flex justify-end items-center gap-2 opacity-40">
-                <span className="text-[7px] uppercase tracking-widest font-bold">Total EXP</span>
-                <span className="text-[10px] font-mono tracking-tighter">{Number(realStats.exp).toLocaleString()}</span>
+          <div className="flex items-start gap-8">
+             {/* Stats & Status */}
+             <div className="text-right flex flex-col items-end">
+                {/* Title Badge */}
+                <div className="mb-4 px-3 py-1.5 border border-azure-500/30 bg-azure-500/[0.05] text-azure-400 text-[8px] tracking-[0.4em] font-bold uppercase flex items-center gap-2">
+                   <ShieldCheck size={10} /> {realStats.equipped?.title || "ASSOCIATE"}
+                </div>
+                
+                <p className="text-[9px] uppercase tracking-[0.5em] text-white/30 mb-1">Relation Token</p>
+                <p className="text-2xl font-extralight tracking-[0.1em] text-white">{Number(realStats.rt_balance).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
+                <div className="mt-2 flex justify-end items-center gap-2 opacity-40">
+                   <span className="text-[7px] uppercase tracking-widest font-bold">Total EXP</span>
+                   <span className="text-[10px] font-mono tracking-tighter text-white">{Number(realStats.exp).toLocaleString()}</span>
+                </div>
              </div>
           </div>
         </header>
@@ -73,7 +85,7 @@ export default function MemberHubPage() {
               equipped: realStats.equipped
             }} onUpdate={fetchData} />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                <Link href="/scan" className="group p-8 border border-azure-500/20 bg-azure-500/[0.03] hover:bg-azure-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-1 h-full bg-azure-500/40" />
                   <div>
@@ -89,14 +101,6 @@ export default function MemberHubPage() {
                      <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-bronze-400/60">名刺帳・人脈管理</p>
                   </div>
                   <Book size={32} className="opacity-20 group-hover:opacity-60 transition-all text-white" />
-               </Link>
-               <Link href="/hub/news" className="group p-8 border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-white/20" />
-                  <div>
-                     <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white">Broadcast</h2>
-                     <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-white/60">お知らせ・更新</p>
-                  </div>
-                  <Newspaper size={32} className="opacity-20 group-hover:opacity-60 transition-all text-white" />
                </Link>
             </div>
 
@@ -117,6 +121,7 @@ export default function MemberHubPage() {
                 </div>
                 <MonthlyReport />
              </div>
+             
              <section className="space-y-6 px-4">
                <h2 className="text-[10px] tracking-[0.5em] uppercase opacity-30 font-bold italic text-white">Recent Connections</h2>
                <div className="space-y-3">
@@ -131,6 +136,32 @@ export default function MemberHubPage() {
                   ))}
                </div>
              </section>
+
+             {/* Minimalist System Broadcast */}
+             {latestNews && (
+               <section className="px-4 mt-12 border-t border-white/5 pt-8">
+                 <h2 className="text-[8px] tracking-[0.5em] uppercase opacity-30 font-bold flex items-center gap-2 mb-4 text-white">
+                    <Newspaper size={10} />
+                    System Broadcast
+                 </h2>
+                 <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                       <span className={`w-1 h-1 rounded-full ${
+                          latestNews.type === 'alert' ? 'bg-rose-500' : 
+                          latestNews.type === 'event' ? 'bg-amber-500' : 
+                          'bg-azure-500'
+                       }`} />
+                       <p className="text-xs font-light tracking-widest text-white/80">{latestNews.title}</p>
+                    </div>
+                    <p className="text-[10px] tracking-wider opacity-40 line-clamp-2 leading-relaxed text-white">
+                       {latestNews.content}
+                    </p>
+                    <p className="text-[8px] tracking-widest opacity-20 font-mono mt-2">
+                       {new Date(latestNews.created_at).toLocaleDateString()}
+                    </p>
+                 </div>
+               </section>
+             )}
           </aside>
         </div>
       </div>

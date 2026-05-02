@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_mock", {
+const stripeKey = process.env.STRIPE_SECRET_KEY || "sk_test_mock";
+const isMock = stripeKey === "sk_test_mock";
+
+const stripe = new Stripe(stripeKey, {
   apiVersion: "2026-04-22.dahlia" as any,
 });
 
@@ -15,8 +18,7 @@ export async function POST(req: NextRequest) {
 
     // 厳格な価格マッピング
     const PRICE_MAP: Record<string, number> = {
-      "Classic": 5000,
-      "Pastel": 10000,
+      "Standard": 5000,
       "Executive": 30000,
       "Apex": 1000000
     };
@@ -25,6 +27,14 @@ export async function POST(req: NextRequest) {
 
     if (!numericPrice) {
       return NextResponse.json({ error: "Invalid tier" }, { status: 400 });
+    }
+
+    // もし本番/テスト用の正しいAPIキーが設定されていない場合は、Stripe通信をバイパスして成功画面へ
+    if (isMock) {
+      console.log("Mocking Stripe Checkout. Redirecting to success page.");
+      // 強制的にローカルの3000ポートへリダイレクト（環境変数のキャッシュ等による3001への誤爆を防ぐため）
+      const baseUrl = "http://localhost:3000";
+      return NextResponse.json({ url: `${baseUrl}/purchase/success?session_id=mock_session_${Date.now()}` });
     }
 
     const session = await stripe.checkout.sessions.create({

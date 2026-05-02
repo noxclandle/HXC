@@ -27,6 +27,14 @@ export async function POST(req: NextRequest) {
       }
     });
 
+    await prisma.auditLog.create({
+      data: {
+        user_id: session.user.id,
+        action: "BROADCAST_PUBLISHED",
+        details: { id: announcement.id, title: announcement.title }
+      }
+    });
+
     return NextResponse.json({ success: true, announcement });
 
   } catch (error: any) {

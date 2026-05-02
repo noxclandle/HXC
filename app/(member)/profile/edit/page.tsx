@@ -37,7 +37,14 @@ export default function ProfileEditPage() {
     vAlign: { ...defaultAlign }
   });
   
-  const [equipped, setEquipped] = useState({ frame: "Obsidian", title: "ASSOCIATE", fontFamily: "Standard" });
+  const [equipped, setEquipped] = useState<any>({ 
+    frame: "Obsidian", 
+    background: "Default",
+    effect: "None",
+    sound: "resonance",
+    title: "", 
+    fontFamily: "Standard" 
+  });
 
   const fetchInitialData = async () => {
     try {
@@ -63,7 +70,7 @@ export default function ProfileEditPage() {
           hAlign: data.equipped?.hAlign || { ...defaultAlign },
           vAlign: data.equipped?.vAlign || { ...defaultAlign }
         });
-        if (data.equipped) setEquipped(prev => ({ ...prev, ...data.equipped }));
+        if (data.equipped) setEquipped((prev: any) => ({ ...prev, ...data.equipped }));
       }
     } catch (e) { console.error(e); }
   };
@@ -188,7 +195,7 @@ export default function ProfileEditPage() {
                  </button>
               </div>
               <HexaCardPreview 
-                name={formData.name || "NAME"} reading={formData.reading} company={formData.company} title={formData.title || equipped.title} phone={formData.phone} email={formData.email} bio={formData.bio} logoUrl={formData.logoUrl} faceUrl={formData.faceUrl} frame={equipped.frame} orientation={formData.orientation}
+                name={formData.name || "NAME"} reading={formData.reading} company={formData.company} title={formData.title} phone={formData.phone} email={formData.email} bio={formData.bio} logoUrl={formData.logoUrl} faceUrl={formData.faceUrl} frame={equipped.frame} background={equipped.background} effect={equipped.effect} sound={equipped.sound} orientation={formData.orientation}
                 link_x={formData.link_x} link_instagram={formData.link_instagram} link_line={formData.link_line} link_facebook={formData.link_facebook}
                 alignName={currentAligns.name} alignReading={currentAligns.reading} alignCompany={currentAligns.company} alignTitle={currentAligns.title} alignPhone={currentAligns.phone} alignEmail={currentAligns.email}
                 fontFamily={equipped.fontFamily}
@@ -203,7 +210,7 @@ export default function ProfileEditPage() {
                       key={f}
                       type="button"
                       onClick={() => {
-                        setEquipped(prev => ({ ...prev, fontFamily: f }));
+                        setEquipped((prev: any) => ({ ...prev, fontFamily: f }));
                         setIsDirty(true);
                       }}
                       className={`py-3 px-4 border text-[10px] tracking-widest uppercase transition-all ${equipped.fontFamily === f ? 'border-azure-500 bg-azure-500/10 text-azure-400' : 'border-white/5 hover:border-white/20 opacity-40 hover:opacity-100'}`}

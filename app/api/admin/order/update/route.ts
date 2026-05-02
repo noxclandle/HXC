@@ -17,6 +17,14 @@ export async function POST(req: NextRequest) {
       data: { status },
     });
 
+    await prisma.auditLog.create({
+      data: {
+        user_id: session.user.id,
+        action: "ORDER_STATUS_UPDATED",
+        details: { id, status }
+      }
+    });
+
     return NextResponse.json(updatedOrder);
   } catch (error) {
     console.error("Order Update Error:", error);

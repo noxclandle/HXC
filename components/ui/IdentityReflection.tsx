@@ -68,7 +68,7 @@ export default function IdentityReflection({ user, onUpdate }: IdentityReflectio
                name={user.name}
                reading={user.reading}
                company={user.profile?.company}
-               title={user.equipped.title}
+               title={user.profile?.title}
                phone={user.profile?.phone}
                email={user.profile?.contact_email}
                logoUrl={user.logo_url}

@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, CreditCard, Shield, Star, Crown, Check, ArrowRight } from "lucide-react";
+import HexaCardPreview from "@/components/ui/HexaCardPreview";
 
-type TierId = "standard" | "custom" | "executive" | "apex";
+type TierId = "standard" | "executive" | "apex";
 
 interface Selection {
   tier: TierId | null;
@@ -13,42 +14,34 @@ interface Selection {
 
 export default function PurchasePage() {
   const [selection, setSelection] = useState<Selection>({ tier: null, variant: null });
+  const [userCount, setUserCount] = useState<number>(0);
+
+  useEffect(() => {
+    fetch("/api/stats/public")
+      .then(res => res.json())
+      .then(data => setUserCount(data.userCount || 0))
+      .catch(err => console.error(err));
+  }, []);
 
   const tiers = [
     {
       id: "standard" as TierId,
-      name: "Classic",
+      name: "Standard",
       price: "¥5,000",
-      type: "Obsidian Edition",
-      desc: "HXCのフィロソフィーを体現する標準モデル。漆黒のマットフィニッシュが、ビジネスにおける誠実さを象徴します。",
+      type: "Original Design",
+      desc: "Hexa Relationのフィロソフィーを体現するオリジナルデザイン。マットな質感が、ビジネスにおける誠実さを象徴します。",
       options: [{ label: "Original Black", value: "black" }],
-      features: ["オリジナルエッチング加工", "初期 3,000 RT 付与", "システム利用権（永続）"],
+      features: ["オリジナルデザイン", "初期 3,000 RT 付与", "システム利用権（永続）"],
       bgColor: "bg-zinc-950",
       accentColor: "border-zinc-800",
       glow: "group-hover:shadow-[0_0_40px_rgba(255,255,255,0.03)]",
-    },
-    {
-      id: "custom" as TierId,
-      name: "Pastel",
-      price: "¥10,000",
-      type: "Aura Series",
-      desc: "個性を引き立てるニュアンスカラー。洗練された色彩が、第一印象に柔らかな品格を添えます。",
-      options: [
-        { label: "Pastel Pink", value: "pink" },
-        { label: "Pastel Blue", value: "blue" },
-        { label: "Original", value: "original" },
-      ],
-      features: ["特注カラー・フィニッシュ", "初期 3,000 RT 付与", "カラーバリエーション選択可"],
-      bgColor: "bg-zinc-950",
-      accentColor: "border-zinc-800",
-      glow: "group-hover:shadow-[0_0_40px_rgba(236,72,153,0.05)]",
     },
     {
       id: "executive" as TierId,
       name: "Executive",
       price: "¥30,000",
       type: "Metallic Series",
-      desc: "卓越した存在感を示すメタリック加工。伝統的な価値観と最新技術が融合した、エグゼクティブのための選択。",
+      desc: "卓越した存在感を示すメタリック加工。伝統的な価値観と最新技術が融合した、エグゼクティブのための洗練された選択。",
       options: [
         { label: "Metallic Silver", value: "silver" },
         { label: "Metallic Gold", value: "gold" },
@@ -62,10 +55,10 @@ export default function PurchasePage() {
       id: "apex" as TierId,
       name: "Apex",
       price: "¥1,000,000",
-      type: "The Black / Limited",
-      desc: "究極のステータスを具現化した特注仕様。一握りのリーダーのみに許される、システムの全権を司るブラック。",
+      type: "The Black",
+      desc: "究極のステータスを証明する完全特注のブラックカード。全世界10枠限定発行。残された席はあと僅かです。",
       options: [{ label: "Deep Black", value: "deep_black" }],
-      features: ["特注最高級ブラック素材", "初期 3,000 RT 付与", "限定称号付与権", "エグゼクティブ・コンシェルジュ"],
+      features: ["特注最高級ブラック素材", "全世界限定 10 枠 (残り 8)", "初期 3,000 RT 付与", "限定称号付与権", "エグゼクティブ・コンシェルジュ"],
       bgColor: "bg-zinc-950",
       accentColor: "border-zinc-700",
       glow: "group-hover:shadow-[0_0_50px_rgba(255,255,255,0.15)]",
@@ -130,6 +123,27 @@ export default function PurchasePage() {
               <div className="w-4 h-4 bg-white/80 rotate-[-45deg]" />
             </div>
           </motion.div>
+          
+          {/* Phase Indicator */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center gap-3 mb-8"
+          >
+            <span className="text-[10px] tracking-[1.5em] uppercase text-azure-400 font-bold ml-[1.5em]">Phase 01: Genesis</span>
+            <div className="flex items-center gap-4">
+              <div className="w-48 h-[1px] bg-white/10 relative">
+                <motion.div 
+                  initial={{ width: 0 }} 
+                  animate={{ width: `${Math.min((userCount / 100) * 100, 100)}%` }} 
+                  transition={{ duration: 2, ease: "easeOut" }}
+                  className="absolute h-full bg-azure-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]" 
+                />
+              </div>
+              <span className="text-[9px] font-mono tracking-widest text-white/40">{userCount} / 100</span>
+            </div>
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -150,11 +164,11 @@ export default function PurchasePage() {
             className="text-[11px] tracking-[0.3em] uppercase text-white/40 max-w-lg mx-auto leading-relaxed"
           >
             HXCのネットワークへ参加するには、物理カードの発行が必要です。
-            全モデルにアカウント登録権と初期 Relation Token が付与されます。
+            Phase 01 発行枠には「初期参加証」として限定称号が付与されます。
           </motion.p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {tiers.map((tier, index) => {
             const isSelected = selection.tier === tier.id;
             return (
@@ -183,6 +197,20 @@ export default function PurchasePage() {
                     </motion.div>
                   )}
                 </AnimatePresence>
+
+                {/* Card Visual Preview Approximation */}
+                <div className="mb-10 w-full h-32 relative pointer-events-none transform -skew-y-3 group-hover:skew-y-0 group-hover:scale-105 transition-all duration-700 opacity-60 group-hover:opacity-100">
+                  <HexaCardPreview
+                    name="HXC MEMBER"
+                    title={tier.name}
+                    company="HEXA RELATION INC."
+                    logoUrl="/logo.png"
+                    orientation="horizontal"
+                    frame={tier.id === "apex" ? "BlackCard" : tier.id === "executive" ? "Platinum" : "Obsidian"}
+                    background={tier.id === "apex" ? "BlackCard" : tier.id === "executive" ? "BrushedMetal" : "BrandedHex"}
+                    effect={tier.id === "apex" ? "Interference" : tier.id === "executive" ? "Glitch" : "None"}
+                  />
+                </div>
 
                 <div className="space-y-12">
                   <div className="space-y-2">
@@ -276,21 +304,39 @@ export default function PurchasePage() {
           )}
         </AnimatePresence>
         
-        <footer className="mt-60 pb-20 text-center space-y-12">
-          <div className="space-y-8">
-            <p className="text-[8px] tracking-[0.2em] text-white/10 uppercase leading-relaxed max-w-sm mx-auto">
-              決済完了後、通常二週間前後での発行となります。<br />
-              厳格な審査と検品を経て、貴方の元へ届けられます。
-            </p>
-            
-            <div className="h-[1px] w-8 bg-white/5 mx-auto" />
+        <div className="mt-40 text-center space-y-4">
+          <p className="text-[11px] tracking-[0.3em] text-white/40 uppercase leading-relaxed max-w-lg mx-auto font-light">
+            決済完了後、通常二週間前後での発行となります。<br />
+            厳格な審査と検品を経て、貴方の元へ届けられます。
+          </p>
+        </div>
 
-            <p className="text-[8px] tracking-[0.5em] text-white/5 uppercase">
-              HXC © 2026. THE HIGHEST STANDARD.
-            </p>
+        {/* Activity Ticker */}
+        <div className="mt-32 border-t border-white/5 pt-8 flex justify-center overflow-hidden">
+          <div className="flex gap-20 animate-infinite-scroll opacity-20 hover:opacity-100 transition-opacity">
+            {[
+              `SYSTEM: Phase 01 slots decreasing / ${Math.max(100 - userCount, 0)} remaining`,
+              "LOG: New Identity established in Tokyo / 12m ago",
+              "LOG: Apex Tier reserved in London / 1h ago",
+              "SYSTEM: Relation Token synchronization complete",
+              "LOG: New Identity established in Seoul / 45m ago"
+            ].map((text, i) => (
+              <span key={i} className="text-[8px] tracking-[0.5em] uppercase whitespace-nowrap font-mono text-white">
+                {text}
+              </span>
+            ))}
           </div>
-        </footer>
+        </div>
       </div>
+      <style jsx>{`
+        @keyframes infinite-scroll {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        .animate-infinite-scroll {
+          animation: infinite-scroll 40s linear infinite;
+        }
+      `}</style>
     </div>
   );
 }

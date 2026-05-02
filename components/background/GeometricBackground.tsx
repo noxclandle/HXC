@@ -8,82 +8,73 @@ export default function GeometricBackground() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    // Very subtle, slow moving minimalist orbs
+    const orbs = [
+      { x: width * 0.2, y: height * 0.3, vx: 0.1, vy: -0.05, size: width * 0.4, color: "rgba(255, 255, 255, 0.015)" },
+      { x: width * 0.8, y: height * 0.7, vx: -0.08, vy: 0.08, size: width * 0.5, color: "rgba(255, 255, 255, 0.02)" },
+      { x: width * 0.5, y: height * 0.8, vx: 0.05, vy: -0.1, size: width * 0.3, color: "rgba(255, 255, 255, 0.01)" }
+    ];
+
     let animationFrameId: number;
 
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    window.addEventListener("resize", resize);
-    resize();
-
-    const particles: { x: number; y: number; vx: number; vy: number; size: number }[] = [];
-    for (let i = 0; i < 60; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.15,
-        vy: (Math.random() - 0.5) * 0.15,
-        size: Math.random() * 1.5,
-      });
-    }
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const render = () => {
+      ctx.clearRect(0, 0, width, height);
       
-      particles.forEach((p, i) => {
-        p.x += p.vx;
-        p.y += p.vy;
+      // Draw a very faint static noise/grid overlay
+      ctx.fillStyle = "#020202"; // base void
+      ctx.fillRect(0, 0, width, height);
 
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
+      orbs.forEach(orb => {
+        orb.x += orb.vx;
+        orb.y += orb.vy;
 
-        // Draw particle
-        ctx.fillStyle = `rgba(224, 224, 224, ${Math.random() * 0.2})`;
+        // Bounce off edges gently
+        if (orb.x < -orb.size || orb.x > width + orb.size) orb.vx *= -1;
+        if (orb.y < -orb.size || orb.y > height + orb.size) orb.vy *= -1;
+
+        const gradient = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.size);
+        gradient.addColorStop(0, orb.color);
+        gradient.addColorStop(1, "transparent");
+
+        ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.arc(orb.x, orb.y, orb.size, 0, Math.PI * 2);
         ctx.fill();
-
-        ctx.strokeStyle = "rgba(224, 224, 224, 0.03)";
-        ctx.lineWidth = 0.5;
-
-        // Draw connections
-        particles.slice(i + 1).forEach((p2) => {
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 150) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-          }
-        });
       });
 
-      animationFrameId = requestAnimationFrame(draw);
+      // Subtle scanline overlay
+      ctx.fillStyle = "rgba(255, 255, 255, 0.005)";
+      for(let i = 0; i < height; i += 4) {
+        ctx.fillRect(0, i, width, 1);
+      }
+
+      animationFrameId = requestAnimationFrame(render);
     };
 
-    draw();
+    render();
+
+    const handleResize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    };
+
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 -z-10 bg-void"
-    />
-  );
+  return <canvas ref={canvasRef} className="fixed inset-0 -z-10 bg-[#020202]" />;
 }
