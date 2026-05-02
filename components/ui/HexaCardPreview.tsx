@@ -248,10 +248,26 @@ export default function HexaCardPreview({
             </div>
           </div>
           <div className="flex gap-4 pb-4">
-             {link_x && <Twitter size={14} className="text-white/20" />}
-             {link_instagram && <Instagram size={14} className="text-white/20" />}
-             {link_line && <MessageCircle size={14} className="text-white/20" />}
-             {link_facebook && <Facebook size={14} className="text-white/20" />}
+             {link_x && (
+               <a href={link_x} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-white transition-colors">
+                 <Twitter size={16} />
+               </a>
+             )}
+             {link_instagram && (
+               <a href={link_instagram} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-white transition-colors">
+                 <Instagram size={16} />
+               </a>
+             )}
+             {link_line && (
+               <a href={link_line.startsWith('http') ? link_line : `https://line.me/ti/p/~${link_line}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-white transition-colors">
+                 <MessageCircle size={16} />
+               </a>
+             )}
+             {link_facebook && (
+               <a href={link_facebook} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-white transition-colors">
+                 <Facebook size={16} />
+               </a>
+             )}
           </div>
         </div>
       </motion.div>

@@ -35,12 +35,21 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
   const handleSaveContact = () => {
     if (!data) return;
     let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${data.name || "MEMBER"}\nTEL:${data.phone || ""}\nEMAIL:${data.contact_email || data.email || ""}\nORG:${data.profile?.company || ""}`;
+    
+    // 画像の埋め込み（Base64形式）
     if (data.photo_url && data.photo_url.startsWith('data:image/')) {
-      const parts = data.photo_url.split(',');
-      const base64Data = parts[1];
-      const type = parts[0].split(':')[1].split(';')[0].split('/')[1].toUpperCase();
-      vcard += `\nPHOTO;ENCODING=b;TYPE=${type}:${base64Data}`;
+      try {
+        const parts = data.photo_url.split(',');
+        const mimeType = parts[0].match(/:(.*?);/)?.[1] || "JPEG";
+        const type = mimeType.split('/')[1].toUpperCase();
+        const base64Data = parts[1];
+        // vCard 3.0 requires PHOTO;TYPE=JPEG;ENCODING=b:BASE64_DATA
+        vcard += `\nPHOTO;TYPE=${type};ENCODING=b:${base64Data}`;
+      } catch (e) {
+        console.error("Failed to embed photo in vCard:", e);
+      }
     }
+    
     vcard += `\nEND:VCARD`;
     const blob = new Blob([vcard], { type: "text/vcard" });
     const url = window.URL.createObjectURL(blob);
