@@ -29,7 +29,7 @@ export default function ProfileEditPage() {
   };
 
   const [formData, setFormData] = useState({
-    name: "", reading: "", title: "", company: "", website: "", bio: "", phone: "", email: "",
+    name: "", handle: "", reading: "", title: "", company: "", website: "", bio: "", phone: "", email: "",
     logoUrl: "", faceUrl: "",
     link_x: "", link_instagram: "", link_line: "", link_facebook: "",
     orientation: "horizontal" as "horizontal" | "vertical",
@@ -53,6 +53,7 @@ export default function ProfileEditPage() {
         const data = await res.json();
         setFormData({
           name: data.name || session?.user?.name || "",
+          handle: data.slug || "",
           reading: data.handle || "",
           title: data.profile?.title || "",
           company: data.profile?.company || "",
@@ -109,7 +110,6 @@ export default function ProfileEditPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          handle: formData.reading,
           photo_url: formData.faceUrl,
           logo_url: formData.logoUrl
         })
@@ -269,6 +269,11 @@ export default function ProfileEditPage() {
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Full Name / 氏名</label>
                     <input type="text" value={formData.name} onChange={(e) => updateField('name', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="漢字・英語" />
                     <AlignButtons field="name" />
+                 </div>
+                 <div className="space-y-3">
+                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold text-azure-400">Public Handle / 識別名 (URL用)</label>
+                    <input type="text" value={formData.handle} onChange={(e) => updateField('handle', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-500 outline-none text-white font-mono" placeholder="architect" />
+                    <p className="text-[7px] tracking-widest opacity-20 uppercase">あなたのプロフィールURL: hxc.link/p/{formData.handle || "..."}</p>
                  </div>
                  <div className="space-y-3">
                     <label className="text-[9px] tracking-[0.4em] uppercase opacity-40 font-bold">Reading / ふりがな</label>

@@ -69,6 +69,11 @@ export default function InventoryPage() {
     { id: "BrushedMetal", name: "Brushed Metal", type: "background", rarity: "rare", description: "鈍く光るヘアライン加工の金属質。", cost: 3500, unlocked: false },
     { id: "Nebula", name: "Cosmic Nebula", type: "background", rarity: "legendary", description: "深い宇宙を思わせる青の階調。", cost: 9000, unlocked: false },
     { id: "SilkBlur", name: "Silk Blur", type: "background", rarity: "legendary", description: "微かな光の拡散。シルクのような滑らかな空間を演出。", cost: 9000, unlocked: false },
+    { id: "Stardust", name: "Stardust", type: "background", rarity: "rare", description: "星屑のような微細な輝きを散りばめた漆黒。", cost: 3000, unlocked: false },
+    { id: "RoyalGold", name: "Royal Gold", type: "background", rarity: "epic", description: "微かな金粉が舞う、格式高い黒金の世界。", cost: 5000, unlocked: false },
+    { id: "MidnightMist", name: "Midnight Mist", type: "background", rarity: "legendary", description: "静寂な霧が立ち込める、深淵のグラデーション。", cost: 8500, unlocked: false },
+    { id: "DigitalFlow", name: "Digital Flow", type: "background", rarity: "epic", description: "情報が流動するサイバー空間のシグナル。", cost: 5500, unlocked: false },
+    { id: "PrismFractal", name: "Prism Fractal", type: "background", rarity: "rare", description: "屈折した光が七色に揺らめく、透過の極致。", cost: 3500, unlocked: false },
 
     // Effects
     { id: "None", name: "Clean", type: "effect", rarity: "common", description: "追加効果なし。純粋な情報を提示する。", unlocked: true },
@@ -214,7 +219,8 @@ export default function InventoryPage() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-        <div className="lg:col-span-5 sticky top-32 space-y-12">
+        {/* Preview Container: Sticky only on large screens, normal flow on mobile */}
+        <div className="lg:col-span-5 lg:sticky lg:top-32 space-y-12">
            <div className="p-8 bg-white/[0.02] border border-white/5 shadow-2xl relative overflow-hidden group flex flex-col items-center">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-azure-500/20 to-transparent" />
               
