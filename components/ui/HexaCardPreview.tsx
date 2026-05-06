@@ -160,7 +160,7 @@ export default function HexaCardPreview({
         >
           {/* Effects Layer */}
           {effect === "Aethereal" && (
-            <div className="absolute inset-0 pointer-events-none mix-blend-screen opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] animate-[shimmer_5s_linear_infinite]" />
+            <div className="absolute inset-0 pointer-events-none mix-blend-screen opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMCAwaDF2MUgwem0yIDyaDF2MUgyeiIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIwLjUiLz4KPC9zdmc+')] animate-[shimmer_5s_linear_infinite]" />
           )}
           {effect === "Glitch" && (
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -231,48 +231,50 @@ export default function HexaCardPreview({
         </div>
 
         <div 
-          className={`absolute inset-0 p-10 md:p-16 flex flex-col justify-between items-center text-center border overflow-hidden ${getFrameStyle()} ${getBackgroundStyle()} ${getFontStyle()}`}
+          className={`absolute inset-0 flex flex-col justify-between items-center text-center border overflow-hidden ${getFrameStyle()} ${getBackgroundStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
         >
-          <div />
-          <div className="space-y-6 relative z-10 w-full flex flex-col items-center">
-            <div className="w-28 h-28 md:w-36 md:h-36 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl">
-               {faceUrl ? <img src={faceUrl} alt="Portrait" className="w-full h-full object-cover" /> : <User size={48} className="text-white/5" />}
+          {isVertical ? (
+            <div className="h-full p-10 md:p-16 flex flex-col justify-between items-center w-full">
+              <div />
+              <div className="space-y-6 relative z-10 w-full flex flex-col items-center">
+                <div className="w-28 h-28 md:w-36 md:h-36 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl">
+                   {faceUrl ? <img src={faceUrl} alt="Portrait" className="w-full h-full object-cover" /> : <User size={48} className="text-white/5" />}
+                </div>
+                <div className="space-y-4 w-full">
+                   <p className="text-[11px] md:text-[13px] tracking-[0.6em] uppercase text-white/30">Verified Identity</p>
+                   <div className="h-px w-12 bg-white/10 mx-auto" />
+                   <p className="text-[12px] md:text-[15px] tracking-[0.1em] uppercase text-white/90 leading-relaxed italic max-w-sm mx-auto line-clamp-5 px-4 whitespace-pre-wrap">
+                     {bio || "Hexa Relation Protocol"}
+                   </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap justify-center gap-8 md:gap-12 pb-8">
+                 {link_x && <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors"><Twitter size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span></a>}
+                 {link_instagram && <a href={link_instagram.startsWith('http') ? link_instagram : `https://instagram.com/${link_instagram}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors"><Instagram size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Insta</span></a>}
+                 {link_line && <a href={link_line.startsWith('http') ? link_line : `https://line.me/ti/p/~${link_line}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors"><MessageCircle size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">LINE</span></a>}
+                 {link_facebook && <a href={link_facebook.startsWith('http') ? link_facebook : `https://facebook.com/${link_facebook}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors"><Facebook size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">FB</span></a>}
+              </div>
             </div>
-            <div className="space-y-4 w-full">
-               <p className="text-[11px] md:text-[13px] tracking-[0.6em] uppercase text-white/30">Verified Identity</p>
-               <div className="h-px w-12 bg-white/10 mx-auto" />
-               <p className="text-[12px] md:text-[15px] tracking-[0.1em] uppercase text-white/90 leading-relaxed italic max-w-sm mx-auto line-clamp-5 px-4 whitespace-pre-wrap">
-                 {bio || "Hexa Network Verified Identity"}
-               </p>
+          ) : (
+            <div className="h-full p-6 md:p-8 flex flex-row items-center justify-center gap-8 md:gap-12 w-full">
+               <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl shrink-0">
+                  {faceUrl ? <img src={faceUrl} alt="Portrait" className="w-full h-full object-cover" /> : <User size={40} className="text-white/5" />}
+               </div>
+               <div className="flex flex-col justify-center text-left flex-1 min-w-0">
+                  <p className="text-[9px] md:text-[11px] tracking-[0.5em] uppercase text-white/30 mb-2">Verified Identity</p>
+                  <p className="text-[10px] md:text-[13px] tracking-[0.05em] uppercase text-white/90 leading-relaxed italic line-clamp-4 whitespace-pre-wrap mb-4 border-l border-white/10 pl-4">
+                    {bio || "Hexa Relation Protocol"}
+                  </p>
+                  <div className="flex flex-wrap gap-4 md:gap-6">
+                    {link_x && <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-1.5 text-white/40 hover:text-white transition-colors"><Twitter size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span></a>}
+                    {link_instagram && <a href={link_instagram.startsWith('http') ? link_instagram : `https://instagram.com/${link_instagram}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-1.5 text-white/40 hover:text-white transition-colors"><Instagram size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Insta</span></a>}
+                    {link_line && <a href={link_line.startsWith('http') ? link_line : `https://line.me/ti/p/~${link_line}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-1.5 text-white/40 hover:text-white transition-colors"><MessageCircle size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">LINE</span></a>}
+                    {link_facebook && <a href={link_facebook.startsWith('http') ? link_facebook : `https://facebook.com/${link_facebook}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-1.5 text-white/40 hover:text-white transition-colors"><Facebook size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">FB</span></a>}
+                  </div>
+               </div>
             </div>
-          </div>
-          <div className="flex flex-wrap justify-center gap-8 md:gap-12 pb-8">
-             {link_x && (
-               <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors">
-                 <Twitter size={18} />
-                 <span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">X</span>
-               </a>
-             )}
-             {link_instagram && (
-               <a href={link_instagram.startsWith('http') ? link_instagram : `https://instagram.com/${link_instagram}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors">
-                 <Instagram size={18} />
-                 <span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Insta</span>
-               </a>
-             )}
-             {link_line && (
-               <a href={link_line.startsWith('http') ? link_line : `https://line.me/ti/p/~${link_line}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors">
-                 <MessageCircle size={18} />
-                 <span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">LINE</span>
-               </a>
-             )}
-             {link_facebook && (
-               <a href={link_facebook.startsWith('http') ? link_facebook : `https://facebook.com/${link_facebook}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors">
-                 <Facebook size={18} />
-                 <span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">FB</span>
-               </a>
-             )}
-          </div>
+          )}
         </div>
       </motion.div>
     </div>

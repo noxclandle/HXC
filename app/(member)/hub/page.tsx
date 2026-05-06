@@ -41,6 +41,11 @@ export default function MemberHubPage() {
 
   useEffect(() => {
     if (session) fetchData();
+    
+    // 装備変更などのイベントを購読してデータを再取得する
+    const handleUpdate = () => fetchData();
+    window.addEventListener("hxc-assets-updated", handleUpdate);
+    return () => window.removeEventListener("hxc-assets-updated", handleUpdate);
   }, [session]);
 
   return (
