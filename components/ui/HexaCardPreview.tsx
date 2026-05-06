@@ -28,7 +28,9 @@ export interface HexaCardProps {
   background?: string;
   effect?: string;
   fontFamily?: string;
-  fontScale?: "standard" | "impact" | "maximum";
+  scaleName?: "standard" | "impact" | "maximum";
+  scaleTitle?: "standard" | "impact" | "maximum";
+  scaleCompany?: "standard" | "impact" | "maximum";
   sound?: string;
   link_x?: string;
   link_instagram?: string;
@@ -43,7 +45,8 @@ export default function HexaCardPreview({
   alignName = "center", alignReading = "center", alignCompany = "center",
   alignTitle = "center", alignPhone = "center", alignEmail = "center",
   frame = "Obsidian", background = "Default", effect = "None", fontFamily = "Standard", 
-  fontScale = "standard", sound = "resonance",
+  scaleName = "standard", scaleTitle = "standard", scaleCompany = "standard",
+  sound = "resonance",
   link_x, link_instagram, link_line, link_facebook,
   onFlip 
 }: HexaCardProps) {
@@ -118,13 +121,15 @@ export default function HexaCardPreview({
     return "items-center text-center self-center";
   };
 
-  const getScaleClass = (isVertical: boolean) => {
-    const scales = {
-      standard: isVertical ? "scale-100" : "scale-100",
-      impact: isVertical ? "scale-120" : "scale-110",
-      maximum: isVertical ? "scale-140" : "scale-120",
+  const getFieldScale = (field: "name" | "title" | "company", isVertical: boolean) => {
+    const scale = field === "name" ? scaleName : field === "title" ? scaleTitle : scaleCompany;
+    const base = isVertical ? 1.0 : 0.9;
+    const maps = {
+      standard: base,
+      impact: base * 1.2,
+      maximum: base * 1.5,
     };
-    return scales[fontScale] || scales.standard;
+    return maps[scale] || base;
   };
 
   const isVertical = orientation === "vertical";
@@ -155,7 +160,7 @@ export default function HexaCardPreview({
         >
           {/* Effects Layer */}
           {effect === "Aethereal" && (
-            <div className="absolute inset-0 pointer-events-none mix-blend-screen opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMCAwaDF2MUgwem0yIDyaDF2MUgyeiIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIwLjUiLz4KPC9zdmc+')] animate-[shimmer_5s_linear_infinite]" />
+            <div className="absolute inset-0 pointer-events-none mix-blend-screen opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] animate-[shimmer_5s_linear_infinite]" />
           )}
           {effect === "Glitch" && (
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -171,16 +176,16 @@ export default function HexaCardPreview({
                   <div className="w-16 h-16 md:w-20 md:h-20 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
                      {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={32} className="text-white/10" />}
                   </div>
-                  <p className={`text-[12px] md:text-[14px] tracking-[0.25em] uppercase text-white font-medium leading-relaxed mt-4 truncate w-full`}>{company || "CORPORATION"}</p>
+                  <p className={`tracking-[0.25em] uppercase text-white font-medium leading-relaxed mt-4 truncate w-full`} style={{ fontSize: `${getFieldScale('company', true) * 12}px` }}>{company || "CORPORATION"}</p>
                </div>
 
                {/* Absolute Center Pane: Dead Center Guarantee */}
-               <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-8 flex flex-col items-center transition-all duration-500 z-10 ${getScaleClass(true)}`}>
+               <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-8 flex flex-col items-center transition-all duration-500 z-10`}>
                   <div className="space-y-4 md:space-y-6 w-full flex flex-col items-center">
-                    {title && <p className={`text-[11px] md:text-[13px] tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title}</p>}
+                    {title && <p className={`tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', true) * 11}px` }}>{title}</p>}
                     <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
-                       {reading && <p className={`text-[12px] md:text-[15px] tracking-[0.3em] text-azure-400 font-bold uppercase truncate w-full ${getAlignClass(alignReading)}`}>{reading}</p>}
-                       <h2 className={`text-4xl md:text-6xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`}>{name}</h2>
+                       {reading && <p className={`tracking-[0.3em] text-azure-400 font-bold uppercase truncate w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getFieldScale('name', true) * 11}px` }}>{reading}</p>}
+                       <h2 className={`tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getFieldScale('name', true) * 36}px` }}>{name}</h2>
                     </div>
                     <div className={`h-px w-12 md:w-16 bg-azure-500/30 mt-2 ${alignName === 'left' ? 'self-start' : alignName === 'right' ? 'self-end' : 'self-center'}`} />
                   </div>
@@ -194,21 +199,21 @@ export default function HexaCardPreview({
             </div>
           ) : (
             <div className="h-full p-8 md:p-12 flex flex-col justify-between relative text-center overflow-hidden">
-              {/* Header: Company Info */}
+              {/* Header */}
               <header className={`w-full flex flex-row items-center gap-4 z-10 ${getAlignClass(alignCompany)}`}>
                  <div className="w-12 h-12 md:w-16 md:h-16 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
                     {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={24} className="text-white/10" />}
                  </div>
-                 <p className="text-[12px] md:text-[15px] tracking-[0.3em] uppercase text-white/80 font-medium leading-tight truncate">{company || "CORPORATION"}</p>
+                 <p className="tracking-[0.3em] uppercase text-white/80 font-medium leading-tight truncate" style={{ fontSize: `${getFieldScale('company', false) * 12}px` }}>{company || "CORPORATION"}</p>
               </header>
 
               {/* Absolute Center Pane: Horizontal Name */}
-              <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-12 flex flex-col items-center transition-all duration-500 z-10 ${getScaleClass(false)}`}>
+              <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-12 flex flex-col items-center transition-all duration-500 z-10`}>
                 <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
-                   {title && <p className={`text-[10px] md:text-[12px] tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title}</p>}
+                   {title && <p className={`tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', false) * 10}px` }}>{title}</p>}
                    <div className="flex flex-col w-full items-center">
-                      {reading && <span className={`text-[9px] md:text-[11px] tracking-[0.3em] text-azure-400 font-bold uppercase mb-1 w-full ${getAlignClass(alignReading)}`}>{reading}</span>}
-                      <h2 className={`text-3xl md:text-5xl tracking-[0.15em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`}>{name}</h2>
+                      {reading && <span className={`tracking-[0.3em] text-azure-400 font-bold uppercase mb-1 w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getFieldScale('name', false) * 9}px` }}>{reading}</span>}
+                      <h2 className={`tracking-[0.15em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getFieldScale('name', false) * 32}px` }}>{name}</h2>
                    </div>
                 </div>
               </div>
@@ -226,7 +231,7 @@ export default function HexaCardPreview({
         </div>
 
         <div 
-          className={`absolute inset-0 p-10 md:p-16 flex flex-col justify-between items-center text-center border ${getFrameStyle()} ${getBackgroundStyle()} ${getFontStyle()}`}
+          className={`absolute inset-0 p-10 md:p-16 flex flex-col justify-between items-center text-center border overflow-hidden ${getFrameStyle()} ${getBackgroundStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
         >
           <div />
@@ -246,7 +251,7 @@ export default function HexaCardPreview({
              {link_x && (
                <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors">
                  <Twitter size={18} />
-                 <span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span>
+                 <span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">X</span>
                </a>
              )}
              {link_instagram && (

@@ -276,10 +276,17 @@ export default function InventoryPage() {
                   background={displayEquipped.background}
                   effect={displayEquipped.effect}
                   fontFamily={displayEquipped.fontFamily}
-                  fontScale={displayEquipped.fontScale}
+                  scaleName={equipped.scaleName}
+                  scaleTitle={equipped.scaleTitle}
+                  scaleCompany={equipped.scaleCompany}
                   sound={displayEquipped.sound}
                   orientation={displayEquipped.orientation}
                   alignCompany="center" alignName="center" alignReading="center" alignTitle="center" alignPhone="center" alignEmail="center"
+                  link_x={profile?.profile?.link_x}
+                  link_instagram={profile?.profile?.link_instagram}
+                  link_line={profile?.profile?.link_line}
+                  link_facebook={profile?.profile?.link_facebook}
+                  bio={profile?.profile?.bio}
                 />
               </div>
 
