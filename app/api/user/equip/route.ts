@@ -12,11 +12,20 @@ export async function POST(req: NextRequest) {
 
     const { equipped } = await req.json();
 
-    // 装備情報を equipped_assets に保存
+    const currentUser = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    const currentEquipped = (currentUser?.equipped_assets as any) || {};
+
+    // 装備情報を equipped_assets に保存 (マージする)
     const updatedUser = await prisma.user.update({
       where: { email: session.user.email },
       data: {
-        equipped_assets: equipped
+        equipped_assets: {
+          ...currentEquipped,
+          ...equipped
+        }
       }
     });
 

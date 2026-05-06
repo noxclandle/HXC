@@ -28,6 +28,7 @@ export interface HexaCardProps {
   background?: string;
   effect?: string;
   fontFamily?: string;
+  fontScale?: "standard" | "impact" | "maximum";
   sound?: string;
   link_x?: string;
   link_instagram?: string;
@@ -41,7 +42,8 @@ export default function HexaCardPreview({
   orientation = "horizontal", 
   alignName = "center", alignReading = "center", alignCompany = "center",
   alignTitle = "center", alignPhone = "center", alignEmail = "center",
-  frame = "Obsidian", background = "Default", effect = "None", fontFamily = "Standard", sound = "resonance",
+  frame = "Obsidian", background = "Default", effect = "None", fontFamily = "Standard", 
+  fontScale = "standard", sound = "resonance",
   link_x, link_instagram, link_line, link_facebook,
   onFlip 
 }: HexaCardProps) {
@@ -116,6 +118,15 @@ export default function HexaCardPreview({
     return "items-center text-center self-center";
   };
 
+  const getScaleClass = (isVertical: boolean) => {
+    const scales = {
+      standard: isVertical ? "scale-100" : "scale-100",
+      impact: isVertical ? "scale-120" : "scale-110",
+      maximum: isVertical ? "scale-140" : "scale-120",
+    };
+    return scales[fontScale] || scales.standard;
+  };
+
   const isVertical = orientation === "vertical";
 
   return (
@@ -147,50 +158,24 @@ export default function HexaCardPreview({
             <div className="absolute inset-0 pointer-events-none mix-blend-screen opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMCAwaDF2MUgwem0yIDyaDF2MUgyeiIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIwLjUiLz4KPC9zdmc+')] animate-[shimmer_5s_linear_infinite]" />
           )}
           {effect === "Glitch" && (
-            <div className="absolute inset-0 pointer-events-none">
-               <div className="absolute inset-0 bg-white/10 mix-blend-overlay animate-pulse opacity-70" />
-               <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0)_50%,rgba(255,255,255,0.1)_50%)] bg-[size:100%_2px] opacity-40 pointer-events-none" />
-               <div className="absolute inset-x-0 h-[1px] bg-white/30 animate-[scan_3s_linear_infinite]" />
-            </div>
-          )}
-          {effect === "Interference" && (
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <div className="absolute inset-0 border-[2px] border-white/20 rounded-full scale-0 opacity-0 animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite]" />
-              <div className="absolute inset-0 border-[1px] border-white/10 rounded-full scale-0 opacity-0 animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite_1.5s]" />
-              <div className="absolute inset-0 bg-gradient-to-t from-white/[0.03] to-transparent animate-pulse" />
-            </div>
-          )}
-          {effect === "Petals" && (
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-               {[...Array(6)].map((_, i) => (
-                 <div 
-                   key={i} 
-                   className="absolute bg-rose-300/30 rounded-full blur-[1px] animate-fall" 
-                   style={{ 
-                     width: `${Math.random() * 6 + 4}px`, 
-                     height: `${Math.random() * 6 + 4}px`, 
-                     left: `${Math.random() * 100}%`, 
-                     top: `-20px`,
-                     animationDelay: `${Math.random() * 10}s`,
-                     animationDuration: `${Math.random() * 5 + 7}s`
-                   }} 
-                 />
-               ))}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+               <div className="absolute inset-0 opacity-10 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] animate-[scanline_8s_linear_infinite]" />
             </div>
           )}
 
+          {/* Main Card Content */}
           {isVertical ? (
-            <div className="h-full p-8 md:p-12 flex flex-col items-center justify-between text-center relative">
-               {/* Top Section: Logo & Company */}
-               <div className={`flex flex-col gap-4 w-full ${getAlignClass(alignCompany)}`}>
-                  <div className="w-16 h-16 md:w-20 md:h-20 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 mx-auto">
+            <div className="h-full p-8 md:p-12 flex flex-col items-center justify-between text-center relative overflow-hidden">
+               {/* Fixed Top Pane */}
+               <div className={`w-full flex flex-col items-center z-10 ${getAlignClass(alignCompany)}`}>
+                  <div className="w-16 h-16 md:w-20 md:h-20 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
                      {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={32} className="text-white/10" />}
                   </div>
-                  <p className={`text-[12px] md:text-[14px] tracking-[0.25em] uppercase text-white font-medium leading-relaxed w-full ${getAlignClass(alignCompany)}`}>{company || "CORPORATION"}</p>
+                  <p className={`text-[12px] md:text-[14px] tracking-[0.25em] uppercase text-white font-medium leading-relaxed mt-4 truncate w-full`}>{company || "CORPORATION"}</p>
                </div>
 
-               {/* Center Section: Title, Reading, Name (Perfectly Centered) */}
-               <div className="flex-1 flex flex-col justify-center items-center w-full py-4">
+               {/* Absolute Center Pane: Dead Center Guarantee */}
+               <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-8 flex flex-col items-center transition-all duration-500 z-10 ${getScaleClass(true)}`}>
                   <div className="space-y-4 md:space-y-6 w-full flex flex-col items-center">
                     {title && <p className={`text-[11px] md:text-[13px] tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title}</p>}
                     <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
@@ -201,26 +186,24 @@ export default function HexaCardPreview({
                   </div>
                </div>
 
-               {/* Bottom Section: Contact Info */}
-               <div className="space-y-3 md:space-y-4 opacity-40 flex flex-col w-full pb-2 items-center">
+               {/* Fixed Bottom Pane */}
+               <div className="w-full space-y-3 md:space-y-4 opacity-40 flex flex-col pb-2 items-center z-10">
                   {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={11} className="text-azure-400" /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.2em]">{phone}</span></div>}
                   {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={11} className="text-azure-400" /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span></div>}
                </div>
             </div>
           ) : (
-            <div className="h-full p-8 md:p-12 flex flex-col justify-between relative text-center">
+            <div className="h-full p-8 md:p-12 flex flex-col justify-between relative text-center overflow-hidden">
               {/* Header: Company Info */}
-              <header className={`flex flex-col w-full ${getAlignClass(alignCompany)}`}>
-                 <div className="flex flex-row items-center gap-4 justify-center md:justify-start">
-                    <div className="w-12 h-12 md:w-16 md:h-16 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
-                       {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={24} className="text-white/10" />}
-                    </div>
-                    <p className="text-[12px] md:text-[15px] tracking-[0.3em] uppercase text-white/80 font-medium leading-tight truncate">{company || "CORPORATION"}</p>
+              <header className={`w-full flex flex-row items-center gap-4 z-10 ${getAlignClass(alignCompany)}`}>
+                 <div className="w-12 h-12 md:w-16 md:h-16 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
+                    {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={24} className="text-white/10" />}
                  </div>
+                 <p className="text-[12px] md:text-[15px] tracking-[0.3em] uppercase text-white/80 font-medium leading-tight truncate">{company || "CORPORATION"}</p>
               </header>
 
-              {/* Main Content: Perfectly Centered Name & Title */}
-              <main className="flex-1 flex flex-col justify-center items-center w-full py-2">
+              {/* Absolute Center Pane: Horizontal Name */}
+              <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-12 flex flex-col items-center transition-all duration-500 z-10 ${getScaleClass(false)}`}>
                 <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
                    {title && <p className={`text-[10px] md:text-[12px] tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title}</p>}
                    <div className="flex flex-col w-full items-center">
@@ -228,10 +211,10 @@ export default function HexaCardPreview({
                       <h2 className={`text-3xl md:text-5xl tracking-[0.15em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`}>{name}</h2>
                    </div>
                 </div>
-              </main>
+              </div>
 
-              {/* Footer: Contact & Subtle branding */}
-              <footer className="w-full flex flex-col items-center">
+              {/* Footer Pane */}
+              <footer className="w-full flex flex-col items-center z-10">
                 <div className="flex flex-col gap-2 opacity-40 w-full items-center">
                    {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest">{phone}</span></div>}
                    {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest uppercase truncate">{email}</span></div>}

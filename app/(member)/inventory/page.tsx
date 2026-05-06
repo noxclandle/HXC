@@ -40,12 +40,14 @@ export default function InventoryPage() {
   const [unlockedTitles, setUnlockedTitles] = useState<string[]>(["ASSOCIATE"]);
   const [assetPrices, setAssetPrices] = useState<Record<string, number>>({});
   const [previewAsset, setPreviewAsset] = useState<Asset | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
   
-  const [equipped, setEquipped] = useState({
+  const [equipped, setEquipped] = useState<any>({
     frame: "Obsidian",
     background: "Default",
     effect: "None",
     fontFamily: "Standard",
+    fontScale: "standard",
     title: "ASSOCIATE",
     sound: "resonance",
     pointer: "Pure White Hex",
@@ -134,9 +136,10 @@ export default function InventoryPage() {
           setOwnedAssets(data.owned_assets || []);
           setUnlockedTitles(data.unlocked_titles || ["ASSOCIATE"]);
           setAssetPrices(data.asset_prices || {});
-          if (data.equipped) setEquipped({ ...equipped, ...data.equipped });
+          if (data.equipped) setEquipped((prev: any) => ({ ...prev, ...data.equipped }));
         }
       } catch (err) { console.error(err); }
+      finally { setIsLoaded(true); }
     };
     if (session) fetchInitialData();
   }, [session]);
@@ -204,6 +207,12 @@ export default function InventoryPage() {
     handleCommit(newEquipped);
   };
 
+  const updateFontScale = (scale: string) => {
+    const newEquipped = { ...equipped, fontScale: scale };
+    setEquipped(newEquipped);
+    handleCommit(newEquipped);
+  };
+
   const filteredAssets = assets.filter(a => a.type === activeCategory);
 
   if (status === "loading") return null;
@@ -252,7 +261,7 @@ export default function InventoryPage() {
                  </button>
               </div>
 
-              {/* Mobile-friendly scaling: Slightly larger than ultra-compact but still efficient */}
+              {/* Mobile-friendly scaling */}
               <div className="py-1 lg:py-0 w-full flex justify-center scale-[0.6] xs:scale-[0.75] sm:scale-85 lg:scale-100 origin-center lg:origin-top transition-transform duration-500">
                 <HexaCardPreview 
                   name={profile?.name || session?.user?.name || "ARCHITECT"} 
@@ -267,6 +276,7 @@ export default function InventoryPage() {
                   background={displayEquipped.background}
                   effect={displayEquipped.effect}
                   fontFamily={displayEquipped.fontFamily}
+                  fontScale={displayEquipped.fontScale}
                   sound={displayEquipped.sound}
                   orientation={displayEquipped.orientation}
                   alignCompany="center" alignName="center" alignReading="center" alignTitle="center" alignPhone="center" alignEmail="center"
@@ -281,24 +291,37 @@ export default function InventoryPage() {
         </div>
 
         <div className="w-full lg:w-7/12 space-y-8 lg:space-y-10 order-2 lg:order-none">
-           {/* Responsive spacer - perfectly matched to 38vh preview container */}
+           {/* Responsive spacer */}
            <div className="lg:hidden h-[38vh]" />
 
-           <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar scroll-smooth sticky top-[38vh] lg:top-0 bg-void/95 lg:bg-transparent z-40 backdrop-blur-md lg:backdrop-blur-none -mx-4 px-4 lg:mx-0 lg:px-0">
-              {CATEGORIES.map((cat) => (
-                <button 
-                  key={cat.id} 
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`py-4 lg:py-6 px-6 lg:px-8 flex flex-col items-center gap-2 lg:gap-3 transition-all border-b-2 flex-shrink-0 ${
-                    activeCategory === cat.id ? "border-azure-500 opacity-100 bg-azure-500/5" : "border-transparent opacity-20 hover:opacity-50"
-                  }`}
-                >
-                  <cat.icon size={16} className={activeCategory === cat.id ? "text-azure-400" : ""} />
-                  <div className="text-center">
-                    <span className="block text-[7px] lg:text-[8px] uppercase tracking-[0.3em] font-bold whitespace-nowrap">{cat.name}</span>
-                  </div>
-                </button>
-              ))}
+           <div className="flex flex-col gap-4">
+              <div className="lg:hidden flex items-center justify-between px-4">
+                 <span className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Font Size / 文字サイズ</span>
+                 <div className="flex gap-2 p-1 bg-white/5 border border-white/5">
+                    {['standard', 'impact', 'maximum'].map((scale) => (
+                      <button key={scale} onClick={() => updateFontScale(scale as any)} className={`px-3 py-1.5 text-[8px] uppercase tracking-widest transition-all ${equipped.fontScale === scale ? 'bg-azure-600 text-white' : 'opacity-40'}`}>
+                        {scale}
+                      </button>
+                    ))}
+                 </div>
+              </div>
+
+              <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar scroll-smooth sticky top-[38vh] lg:top-0 bg-void/95 lg:bg-transparent z-40 backdrop-blur-md lg:backdrop-blur-none -mx-4 px-4 lg:mx-0 lg:px-0">
+                {CATEGORIES.map((cat) => (
+                  <button 
+                    key={cat.id} 
+                    onClick={() => setActiveCategory(cat.id)}
+                    className={`py-4 lg:py-6 px-6 lg:px-8 flex flex-col items-center gap-2 lg:gap-3 transition-all border-b-2 flex-shrink-0 ${
+                      activeCategory === cat.id ? "border-azure-500 opacity-100 bg-azure-500/5" : "border-transparent opacity-20 hover:opacity-50"
+                    }`}
+                  >
+                    <cat.icon size={16} className={activeCategory === cat.id ? "text-azure-400" : ""} />
+                    <div className="text-center">
+                      <span className="block text-[7px] lg:text-[8px] uppercase tracking-[0.3em] font-bold whitespace-nowrap">{cat.name}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
            </div>
 
            <div className="space-y-4 lg:max-h-[700px] overflow-y-visible lg:overflow-y-auto lg:pr-4 custom-scrollbar">

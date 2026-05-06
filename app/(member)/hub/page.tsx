@@ -83,7 +83,7 @@ export default function MemberHubPage() {
               photo_url: realStats.photo_url,
               profile: realStats.profile,
               equipped: realStats.equipped
-            }} onUpdate={fetchData} />
+            }} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                <Link href="/scan" className="group p-8 border border-azure-500/20 bg-azure-500/[0.03] hover:bg-azure-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
