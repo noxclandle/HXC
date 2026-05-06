@@ -2,8 +2,9 @@
 
 import { useState, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Hexagon, UserCheck, ShieldCheck, Mail, Lock, Briefcase } from "lucide-react";
+import { Hexagon, UserCheck, ShieldCheck, Mail, Lock, Briefcase, Fingerprint } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 function RegisterContent() {
   const router = useRouter();
@@ -13,6 +14,7 @@ function RegisterContent() {
 
   const [formData, setFormData] = useState({
     name: "",
+    handle: "",
     email: "",
     password: "",
     title: "",
@@ -23,8 +25,8 @@ function RegisterContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.email || !formData.password || !formData.name) {
-      setError("必須項目を入力してください。");
+    if (!formData.email || !formData.password || !formData.name || !formData.handle) {
+      setError("必須項目をすべて入力してください。");
       return;
     }
     setError("");
@@ -38,14 +40,26 @@ function RegisterContent() {
         body: JSON.stringify({
           ...formData,
           uid,
-          role: formData.title || "MEMBER"
+          role: "member"
         })
       });
 
       if (res.ok) {
-        setTimeout(() => {
-          router.push("/hub");
-        }, 2500);
+        // 自動ログインを試行
+        const loginRes = await signIn("credentials", {
+          email: formData.email,
+          password: formData.password,
+          redirect: false,
+        });
+
+        if (loginRes?.error) {
+          setError("登録は完了しましたが、ログインに失敗しました。手動でログインしてください。");
+          setTimeout(() => router.push("/login"), 3000);
+        } else {
+          setTimeout(() => {
+            router.push("/hub");
+          }, 2500);
+        }
       } else {
         const data = await res.json();
         setError(data.error || "登録に失敗しました。");
@@ -94,8 +108,32 @@ function RegisterContent() {
             )}
             
             <form onSubmit={handleSubmit} className="space-y-6 text-left">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[9px] uppercase tracking-[0.3em] opacity-30 flex items-center gap-2 font-bold"><UserCheck size={14}/> Name / 氏名</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="福井 豪"
+                    className="w-full bg-white/[0.03] border border-white/10 p-4 tracking-widest focus:border-azure-500 outline-none transition-all text-white text-xs placeholder:opacity-20"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] uppercase tracking-[0.3em] opacity-30 flex items-center gap-2 font-bold"><Fingerprint size={14}/> Reading / フリガナ</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.handle}
+                    onChange={(e) => setFormData({ ...formData, handle: e.target.value })}
+                    placeholder="フクイ ゴウ"
+                    className="w-full bg-white/[0.03] border border-white/10 p-4 tracking-widest focus:border-azure-500 outline-none transition-all text-white text-xs placeholder:opacity-20"
+                  />
+                </div>
+              </div>
+
               {[
-                { label: "Real Name / 氏名", key: "name", icon: <UserCheck size={14}/>, placeholder: "福井 豪" },
                 { label: "Login Email / メールアドレス", key: "email", icon: <Mail size={14}/>, placeholder: "your@email.com", type: "email" },
                 { label: "Password / パスワード", key: "password", icon: <Lock size={14}/>, placeholder: "••••••••", type: "password" },
                 { label: "Job Title / 役職・肩書き", key: "title", icon: <Briefcase size={14}/>, placeholder: "Architect" },

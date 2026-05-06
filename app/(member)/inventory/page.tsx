@@ -47,7 +47,6 @@ export default function InventoryPage() {
     background: "Default",
     effect: "None",
     fontFamily: "Standard",
-    fontScale: "standard",
     title: "ASSOCIATE",
     sound: "resonance",
     pointer: "Pure White Hex",
@@ -207,12 +206,6 @@ export default function InventoryPage() {
     handleCommit(newEquipped);
   };
 
-  const updateFontScale = (scale: string) => {
-    const newEquipped = { ...equipped, fontScale: scale };
-    setEquipped(newEquipped);
-    handleCommit(newEquipped);
-  };
-
   const filteredAssets = assets.filter(a => a.type === activeCategory);
 
   if (status === "loading") return null;
@@ -302,17 +295,6 @@ export default function InventoryPage() {
            <div className="lg:hidden h-[38vh]" />
 
            <div className="flex flex-col gap-4">
-              <div className="lg:hidden flex items-center justify-between px-4">
-                 <span className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Font Size / 文字サイズ</span>
-                 <div className="flex gap-2 p-1 bg-white/5 border border-white/5">
-                    {['standard', 'impact', 'maximum'].map((scale) => (
-                      <button key={scale} onClick={() => updateFontScale(scale as any)} className={`px-3 py-1.5 text-[8px] uppercase tracking-widest transition-all ${equipped.fontScale === scale ? 'bg-azure-600 text-white' : 'opacity-40'}`}>
-                        {scale}
-                      </button>
-                    ))}
-                 </div>
-              </div>
-
               <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar scroll-smooth sticky top-[38vh] lg:top-0 bg-void/95 lg:bg-transparent z-40 backdrop-blur-md lg:backdrop-blur-none -mx-4 px-4 lg:mx-0 lg:px-0">
                 {CATEGORIES.map((cat) => (
                   <button 
