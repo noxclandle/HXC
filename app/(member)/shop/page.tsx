@@ -51,9 +51,17 @@ export default function ShopPage() {
                 </div>
               </div>
 
-              {/* Decorative background element */}
-              <div className="absolute top-0 right-0 p-8 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity">
-                <ShoppingBag size={120} />
+              {/* Corporate Seal background element */}
+              <div className="absolute right-0 top-0 h-full w-48 pointer-events-none overflow-hidden opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
+                 <div className="absolute top-1/2 -right-12 -translate-y-1/2 w-64 h-64 border border-azure-500/20 rounded-full flex items-center justify-center">
+                    <div className="w-48 h-48 border border-bronze-500/20 rounded-full flex items-center justify-center">
+                       <div className="w-32 h-32 border border-azure-400/20 rotate-45 flex items-center justify-center">
+                          <div className="w-20 h-20 border border-bronze-400/20 flex items-center justify-center -rotate-45">
+                             <span className="text-[7px] tracking-[0.8em] text-azure-500 font-black uppercase">HXC</span>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
               </div>
             </motion.div>
           </Link>

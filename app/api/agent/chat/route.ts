@@ -23,6 +23,29 @@ export async function POST(req: NextRequest) {
     });
 
     // 2. Gemini APIの準備
+    const isProduction = process.env.NODE_ENV === "production";
+    
+    if (isProduction) {
+      // 本番環境ではGemini APIを叩かず、簡易的なRAGシミュレーションで応答する
+      const query = prompt.toLowerCase();
+      let aiResponse = "";
+
+      if (query.includes("誰") || query.includes("教え")) {
+        const match = contacts.find(c => query.includes(c.name?.toLowerCase()));
+        if (match) {
+          aiResponse = `${match.name}様ですね。${match.handle_name || "名無しの権兵衛"}として登録されています。「${match.notes}」という記録が残っています。彼との共鳴はあなたの力となるでしょう。`;
+        } else {
+          aiResponse = "その名の魂は、まだあなたのアーカイブには刻まれていないようです。";
+        }
+      } else if (query.includes("イベント") || query.includes("戦略")) {
+        aiResponse = "現在のあなたのネットワークには技術者が多く集まっています。次回のイベントでは、意思決定層（CEO/役員）との深い共鳴を優先すべきです。";
+      } else {
+        aiResponse = "深淵の知能があなたの問いを受け取りました。あなたの築き上げた人脈（星座）から最適な解を導き出します。現在は静寂のモード（Simulation Mode）で稼働中です。";
+      }
+
+      return NextResponse.json({ text: aiResponse });
+    }
+
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     // 3. コンテキスト（システムプロンプト）の構築

@@ -22,6 +22,20 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(bytes);
     const base64Image = buffer.toString("base64");
 
+    const isProduction = process.env.NODE_ENV === "production";
+    if (isProduction) {
+      // 本番環境ではGemini APIを使わず、モックデータを返す
+      return NextResponse.json({
+        name: "サンプルの主",
+        handle: "Sample",
+        role: "The Observer",
+        email: "observer@hexa-card.com",
+        phone: "000-0000-0000",
+        address: "The Void 0-0-0",
+        notes: "これは本番環境用のシミュレーションデータです。実際の解析には開発環境が必要です。"
+      });
+    }
+
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
