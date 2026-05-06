@@ -230,12 +230,12 @@ export default function InventoryPage() {
       </header>
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
-        {/* Preview Container: Ultra-compact sticky for mobile */}
-        <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/95 backdrop-blur-lg pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none">
-           <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-hidden group flex flex-col items-center">
+        {/* Preview Container: Balanced sticky for mobile (approx 2/5 screen height) */}
+        <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/95 backdrop-blur-lg pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[38vh] lg:h-auto flex items-center justify-center">
+           <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-hidden group flex flex-col items-center w-full">
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent hidden lg:block" />
               
-              <div className="absolute top-2 right-6 lg:top-4 lg:right-4 z-30 flex gap-2 p-1 bg-white/10 lg:bg-white/5 border border-white/10 scale-75 lg:scale-100">
+              <div className="absolute top-2 right-6 lg:top-4 lg:right-4 z-30 flex gap-2 p-1 bg-white/10 lg:bg-white/5 border border-white/10 scale-90 lg:scale-100">
                  <button onClick={() => {
                    const newEquipped = {...equipped, orientation: 'horizontal' as const};
                    setEquipped(newEquipped);
@@ -252,8 +252,8 @@ export default function InventoryPage() {
                  </button>
               </div>
 
-              {/* Mobile-friendly scaling: ultra-compact to maximize vertical space */}
-              <div className="py-1 lg:py-0 w-full flex justify-center scale-[0.45] xs:scale-[0.6] sm:scale-75 lg:scale-100 origin-center lg:origin-top transition-transform duration-500">
+              {/* Mobile-friendly scaling: Slightly larger than ultra-compact but still efficient */}
+              <div className="py-1 lg:py-0 w-full flex justify-center scale-[0.6] xs:scale-[0.75] sm:scale-85 lg:scale-100 origin-center lg:origin-top transition-transform duration-500">
                 <HexaCardPreview 
                   name={profile?.name || session?.user?.name || "ARCHITECT"} 
                   reading={profile?.handle || profile?.reading}
@@ -273,27 +273,18 @@ export default function InventoryPage() {
                 />
               </div>
 
-              <div className="hidden lg:block mt-10 pt-8 border-t border-white/5 space-y-4 w-full">
-                 <div className="flex justify-between items-center text-[8px] tracking-[0.3em] uppercase opacity-40">
-                    <span>Identity Status</span>
-                    <span className="text-azure-400 font-bold uppercase tracking-widest">
-                       {previewAsset ? "Preview Mode" : "Authorized"}
-                    </span>
-                 </div>
-              </div>
-              
               {/* Mobile instruction helper */}
-              <div className="lg:hidden text-center mt-[-25%] pb-1">
-                 <p className="text-[6px] tracking-[0.3em] uppercase opacity-20">Live Resonance Preview</p>
+              <div className="lg:hidden text-center mt-[-15%] pb-1">
+                 <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">Live Resonance Preview</p>
               </div>
            </div>
         </div>
 
         <div className="w-full lg:w-7/12 space-y-8 lg:space-y-10 order-2 lg:order-none">
-           {/* Responsive spacer - tightly adjusted for ultra-compact preview */}
-           <div className={`lg:hidden ${equipped.orientation === 'vertical' ? 'h-[180px]' : 'h-[100px]'}`} />
+           {/* Responsive spacer - perfectly matched to 38vh preview container */}
+           <div className="lg:hidden h-[38vh]" />
 
-           <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar scroll-smooth sticky top-[130px] xs:top-[170px] sm:top-[200px] lg:top-0 bg-void/95 lg:bg-transparent z-40 backdrop-blur-md lg:backdrop-blur-none -mx-4 px-4 lg:mx-0 lg:px-0">
+           <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar scroll-smooth sticky top-[38vh] lg:top-0 bg-void/95 lg:bg-transparent z-40 backdrop-blur-md lg:backdrop-blur-none -mx-4 px-4 lg:mx-0 lg:px-0">
               {CATEGORIES.map((cat) => (
                 <button 
                   key={cat.id} 
