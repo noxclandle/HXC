@@ -44,12 +44,28 @@ export async function POST(req: NextRequest) {
           email,
           password: hashedPassword,
           name,
-          handle_name: handle,
+          handle_name: handle, // フリガナ/ハンドル
           role: "member", // 初期ロール
           rank: "Initiate",
           address,
           phone,
           rt_balance: 100n, // 初期ポイント
+          ai_config: {
+            profile: {
+              title: data.title || "",
+            }
+          },
+          equipped_assets: {
+            frame: "Obsidian",
+            background: "Default",
+            effect: "None",
+            fontFamily: "Standard",
+            title: "ASSOCIATE",
+            sound: "resonance",
+            pointer: "Pure White Hex",
+            orientation: "horizontal"
+          },
+          unlocked_titles: ["ASSOCIATE", "Initiate", "Observer"]
         }
       });
 
