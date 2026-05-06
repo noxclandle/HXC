@@ -199,12 +199,12 @@ export default function ProfileEditPage() {
       </header>
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-20 items-start">
-        {/* Preview Container: Optimized for mobile viewport and keyboard */}
-        <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/95 backdrop-blur-lg pb-2 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none">
-           <div className="py-4 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-hidden group flex flex-col items-center">
+        {/* Preview Container: Ultra-compact sticky for mobile */}
+        <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/95 backdrop-blur-lg pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none">
+           <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-hidden group flex flex-col items-center">
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent hidden lg:block" />
               
-              <div className="absolute top-2 right-6 lg:top-4 lg:right-4 z-30 flex gap-2 p-1 bg-white/10 lg:bg-white/5 border border-white/10">
+              <div className="absolute top-2 right-6 lg:top-4 lg:right-4 z-30 flex gap-2 p-1 bg-white/10 lg:bg-white/5 border border-white/10 scale-75 lg:scale-100">
                  <button type="button" onClick={() => updateField('orientation', 'horizontal')} className={`p-1.5 transition-all ${formData.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
                     <Layout size={10}/>
                  </button>
@@ -213,8 +213,8 @@ export default function ProfileEditPage() {
                  </button>
               </div>
 
-              {/* Mobile-friendly scaling: scale down significantly on mobile to leave room for input/keyboard */}
-              <div className="py-2 lg:py-0 w-full flex justify-center scale-[0.6] xs:scale-[0.75] sm:scale-90 lg:scale-100 origin-center lg:origin-top transition-transform duration-500">
+              {/* Mobile-friendly scaling: ultra-compact to leave room for input/keyboard */}
+              <div className="py-1 lg:py-0 w-full flex justify-center scale-[0.5] xs:scale-[0.65] sm:scale-80 lg:scale-100 origin-center lg:origin-top transition-transform duration-500">
                 <HexaCardPreview 
                   name={formData.name || "NAME"} reading={formData.reading} company={formData.company} title={formData.title} phone={formData.phone} email={formData.email} bio={formData.bio} logoUrl={formData.logoUrl} faceUrl={formData.faceUrl} frame={equipped.frame} background={equipped.background} effect={equipped.effect} sound={equipped.sound} orientation={formData.orientation}
                   link_x={formData.link_x} link_instagram={formData.link_instagram} link_line={formData.link_line} link_facebook={formData.link_facebook}
@@ -224,15 +224,15 @@ export default function ProfileEditPage() {
               </div>
 
               {/* Mobile instruction helper */}
-              <div className="lg:hidden text-center mt-[-15%] pb-2">
-                 <p className="text-[7px] tracking-[0.3em] uppercase opacity-20">Live Preview Alignment</p>
+              <div className="lg:hidden text-center mt-[-22%] pb-1">
+                 <p className="text-[6px] tracking-[0.3em] uppercase opacity-20">Live Preview Alignment</p>
               </div>
            </div>
         </div>
 
         <div className="w-full lg:w-7/12 order-2 lg:order-none space-y-12 lg:space-y-16">
-           {/* Responsive spacer - significantly reduced on mobile due to scaling and sticky top-0 */}
-           <div className={`lg:hidden ${formData.orientation === 'vertical' ? 'h-[250px]' : 'h-[140px]'}`} />
+           {/* Responsive spacer - tightly adjusted for ultra-compact preview */}
+           <div className={`lg:hidden ${formData.orientation === 'vertical' ? 'h-[200px]' : 'h-[110px]'}`} />
 
            <form onSubmit={(e) => e.preventDefault()} className="space-y-16">
               {/* Identity Section */}
