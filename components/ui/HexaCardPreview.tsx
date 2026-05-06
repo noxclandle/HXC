@@ -180,96 +180,108 @@ export default function HexaCardPreview({
           )}
 
           {isVertical ? (
-            <div className="h-full p-6 md:p-10 flex flex-col items-center">
-               <div className={`flex flex-col gap-3 md:gap-4 w-full ${getAlignClass(alignCompany)}`}>
-                  <div className="w-12 h-12 md:w-14 md:h-14 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
-                     {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={24} className="text-white/10" />}
+            <div className="h-full p-8 md:p-12 flex flex-col items-center justify-between text-center relative">
+               {/* Top Section: Logo & Company */}
+               <div className={`flex flex-col gap-4 w-full ${getAlignClass(alignCompany)}`}>
+                  <div className="w-16 h-16 md:w-20 md:h-20 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 mx-auto">
+                     {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={32} className="text-white/10" />}
                   </div>
-                  <p className={`text-[11px] md:text-[12px] tracking-[0.2em] uppercase text-white font-medium leading-relaxed w-full ${getAlignClass(alignCompany)}`}>{company || "CORPORATION"}</p>
+                  <p className={`text-[12px] md:text-[14px] tracking-[0.25em] uppercase text-white font-medium leading-relaxed w-full ${getAlignClass(alignCompany)}`}>{company || "CORPORATION"}</p>
                </div>
-               <div className="flex-1" />
-               <div className="space-y-3 md:space-y-4 w-full flex flex-col py-2">
-                  {title && <p className={`text-[10px] md:text-[11px] tracking-[0.3em] md:tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title}</p>}
-                  <div className="flex flex-col gap-1.5 md:gap-2 w-full">
-                     {reading && <p className={`text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.3em] text-azure-400 font-bold uppercase truncate w-full ${getAlignClass(alignReading)}`}>{reading}</p>}
-                     <h2 className={`text-2xl md:text-3xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`}>{name}</h2>
+
+               {/* Center Section: Title, Reading, Name (Perfectly Centered) */}
+               <div className="flex-1 flex flex-col justify-center items-center w-full py-4">
+                  <div className="space-y-4 md:space-y-6 w-full flex flex-col items-center">
+                    {title && <p className={`text-[11px] md:text-[13px] tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title}</p>}
+                    <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
+                       {reading && <p className={`text-[12px] md:text-[15px] tracking-[0.3em] text-azure-400 font-bold uppercase truncate w-full ${getAlignClass(alignReading)}`}>{reading}</p>}
+                       <h2 className={`text-4xl md:text-6xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`}>{name}</h2>
+                    </div>
+                    <div className={`h-px w-12 md:w-16 bg-azure-500/30 mt-2 ${alignName === 'left' ? 'self-start' : alignName === 'right' ? 'self-end' : 'self-center'}`} />
                   </div>
-                  <div className={`h-px w-10 md:w-12 bg-azure-500/30 mt-1 ${alignName === 'left' ? 'self-start' : alignName === 'right' ? 'self-end' : 'self-center'}`} />
                </div>
-               <div className="flex-[1.2] md:flex-[2]" />
-               <div className="space-y-2.5 md:space-y-3 opacity-40 flex flex-col w-full pb-2">
-                  {phone && <div className={`flex items-center gap-2 w-full ${getAlignClass(alignPhone)}`}><Phone size={10} className="text-azure-400" /><span className="font-mono text-[10px] md:text-[11px] tracking-[0.1em] md:tracking-[0.2em]">{phone}</span></div>}
-                  {email && <div className={`flex items-center gap-2 w-full ${getAlignClass(alignEmail)}`}><Mail size={10} className="text-azure-400" /><span className="font-mono text-[10px] md:text-[11px] tracking-[0.05em] md:tracking-[0.1em] uppercase truncate max-w-full">{email}</span></div>}
+
+               {/* Bottom Section: Contact Info */}
+               <div className="space-y-3 md:space-y-4 opacity-40 flex flex-col w-full pb-2 items-center">
+                  {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={11} className="text-azure-400" /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.2em]">{phone}</span></div>}
+                  {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={11} className="text-azure-400" /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span></div>}
                </div>
             </div>
           ) : (
-            <div className="h-full p-6 md:p-10 flex flex-col justify-between relative">
+            <div className="h-full p-8 md:p-12 flex flex-col justify-between relative text-center">
+              {/* Header: Company Info */}
               <header className={`flex flex-col w-full ${getAlignClass(alignCompany)}`}>
-                 <div className="flex flex-row items-center gap-3 md:gap-4">
-                    <div className="w-10 h-10 md:w-14 md:h-14 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
-                       {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={18} className="text-white/10" />}
+                 <div className="flex flex-row items-center gap-4 justify-center md:justify-start">
+                    <div className="w-12 h-12 md:w-16 md:h-16 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
+                       {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={24} className="text-white/10" />}
                     </div>
-                    <p className="text-[11px] md:text-[13px] tracking-[0.2em] md:tracking-[0.3em] uppercase text-white/80 font-medium leading-tight truncate">{company || "CORPORATION"}</p>
+                    <p className="text-[12px] md:text-[15px] tracking-[0.3em] uppercase text-white/80 font-medium leading-tight truncate">{company || "CORPORATION"}</p>
                  </div>
               </header>
-              <main className="flex flex-col gap-2 md:gap-4 w-full my-auto py-2">
-                <div className="flex flex-col gap-1 md:gap-1.5 w-full">
-                   {title && <p className={`text-[9px] md:text-[10px] tracking-[0.3em] md:tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title}</p>}
-                   <div className="flex flex-col w-full">
-                      {reading && <span className={`text-[8px] md:text-[9px] tracking-[0.2em] md:tracking-[0.3em] text-azure-400 font-bold uppercase mb-0.5 w-full ${getAlignClass(alignReading)}`}>{reading}</span>}
-                      <h2 className={`text-2xl md:text-4xl tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`}>{name}</h2>
+
+              {/* Main Content: Perfectly Centered Name & Title */}
+              <main className="flex-1 flex flex-col justify-center items-center w-full py-2">
+                <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
+                   {title && <p className={`text-[10px] md:text-[12px] tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`}>{title}</p>}
+                   <div className="flex flex-col w-full items-center">
+                      {reading && <span className={`text-[9px] md:text-[11px] tracking-[0.3em] text-azure-400 font-bold uppercase mb-1 w-full ${getAlignClass(alignReading)}`}>{reading}</span>}
+                      <h2 className={`text-3xl md:text-5xl tracking-[0.15em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`}>{name}</h2>
                    </div>
                 </div>
-                <div className="mt-1.5 flex flex-col gap-1.5 md:gap-2.5 opacity-40 w-full">
-                   {phone && <div className={`flex items-center gap-2 w-full ${getAlignClass(alignPhone)}`}><Phone size={10} /><span className="font-mono text-[10px] md:text-[12px] tracking-widest">{phone}</span></div>}
-                   {email && <div className={`flex items-center gap-2 w-full ${getAlignClass(alignEmail)}`}><Mail size={10} /><span className="font-mono text-[10px] md:text-[12px] tracking-widest uppercase truncate">{email}</span></div>}
-                </div>
               </main>
-              <footer className="absolute bottom-6 right-6 opacity-5"><div className="text-[9px] md:text-[11px] font-bold italic">STANDARD HXC</div></footer>
+
+              {/* Footer: Contact & Subtle branding */}
+              <footer className="w-full flex flex-col items-center">
+                <div className="flex flex-col gap-2 opacity-40 w-full items-center">
+                   {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest">{phone}</span></div>}
+                   {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest uppercase truncate">{email}</span></div>}
+                </div>
+                <div className="absolute bottom-6 right-6 opacity-5"><div className="text-[10px] md:text-[12px] font-bold italic">STANDARD HXC</div></div>
+              </footer>
             </div>
           )}
         </div>
 
         <div 
-          className={`absolute inset-0 p-8 flex flex-col justify-between items-center text-center border ${getFrameStyle()} ${getBackgroundStyle()} ${getFontStyle()}`}
+          className={`absolute inset-0 p-10 md:p-16 flex flex-col justify-between items-center text-center border ${getFrameStyle()} ${getBackgroundStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
         >
           <div />
-          <div className="space-y-4 relative z-10 w-full flex flex-col items-center">
-            <div className="w-24 h-24 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl">
-               {faceUrl ? <img src={faceUrl} alt="Portrait" className="w-full h-full object-cover" /> : <User size={40} className="text-white/5" />}
+          <div className="space-y-6 relative z-10 w-full flex flex-col items-center">
+            <div className="w-28 h-28 md:w-36 md:h-36 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl">
+               {faceUrl ? <img src={faceUrl} alt="Portrait" className="w-full h-full object-cover" /> : <User size={48} className="text-white/5" />}
             </div>
-            <div className="space-y-3 w-full">
-               <p className="text-[10px] tracking-[0.5em] uppercase text-white/30">Verified Identity</p>
-               <div className="h-px w-10 bg-white/10 mx-auto" />
-               <p className="text-[11px] tracking-[0.1em] uppercase text-white/80 leading-relaxed italic max-w-xs mx-auto line-clamp-4">
+            <div className="space-y-4 w-full">
+               <p className="text-[11px] md:text-[13px] tracking-[0.6em] uppercase text-white/30">Verified Identity</p>
+               <div className="h-px w-12 bg-white/10 mx-auto" />
+               <p className="text-[12px] md:text-[15px] tracking-[0.1em] uppercase text-white/90 leading-relaxed italic max-w-sm mx-auto line-clamp-5 px-4 whitespace-pre-wrap">
                  {bio || "Hexa Network Verified Identity"}
                </p>
             </div>
           </div>
-          <div className="flex flex-wrap justify-center gap-8 pb-6">
+          <div className="flex flex-wrap justify-center gap-8 md:gap-12 pb-8">
              {link_x && (
                <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors">
-                 <Twitter size={16} />
-                 <span className="text-[10px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span>
+                 <Twitter size={18} />
+                 <span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span>
                </a>
              )}
              {link_instagram && (
                <a href={link_instagram.startsWith('http') ? link_instagram : `https://instagram.com/${link_instagram}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors">
-                 <Instagram size={16} />
-                 <span className="text-[10px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Insta</span>
+                 <Instagram size={18} />
+                 <span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Insta</span>
                </a>
              )}
              {link_line && (
                <a href={link_line.startsWith('http') ? link_line : `https://line.me/ti/p/~${link_line}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors">
-                 <MessageCircle size={16} />
-                 <span className="text-[10px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">LINE</span>
+                 <MessageCircle size={18} />
+                 <span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">LINE</span>
                </a>
              )}
              {link_facebook && (
-               <a href={link_facebook} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors">
-                 <Facebook size={14} />
-                 <span className="text-[8px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Facebook</span>
+               <a href={link_facebook.startsWith('http') ? link_facebook : `https://facebook.com/${link_facebook}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors">
+                 <Facebook size={18} />
+                 <span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">FB</span>
                </a>
              )}
           </div>
