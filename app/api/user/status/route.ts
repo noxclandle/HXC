@@ -22,8 +22,16 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const titles = Array.isArray(user.unlocked_titles) ? user.unlocked_titles : [];
-    const ownedAssets = Array.isArray(user.owned_assets) ? user.owned_assets : [];
+    const isMastermind = user.role === "mastermind";
+    
+    // Mastermind (Go Fukui) gets everything unlocked
+    const titles = isMastermind 
+      ? ["ASSOCIATE", "Initiate", "Observer", "Collector", "Messenger", "Connector", "Void Voyager", "Strategist", "Tech Lead", "Headhunter", "Gilded Soul", "The Sovereign", "Mastermind", "Architect", "Chief Officer", "APEX"]
+      : (Array.isArray(user.unlocked_titles) ? user.unlocked_titles : []);
+
+    const ownedAssets = isMastermind
+      ? ["Obsidian", "Gold", "Dynamic", "Sakura", "Emerald", "Platinum", "ImperialGold", "Default", "Carbon", "MonochromeGrid", "BrushedMetal", "Nebula", "SilkBlur", "Stardust", "RoyalGold", "MidnightMist", "DigitalFlow", "PrismFractal", "None", "Aethereal", "Glitch", "Interference", "Petals", "Pure White Hex", "Azure Trace", "Gold Trace", "Emerald Trace", "Violet Trace", "Crimson Trace", "resonance", "silver", "void"]
+      : (Array.isArray(user.owned_assets) ? user.owned_assets : []);
     
     const assetPricesConfig = await prisma.systemConfig.findUnique({
       where: { key: 'asset_prices' }
@@ -47,7 +55,8 @@ export async function GET() {
       name: user.name || session.user.name || "ARCHITECT",
       rt_balance: user.rt_balance.toString(),
       exp: user.exp.toString(),
-      rank: user.rank,
+      rank: isMastermind ? "Mastermind" : user.rank,
+      role: user.role,
       titles: titles,
       owned_assets: ownedAssets,
       asset_prices: assetPrices,
@@ -59,7 +68,7 @@ export async function GET() {
       equipped: {
         ...equipped,
         frame: equipped.frame || "Obsidian",
-        title: equipped.title || "ASSOCIATE",
+        title: equipped.title || (isMastermind ? "Mastermind" : "ASSOCIATE"),
         orientation: equipped.orientation || "horizontal",
         hAlign: equipped.hAlign || defaultAlign,
         vAlign: equipped.vAlign || defaultAlign
