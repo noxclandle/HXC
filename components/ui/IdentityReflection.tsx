@@ -6,43 +6,32 @@ import Link from "next/link";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useToast } from "@/components/ui/ResonanceToast";
 
-interface IdentityReflectionProps {
-  user: {
-    name: string;
-    reading?: string;
-    slug: string;
-    logo_url?: string;
-    photo_url?: string;
-    profile?: any;
-    equipped: any;
-  };
-  onUpdate: () => void;
-}
-
-export default function IdentityReflection({ user, onUpdate }: IdentityReflectionProps) {
+export default function IdentityReflection({ user }: { user: any }) {
   const { showToast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const updateOrientation = async (orient: "horizontal" | "vertical") => {
-    if (user.equipped.orientation === orient) return;
+  const updateOrientation = async (orientation: 'horizontal' | 'vertical') => {
     setIsUpdating(true);
     try {
-      const newEquipped = { ...user.equipped, orientation: orient };
       const res = await fetch("/api/user/equip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ equipped: newEquipped })
+        body: JSON.stringify({ 
+          equipped: { ...user.equipped, orientation } 
+        })
       });
+
       if (res.ok) {
-        showToast(`Layout Fixed / 形式を保存しました (${orient})`, "success");
-        onUpdate();
+        showToast(`Alignment Shifted / 向きを変更しました`, "success");
+        window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
+    } catch (e) { console.error(e); }
+    finally {
       setIsUpdating(false);
     }
   };
+
+  const currentAligns = user.equipped.orientation === 'horizontal' ? user.equipped.hAlign : user.equipped.vAlign;
 
   return (
     <section className="p-4 md:p-8 border border-white/5 bg-white/[0.01] relative overflow-hidden group">
@@ -63,44 +52,45 @@ export default function IdentityReflection({ user, onUpdate }: IdentityReflectio
        </div>
        
        <div className="flex flex-col items-center">
-          <div className={`relative ${isUpdating ? 'opacity-20' : ''} transition-all duration-700 min-h-[250px] flex items-center justify-center w-full`}>
-             <HexaCardPreview
-               name={user.name}
-               reading={user.reading}
-               company={user.profile?.company}
-               title={user.profile?.title}
-               phone={user.profile?.phone}
-               email={user.profile?.contact_email}
-               logoUrl={user.logo_url}
-               faceUrl={user.photo_url}
-               frame={user.equipped.frame}
-               background={user.equipped.background}
-               effect={user.equipped.effect}
-               fontFamily={user.equipped.fontFamily || user.equipped.font}
-               sound={user.equipped.sound}
-               link_x={user.profile?.link_x}
-               link_instagram={user.profile?.link_instagram}
-               link_line={user.profile?.link_line}
-               link_facebook={user.profile?.link_facebook}
-               orientation={user.equipped.orientation}
-               alignCompany={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.company || "center") : (user.equipped.vAlign?.company || "center")}
-               alignName={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.name || "center") : (user.equipped.vAlign?.name || "center")}
-               alignReading={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.reading || "center") : (user.equipped.vAlign?.reading || "center")}
-               alignTitle={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.title || "center") : (user.equipped.vAlign?.title || "center")}
-               alignPhone={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.phone || "center") : (user.equipped.vAlign?.phone || "center")}
-               alignEmail={user.equipped.orientation === 'horizontal' ? (user.equipped.hAlign?.email || "center") : (user.equipped.vAlign?.email || "center")}
-             />             {isUpdating && <div className="absolute inset-0 flex items-center justify-center"><Sparkles className="animate-spin text-azure-400" /></div>}
+          <div className={`relative ${isUpdating ? 'opacity-20' : ''} transition-all duration-700 min-h-[280px] flex items-center justify-center w-full py-6`}>
+             <HexaCardPreview 
+                name={user.name} 
+                reading={user.handle} 
+                company={user.profile.company} 
+                title={user.profile.title} 
+                phone={user.profile.phone} 
+                email={user.profile.contact_email} 
+                logoUrl={user.logo_url} 
+                faceUrl={user.photo_url}
+                frame={user.equipped.frame}
+                background={user.equipped.background}
+                effect={user.equipped.effect}
+                fontFamily={user.equipped.fontFamily}
+                fontScale={user.equipped.fontScale}
+                sound={user.equipped.sound}
+                orientation={user.equipped.orientation}
+                alignCompany={currentAligns.company}
+                alignName={currentAligns.name}
+                alignReading={currentAligns.reading}
+                alignTitle={currentAligns.title}
+                alignPhone={currentAligns.phone}
+                alignEmail={currentAligns.email}
+             />
           </div>
-          
-          <div className="mt-12 grid grid-cols-2 gap-4 w-full">
-             <Link href="/profile/edit" className="py-5 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all text-center group flex flex-col items-center gap-1">
-                <Edit3 size={14} className="mb-1 opacity-40 group-hover:opacity-100" />
-                <span className="text-[9px] tracking-[0.4em] uppercase font-bold">Tune Identity</span>
+       </div>
+       
+       <div className="grid grid-cols-2 gap-4 mt-12">
+          <div className="flex flex-col gap-4">
+             <Link href="/profile/edit" className="flex flex-col items-center justify-center p-6 bg-white/[0.02] border border-white/5 hover:bg-white/5 transition-all group/btn">
+                <Edit3 size={16} className="mb-3 opacity-20 group-hover/btn:opacity-100 group-hover/btn:text-azure-400 transition-all" />
+                <span className="text-[9px] tracking-[0.4em] uppercase font-bold text-white">Tune Identity</span>
                 <span className="text-[7px] opacity-20 uppercase tracking-[0.2em]">プロフィールの調律</span>
              </Link>
-             <Link href="/inventory" className="py-5 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all text-center group flex flex-col items-center gap-1">
-                <Trophy size={14} className="mb-1 opacity-40 group-hover:opacity-100" />
-                <span className="text-[9px] tracking-[0.4em] uppercase font-bold">Treasury</span>
+          </div>
+          <div className="flex flex-col gap-4">
+             <Link href="/inventory" className="flex flex-col items-center justify-center p-6 bg-white/[0.02] border border-white/5 hover:bg-white/5 transition-all group/btn">
+                <Trophy size={16} className="mb-3 opacity-20 group-hover/btn:opacity-100 group-hover/btn:text-orange-400 transition-all" />
+                <span className="text-[9px] tracking-[0.4em] uppercase font-bold text-white">Treasury</span>
                 <span className="text-[7px] opacity-20 uppercase tracking-[0.2em]">宝物庫・装備</span>
              </Link>
           </div>

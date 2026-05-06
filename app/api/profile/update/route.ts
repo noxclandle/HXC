@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
         },
         ai_config: {
           profile: {
+            ...((currentUser?.ai_config as any)?.profile || {}),
             title: title,
             bio: bio,
             company: company,
