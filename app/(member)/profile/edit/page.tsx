@@ -98,6 +98,10 @@ export default function ProfileEditPage() {
     }));
   };
 
+  const updateOrientation = (orientation: "horizontal" | "vertical") => {
+    setFormData(prev => ({ ...prev, orientation }));
+  };
+
   const updateFontScale = (scale: string) => {
     setEquipped((prev: any) => ({ ...prev, fontScale: scale }));
   };
@@ -105,11 +109,18 @@ export default function ProfileEditPage() {
   const performAutoSave = async (dataToSave: any, equippedToSave: any) => {
     setSaveStatus("saving");
     try {
-      // 装備情報を deep merge する API
+      // 装備情報をマージして保存
+      const finalEquipped = {
+        ...equippedToSave,
+        orientation: dataToSave.orientation,
+        hAlign: dataToSave.hAlign,
+        vAlign: dataToSave.vAlign
+      };
+
       await fetch("/api/user/equip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ equipped: equippedToSave })
+        body: JSON.stringify({ equipped: finalEquipped })
       });
 
       const res = await fetch("/api/profile/update", {
@@ -119,12 +130,7 @@ export default function ProfileEditPage() {
           ...dataToSave,
           photo_url: dataToSave.faceUrl,
           logo_url: dataToSave.logoUrl,
-          equipped_assets: {
-            ...equippedToSave,
-            orientation: dataToSave.orientation,
-            hAlign: dataToSave.hAlign,
-            vAlign: dataToSave.vAlign
-          }
+          equipped_assets: finalEquipped
         })
       });
 
@@ -195,11 +201,11 @@ export default function ProfileEditPage() {
            <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-hidden group flex flex-col items-center w-full">
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent hidden lg:block" />
               
-              <div className="absolute top-2 right-6 lg:top-4 lg:right-4 z-30 flex gap-2 p-1 bg-white/10 lg:bg-white/5 border border-white/10 scale-90 lg:scale-100">
-                 <button type="button" onClick={() => updateField('orientation', 'horizontal')} className={`p-1.5 transition-all ${formData.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
+              <div className="absolute top-2 right-6 lg:top-4 lg:right-4 z-30 flex gap-2 p-1 bg-white/10 lg:bg-white/5 border border-white/10 lg:scale-100">
+                 <button type="button" onClick={() => updateOrientation('horizontal')} className={`p-1.5 transition-all ${formData.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
                     <Layout size={10}/>
                  </button>
-                 <button type="button" onClick={() => updateField('orientation', 'vertical')} className={`p-1.5 transition-all ${formData.orientation === 'vertical' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
+                 <button type="button" onClick={() => updateOrientation('vertical')} className={`p-1.5 transition-all ${formData.orientation === 'vertical' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
                     <Smartphone size={10}/>
                  </button>
               </div>
