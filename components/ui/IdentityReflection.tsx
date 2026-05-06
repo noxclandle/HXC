@@ -45,12 +45,12 @@ export default function IdentityReflection({ user, onUpdate }: IdentityReflectio
   };
 
   return (
-    <section className="p-8 border border-white/5 bg-white/[0.01] relative overflow-hidden group">
-       <div className="flex justify-between items-center mb-10 border-b border-white/5 pb-4">
-          <h2 className="text-[10px] tracking-[0.5em] uppercase opacity-30 font-bold italic">Identity Reflection / あなたの証</h2>
-          <div className="flex items-center gap-6">
+    <section className="p-4 md:p-8 border border-white/5 bg-white/[0.01] relative overflow-hidden group">
+       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 border-b border-white/5 pb-6 sm:pb-4 gap-4">
+          <h2 className="text-[9px] md:text-[10px] tracking-[0.3em] md:tracking-[0.5em] uppercase opacity-30 font-bold italic">Identity Reflection / あなたの証</h2>
+          <div className="flex items-center justify-between w-full sm:w-auto gap-4 md:gap-6">
             {/* レイアウト即時切替ボタン */}
-            <div className="flex gap-2 p-1 bg-white/5 border border-white/5">
+            <div className="flex gap-1 md:gap-2 p-1 bg-white/5 border border-white/5">
                <button onClick={() => updateOrientation('horizontal')} className={`p-1.5 transition-all ${user.equipped.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'opacity-20 hover:opacity-100'}`} title="Horizontal">
                   <Layout size={12}/>
                </button>
@@ -58,7 +58,7 @@ export default function IdentityReflection({ user, onUpdate }: IdentityReflectio
                   <Smartphone size={12}/>
                </button>
             </div>
-            <Link href={`/p/${user.slug}`} className="text-[8px] uppercase tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity flex items-center gap-2 border-l border-white/10 pl-6">Public View <Share2 size={10}/></Link>
+            <Link href={`/p/${user.slug}`} className="text-[8px] uppercase tracking-[0.2em] md:tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity flex items-center gap-2 border-l border-white/10 pl-4 md:pl-6">Public View <Share2 size={10}/></Link>
           </div>
        </div>
        

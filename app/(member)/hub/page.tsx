@@ -52,8 +52,8 @@ export default function MemberHubPage() {
       <div className="max-w-7xl mx-auto pt-24 px-6 pb-24 relative text-moonlight">
         <header className="mb-12 flex flex-col md:flex-row justify-between items-start gap-8">
           <div className="space-y-4">
-            <h1 className="text-3xl tracking-[0.4em] uppercase font-extralight mb-2 text-white">Member Hub</h1>
-            <p className="text-[10px] tracking-[0.4em] uppercase opacity-40">System Dashboard</p>
+            <h1 className="text-2xl md:text-3xl tracking-[0.2em] md:tracking-[0.4em] uppercase font-extralight mb-2 text-white">Member Hub</h1>
+            <p className="text-[9px] md:text-[10px] tracking-[0.2em] md:tracking-[0.4em] uppercase opacity-40">System Dashboard</p>
           </div>
           <div className="flex items-start gap-8 w-full md:w-auto justify-between md:justify-end">
              {/* Stats & Status */}
