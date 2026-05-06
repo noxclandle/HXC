@@ -9,9 +9,13 @@ import { useToast } from "@/components/ui/ResonanceToast";
 export default function IdentityReflection({ user }: { user: any }) {
   const { showToast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
+  const [localOrientation, setLocalOrientation] = useState(user.equipped.orientation);
 
   const updateOrientation = async (orientation: 'horizontal' | 'vertical') => {
+    if (orientation === localOrientation) return;
     setIsUpdating(true);
+    setLocalOrientation(orientation); // 即座にUIに反映
+
     try {
       const res = await fetch("/api/user/equip", {
         method: "POST",
@@ -24,14 +28,19 @@ export default function IdentityReflection({ user }: { user: any }) {
       if (res.ok) {
         showToast(`Alignment Shifted / 向きを変更しました`, "success");
         window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
+      } else {
+        setLocalOrientation(user.equipped.orientation); // 失敗したら戻す
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+      console.error(e);
+      setLocalOrientation(user.equipped.orientation);
+    }
     finally {
       setIsUpdating(false);
     }
   };
 
-  const currentAligns = user.equipped.orientation === 'horizontal' ? user.equipped.hAlign : user.equipped.vAlign;
+  const currentAligns = localOrientation === 'horizontal' ? user.equipped.hAlign : user.equipped.vAlign;
 
   return (
     <section className="p-4 md:p-8 border border-white/5 bg-white/[0.01] relative overflow-hidden group">
@@ -40,10 +49,10 @@ export default function IdentityReflection({ user }: { user: any }) {
           <div className="flex items-center justify-between w-full sm:w-auto gap-4 md:gap-6">
             {/* レイアウト即時切替ボタン */}
             <div className="flex gap-1 md:gap-2 p-1 bg-white/5 border border-white/5">
-               <button onClick={() => updateOrientation('horizontal')} className={`p-1.5 transition-all ${user.equipped.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'opacity-20 hover:opacity-100'}`} title="Horizontal">
+               <button onClick={() => updateOrientation('horizontal')} className={`p-1.5 transition-all ${localOrientation === 'horizontal' ? 'bg-azure-600 text-white' : 'opacity-20 hover:opacity-100'}`} title="Horizontal">
                   <Layout size={12}/>
                </button>
-               <button onClick={() => updateOrientation('vertical')} className={`p-1.5 transition-all ${user.equipped.orientation === 'vertical' ? 'bg-azure-600 text-white' : 'opacity-20 hover:opacity-100'}`} title="Vertical">
+               <button onClick={() => updateOrientation('vertical')} className={`p-1.5 transition-all ${localOrientation === 'vertical' ? 'bg-azure-600 text-white' : 'opacity-20 hover:opacity-100'}`} title="Vertical">
                   <Smartphone size={12}/>
                </button>
             </div>
@@ -68,7 +77,7 @@ export default function IdentityReflection({ user }: { user: any }) {
                 fontFamily={user.equipped.fontFamily}
                 fontScale={user.equipped.fontScale}
                 sound={user.equipped.sound}
-                orientation={user.equipped.orientation}
+                orientation={localOrientation}
                 alignCompany={currentAligns.company}
                 alignName={currentAligns.name}
                 alignReading={currentAligns.reading}
