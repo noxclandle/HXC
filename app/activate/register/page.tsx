@@ -13,7 +13,6 @@ function RegisterContent() {
 
   const [formData, setFormData] = useState({
     name: "",
-    handle: "",
     email: "",
     password: "",
     title: "",
@@ -97,7 +96,6 @@ function RegisterContent() {
             <form onSubmit={handleSubmit} className="space-y-6 text-left">
               {[
                 { label: "Real Name / 氏名", key: "name", icon: <UserCheck size={14}/>, placeholder: "福井 豪" },
-                { label: "Public Handle / ハンドル", key: "handle", icon: <ShieldCheck size={14}/>, placeholder: "architect" },
                 { label: "Login Email / メールアドレス", key: "email", icon: <Mail size={14}/>, placeholder: "your@email.com", type: "email" },
                 { label: "Password / パスワード", key: "password", icon: <Lock size={14}/>, placeholder: "••••••••", type: "password" },
                 { label: "Job Title / 役職・肩書き", key: "title", icon: <Briefcase size={14}/>, placeholder: "Architect" },
@@ -106,7 +104,7 @@ function RegisterContent() {
                   <label className="text-[9px] uppercase tracking-[0.3em] opacity-30 flex items-center gap-2 font-bold">{f.icon} {f.label}</label>
                   <input
                     type={f.type || "text"}
-                    required={f.key !== "title" && f.key !== "handle"}
+                    required={f.key !== "title"}
                     value={(formData as any)[f.key]}
                     onChange={(e) => setFormData({ ...formData, [f.key]: e.target.value })}
                     placeholder={f.placeholder}

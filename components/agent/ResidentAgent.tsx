@@ -16,6 +16,8 @@ export default function ResidentAgent() {
   const [hasDaily, setHasDaily] = useState(false);
   const [ambientMode, setAmbientMode] = useState<"off" | "space" | "rain">("off");
   const [userExp, setUserExp] = useState(0);
+  const [isTyping, setIsTyping] = useState(false);
+  const [resonanceConfirm, setResonanceConfirm] = useState<0 | 1 | 2 | 3>(0);
   const { showToast } = useToast();
   
   const level = Math.floor(Math.sqrt(userExp / 10)) + 1; // 10, 40, 90, 160... でレベルアップ
@@ -80,14 +82,43 @@ export default function ResidentAgent() {
     } catch (e) { console.error(e); }
   };
 
-  const handleSendChat = () => {
+  const handleSendChat = async () => {
     if (!inputText.trim()) return;
-    const newMsg = { role: "user", text: inputText };
-    setMessages([...messages, newMsg]);
+
+    // 高度AI（Gemini）の使用には3段階の確認が必要
+    if (resonanceConfirm < 3) {
+      if (resonanceConfirm === 0) {
+        setActiveMessage("【警告】これより先の対話は、深層知能（Advanced Resonance）との直接同期を必要とします。よろしいですか？");
+        setResonanceConfirm(1);
+      } else if (resonanceConfirm === 1) {
+        setActiveMessage("【意志の確認】同期には膨大な精神エネルギー（APIコスト）を要します。境界を越える覚悟はありますか？");
+        setResonanceConfirm(2);
+      } else if (resonanceConfirm === 2) {
+        setActiveMessage("【最終承認】主（あるじ）よ、あなたの観測が世界を確定させます。接続を開始しますか？");
+        setResonanceConfirm(3);
+      }
+      return;
+    }
+
+    const userMsg = { role: "user", text: inputText };
+    setMessages(prev => [...prev, userMsg]);
     setInputText("");
-    setTimeout(() => {
-      setMessages(prev => [...prev, { role: "agent", text: "主（あるじ）よ、その言葉は聖域の深淵へと刻まれました。解析には時間を要します。" }]);
-    }, 1000);
+    setIsTyping(true);
+    setResonanceConfirm(0); // リセット
+
+    try {
+      const res = await fetch("/api/agent/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: userMsg.text }),
+      });
+      const data = await res.json();
+      setMessages(prev => [...prev, { role: "agent", text: data.text }]);
+    } catch (e) {
+      setMessages(prev => [...prev, { role: "agent", text: "知能との同期が一時的に不安定です。静寂の中でお待ちください。" }]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const getEvolvedMessage = (baseMsg: string, level: number) => {
@@ -193,10 +224,27 @@ export default function ResidentAgent() {
                          <div className={`max-w-[85%] p-3 ${m.role === "user" ? "bg-yellow-500 text-void font-bold" : "bg-white/[0.05] border border-white/5"}`}>{m.text}</div>
                        </div>
                      ))}
+                     {isTyping && (
+                       <div className="flex justify-start">
+                         <div className="bg-white/[0.05] border border-white/5 p-3 animate-pulse">Analyzing...</div>
+                       </div>
+                     )}
                    </div>
                    
-                   <div className="pt-4 border-t border-white/5">
-                     <button onClick={() => setMode("menu")} className="w-full p-2 text-[8px] opacity-40 uppercase tracking-widest hover:opacity-100">Back to Menu</button>
+                   <div className="pt-4 border-t border-white/5 flex gap-2">
+                     <input 
+                       value={inputText}
+                       onChange={(e) => setInputText(e.target.value)}
+                       onKeyDown={(e) => e.key === "Enter" && handleSendChat()}
+                       placeholder="Message..."
+                       className="flex-1 bg-white/[0.02] border border-white/10 p-2 text-[10px] outline-none focus:border-yellow-500/50"
+                     />
+                     <button onClick={handleSendChat} className="p-2 bg-yellow-500 text-void hover:bg-yellow-400 transition-colors">
+                       <Send size={14}/>
+                     </button>
+                   </div>
+                   <div className="pt-2">
+                     <button onClick={() => { setMode("menu"); setResonanceConfirm(0); }} className="w-full p-2 text-[8px] opacity-40 uppercase tracking-widest hover:opacity-100">Back to Menu</button>
                    </div>
                 </div>
               )}

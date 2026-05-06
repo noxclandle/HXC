@@ -71,10 +71,18 @@ export default function PurchasePage() {
   };
 
   const [loading, setLoading] = useState(false);
+  const [confirmStep, setConfirmStep] = useState<0 | 1 | 2 | 3>(0);
 
   const handleCheckout = async () => {
     if (!selection.tier) return;
+
+    if (confirmStep < 2) {
+      setConfirmStep((prev: any) => prev + 1);
+      return;
+    }
+
     setLoading(true);
+    setConfirmStep(3);
 
     try {
       const selectedTierData = tiers.find(t => t.id === selection.tier);
@@ -282,24 +290,31 @@ export default function PurchasePage() {
               className="fixed bottom-12 left-1/2 -translate-x-1/2 w-[90%] max-w-3xl bg-zinc-950/80 backdrop-blur-2xl border border-white/10 p-8 z-50 flex flex-col md:flex-row items-center justify-between gap-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
             >
               <div className="text-center md:text-left space-y-1">
-                <span className="text-[9px] uppercase tracking-[0.4em] text-white/30 block">Confirm Selection</span>
+                <span className="text-[9px] uppercase tracking-[0.4em] text-white/30 block">
+                  {confirmStep === 0 ? "Confirm Selection" : confirmStep === 1 ? "Deepen Intent" : "Authorize Financiality"}
+                </span>
                 <div className="flex items-center gap-4">
                   <span className="text-xl font-extralight tracking-[0.2em] text-white uppercase">
-                    {selectedTierData?.name} Edition
+                    {confirmStep === 0 ? `${selectedTierData?.name} Edition` : confirmStep === 1 ? "Permeate Reality" : "Final Authorization"}
                   </span>
                   <div className="h-4 w-[1px] bg-white/10 hidden md:block" />
                   <span className="text-lg font-light text-white/60 italic">{selectedTierData?.price}</span>
                 </div>
               </div>
               
-              <button 
-                onClick={handleCheckout}
-                disabled={loading}
-                className="w-full md:w-auto px-10 py-4 bg-white text-black hover:bg-[#d0d0d0] transition-all duration-500 font-bold tracking-[0.3em] text-[10px] uppercase flex items-center justify-center gap-4 group disabled:opacity-50 disabled:cursor-wait"
-              >
-                {loading ? "Processing..." : "Purchase Issuance"}
-                {!loading && <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />}
-              </button>
+              <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                {confirmStep > 0 && (
+                  <button onClick={() => setConfirmStep(0)} className="px-6 py-4 border border-white/10 text-[9px] uppercase tracking-widest hover:bg-white/5">Cancel</button>
+                )}
+                <button 
+                  onClick={handleCheckout}
+                  disabled={loading}
+                  className="w-full md:w-auto px-10 py-4 bg-white text-black hover:bg-[#d0d0d0] transition-all duration-500 font-bold tracking-[0.3em] text-[10px] uppercase flex items-center justify-center gap-4 group disabled:opacity-50 disabled:cursor-wait"
+                >
+                  {loading ? "Redirecting..." : confirmStep === 0 ? "Purchase Issuance" : confirmStep === 1 ? "Authorize Intent" : "Confirm Payment"}
+                  {!loading && <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />}
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const { 
-      name, handle, title, website, bio, company, photo_url, logo_url, 
+      name, reading, title, website, bio, company, photo_url, logo_url, 
       orientation, phone, email, hAlign, vAlign,
       link_x, link_instagram, link_line, link_facebook
     } = body;
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       where: { email: session.user.email },
       data: {
         name: name,
-        handle_name: handle,
+        handle_name: reading, // Save 'reading' to handle_name
         link_website: website,
         link_x: link_x,
         link_instagram: link_instagram,

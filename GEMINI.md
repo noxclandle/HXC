@@ -14,3 +14,8 @@ The brand identity is a blend of High-end/Luxury, Cyber/Tech, and Minimal/Chic, 
 *   High contrast, lots of negative space.
 *   Symmetrical and centered layouts preferred for key elements.
 *   Subtle animations (framer-motion) that feel elegant, not aggressive.
+
+## Operational Security & Cost Management
+*   **Triple Confirmation Policy:** Any operation that triggers the Gemini API or involves financial costs (e.g., actual credit card charges, not just RT) MUST be confirmed by the user **three times** via distinct UI steps/modals.
+    *   This applies even in development to prevent accidental token consumption.
+    *   The wording should remain within the "Minimal/Chic" aesthetic (e.g., "Confirm Resonance", "Deepen Connection", "Authorize Finality").

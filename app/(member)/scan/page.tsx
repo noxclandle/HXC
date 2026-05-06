@@ -7,20 +7,32 @@ import { useRouter } from "next/navigation";
 import { playResonanceSound } from "@/lib/audio/resonance";
 
 export default function ScanPage() {
-  const [status, setStatus] = useState<"idle" | "scanning" | "processing" | "confirm">("idle");
+  const [status, setStatus] = useState<"idle" | "scanning" | "processing" | "confirm" | "confirm_step2" | "confirm_step3">("idle");
   const [scannedData, setScannedData] = useState<any>(null);
   const [aiInsight, setAiInsight] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const router = useRouter();
 
-  const handleCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setPendingFile(file);
+    setStatus("confirm_step2"); // 1段階目 (ファイル選択) 完了
+  };
 
-    setStatus("processing");
+  const proceedToStep3 = () => {
+    playResonanceSound("resonance");
+    setStatus("confirm_step3"); // 2段階目
+  };
+
+  const startProcessing = async () => {
+    if (!pendingFile) return;
+    playResonanceSound("silver");
+    setStatus("processing"); // 3段階目 (最終承認) -> 処理開始
     
     // APIへ画像を送信
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("image", pendingFile);
 
     try {
       const res = await fetch("/api/ocr", {
@@ -32,7 +44,6 @@ export default function ScanPage() {
         const data = await res.json();
         setScannedData(data);
         
-        playResonanceSound("silver");
         if (typeof navigator !== "undefined" && navigator.vibrate) {
           navigator.vibrate([20, 50, 20]);
         }
@@ -141,6 +152,40 @@ export default function ScanPage() {
               </button>
               <button onClick={() => router.back()} className="text-[9px] opacity-20 uppercase tracking-[0.4em] hover:opacity-50 transition-opacity">Return to Sanctum</button>
             </div>
+          </motion.div>
+        )}
+
+        {status === "confirm_step2" && (
+          <motion.div key="confirm_step2" className="flex flex-col items-center p-12 text-center space-y-8">
+            <h2 className="text-sm tracking-[0.4em] uppercase font-light">Deepen Connection</h2>
+            <p className="text-[10px] tracking-widest opacity-40 leading-relaxed uppercase">
+              The image is prepared. <br />Do you wish to permeate the boundary?
+            </p>
+            <button 
+              onClick={proceedToStep3} 
+              className="w-full py-5 border border-moonlight/40 text-[10px] tracking-[0.6em] uppercase hover:bg-white/5 transition-all"
+            >
+              Authorize Permeation
+            </button>
+            <button onClick={() => setStatus("idle")} className="text-[8px] opacity-20 uppercase tracking-[0.4em]">Abort Ritual</button>
+          </motion.div>
+        )}
+
+        {status === "confirm_step3" && (
+          <motion.div key="confirm_step3" className="flex flex-col items-center p-12 text-center space-y-8">
+            <h2 className="text-sm tracking-[0.4em] uppercase font-bold text-moonlight">Authorize Finality</h2>
+            <p className="text-[10px] tracking-widest opacity-60 leading-relaxed uppercase italic">
+              &quot;To observe is to change the system.&quot; <br />
+              This action will consume resonance tokens/API credits.
+            </p>
+            <div className="w-16 h-[1px] bg-moonlight/20 mx-auto" />
+            <button 
+              onClick={startProcessing} 
+              className="w-full py-5 bg-moonlight text-void text-[11px] font-bold tracking-[0.8em] uppercase shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-105 transition-all"
+            >
+              Commence Observation
+            </button>
+            <button onClick={() => setStatus("idle")} className="text-[8px] opacity-20 uppercase tracking-[0.4em]">Withdraw</button>
           </motion.div>
         )}
 
