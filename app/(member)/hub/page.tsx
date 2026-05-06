@@ -82,7 +82,12 @@ export default function MemberHubPage() {
               logo_url: realStats.logo_url,
               photo_url: realStats.photo_url,
               profile: realStats.profile,
-              equipped: realStats.equipped
+              equipped: realStats.equipped,
+              link_x: realStats.profile?.link_x,
+              link_instagram: realStats.profile?.link_instagram,
+              link_line: realStats.profile?.link_line,
+              link_facebook: realStats.profile?.link_facebook,
+              bio: realStats.profile?.bio
             }} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

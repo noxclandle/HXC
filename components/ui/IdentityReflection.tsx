@@ -64,7 +64,7 @@ export default function IdentityReflection({ user }: { user: any }) {
           <div className={`relative ${isUpdating ? 'opacity-20' : ''} transition-all duration-700 min-h-[280px] flex items-center justify-center w-full py-6`}>
              <HexaCardPreview 
                 name={user.name} 
-                reading={user.handle} 
+                reading={user.reading} 
                 company={user.profile.company} 
                 title={user.profile.title} 
                 phone={user.profile.phone} 
@@ -75,7 +75,9 @@ export default function IdentityReflection({ user }: { user: any }) {
                 background={user.equipped.background}
                 effect={user.equipped.effect}
                 fontFamily={user.equipped.fontFamily}
-                fontScale={user.equipped.fontScale}
+                scaleName={user.equipped.scaleName}
+                scaleTitle={user.equipped.scaleTitle}
+                scaleCompany={user.equipped.scaleCompany}
                 sound={user.equipped.sound}
                 orientation={localOrientation}
                 alignCompany={currentAligns.company}
@@ -84,6 +86,11 @@ export default function IdentityReflection({ user }: { user: any }) {
                 alignTitle={currentAligns.title}
                 alignPhone={currentAligns.phone}
                 alignEmail={currentAligns.email}
+                link_x={user.link_x}
+                link_instagram={user.link_instagram}
+                link_line={user.link_line}
+                link_facebook={user.link_facebook}
+                bio={user.bio}
              />
           </div>
        </div>

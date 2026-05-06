@@ -48,7 +48,9 @@ export default function ProfileEditPage() {
     background: "Default",
     effect: "None",
     fontFamily: "Standard",
-    fontScale: "standard",
+    scaleName: "standard",
+    scaleTitle: "standard",
+    scaleCompany: "standard",
     sound: "resonance"
   });
 
@@ -77,7 +79,13 @@ export default function ProfileEditPage() {
             hAlign: data.equipped?.hAlign || { ...defaultAlign },
             vAlign: data.equipped?.vAlign || { ...defaultAlign }
           });
-          if (data.equipped) setEquipped((prev: any) => ({ ...prev, ...data.equipped }));
+          if (data.equipped) setEquipped((prev: any) => ({ 
+            ...prev, 
+            ...data.equipped,
+            scaleName: data.equipped.scaleName || "standard",
+            scaleTitle: data.equipped.scaleTitle || "standard",
+            scaleCompany: data.equipped.scaleCompany || "standard"
+          }));
         }
       } catch (e) { console.error(e); }
       finally { setIsLoaded(true); }
@@ -102,14 +110,14 @@ export default function ProfileEditPage() {
     setFormData(prev => ({ ...prev, orientation }));
   };
 
-  const updateFontScale = (scale: string) => {
-    setEquipped((prev: any) => ({ ...prev, fontScale: scale }));
+  const updateScale = (field: "name" | "title" | "company", scale: string) => {
+    const key = field === "name" ? "scaleName" : field === "title" ? "scaleTitle" : "scaleCompany";
+    setEquipped((prev: any) => ({ ...prev, [key]: scale }));
   };
 
   const performAutoSave = async (dataToSave: any, equippedToSave: any) => {
     setSaveStatus("saving");
     try {
-      // 装備情報をマージして保存
       const finalEquipped = {
         ...equippedToSave,
         orientation: dataToSave.orientation,
@@ -169,6 +177,17 @@ export default function ProfileEditPage() {
     </div>
   );
 
+  const ScaleButtons = ({ field }: { field: "name" | "title" | "company" }) => {
+    const key = field === "name" ? "scaleName" : field === "title" ? "scaleTitle" : "scaleCompany";
+    return (
+      <div className="flex gap-1 p-1 bg-white/5 border border-white/10 w-fit ml-auto">
+         {['standard', 'impact', 'maximum'].map((s) => (
+           <button key={s} type="button" onClick={() => updateScale(field, s)} className={`px-2 py-1 text-[7px] uppercase tracking-tighter transition-all ${equipped[key] === s ? 'bg-azure-600 text-white' : 'opacity-40 hover:opacity-100'}`}>{s}</button>
+         ))}
+      </div>
+    );
+  };
+
   return (
     <div className="max-w-7xl mx-auto pt-20 lg:pt-32 px-4 lg:px-6 pb-24 relative text-moonlight">
       <header className="mb-8 lg:mb-16 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
@@ -196,7 +215,7 @@ export default function ProfileEditPage() {
       </header>
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-20 items-start">
-        {/* Preview Container: Balanced sticky for mobile (approx 2/5 screen height) */}
+        {/* Preview Container */}
         <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/95 backdrop-blur-lg pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[38vh] lg:h-auto flex items-center justify-center">
            <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-hidden group flex flex-col items-center w-full">
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent hidden lg:block" />
@@ -215,7 +234,7 @@ export default function ProfileEditPage() {
                   name={formData.name || "NAME"} reading={formData.reading} company={formData.company} title={formData.title} phone={formData.phone} email={formData.email} bio={formData.bio} logoUrl={formData.logoUrl} faceUrl={formData.faceUrl} frame={equipped.frame} background={equipped.background} effect={equipped.effect} sound={equipped.sound} orientation={formData.orientation}
                   link_x={formData.link_x} link_instagram={formData.link_instagram} link_line={formData.link_line} link_facebook={formData.link_facebook}
                   alignName={currentAligns.name as Alignment} alignReading={currentAligns.reading as Alignment} alignCompany={currentAligns.company as Alignment} alignTitle={currentAligns.title as Alignment} alignPhone={currentAligns.phone as Alignment} alignEmail={currentAligns.email as Alignment}
-                  fontFamily={equipped.fontFamily} fontScale={equipped.fontScale}
+                  fontFamily={equipped.fontFamily} scaleName={equipped.scaleName} scaleTitle={equipped.scaleTitle} scaleCompany={equipped.scaleCompany}
                 />
               </div>
 
@@ -239,7 +258,10 @@ export default function ProfileEditPage() {
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Full Name / 氏名</label>
                       <input type="text" value={formData.name} onChange={(e) => updateField('name', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="漢字・英語" />
-                      <AlignButtons field="name" />
+                      <div className="flex items-center">
+                        <AlignButtons field="name" />
+                        <ScaleButtons field="name" />
+                      </div>
                    </div>
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Reading / ふりがな</label>
@@ -249,22 +271,18 @@ export default function ProfileEditPage() {
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Company / 所属企業</label>
                       <input type="text" value={formData.company} onChange={(e) => updateField('company', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-bronze-400 outline-none text-white" placeholder="企業名" />
-                      <AlignButtons field="company" />
-                   </div>
-                   <div className="space-y-3">
-                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Font Scale / 文字サイズ</label>
-                      <div className="flex gap-2 p-1 bg-white/5 border border-white/10 w-fit">
-                         {['standard', 'impact', 'maximum'].map((scale) => (
-                           <button key={scale} type="button" onClick={() => updateFontScale(scale)} className={`px-4 py-2 text-[10px] uppercase tracking-widest transition-all ${equipped.fontScale === scale ? 'bg-azure-600 text-white' : 'opacity-40 hover:opacity-100'}`}>
-                             {scale}
-                           </button>
-                         ))}
+                      <div className="flex items-center">
+                        <AlignButtons field="company" />
+                        <ScaleButtons field="company" />
                       </div>
                    </div>
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Title / 肩書き</label>
                       <input type="text" value={formData.title} onChange={(e) => updateField('title', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="CEO, Designer, etc." />
-                      <AlignButtons field="title" />
+                      <div className="flex items-center">
+                        <AlignButtons field="title" />
+                        <ScaleButtons field="title" />
+                      </div>
                    </div>
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Phone / 電話番号</label>
