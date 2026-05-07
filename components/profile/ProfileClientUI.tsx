@@ -7,8 +7,9 @@ import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import GeometricBackground from "@/components/background/GeometricBackground";
 import ResonanceInteraction from "@/components/ui/ResonanceInteraction";
 import Link from "next/link";
+import ResidentAgent from "@/components/agent/ResidentAgent";
 
-export default function ProfileClientUI({ data }: { data: any }) {
+export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?: boolean }) {
   const [showReport, setShowReport] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [reporting, setReporting] = useState(false);
@@ -61,10 +62,13 @@ export default function ProfileClientUI({ data }: { data: any }) {
     <main className="min-h-screen bg-void text-moonlight relative overflow-x-hidden overflow-y-auto custom-scrollbar flex flex-col items-center">
       <GeometricBackground />
       <ResonanceInteraction />
+      {isOwner && <ResidentAgent />}
 
-      <button onClick={() => setShowReport(true)} className="fixed top-8 right-8 z-50 p-3 border border-white/5 bg-white/[0.02] text-white/20 hover:text-rose-500 hover:border-rose-500/20 transition-all group" title="Report Identity">
-         <AlertCircle size={16} />
-      </button>
+      {!isOwner && (
+        <button onClick={() => setShowReport(true)} className="fixed top-8 right-8 z-50 p-3 border border-white/5 bg-white/[0.02] text-white/20 hover:text-rose-500 hover:border-rose-500/20 transition-all group" title="Report Identity">
+           <AlertCircle size={16} />
+        </button>
+      )}
 
       <AnimatePresence>
         {showReport && (
@@ -88,8 +92,13 @@ export default function ProfileClientUI({ data }: { data: any }) {
 
       <div className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center px-6">
         <header className="text-center space-y-2 mb-20">
-           <p className="text-[9px] tracking-[0.8em] uppercase opacity-20 font-bold text-white">Identity Verification</p>
+           <p className="text-[9px] tracking-[0.8em] uppercase opacity-20 font-bold text-white">{isOwner ? "Your Sanctum Entry" : "Identity Verification"}</p>
            <div className="h-px w-8 bg-white/10 mx-auto" />
+           {isOwner && (
+             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4">
+                <Link href="/hub" className="text-[10px] tracking-[0.4em] uppercase text-azure-400 hover:text-white transition-colors border border-azure-500/20 px-4 py-2 bg-azure-500/5">Enter Hub / 拠点へ移動</Link>
+             </motion.div>
+           )}
         </header>
 
         <motion.div 
