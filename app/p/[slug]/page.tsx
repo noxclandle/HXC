@@ -1,6 +1,8 @@
 import { getPublicProfile } from "@/lib/user";
 import ProfileClientUI from "@/components/profile/ProfileClientUI";
 import { Metadata } from "next";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +22,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function PublicProfilePage({ params }: { params: { slug: string } }) {
-  const data = await getPublicProfile(params.slug);
+  const [data, session] = await Promise.all([
+    getPublicProfile(params.slug),
+    getServerSession(authOptions)
+  ]);
 
   if (!data) return (
     <div className="min-h-screen bg-void flex items-center justify-center text-[10px] uppercase tracking-[0.5em] opacity-40 text-white text-center p-12">
@@ -28,7 +33,9 @@ export default async function PublicProfilePage({ params }: { params: { slug: st
     </div>
   );
 
+  const isOwner = session?.user?.id === data.id;
+
   return (
-    <ProfileClientUI data={data} />
+    <ProfileClientUI data={data} isOwner={isOwner} />
   );
 }
