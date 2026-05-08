@@ -97,6 +97,16 @@ function RegisterContent() {
       }
 
       setStep(3);
+      
+      // 自動ログイン後にデバイスを紐付ける
+      try {
+        const bindRes = await fetch("/api/auth/bind-device", { method: "POST" });
+        if (bindRes.ok) {
+          const { deviceToken } = await bindRes.json();
+          localStorage.setItem("hxc_soul_fragment", deviceToken);
+        }
+      } catch (e) { console.warn("Auto device binding failed, but registration is complete."); }
+
       setTimeout(() => {
         router.push("/hub");
       }, 3000);

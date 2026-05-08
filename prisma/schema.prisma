@@ -41,8 +41,21 @@ model User {
   chat_messages     ChatMessage[]
   contacts          Contact[]       @relation("UserContacts")
   rt_transactions   RTTransaction[]
+  device_bindings   DeviceBinding[]
 
   @@map("users")
+}
+
+model DeviceBinding {
+  id           String   @id @default(uuid()) @db.Uuid
+  user_id      String   @db.Uuid
+  device_token String   @unique // ブラウザに保存される秘密の鍵
+  user_agent   String?  // 端末識別用
+  created_at   DateTime @default(now())
+  last_used_at DateTime @default(now())
+  user         User     @relation(fields: [user_id], references: [id])
+
+  @@map("device_bindings")
 }
 
 model ChatMessage {

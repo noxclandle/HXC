@@ -14,9 +14,26 @@ export default function ResidentAgent() {
   const [ambientMode, setAmbientMode] = useState<"off" | "space" | "rain">("off");
   const [userExp, setUserExp] = useState(0);
   const [rtBalance, setRtBalance] = useState("0");
+  const [isSoulLinked, setIsSoulLinked] = useState(false);
   const { showToast } = useToast();
   
   const level = Math.min(30, Math.floor(Math.sqrt(userExp / 10)) + 1);
+
+  const checkSoulLink = () => {
+    setIsSoulLinked(!!localStorage.getItem("hxc_soul_fragment"));
+  };
+
+  const bindDevice = async () => {
+    try {
+      const res = await fetch("/api/auth/bind-device", { method: "POST" });
+      if (res.ok) {
+        const { deviceToken } = await res.json();
+        localStorage.setItem("hxc_soul_fragment", deviceToken);
+        setIsSoulLinked(true);
+        showToast("Soul-Link Established / 魂の同調を完了しました", "success");
+      }
+    } catch (e) { console.error(e); }
+  };
 
   const fetchStatus = async () => {
     try {
@@ -32,6 +49,7 @@ export default function ResidentAgent() {
   useEffect(() => {
     ambientManager.init();
     fetchStatus();
+    checkSoulLink();
     window.addEventListener("rt-grace-received", fetchStatus);
     window.addEventListener("hxc-assets-updated", fetchStatus);
     return () => {
@@ -149,6 +167,14 @@ export default function ResidentAgent() {
                       <p className="text-[10px] tracking-widest leading-relaxed opacity-60 italic">
                         &quot;主（あるじ）よ、本日の聖域の状態をお伝えします。深淵との接続は安定しており、あなたの存在は確実に刻まれています。&quot;
                       </p>
+
+                      {!isSoulLinked && (
+                        <button onClick={bindDevice} className="w-full p-4 border border-azure-500/30 bg-azure-500/5 text-azure-400 flex flex-col items-center gap-2 group hover:bg-azure-500/10 transition-all">
+                           <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Bind This Device / この端末を同期</span>
+                           <span className="text-[7px] opacity-50 uppercase text-center">次回からカードをかざすだけでログイン</span>
+                        </button>
+                      )}
+
                       <div className="grid grid-cols-2 gap-3">
                          <div className="p-4 bg-white/[0.02] border border-white/5 rounded-sm">
                             <p className="text-[7px] opacity-40 uppercase tracking-widest mb-1">Energy Balance</p>
@@ -307,4 +333,3 @@ export default function ResidentAgent() {
     </div>
   );
 }
-
