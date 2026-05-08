@@ -63,6 +63,7 @@ export default function AdminDashboardPage() {
           { label: "インシデント報告", path: "/admin/reports", icon: <ShieldAlert size={18}/>, desc: "ユーザーからの不具合・違反報告" },
           { label: "アセット大典", path: "/admin/compendium", icon: <BookOpen size={18}/>, desc: "称号・フレーム等の獲得条件管理" },
           { label: "カード中央台帳", path: "/admin/ledger", icon: <Layers size={18}/>, desc: "物理カードの登録 & ペアリング" },
+          { label: "発行・登録手順", path: "/admin/onboarding", icon: <ShieldCheck size={18}/>, desc: "新規ユーザー・カード発行プロトコル" },
           { label: "システム構成", path: "/admin/config", icon: <Database size={18}/>, desc: "価格設定 & 内部パラメータ" },
         ].map((link) => (
           <Link 
