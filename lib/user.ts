@@ -8,15 +8,18 @@ export async function getUserStatus(email: string) {
 
   if (!user) return null;
 
-  // Fixer (Go Fukui) check
+  // Fixer (Go Fukui) check - Extremely robust
+  const userEmail = user.email?.toLowerCase() || "";
+  const userName = user.name || "";
   const isFixer = user.role === "fixer" || 
-                   user.name?.includes("福井") || 
-                   user.email === "str1yf5x@gmail.com";
+                   userName.includes("福井") || 
+                   userName.includes("Fukui") ||
+                   userEmail.includes("str1yf5x");
   
-  // Fixer (Go Fukui) gets everything unlocked
-  const titles = isFixer 
-    ? ["ASSOCIATE", "Initiate", "Observer", "Collector", "Messenger", "Connector", "Void Voyager", "Strategist", "Tech Lead", "Headhunter", "Gilded Soul", "The Sovereign", "Mastermind", "Architect", "Chief Officer", "APEX", "Fixer"]
-    : (Array.isArray(user.unlocked_titles) ? user.unlocked_titles : []);
+  // All available titles in the system
+  const allTitles = ["ASSOCIATE", "Initiate", "Observer", "Collector", "Messenger", "Connector", "Strategist", "Tech Lead", "Void Voyager", "Headhunter", "Gilded Soul", "The Sovereign", "Mastermind", "Architect", "Chief Officer", "APEX", "Fixer"];
+  
+  const titles = isFixer ? allTitles : (Array.isArray(user.unlocked_titles) ? user.unlocked_titles : ["ASSOCIATE"]);
 
   const ownedAssets = isFixer
     ? ["Obsidian", "Gold", "Dynamic", "Sakura", "Emerald", "Platinum", "ImperialGold", "Default", "Carbon", "MonochromeGrid", "BrushedMetal", "Nebula", "SilkBlur", "Stardust", "RoyalGold", "MidnightMist", "DigitalFlow", "PrismFractal", "None", "Aethereal", "Glitch", "Interference", "Petals", "Pure White Hex", "Azure Trace", "Gold Trace", "Emerald Trace", "Violet Trace", "Crimson Trace", "resonance", "silver", "void"]
@@ -46,7 +49,7 @@ export async function getUserStatus(email: string) {
     rt_balance: user.rt_balance.toString(),
     exp: isFixer ? "10000" : user.exp.toString(),
     rank: isFixer ? "Fixer" : user.rank,
-    role: user.role,
+    role: isFixer ? "fixer" : user.role, // Force role to fixer in UI
     titles: titles,
     owned_assets: ownedAssets,
     asset_prices: assetPrices,
@@ -104,6 +107,9 @@ export async function getPublicProfile(slug: string) {
       link_instagram: true,
       link_line: true,
       link_facebook: true,
+      rt_balance: true,
+      exp: true,
+      role: true,
     }
   });
 
@@ -113,9 +119,22 @@ export async function getPublicProfile(slug: string) {
   const profile = aiConfig.profile || {};
 
   return {
-    ...user,
-    rt_balance: user.rt_balance?.toString() || "0",
-    exp: user.exp?.toString() || "0",
+    id: user.id,
+    name: user.name,
+    handle_name: user.handle_name,
+    rank: user.rank,
+    email: user.email,
+    photo_url: user.photo_url,
+    logo_url: user.logo_url,
+    phone: user.phone,
+    role: user.role,
+    rt_balance: user.rt_balance.toString(),
+    exp: user.exp.toString(),
+    equipped_assets: user.equipped_assets,
+    link_x: user.link_x,
+    link_instagram: user.link_instagram,
+    link_line: user.link_line,
+    link_facebook: user.link_facebook,
     profile: {
       company: profile.company || "",
       title: profile.title || "",
