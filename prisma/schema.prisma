@@ -8,68 +8,68 @@ datasource db {
 }
 
 model User {
-  id                String           @id @default(uuid()) @db.Uuid
-  email             String?          @unique
+  id                String          @id @default(uuid()) @db.Uuid
+  email             String?         @unique
   password          String?
   name              String?
   handle_name       String?
   alias_name        String?
-  photo_url         String?          // 自画像
-  logo_url          String?          // 会社ロゴ
-  is_alias_active   Boolean          @default(false)
-  is_alias_unlocked Boolean          @default(false)
+  photo_url         String?
+  is_alias_active   Boolean         @default(false)
+  is_alias_unlocked Boolean         @default(false)
   address           String?
   phone             String?
-  role              String           @default("member")
-  rank              String           @default("Initiate")
-  link_x            String?          // X (Twitter) URL
-  link_instagram    String?          // Instagram URL
-  link_website      String?          // Website URL
-  link_line         String?          // LINE URL/ID
-  link_facebook     String?          // Facebook URL
-  rt_balance        BigInt           @default(0)
-  exp               BigInt           @default(0)      // 累計経験値
-  last_daily_at     DateTime?        // 最後にデイリーボーナスを受け取った日時
-  last_read_news_at DateTime?        // 最後にニュースを既読にした日時
+  role              String          @default("member")
+  rank              String          @default("Initiate")
+  link_x            String?
+  link_instagram    String?
+  link_website      String?
+  rt_balance        BigInt          @default(0)
+  last_daily_at     DateTime?
   ai_config         Json?
   owned_assets      Json?
-  equipped_assets   Json?            // 現在装備中のアセット (frame, title, sound, etc.)
   unlocked_titles   Json?
-  created_at        DateTime         @default(now())
-  card              Card?
-  rt_transactions   RTTransaction[]
-  contacts          Contact[]        @relation("UserContacts")
+  created_at        DateTime        @default(now())
+  equipped_assets   Json?
+  logo_url          String?
+  link_facebook     String?
+  link_line         String?
+  exp               BigInt          @default(0)
+  last_read_news_at DateTime?
   audit_logs        AuditLog[]
+  card              Card?
   chat_messages     ChatMessage[]
+  contacts          Contact[]       @relation("UserContacts")
+  rt_transactions   RTTransaction[]
 
   @@map("users")
 }
 
 model ChatMessage {
-  id           String   @id @default(uuid()) @db.Uuid
-  user_id      String   @db.Uuid
-  role         String
-  text         String
-  created_at   DateTime @default(now())
-  user         User     @relation(fields: [user_id], references: [id])
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  role       String
+  text       String
+  created_at DateTime @default(now())
+  user       User     @relation(fields: [user_id], references: [id])
 
   @@map("chat_messages")
 }
 
 model Contact {
-  id           String   @id @default(uuid()) @db.Uuid
-  owner_id     String   @db.Uuid
-  name         String
-  handle_name  String?
-  phone        String?
-  email        String?
-  address      String?
-  notes        String?
-  ai_tags      Json?
-  coord_x      Float?
-  coord_y      Float?
-  created_at   DateTime @default(now())
-  owner        User     @relation("UserContacts", fields: [owner_id], references: [id])
+  id          String   @id @default(uuid()) @db.Uuid
+  owner_id    String   @db.Uuid
+  name        String
+  handle_name String?
+  phone       String?
+  email       String?
+  address     String?
+  notes       String?
+  ai_tags     Json?
+  coord_x     Float?
+  coord_y     Float?
+  created_at  DateTime @default(now())
+  owner       User     @relation("UserContacts", fields: [owner_id], references: [id])
 
   @@map("contacts")
 }
@@ -99,25 +99,25 @@ model RTTransaction {
 }
 
 model AuditLog {
-  id           String   @id @default(uuid()) @db.Uuid
-  user_id      String?  @db.Uuid
-  action       String
-  details      Json?
-  ip_address   String?
-  created_at   DateTime @default(now())
-  user         User?    @relation(fields: [user_id], references: [id])
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String?  @db.Uuid
+  action     String
+  details    Json?
+  ip_address String?
+  created_at DateTime @default(now())
+  user       User?    @relation(fields: [user_id], references: [id])
 
   @@map("audit_logs")
 }
 
 model ScheduledTask {
-  id           String   @id @default(uuid()) @db.Uuid
+  id           String    @id @default(uuid()) @db.Uuid
   action       String
   payload      Json
   scheduled_at DateTime
   executed_at  DateTime?
-  status       String   @default("pending")
-  created_at   DateTime @default(now())
+  status       String    @default("pending")
+  created_at   DateTime  @default(now())
 
   @@map("scheduled_tasks")
 }
@@ -131,13 +131,13 @@ model SystemConfig {
 }
 
 model Report {
-  id              String   @id @default(uuid()) @db.Uuid
-  reporter_id     String?  @db.Uuid
-  target_user_id  String   @db.Uuid
-  reason          String
-  details         String?
-  status          String   @default("pending")
-  created_at      DateTime @default(now())
+  id             String   @id @default(uuid()) @db.Uuid
+  reporter_id    String?  @db.Uuid
+  target_user_id String   @db.Uuid
+  reason         String
+  details        String?
+  status         String   @default("pending")
+  created_at     DateTime @default(now())
 
   @@map("reports")
 }
@@ -157,13 +157,13 @@ model Announcement {
 model Order {
   id                String   @id @default(uuid()) @db.Uuid
   stripe_session_id String?  @unique
-  tier              String   // Classic, Custom, Executive, Apex
-  variant           String?  // 色（Silver, Gold等）
-  price             Int      // 支払額
+  tier              String
+  variant           String?
+  price             Int
   customer_email    String
   customer_name     String
-  shipping_address  Json?    // 配送先情報
-  status            String   @default("paid") // paid, processing, shipped, completed
+  shipping_address  Json?
+  status            String   @default("paid")
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
 

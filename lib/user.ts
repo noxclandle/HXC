@@ -113,6 +113,8 @@ export async function getPublicProfile(slug: string) {
 
   return {
     ...user,
+    rt_balance: user.rt_balance?.toString() || "0",
+    exp: user.exp?.toString() || "0",
     profile: {
       company: profile.company || "",
       title: profile.title || "",
