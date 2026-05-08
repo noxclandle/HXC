@@ -9,7 +9,7 @@ export default withAuth(
 
     if (isAdminPath) {
       const rank = token?.rank as string;
-      const allowedRoles = ["mastermind", "chief_officer", "architect"];
+      const allowedRoles = ["fixer", "mastermind", "manager"];
       
       if (!isAuth || !allowedRoles.includes(token?.role as string)) {
         return NextResponse.redirect(new URL("/hub", req.url));
