@@ -9,14 +9,25 @@ import { authOptions } from "@/lib/auth";
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    const allowedRoles = ["mastermind", "chief_officer", "architect"];
+    const allowedRoles = ["fixer", "mastermind", "manager"];
     
     if (!session?.user?.id || !allowedRoles.includes((session.user as any).role)) {
-      return NextResponse.json({ error: "Forbidden: Master authority required." }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden: Administrative authority required." }, { status: 403 });
     }
 
     const data = await req.json();
     const { userId, name, handle, address, phone, rank, role } = data;
+
+    // 【重要】Fixerロールの付与はシステム側で完全にブロック
+    if (role === "fixer") {
+      return NextResponse.json({ error: "Forbidden: The Fixer role is immutable and cannot be assigned." }, { status: 403 });
+    }
+
+    // 更新対象がFixer本人の場合、管理者といえど変更を拒否
+    const targetUser = await prisma.user.findUnique({ where: { id: userId } });
+    if (targetUser?.role === "fixer" && (session.user as any).role !== "fixer") {
+       return NextResponse.json({ error: "Forbidden: You cannot modify the Fixer soul record." }, { status: 403 });
+    }
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
