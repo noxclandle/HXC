@@ -100,6 +100,7 @@ export default function InventoryPage() {
     { id: "Architect", name: "Architect", type: "title", rarity: "mythic", description: "管理者級特権。アーキテクチャに干渉する権限。", unlocked: false },
     { id: "Chief Officer", name: "Chief Officer", type: "title", rarity: "mythic", description: "至高実績：システムの運営に関与する権限。", unlocked: false },
     { id: "APEX", name: "APEX", type: "title", rarity: "mythic", description: "Black Card保有者専用。頂点に立つ者の称号。", unlocked: false },
+    { id: "Fixer", name: "Fixer", type: "title", rarity: "mythic", description: "創造主。唯一無二の存在。", unlocked: false },
 
     { id: "Pure White Hex", name: "Pure White Hex", type: "pointer", rarity: "common", description: "純白の鋭い軌跡。", unlocked: true },
     { id: "Azure Trace", name: "Azure Trace", type: "pointer", rarity: "rare", description: "知的な蒼い軌跡。", unlocked: false },
@@ -133,7 +134,7 @@ export default function InventoryPage() {
           setRTBalance(data.rt_balance);
           setProfile(data);
           setOwnedAssets(data.owned_assets || []);
-          setUnlockedTitles(data.unlocked_titles || ["ASSOCIATE"]);
+          setUnlockedTitles(data.titles || ["ASSOCIATE"]);
           setAssetPrices(data.asset_prices || {});
           if (data.equipped) setEquipped((prev: any) => ({ ...prev, ...data.equipped }));
         }
@@ -163,7 +164,7 @@ export default function InventoryPage() {
   };
 
   const handleUnlock = async (asset: Asset) => {
-    if (unlockingAsset) return;
+    if (unlockingAsset || profile?.role === "fixer") return;
     
     const cost = assetPrices[asset.rarity] || 0;
     if (confirm(`Unlock ${asset.name} for ${cost.toLocaleString()} RT?`)) {
@@ -193,9 +194,10 @@ export default function InventoryPage() {
   };
 
   const handleSelectAsset = (asset: Asset) => {
-    const isUnlocked = asset.type === "title" 
+    const isFixer = profile?.role === "fixer";
+    const isUnlocked = isFixer || (asset.type === "title" 
       ? unlockedTitles.includes(asset.id)
-      : (asset.rarity === "common" || ownedAssets.includes(asset.id));
+      : (asset.rarity === "common" || ownedAssets.includes(asset.id)));
     
     if (!isUnlocked) {
       handleUnlock(asset);
@@ -232,7 +234,7 @@ export default function InventoryPage() {
       </header>
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
-        {/* Preview Container: Balanced sticky for mobile (approx 2/5 screen height) */}
+        {/* Preview Container */}
         <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/95 backdrop-blur-lg pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[38vh] lg:h-auto flex items-center justify-center">
            <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-hidden group flex flex-col items-center w-full">
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent hidden lg:block" />
@@ -254,7 +256,6 @@ export default function InventoryPage() {
                  </button>
               </div>
 
-              {/* Mobile-friendly scaling */}
               <div className="py-1 lg:py-0 w-full flex justify-center scale-[0.6] xs:scale-[0.75] sm:scale-85 lg:scale-100 origin-center lg:origin-top transition-transform duration-500">
                 <HexaCardPreview 
                   name={profile?.name || session?.user?.name || "ARCHITECT"} 
@@ -283,7 +284,6 @@ export default function InventoryPage() {
                 />
               </div>
 
-              {/* Mobile instruction helper */}
               <div className="lg:hidden text-center mt-[-15%] pb-1">
                  <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">Live Resonance Preview</p>
               </div>
@@ -291,7 +291,6 @@ export default function InventoryPage() {
         </div>
 
         <div className="w-full lg:w-7/12 space-y-8 lg:space-y-10 order-2 lg:order-none">
-           {/* Responsive spacer */}
            <div className="lg:hidden h-[38vh]" />
 
            <div className="flex flex-col gap-4">
@@ -316,10 +315,14 @@ export default function InventoryPage() {
            <div className="space-y-4 lg:max-h-[700px] overflow-y-visible lg:overflow-y-auto lg:pr-4 custom-scrollbar">
               <AnimatePresence mode="wait">
                 <motion.div key={activeCategory} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="grid grid-cols-1 gap-4 px-2 lg:px-0">
-                  {filteredAssets.filter(asset => asset.type !== "title" || unlockedTitles.includes(asset.id)).map((asset) => {
-                    const isUnlocked = asset.type === "title" 
+                  {filteredAssets.filter(asset => {
+                    if (profile?.role === "fixer") return true;
+                    return asset.type !== "title" || unlockedTitles.includes(asset.id);
+                  }).map((asset) => {
+                    const isFixer = profile?.role === "fixer";
+                    const isUnlocked = isFixer || (asset.type === "title" 
                       ? unlockedTitles.includes(asset.id)
-                      : (asset.rarity === "common" || ownedAssets.includes(asset.id));
+                      : (asset.rarity === "common" || ownedAssets.includes(asset.id)));
                     const isActive = equipped[activeCategory as keyof typeof equipped] === asset.id;
                     const cost = assetPrices[asset.rarity] || 0;
 
@@ -329,7 +332,7 @@ export default function InventoryPage() {
                         onClick={() => handleSelectAsset(asset)} 
                         onMouseEnter={() => setPreviewAsset(asset)}
                         onMouseLeave={() => setPreviewAsset(null)}
-                        className={`group p-4 lg:p-6 border transition-all cursor-pointer flex justify-between items-center relative overflow-hidden ${isActive ? "border-white/40 bg-white/5" : "border-white/5 bg-white/[0.01] hover:border-azure-500/20"} ${!isUnlocked && "opacity-60"}`}
+                        className={`group p-4 lg:p-6 border transition-all cursor-pointer flex justify-between items-center relative overflow-hidden ${isActive ? "border-white/40 bg-white/5" : "border-white/5 bg-white/[0.01] hover:border-azure-500/20"} ${(!isUnlocked && !isFixer) && "opacity-60"}`}
                       >
                         <div className="flex items-center gap-4 lg:gap-6 relative z-10">
                            <div className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center border ${isActive ? "border-white text-white" : "border-white/10 opacity-40"}`}>
