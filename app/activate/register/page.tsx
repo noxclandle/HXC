@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Hexagon, UserCheck, ShieldCheck, Mail, Lock, Briefcase, Fingerprint } from "lucide-react";
+import { Hexagon, UserCheck, ShieldCheck, Mail, Lock, Briefcase, Fingerprint, CheckCircle2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 
@@ -22,6 +22,7 @@ function RegisterContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [step, setStep] = useState(0);
+  const [registeredSlug, setRegisteredSlug] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,30 +45,64 @@ function RegisterContent() {
         })
       });
 
+      const data = await res.json();
       if (res.ok) {
+        setRegisteredSlug(data.slug);
         // 自動ログインを試行
-        const loginRes = await signIn("credentials", {
+        await signIn("credentials", {
           email: formData.email,
           password: formData.password,
           redirect: false,
         });
-
-        if (loginRes?.error) {
-          setError("登録は完了しましたが、ログインに失敗しました。手動でログインしてください。");
-          setTimeout(() => router.push("/login"), 3000);
-        } else {
-          setTimeout(() => {
-            router.push("/hub");
-          }, 2500);
-        }
+        
+        // 登録成功、次はハードウェアへの書き込み（ステップ2）
+        setStep(2);
       } else {
-        const data = await res.json();
         setError(data.error || "登録に失敗しました。");
         setStep(0);
       }
     } catch (err) {
       setError("通信エラーが発生しました。");
       setStep(0);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleHardwareWrite = async () => {
+    if (!registeredSlug) return;
+    setError("");
+    setLoading(true);
+
+    try {
+      if (!("NDEFReader" in window)) {
+        throw new Error("This browser does not support NFC writing.");
+      }
+
+      const ndef = new (window as any).NDEFReader();
+      const publicUrl = `${window.location.origin}/p/${registeredSlug}`;
+      
+      // 書き込み実行
+      await ndef.write({
+        records: [{ recordType: "url", data: publicUrl }]
+      });
+
+      // 物理的ロック（読み取り専用化）の試行
+      if ("makeReadOnly" in ndef) {
+        try {
+          await ndef.makeReadOnly();
+        } catch (lockError) {
+          console.warn("Hardware lock not supported on this device/chip.");
+        }
+      }
+
+      setStep(3);
+      setTimeout(() => {
+        router.push("/hub");
+      }, 3000);
+    } catch (err: any) {
+      console.error("Write error:", err);
+      setError("刻印に失敗しました。カードを離さず、もう一度ボタンを押してください。");
     } finally {
       setLoading(false);
     }
@@ -184,13 +219,74 @@ function RegisterContent() {
                </motion.div>
                <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
                  <div className="w-16 h-16 border-t-2 border-azure-400 rounded-full animate-spin" />
-                 <span className="text-[10px] tracking-[1em] uppercase text-azure-400 font-bold ml-[1em] animate-pulse">Synchronizing</span>
+                 <span className="text-[10px] tracking-[1em] uppercase text-azure-400 font-bold ml-[1em] animate-pulse">Establishing Identity</span>
                </div>
             </div>
             <h2 className="text-2xl tracking-[0.5em] uppercase font-light text-white">Writing Archive</h2>
             <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase max-w-xs leading-relaxed mt-4">
                あなたの意志と、物理の鍵を聖域へ刻んでいます。<br />
                接続を切断しないでください。
+            </p>
+          </motion.div>
+        )}
+
+        {step === 2 && (
+          <motion.div 
+            key="inscription" 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-md w-full space-y-10"
+          >
+            <header className="space-y-4">
+              <div className="w-16 h-16 border border-azure-400/40 flex items-center justify-center mx-auto rounded-full mb-8 relative">
+                 <motion.div animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }} transition={{ duration: 2, repeat: Infinity }} className="absolute inset-0 bg-azure-400 rounded-full" />
+                 <Fingerprint size={32} className="text-azure-400" />
+              </div>
+              <h2 className="text-2xl tracking-[0.4em] uppercase font-light text-white">Hardware Inscription</h2>
+              <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400">物理デバイスへの最終刻印</p>
+            </header>
+
+            <div className="p-8 border border-white/10 bg-white/[0.02] space-y-6 text-center">
+               <p className="text-[11px] tracking-widest leading-relaxed opacity-60">
+                 聖域への登録が完了しました。<br />
+                 最後に、お手元のカードに「名刺URL」を直接刻み、物理的な書き換えロックをかけます。
+               </p>
+               <div className="py-4 border-y border-white/5 font-mono text-[10px] text-azure-400 tracking-tighter">
+                  TARGET: /p/{registeredSlug}
+               </div>
+            </div>
+
+            {error && <div className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[10px] tracking-widest uppercase">{error}</div>}
+
+            <button
+              onClick={handleHardwareWrite}
+              disabled={loading}
+              className="w-full py-6 bg-white text-void font-bold text-[11px] tracking-[0.8em] uppercase shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:bg-azure-50 transition-all active:scale-[0.98]"
+            >
+              {loading ? "Synchronizing..." : "Inscribe & Lock"}
+            </button>
+            
+            <p className="text-[8px] tracking-[0.3em] opacity-20 uppercase leading-relaxed text-center">
+               この操作により、カードはあなたの専用鍵として永久に固定されます。<br />
+               二度と中身を書き換えることはできません。
+            </p>
+          </motion.div>
+        )}
+
+        {step === 3 && (
+          <motion.div 
+            key="finalized" 
+            initial={{ opacity: 0, scale: 0.9 }} 
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex flex-col items-center"
+          >
+            <div className="relative mb-16">
+               <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.1, 0.4, 0.1] }} transition={{ duration: 1.5, repeat: Infinity }} className="absolute inset-0 bg-white blur-[100px] rounded-full" />
+               <CheckCircle2 size={120} className="text-white relative z-10" />
+            </div>
+            <h2 className="text-3xl tracking-[0.6em] uppercase font-extralight text-white">Eternalized</h2>
+            <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase mt-4">
+               刻印は完了しました。聖域へお進みください。
             </p>
           </motion.div>
         )}
