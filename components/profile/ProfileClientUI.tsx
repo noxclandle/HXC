@@ -8,11 +8,30 @@ import GeometricBackground from "@/components/background/GeometricBackground";
 import ResonanceInteraction from "@/components/ui/ResonanceInteraction";
 import Link from "next/link";
 import ResidentAgent from "@/components/agent/ResidentAgent";
+import { signIn } from "next-auth/react";
+import { useEffect } from "react";
 
 export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?: boolean }) {
   const [showReport, setShowReport] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [reporting, setReporting] = useState(false);
+
+  useEffect(() => {
+    // 魂の同調チェック（ログインしていないが、この端末の持ち主である場合）
+    const trySoulLink = async () => {
+      const token = localStorage.getItem("hxc_soul_fragment");
+      if (token && !isOwner) {
+        const res = await signIn("soul-link", {
+          deviceToken: token,
+          redirect: false
+        });
+        if (res?.ok) {
+           window.location.reload(); // 成功したらリロードして主として認識させる
+        }
+      }
+    };
+    trySoulLink();
+  }, [isOwner]);
 
   const handleSaveContact = () => {
     if (!data) return;

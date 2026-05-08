@@ -6,6 +6,41 @@ import bcrypt from "bcryptjs";
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
+      id: "soul-link",
+      name: "SoulLink",
+      credentials: {
+        deviceToken: { label: "Device Token", type: "text" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.deviceToken) return null;
+
+        try {
+          const binding = await prisma.deviceBinding.findUnique({
+            where: { device_token: credentials.deviceToken },
+            include: { user: true }
+          });
+
+          if (!binding || !binding.user) return null;
+
+          // 使用日時を更新
+          await prisma.deviceBinding.update({
+            where: { id: binding.id },
+            data: { last_used_at: new Date() }
+          });
+
+          return {
+            id: binding.user.id,
+            name: binding.user.name,
+            email: binding.user.email,
+            role: binding.user.role,
+            rank: binding.user.rank,
+          };
+        } catch (e) {
+          return null;
+        }
+      }
+    }),
+    CredentialsProvider({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
