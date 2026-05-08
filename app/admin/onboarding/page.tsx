@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Layers, ShieldCheck, Mail, Smartphone, Fingerprint, Lock, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
+// Finalized Protocol
 export default function OnboardingGuidePage() {
   const protocols = [
     {
