@@ -1,10 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Layers, ShieldCheck, Mail, Smartphone, Fingerprint, Lock, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
-// Finalized Protocol
 export default function OnboardingGuidePage() {
   const protocols = [
     {
@@ -57,14 +55,10 @@ export default function OnboardingGuidePage() {
 
       <div className="space-y-12">
         {protocols.map((p, i) => (
-          <motion.div 
+          <div 
             key={i} 
-            initial={{ opacity: 0, x: -20 }} 
-            animate={{ opacity: 1, x: 0 }} 
-            transition={{ delay: i * 0.1 }}
             className="flex gap-8 relative group"
           >
-            {/* Step Number */}
             <div className="flex flex-col items-center">
                <div className="w-10 h-10 border border-white/10 bg-white/[0.02] flex items-center justify-center text-[10px] font-mono text-azure-400 font-bold mb-4">
                   {p.step}
@@ -72,9 +66,8 @@ export default function OnboardingGuidePage() {
                {i < protocols.length - 1 && <div className="w-px h-full bg-white/5" />}
             </div>
 
-            {/* Content */}
             <div className="flex-1 pb-12">
-               <div className="flex items-center gap-4 mb-3 text-azure-400 opacity-60 group-hover:opacity-100 transition-opacity">
+               <div className="flex items-center gap-4 mb-3 text-azure-400 opacity-60">
                   {p.icon}
                   <h3 className="text-[13px] tracking-[0.3em] uppercase font-bold text-white">{p.title}</h3>
                </div>
@@ -87,7 +80,7 @@ export default function OnboardingGuidePage() {
                  </Link>
                )}
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
