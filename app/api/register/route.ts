@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       return newUser;
     });
 
-    return NextResponse.json({ success: true, userId: result.id });
+    return NextResponse.json({ success: true, userId: result.id, slug: result.handle_name });
   } catch (error: any) {
     console.error("Registration error:", error);
     if (error.code === "P2002") {
