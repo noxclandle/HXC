@@ -8,16 +8,17 @@ export async function getUserStatus(email: string) {
 
   if (!user) return null;
 
-  const isMastermind = user.role === "mastermind" || 
-                       user.name?.includes("福井") || 
-                       user.email === "str1yf5x@gmail.com";
+  // Fixer (Go Fukui) check
+  const isFixer = user.role === "fixer" || 
+                   user.name?.includes("福井") || 
+                   user.email === "str1yf5x@gmail.com";
   
-  // Mastermind (Go Fukui) gets everything unlocked
-  const titles = isMastermind 
-    ? ["ASSOCIATE", "Initiate", "Observer", "Collector", "Messenger", "Connector", "Void Voyager", "Strategist", "Tech Lead", "Headhunter", "Gilded Soul", "The Sovereign", "Mastermind", "Architect", "Chief Officer", "APEX"]
+  // Fixer (Go Fukui) gets everything unlocked
+  const titles = isFixer 
+    ? ["ASSOCIATE", "Initiate", "Observer", "Collector", "Messenger", "Connector", "Void Voyager", "Strategist", "Tech Lead", "Headhunter", "Gilded Soul", "The Sovereign", "Mastermind", "Architect", "Chief Officer", "APEX", "Fixer"]
     : (Array.isArray(user.unlocked_titles) ? user.unlocked_titles : []);
 
-  const ownedAssets = isMastermind
+  const ownedAssets = isFixer
     ? ["Obsidian", "Gold", "Dynamic", "Sakura", "Emerald", "Platinum", "ImperialGold", "Default", "Carbon", "MonochromeGrid", "BrushedMetal", "Nebula", "SilkBlur", "Stardust", "RoyalGold", "MidnightMist", "DigitalFlow", "PrismFractal", "None", "Aethereal", "Glitch", "Interference", "Petals", "Pure White Hex", "Azure Trace", "Gold Trace", "Emerald Trace", "Violet Trace", "Crimson Trace", "resonance", "silver", "void"]
     : (Array.isArray(user.owned_assets) ? user.owned_assets : []);
   
@@ -43,8 +44,8 @@ export async function getUserStatus(email: string) {
     id: user.id,
     name: user.name || "ARCHITECT",
     rt_balance: user.rt_balance.toString(),
-    exp: isMastermind ? "10000" : user.exp.toString(),
-    rank: isMastermind ? "Mastermind" : user.rank,
+    exp: isFixer ? "10000" : user.exp.toString(),
+    rank: isFixer ? "Fixer" : user.rank,
     role: user.role,
     titles: titles,
     owned_assets: ownedAssets,
@@ -57,7 +58,7 @@ export async function getUserStatus(email: string) {
     equipped: {
       ...equipped,
       frame: equipped.frame || "Obsidian",
-      title: equipped.title || (isMastermind ? "Mastermind" : "ASSOCIATE"),
+      title: equipped.title || (isFixer ? "Fixer" : "ASSOCIATE"),
       orientation: equipped.orientation || "horizontal",
       hAlign: equipped.hAlign || defaultAlign,
       vAlign: equipped.vAlign || defaultAlign
