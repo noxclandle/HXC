@@ -96,7 +96,7 @@ export default function LedgerPage() {
 
       reader.addEventListener("reading", ({ serialNumber }: any) => {
         const formattedUid = serialNumber.toUpperCase();
-        const autoSerial = `HXC-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+        const autoSerial = `HXRL002026${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
         
         setNewCard(prev => ({
           ...prev,

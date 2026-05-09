@@ -18,8 +18,8 @@ export async function POST(req: NextRequest) {
 
     // 厳格な価格マッピング
     const PRICE_MAP: Record<string, number> = {
-      "Standard": 5000,
-      "Executive": 30000,
+      "Standard": 3000,
+      "Executive": 10000,
       "Apex": 1000000
     };
 
@@ -29,11 +29,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid tier" }, { status: 400 });
     }
 
+    // Base URL for redirects
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
     // もし本番/テスト用の正しいAPIキーが設定されていない場合は、Stripe通信をバイパスして成功画面へ
     if (isMock) {
       console.log("Mocking Stripe Checkout. Redirecting to success page.");
-      // 強制的にローカルの3000ポートへリダイレクト（環境変数のキャッシュ等による3001への誤爆を防ぐため）
-      const baseUrl = "http://localhost:3000";
       return NextResponse.json({ url: `${baseUrl}/purchase/success?session_id=mock_session_${Date.now()}` });
     }
 
@@ -66,8 +67,8 @@ export async function POST(req: NextRequest) {
           type: "text",
         },
       ],
-      success_url: `${process.env.NEXTAUTH_URL}/purchase/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXTAUTH_URL}/purchase`,
+      success_url: `${baseUrl}/purchase/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/purchase`,
       metadata: {
         tier,
         variant,

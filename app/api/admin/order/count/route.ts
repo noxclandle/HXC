@@ -1,0 +1,26 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
+
+export async function GET() {
+  try {
+    const session = await getServerSession(authOptions);
+    const allowedRoles = ["fixer", "mastermind", "manager"];
+    
+    if (!session?.user?.id || !allowedRoles.includes(session.user.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const count = await prisma.order.count({
+      where: { status: "paid" } // 'paid' means it's newly paid but not yet 'shipped' or 'completed'
+    });
+
+    return NextResponse.json({ count });
+  } catch (error: any) {
+    console.error("Order count error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}

@@ -26,6 +26,9 @@ export default function Footer() {
           <Link href="/privacy" className="text-[10px] tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity flex items-center gap-2 uppercase">
             <Shield size={12} /> Privacy
           </Link>
+          <Link href="/legal" className="text-[10px] tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity flex items-center gap-2 uppercase">
+            <Scale size={12} /> Legal
+          </Link>
         </div>
 
         {/* Copyright */}

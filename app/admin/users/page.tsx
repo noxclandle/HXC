@@ -53,8 +53,8 @@ export default function UsersAdminPage() {
   const roleIcon = (role: string) => {
     switch (role) {
       case "mastermind": return <Crown size={14} className="text-purple-500" />;
-      case "chief_officer": return <Crown size={14} className="text-rose-500" />;
-      case "architect": return <Lock size={14} className="text-emerald-400" />;
+      case "fixer": return <Sparkles size={14} className="text-azure-400" />;
+      case "manager": return <Shield size={14} className="text-emerald-400" />;
       default: return <UserIcon size={14} className="opacity-20" />;
     }
   };
@@ -68,19 +68,19 @@ export default function UsersAdminPage() {
         body: JSON.stringify({ userId: selectedUser.id, amount: grantAmount }),
       });
       if (res.ok) {
-        alert(`${selectedUser.name} に ${grantAmount} CP を発行しました。`);
+        alert(`${selectedUser.name} に ${grantAmount} RT を発行しました。`);
         setSelectedUser(null);
         fetchUsers();
       }
     } catch (err) { console.error(err); }
   };
 
-  const handleUpdateRole = async (userId: string, newRole: string, grantChiefTitle: boolean = false) => {
+  const handleUpdateRole = async (userId: string, newRole: string) => {
     try {
       const res = await fetch("/api/admin/user/role", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, role: newRole, grantChiefTitle }),
+        body: JSON.stringify({ userId, role: newRole }),
       });
       if (res.ok) {
         alert("Identity authority updated.");
@@ -115,13 +115,20 @@ export default function UsersAdminPage() {
             />
           </div>
           <div className="flex gap-2">
-            {["All", "mastermind", "chief_officer", "architect", "black_member", "member"].map((r) => (
+            {[
+              { id: "All", label: "すべて" },
+              { id: "mastermind", label: "Mastermind" },
+              { id: "fixer", label: "Fixer" },
+              { id: "manager", label: "Manager" },
+              { id: "black_member", label: "Black Member" },
+              { id: "member", label: "Initiate" }
+            ].map((r) => (
               <button 
-                key={r}
-                onClick={() => setFilterRank(r)}
-                className={`px-4 py-2 border text-[8px] uppercase tracking-widest transition-all ${filterRole === r ? 'border-azure-500 bg-azure-500/10 text-azure-400' : 'border-white/10 opacity-40 hover:opacity-100'}`}
+                key={r.id}
+                onClick={() => setFilterRank(r.id)}
+                className={`px-4 py-2 border text-[8px] uppercase tracking-widest transition-all ${filterRole === r.id ? 'border-azure-500 bg-azure-500/10 text-azure-400' : 'border-white/10 opacity-40 hover:opacity-100'}`}
               >
-                {r === "All" ? "すべて" : r.replace('_', ' ')}
+                {r.label}
               </button>
             ))}
           </div>
@@ -156,7 +163,9 @@ export default function UsersAdminPage() {
                   </div>
                   <div className="flex items-center gap-3 text-[10px] tracking-[0.2em] uppercase">
                      {roleIcon(u.role)}
-                     <span className={u.role === "chief_officer" ? "text-rose-500 font-bold" : u.role === "architect" ? "text-emerald-400" : ""}>{u.role.replace('_', ' ')}</span>
+                     <span className={u.role === "mastermind" ? "text-purple-400 font-bold" : u.role === "fixer" ? "text-azure-400 font-bold" : u.role === "manager" ? "text-emerald-400" : ""}>
+                        {u.role === 'member' ? 'Initiate' : u.role.replace('_', ' ')}
+                     </span>
                   </div>
                   <div className="flex flex-col gap-1">
                     <div className="font-mono text-xs opacity-50 text-azure-400">{parseInt(u.rt).toLocaleString()} <span className="text-[8px] opacity-40">RT</span></div>
@@ -249,26 +258,26 @@ export default function UsersAdminPage() {
                   <div className="flex flex-wrap gap-4">
                      {inspectUser.role !== 'mastermind' && (
                         <button 
-                           onClick={() => handleUpdateRole(inspectUser.id, 'mastermind', true)}
+                           onClick={() => handleUpdateRole(inspectUser.id, 'mastermind')}
                            className="px-6 py-3 border border-purple-500/30 text-purple-400 text-[9px] uppercase tracking-widest font-bold hover:bg-purple-500/10 transition-all"
                         >
-                           Mastermind に昇格
+                           Mastermind へ昇華
                         </button>
                      )}
-                     {inspectUser.role !== 'chief_officer' && (
+                     {inspectUser.role !== 'fixer' && (
                         <button 
-                           onClick={() => handleUpdateRole(inspectUser.id, 'chief_officer', true)}
-                           className="px-6 py-3 border border-rose-500/30 text-rose-500 text-[9px] uppercase tracking-widest font-bold hover:bg-rose-500/10 transition-all"
+                           onClick={() => handleUpdateRole(inspectUser.id, 'fixer')}
+                           className="px-6 py-3 border border-azure-500/30 text-azure-400 text-[9px] uppercase tracking-widest font-bold hover:bg-azure-500/10 transition-all"
                         >
-                           Chief Officer に昇格
+                           Fixer 権限を付与
                         </button>
                      )}
-                     {inspectUser.role !== 'architect' && (
+                     {inspectUser.role !== 'manager' && (
                         <button 
-                           onClick={() => handleUpdateRole(inspectUser.id, 'architect')}
+                           onClick={() => handleUpdateRole(inspectUser.id, 'manager')}
                            className="px-6 py-3 border border-emerald-500/30 text-emerald-400 text-[9px] uppercase tracking-widest font-bold hover:bg-emerald-500/10 transition-all"
                         >
-                           Architect 権限を付与
+                           Manager 権限を付与
                         </button>
                      )}
                      {inspectUser.role !== 'black_member' && (
@@ -276,7 +285,7 @@ export default function UsersAdminPage() {
                            onClick={() => handleUpdateRole(inspectUser.id, 'black_member')}
                            className="px-6 py-3 border border-amber-500/30 text-amber-500 text-[9px] uppercase tracking-widest font-bold hover:bg-amber-500/10 transition-all"
                         >
-                           Black Member に設定
+                           Black Member へ昇華
                         </button>
                      )}
                      {inspectUser.role !== 'member' && (
@@ -284,7 +293,7 @@ export default function UsersAdminPage() {
                            onClick={() => handleUpdateRole(inspectUser.id, 'member')}
                            className="px-6 py-3 border border-white/10 text-white/40 text-[9px] uppercase tracking-widest font-bold hover:bg-white/5 transition-all"
                         >
-                           Member に降格
+                           Initiate に設定
                         </button>
                      )}
                   </div>

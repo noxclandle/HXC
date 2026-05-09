@@ -71,18 +71,11 @@ export default function PurchasePage() {
   };
 
   const [loading, setLoading] = useState(false);
-  const [confirmStep, setConfirmStep] = useState<0 | 1 | 2 | 3>(0);
 
   const handleCheckout = async () => {
     if (!selection.tier) return;
 
-    if (confirmStep < 2) {
-      setConfirmStep((prev: any) => prev + 1);
-      return;
-    }
-
     setLoading(true);
-    setConfirmStep(3);
 
     try {
       const selectedTierData = tiers.find(t => t.id === selection.tier);
@@ -347,6 +340,14 @@ export default function PurchasePage() {
         @keyframes infinite-scroll {
           from { transform: translateX(0); }
           to { transform: translateX(-50%); }
+        }
+        .animate-infinite-scroll {
+          animation: infinite-scroll 40s linear infinite;
+        }
+      `}</style>
+    </div>
+  );
+}   to { transform: translateX(-50%); }
         }
         .animate-infinite-scroll {
           animation: infinite-scroll 40s linear infinite;

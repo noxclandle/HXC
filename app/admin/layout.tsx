@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Database, ShieldAlert, Newspaper, Users, BookOpen } from "lucide-react";
+import AdminNotificationBadge from "@/components/admin/AdminNotificationBadge";
 
 export const metadata: Metadata = {
   title: "Admin | Hexa System",
@@ -25,8 +26,8 @@ export default function AdminLayout({
           <div className="flex gap-8 text-[9px] uppercase tracking-[0.2em] font-bold opacity-60">
              <Link href="/admin/users" className="hover:text-azure-400 hover:opacity-100 transition-colors flex items-center gap-2"><Users size={12}/> ユーザー</Link>
              <Link href="/admin/news" className="hover:text-azure-400 hover:opacity-100 transition-colors flex items-center gap-2"><Newspaper size={12}/> お知らせ配信</Link>
-             <Link href="/admin/ledger" className="hover:text-azure-400 hover:opacity-100 transition-colors flex items-center gap-2"><BookOpen size={12}/> カード台帳</Link>
-             <Link href="/admin/reports" className="hover:text-azure-400 hover:opacity-100 transition-colors flex items-center gap-2"><ShieldAlert size={12}/> 通報・違反</Link>
+             <OrderNotificationBadge />
+             <AdminNotificationBadge />
           </div>
         </div>
       </nav>
