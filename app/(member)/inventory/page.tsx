@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Music, Sparkles, UserCheck, Check, Lock, Wallet, Trophy, ArrowLeft, MousePointer2, Smartphone, Layout, Type, Palette } from "lucide-react";
+import { Shield, Music, Sparkles, UserCheck, Check, Lock, Wallet, Trophy, ArrowLeft, MousePointer2, Smartphone, Layout, Type, Palette, Eye } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useToast } from "@/components/ui/ResonanceToast";
+import { playResonanceSound } from "@/lib/audio/resonance";
 
 export const dynamic = "force-dynamic";
 
@@ -28,13 +29,6 @@ const CATEGORIES = [
   { id: "pointer", name: "Pointers", icon: MousePointer2, sub: "軌跡" },
   { id: "sound", name: "Sounds", icon: Music, sub: "音響" },
 ];
-
-// Rarity Pricing (RT)
-// Common: 0
-// Rare: 2,000
-// Epic: 5,000
-// Legendary: 10,000
-// Mythic: 25,000
 
 export default function InventoryPage() {
   const { data: session, status } = useSession();
@@ -122,7 +116,7 @@ export default function InventoryPage() {
     { id: "void", name: "Deep Resonance", type: "sound", rarity: "mythic", description: "深淵からの呼び声。", cost: 25000, unlocked: false },
     { id: "omega", name: "Eternal Chord", type: "sound", rarity: "mythic", description: "世界の終焉と始まりの音。", cost: 25000, unlocked: false },
 
-    // --- Titles (Existing) ---
+    // --- Titles ---
     { id: "ASSOCIATE", name: "ASSOCIATE", type: "title", rarity: "common", description: "初期称号。", unlocked: true },
     { id: "Initiate", name: "Initiate", type: "title", rarity: "common", description: "アカウント作成の証。", unlocked: true },
     { id: "Observer", name: "Observer", type: "title", rarity: "common", description: "世界の観測者。", unlocked: true },
@@ -163,17 +157,8 @@ export default function InventoryPage() {
           setProfile(data);
           setOwnedAssets(data.owned_assets || []);
           setUnlockedTitles(data.titles || ["ASSOCIATE"]);
-          
-          // Apply pricing structure if not provided by server
-          const pricing = data.asset_prices || {
-            common: 0,
-            rare: 2000,
-            epic: 5000,
-            legendary: 10000,
-            mythic: 25000
-          };
+          const pricing = data.asset_prices || { common: 0, rare: 2000, epic: 5000, legendary: 10000, mythic: 25000 };
           setAssetPrices(pricing);
-
           if (data.equipped) setEquipped((prev: any) => ({ ...prev, ...data.equipped }));
         }
       } catch (err) { console.error(err); }
@@ -190,7 +175,6 @@ export default function InventoryPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ equipped: customEquipped || equipped })
       });
-
       if (res.ok) {
         showToast("Synchronized / 装備を同期しました", "success");
         window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
@@ -203,7 +187,6 @@ export default function InventoryPage() {
 
   const handleUnlock = async (asset: Asset) => {
     if (unlockingAsset || profile?.role === "fixer") return;
-    
     const cost = assetPrices[asset.rarity] || 0;
     if (confirm(`Unlock ${asset.name} for ${cost.toLocaleString()} RT?`)) {
       setUnlockingAsset(asset.id);
@@ -218,8 +201,6 @@ export default function InventoryPage() {
           showToast(`Unlocked: ${asset.name}`, "success");
           setRTBalance(data.rt_balance);
           setOwnedAssets(data.owned_assets);
-          
-          // 即座に装備
           const newEquipped = { ...equipped, [activeCategory as keyof typeof equipped]: asset.id };
           setEquipped(newEquipped);
           handleCommit(newEquipped);
@@ -228,6 +209,14 @@ export default function InventoryPage() {
         }
       } catch (err) { console.error(err); }
       finally { setUnlockingAsset(null); }
+    }
+  };
+
+  const handlePreviewAsset = (asset: Asset) => {
+    setPreviewAsset(asset);
+    // サウンドカテゴリの場合はその場で音を鳴らす
+    if (asset.type === "sound") {
+      playResonanceSound(asset.id);
     }
   };
 
@@ -266,7 +255,7 @@ export default function InventoryPage() {
           <p className="text-[9px] lg:text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold hidden lg:block">宝物庫・アセット管理</p>
         </div>
         <div className="text-right">
-           <p className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60">Relation Token Balance</p>
+           <p className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60">RT Balance</p>
            <p className="text-xl lg:text-3xl font-extralight tracking-[0.2em] text-white">{Number(rtBalance).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
         </div>
       </header>
@@ -275,7 +264,9 @@ export default function InventoryPage() {
         {/* Preview Container */}
         <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/95 backdrop-blur-lg pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[38vh] lg:h-auto flex items-center justify-center">
            <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-hidden group flex flex-col items-center w-full">
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent hidden lg:block" />
+              {previewAsset && (
+                 <div className="absolute top-0 left-0 w-full h-[1px] bg-azure-500 animate-pulse z-50" />
+              )}
               
               <div className="absolute top-2 right-6 lg:top-4 lg:right-4 z-30 flex gap-2 p-1 bg-white/10 lg:bg-white/5 border border-white/10 scale-90 lg:scale-100">
                  <button onClick={() => {
@@ -308,22 +299,16 @@ export default function InventoryPage() {
                   background={displayEquipped.background}
                   effect={displayEquipped.effect}
                   fontFamily={displayEquipped.fontFamily}
-                  scaleName={equipped.scaleName}
-                  scaleTitle={equipped.scaleTitle}
-                  scaleCompany={equipped.scaleCompany}
                   sound={displayEquipped.sound}
                   orientation={displayEquipped.orientation}
                   alignCompany="center" alignName="center" alignReading="center" alignTitle="center" alignPhone="center" alignEmail="center"
-                  link_x={profile?.profile?.link_x}
-                  link_instagram={profile?.profile?.link_instagram}
-                  link_line={profile?.profile?.link_line}
-                  link_facebook={profile?.profile?.link_facebook}
                   bio={profile?.profile?.bio}
                 />
               </div>
 
-              <div className="lg:hidden text-center mt-[-15%] pb-1">
+              <div className="lg:hidden text-center mt-[-15%] pb-1 flex flex-col items-center gap-1">
                  <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">Live Resonance Preview</p>
+                 {previewAsset && <span className="text-[6px] text-azure-400 uppercase font-bold tracking-widest animate-pulse">Previewing: {previewAsset.name}</span>}
               </div>
            </div>
         </div>
@@ -336,15 +321,13 @@ export default function InventoryPage() {
                 {CATEGORIES.map((cat) => (
                   <button 
                     key={cat.id} 
-                    onClick={() => setActiveCategory(cat.id)}
+                    onClick={() => { setActiveCategory(cat.id); setPreviewAsset(null); }}
                     className={`py-4 lg:py-6 px-6 lg:px-8 flex flex-col items-center gap-2 lg:gap-3 transition-all border-b-2 flex-shrink-0 ${
                       activeCategory === cat.id ? "border-azure-500 opacity-100 bg-azure-500/5" : "border-transparent opacity-20 hover:opacity-50"
                     }`}
                   >
                     <cat.icon size={16} className={activeCategory === cat.id ? "text-azure-400" : ""} />
-                    <div className="text-center">
-                      <span className="block text-[7px] lg:text-[8px] uppercase tracking-[0.3em] font-bold whitespace-nowrap">{cat.name}</span>
-                    </div>
+                    <span className="block text-[7px] lg:text-[8px] uppercase tracking-[0.3em] font-bold whitespace-nowrap">{cat.name}</span>
                   </button>
                 ))}
               </div>
@@ -362,39 +345,48 @@ export default function InventoryPage() {
                       ? unlockedTitles.includes(asset.id)
                       : (asset.rarity === "common" || ownedAssets.includes(asset.id)));
                     const isActive = equipped[activeCategory as keyof typeof equipped] === asset.id;
+                    const isPreviewing = previewAsset?.id === asset.id;
                     const cost = assetPrices[asset.rarity] || 0;
 
                     return (
                       <div 
                         key={asset.id} 
-                        onClick={() => handleSelectAsset(asset)} 
-                        onMouseEnter={() => setPreviewAsset(asset)}
-                        onMouseLeave={() => setPreviewAsset(null)}
-                        className={`group p-4 lg:p-6 border transition-all cursor-pointer flex justify-between items-center relative overflow-hidden ${isActive ? "border-white/40 bg-white/5" : "border-white/5 bg-white/[0.01] hover:border-azure-500/20"} ${(!isUnlocked && !isFixer) && "opacity-60"}`}
+                        className={`group p-4 lg:p-6 border transition-all relative overflow-hidden ${isActive ? "border-white/40 bg-white/5" : isPreviewing ? "border-azure-500/40 bg-azure-500/5" : "border-white/5 bg-white/[0.01] hover:border-white/20"}`}
                       >
-                        <div className="flex items-center gap-4 lg:gap-6 relative z-10">
-                           <div className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center border ${isActive ? "border-white text-white" : "border-white/10 opacity-40"}`}>
-                              {isUnlocked ? <Check size={14} /> : <Lock size={14} />}
-                           </div>
-                           <div>
-                              <div className="flex flex-col lg:items-start gap-1 mb-1">
-                                 <h3 className="text-[10px] lg:text-[11px] tracking-[0.4em] uppercase font-bold">{asset.name}</h3>
-                                 <span className={`text-[6px] lg:text-[7px] w-fit px-2 py-0.5 border uppercase tracking-widest font-bold ${getRarityStyle(asset.rarity)}`}>{asset.rarity}</span>
-                              </div>
-                              <p className="text-[8px] lg:text-[9px] tracking-widest opacity-40 uppercase leading-relaxed max-w-[200px] lg:max-w-md line-clamp-1 lg:line-clamp-none">{asset.description}</p>
-                           </div>
-                        </div>
-                        <div className="text-right shrink-0">
-                          {isUnlocked ? (
-                            isActive ? <span className="text-white text-[7px] lg:text-[8px] tracking-[0.4em] font-bold uppercase italic">Active</span> : <span className="text-[7px] lg:text-[8px] tracking-[0.4em] opacity-20 uppercase group-hover:opacity-100">Equip</span>
-                          ) : (
-                            <div className="flex flex-col items-end gap-1">
-                              <span className="text-[9px] lg:text-[10px] font-mono text-white tracking-widest">{cost.toLocaleString()} RT</span>
-                              <span className="text-[6px] lg:text-[7px] tracking-[0.2em] opacity-40 uppercase font-bold">
-                                {unlockingAsset === asset.id ? "..." : "Unlock"}
-                              </span>
-                            </div>
-                          )}
+                        <div className="flex justify-between items-center relative z-10">
+                          <div className="flex items-center gap-4 lg:gap-6">
+                             <div className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center border ${isActive ? "border-white text-white" : "border-white/10 opacity-40"}`}>
+                                {isUnlocked ? <Check size={14} /> : <Lock size={14} />}
+                             </div>
+                             <div>
+                                <div className="flex flex-col lg:items-start gap-1 mb-1">
+                                   <h3 className="text-[10px] lg:text-[11px] tracking-[0.4em] uppercase font-bold">{asset.name}</h3>
+                                   <span className={`text-[6px] lg:text-[7px] w-fit px-2 py-0.5 border uppercase tracking-widest font-bold ${getRarityStyle(asset.rarity)}`}>{asset.rarity}</span>
+                                </div>
+                                <p className="text-[8px] lg:text-[9px] tracking-widest opacity-40 uppercase leading-relaxed max-w-[200px] lg:max-w-md line-clamp-1 lg:line-clamp-none">{asset.description}</p>
+                             </div>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            {/* Preview Button (Try-on) */}
+                            {!isActive && (
+                              <button 
+                                onClick={() => handlePreviewAsset(asset)}
+                                className={`p-3 border transition-all ${isPreviewing ? "bg-azure-500 text-white border-azure-500" : "border-white/10 opacity-40 hover:opacity-100 hover:border-white/30"}`}
+                                title="Try on / お試し着用"
+                              >
+                                <Eye size={14} />
+                              </button>
+                            )}
+                            
+                            {/* Action Button (Equip or Unlock) */}
+                            <button 
+                              onClick={() => handleSelectAsset(asset)}
+                              className={`px-4 py-3 border text-[8px] uppercase tracking-[0.2em] font-bold transition-all ${isUnlocked ? (isActive ? "bg-white text-void border-white" : "border-white/20 opacity-40 hover:opacity-100 hover:border-white") : "bg-azure-600/10 border-azure-600/30 text-azure-400"}`}
+                            >
+                              {isUnlocked ? (isActive ? "Active" : "Equip") : `${cost.toLocaleString()} RT`}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     );

@@ -73,13 +73,15 @@ export default function HexaCardPreview({
 
   const getFrameStyle = () => {
     switch (frame) {
-      case "Gold": return "border-bronze-400/40 shadow-xl";
-      case "Dynamic": return "border-azure-500/40 shadow-xl";
-      case "Sakura": return "border-rose-400/40 shadow-[0_0_20px_rgba(251,113,133,0.1)]";
-      case "Emerald": return "border-emerald-400/40 shadow-[0_0_20px_rgba(52,211,153,0.1)]";
-      case "Platinum": return "border-[3px] border-slate-500 shadow-[0_0_30px_rgba(255,255,255,0.3)] ring-1 ring-white/20 ring-inset";
-      case "ImperialGold": return "border-[4px] border-amber-500/80 shadow-[0_0_50px_rgba(245,158,11,0.4)] ring-2 ring-amber-300/30 ring-inset bg-amber-900/5";
-      case "BlackCard": return "border-[2px] border-zinc-900 ring-1 ring-zinc-800/50 ring-inset shadow-[0_30px_60px_rgba(0,0,0,1)]";
+      case "Silver": return "border-[2px] border-zinc-400 shadow-[0_0_15px_rgba(255,255,255,0.1)]";
+      case "Gold": return "border-[3px] border-amber-600/60 shadow-xl ring-1 ring-amber-500/20";
+      case "Dynamic": return "border-[3px] border-azure-500 shadow-[0_0_20px_rgba(59,130,246,0.3)] animate-pulse";
+      case "Sakura": return "border-[2px] border-rose-300 shadow-[0_0_25px_rgba(251,113,133,0.2)]";
+      case "Emerald": return "border-[2px] border-emerald-500 shadow-[0_0_20px_rgba(52,211,153,0.2)]";
+      case "Platinum": return "border-[4px] border-slate-400 shadow-[0_0_30px_rgba(255,255,255,0.4)] ring-1 ring-white/30";
+      case "Crimson": return "border-[3px] border-rose-700 shadow-[0_0_25px_rgba(225,29,72,0.3)]";
+      case "Void": return "border-[5px] border-zinc-900 shadow-[0_0_40px_rgba(0,0,0,1)] ring-1 ring-zinc-800";
+      case "ImperialGold": return "border-[5px] border-amber-500 shadow-[0_0_60px_rgba(245,158,11,0.5)] ring-2 ring-amber-300/40 bg-amber-900/10";
       default: return "border-white/10 shadow-2xl";
     }
   };
@@ -88,20 +90,92 @@ export default function HexaCardPreview({
     const bg = background || "Default";
     switch (bg) {
       case "Carbon": return "bg-[#0A0A0A] bg-[radial-gradient(#1a1a1a_1px,transparent_1px)] bg-[size:4px_4px]";
+      case "BrushedMetal": return "bg-zinc-800 bg-[linear-gradient(105deg,#27272a_0%,#52525b_25%,#27272a_50%,#52525b_75%,#27272a_100%)]";
       case "MonochromeGrid": return "bg-[#050505] bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:16px_16px]";
-      case "BrushedMetal": return "bg-zinc-800 bg-[linear-gradient(105deg,#27272a_0%,#52525b_25%,#27272a_50%,#52525b_75%,#27272a_100%)] before:absolute before:inset-0 before:bg-[linear-gradient(to_right,transparent,rgba(255,255,255,0.1),transparent)] before:pointer-events-none";
-      case "SilkBlur": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:to-transparent before:blur-[60px] before:opacity-50 before:pointer-events-none";
-      case "Nebula": return "bg-[#050505] bg-[radial-gradient(circle_at_50%_50%,rgba(76,29,149,0.15),transparent_50%),radial-gradient(circle_at_80%_20%,rgba(30,58,138,0.15),transparent_40%)]";
-      case "CrimsonVelvet": return "bg-[#1a0505] bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.1),transparent_70%)] before:absolute before:inset-0 before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] before:mix-blend-overlay before:pointer-events-none";
-      case "IceGlass": return "bg-[#0a0f15] before:absolute before:inset-0 before:backdrop-blur-[20px] before:bg-white/[0.02] before:border before:border-white/10 before:pointer-events-none";
-      case "BrandedHex": return "bg-[#080808] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+CjxwYXRoIGQ9Ik0zMCAwbDE1IDI2djI2TDMwIDYwIDE1IDUybDAtMjZ6IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjA1IiBzdHJva2Utd2lkdGg9IjAuNSIvPgo8L3N2Zz4=')] bg-[size:30px_30px]";
-      case "BlackCard": return "bg-[#030303] bg-[radial-gradient(ellipse_at_top,#1a1a1a,transparent_80%)]";
-      case "Stardust": return "bg-[#050508] bg-[radial-gradient(white_0.5px,transparent_0.5px)] bg-[size:20px_20px] opacity-90";
-      case "RoyalGold": return "bg-[#0f0a05] bg-[radial-gradient(circle_at_50%_50%,rgba(180,139,94,0.15),transparent_70%)] before:absolute before:inset-0 before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyIiBoZWlnaHQ9IjIiPgo8cmVjdCB3aWR0aD0iMiIgaGVpZ2h0PSIyIiBmaWxsPSIjYmI5OTVlIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] before:pointer-events-none";
-      case "MidnightMist": return "bg-gradient-to-b from-[#0a0a0a] via-[#1a1a1a] to-[#0a0a0a] before:absolute before:inset-0 before:bg-white/[0.02] before:blur-xl before:pointer-events-none";
-      case "DigitalFlow": return "bg-[#020202] bg-[linear-gradient(rgba(59,130,246,0.03)_1px,transparent_1px)] bg-[size:100%_4px]";
-      case "PrismFractal": return "bg-[#050505] before:absolute before:inset-0 before:bg-gradient-to-tr before:from-rose-500/5 before:via-azure-500/5 before:to-emerald-500/5 before:pointer-events-none";
+      case "Stardust": return "bg-[#050508] bg-[radial-gradient(white_0.5px,transparent_0.5px)] bg-[size:24px_24px]";
+      case "RoyalGold": return "bg-[#0f0a05] bg-[radial-gradient(circle_at_50%_50%,rgba(180,139,94,0.1),transparent_70%)]";
+      case "Nebula": return "bg-[#020205] bg-[radial-gradient(circle_at_20%_20%,rgba(76,29,149,0.1),transparent_50%),radial-gradient(circle_at_80%_80%,rgba(30,58,138,0.1),transparent_50%)]";
+      case "SilkBlur": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/5 before:to-transparent before:blur-[80px]";
+      case "DigitalFlow": return "bg-[#010101] bg-[linear-gradient(rgba(59,130,246,0.02)_1px,transparent_1px)] bg-[size:100%_2px]";
+      case "PrismFractal": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-tr before:from-rose-500/10 before:via-azure-500/10 before:to-emerald-500/10";
       default: return "bg-[#050505]";
+    }
+  };
+
+  const getEffectLayer = () => {
+    switch (effect) {
+      case "Glitch":
+        return (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
+            <motion.div animate={{ y: [-5, 5, -5], opacity: [0.1, 0.3, 0.1] }} transition={{ duration: 0.2, repeat: Infinity }} className="absolute inset-0 bg-white/5 mix-blend-overlay" />
+            <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px]" />
+          </div>
+        );
+      case "Petals":
+        return (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
+             {[...Array(6)].map((_, i) => (
+               <motion.div 
+                 key={i} 
+                 initial={{ y: -20, x: Math.random() * 300, opacity: 0 }}
+                 animate={{ y: 500, x: (Math.random() * 300) + 50, opacity: [0, 0.4, 0], rotate: 360 }}
+                 transition={{ duration: 4 + Math.random() * 4, repeat: Infinity, delay: i * 1.5 }}
+                 className="absolute w-2 h-2 bg-rose-200/40 rounded-full blur-[1px]"
+               />
+             ))}
+          </div>
+        );
+      case "Snow":
+        return (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
+             {[...Array(15)].map((_, i) => (
+               <motion.div 
+                 key={i} 
+                 initial={{ y: -10, x: Math.random() * 400, opacity: 0 }}
+                 animate={{ y: 600, opacity: [0, 0.6, 0] }}
+                 transition={{ duration: 3 + Math.random() * 3, repeat: Infinity, delay: i * 0.4 }}
+                 className="absolute w-0.5 h-0.5 bg-white/60 rounded-full"
+               />
+             ))}
+          </div>
+        );
+      case "Aethereal":
+        return <motion.div animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_0%,transparent_70%)] z-20" />;
+      case "Scanline":
+        return <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_2px,3px_100%] pointer-events-none z-20" />;
+      case "Interference":
+        return (
+          <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
+             <motion.div animate={{ x: [-100, 400] }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} className="w-20 h-full bg-white/5 blur-3xl -skew-x-12" />
+          </div>
+        );
+      case "Dust":
+        return (
+          <div className="absolute inset-0 pointer-events-none z-20">
+             {[...Array(20)].map((_, i) => (
+               <motion.div 
+                 key={i} 
+                 animate={{ 
+                   x: [Math.random() * 400, Math.random() * 400], 
+                   y: [Math.random() * 600, Math.random() * 600],
+                   opacity: [0, 0.3, 0] 
+                 }}
+                 transition={{ duration: 10 + Math.random() * 10, repeat: Infinity }}
+                 className="absolute w-1 h-1 bg-white/20 rounded-full blur-[2px]"
+               />
+             ))}
+          </div>
+        );
+      case "Aurora":
+        return <motion.div animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 5, repeat: Infinity }} className="absolute inset-0 bg-gradient-to-t from-emerald-500/10 via-azure-500/5 to-transparent mix-blend-screen z-20" />;
+      case "Singularity":
+        return (
+          <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden flex items-center justify-center">
+             <motion.div animate={{ scale: [1, 1.2, 1], rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="w-64 h-64 border border-white/5 rounded-full blur-xl" />
+             <motion.div animate={{ scale: [0.8, 1, 0.8], rotate: -360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="absolute w-48 h-48 border border-white/10 rounded-full blur-md" />
+          </div>
+        );
+      default: return null;
     }
   };
 
@@ -158,20 +232,11 @@ export default function HexaCardPreview({
           className={`absolute inset-0 overflow-hidden border ${getFrameStyle()} ${getBackgroundStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
-          {/* Effects Layer */}
-          {effect === "Aethereal" && (
-            <div className="absolute inset-0 pointer-events-none mix-blend-screen opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMCAwaDF2MUgwem0yIDyaDF2MUgyeiIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIwLjUiLz4KPC9zdmc+')] animate-[shimmer_5s_linear_infinite]" />
-          )}
-          {effect === "Glitch" && (
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-               <div className="absolute inset-0 opacity-10 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] animate-[scanline_8s_linear_infinite]" />
-            </div>
-          )}
+          {getEffectLayer()}
 
           {/* Main Card Content */}
           {isVertical ? (
             <div className="h-full p-8 md:p-12 flex flex-col items-center justify-between text-center relative overflow-hidden">
-               {/* Fixed Top Pane */}
                <div className={`w-full flex flex-col items-center z-10 ${getAlignClass(alignCompany)}`}>
                   <div className="w-16 h-16 md:w-20 md:h-20 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
                      {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={32} className="text-white/10" />}
@@ -179,7 +244,6 @@ export default function HexaCardPreview({
                   <p className={`tracking-[0.25em] uppercase text-white font-medium leading-relaxed mt-4 truncate w-full`} style={{ fontSize: `${getFieldScale('company', true) * 12}px` }}>{company || "CORPORATION"}</p>
                </div>
 
-               {/* Absolute Center Pane: Dead Center Guarantee */}
                <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-8 flex flex-col items-center transition-all duration-500 z-10`}>
                   <div className="space-y-4 md:space-y-6 w-full flex flex-col items-center">
                     {title && <p className={`tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', true) * 11}px` }}>{title}</p>}
@@ -191,7 +255,6 @@ export default function HexaCardPreview({
                   </div>
                </div>
 
-               {/* Fixed Bottom Pane */}
                <div className="w-full space-y-3 md:space-y-4 opacity-40 flex flex-col pb-2 items-center z-10">
                   {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={11} className="text-azure-400" /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.2em]">{phone}</span></div>}
                   {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={11} className="text-azure-400" /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span></div>}
@@ -199,7 +262,6 @@ export default function HexaCardPreview({
             </div>
           ) : (
             <div className="h-full p-8 md:p-12 flex flex-col justify-between relative text-center overflow-hidden">
-              {/* Header */}
               <header className={`w-full flex flex-row items-center gap-4 z-10 ${getAlignClass(alignCompany)}`}>
                  <div className="w-12 h-12 md:w-16 md:h-16 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
                     {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={24} className="text-white/10" />}
@@ -207,7 +269,6 @@ export default function HexaCardPreview({
                  <p className="tracking-[0.3em] uppercase text-white/80 font-medium leading-tight truncate" style={{ fontSize: `${getFieldScale('company', false) * 12}px` }}>{company || "CORPORATION"}</p>
               </header>
 
-              {/* Absolute Center Pane: Horizontal Name */}
               <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-12 flex flex-col items-center transition-all duration-500 z-10`}>
                 <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
                    {title && <p className={`tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', false) * 10}px` }}>{title}</p>}
@@ -218,13 +279,11 @@ export default function HexaCardPreview({
                 </div>
               </div>
 
-              {/* Footer Pane */}
               <footer className="w-full flex flex-col items-center z-10">
                 <div className="flex flex-col gap-2 opacity-40 w-full items-center">
                    {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest">{phone}</span></div>}
                    {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest uppercase truncate">{email}</span></div>}
                 </div>
-                <div className="absolute bottom-6 right-6 opacity-5"><div className="text-[10px] md:text-[12px] font-bold italic">STANDARD HXC</div></div>
               </footer>
             </div>
           )}
