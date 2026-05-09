@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
+import { sendAdminOrderNotification } from "@/lib/mail";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_mock", {
   apiVersion: "2026-04-22.dahlia" as any,
@@ -72,6 +73,19 @@ export async function POST(req: NextRequest) {
              }
           });
           console.log(`Automatically upgraded user ${existingUser.email} to black_member and granted exclusive assets.`);
+        }
+      }
+
+      console.log(`Successfully processed session: ${session.id}`);
+    } catch (dbError) {
+      console.error("Failed to save order to database:", dbError);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+  }
+
+  return NextResponse.json({ received: true });
+}
+ve assets.`);
         }
       }
 

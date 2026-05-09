@@ -16,6 +16,12 @@ export default function SettingsPage() {
 
   const [unlockedAssets, setUnlockedAssets] = useState(["Obsidian", "ASSOCIATE"]);
 
+  // Report Form State
+  const [reportReason, setReportReason] = useState("");
+  const [reportDetails, setReportDetails] = useState("");
+  const [isReporting, setIsReporting] = useState(false);
+  const [reportSuccess, setReportSuccess] = useState(false);
+
   const handleUnlock = (name: string, cost: number) => {
     if (rtBalance >= cost) {
       if (confirm(`${name} を ${cost} RT でアンロックしますか？`)) {
@@ -24,6 +30,33 @@ export default function SettingsPage() {
       }
     } else {
       alert("RTが不足しています。活動してポイントを蓄積してください。");
+    }
+  };
+
+  const handleReport = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reportReason) return;
+    setIsReporting(true);
+    try {
+      const res = await fetch("/api/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          targetUserId: session?.user?.id, // 自分自身の環境報告として送信
+          reason: reportReason,
+          details: reportDetails 
+        })
+      });
+      if (res.ok) {
+        setReportSuccess(true);
+        setReportReason("");
+        setReportDetails("");
+        setTimeout(() => setReportSuccess(false), 5000);
+      }
+    } catch (error) {
+      console.error("Report failed", error);
+    } finally {
+      setIsReporting(false);
     }
   };
 
@@ -87,6 +120,61 @@ export default function SettingsPage() {
              <button className="px-16 py-5 bg-white text-void text-[10px] tracking-[0.6em] uppercase font-bold hover:bg-azure-50 transition-all shadow-xl">
                Confirm Configuration
              </button>
+          </div>
+
+          {/* Support Section */}
+          <div className="pt-24 border-t border-white/5">
+            <h2 className="text-[10px] tracking-[0.3em] uppercase opacity-40 mb-8 flex items-center gap-2">
+              <Brain size={14} /> Support & Feedback / 不具合・要望
+            </h2>
+            
+            <form onSubmit={handleReport} className="space-y-6 max-w-xl">
+              <div className="space-y-2">
+                <label className="text-[8px] uppercase tracking-widest opacity-30">Category</label>
+                <select 
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  className="w-full bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest uppercase outline-none focus:border-azure-400 transition-all"
+                  required
+                >
+                  <option value="" className="bg-void">Select category...</option>
+                  <option value="BUG" className="bg-void">Bug Report / 不具合</option>
+                  <option value="REQUEST" className="bg-void">Feature Request / 要望</option>
+                  <option value="OTHER" className="bg-void">Other / その他</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[8px] uppercase tracking-widest opacity-30">Details</label>
+                <textarea 
+                  value={reportDetails}
+                  onChange={(e) => setReportDetails(e.target.value)}
+                  placeholder="Describe the situation..."
+                  className="w-full bg-white/[0.02] border border-white/10 p-4 h-32 text-[10px] tracking-widest outline-none focus:border-azure-400 transition-all"
+                />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={isReporting}
+                className="w-full py-4 border border-azure-400/30 text-azure-400 text-[9px] tracking-[0.4em] uppercase font-bold hover:bg-azure-400 hover:text-white transition-all disabled:opacity-20"
+              >
+                {isReporting ? "Transmitting..." : "Submit Observation"}
+              </button>
+
+              <AnimatePresence>
+                {reportSuccess && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="text-[9px] text-azure-400 tracking-widest text-center uppercase"
+                  >
+                    Report successfully logged. Thank you for your resonance.
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </form>
           </div>
         </div>
       </div>

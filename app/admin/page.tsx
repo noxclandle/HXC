@@ -60,7 +60,23 @@ export default function AdminDashboardPage() {
         {[
           { label: "ユーザー登録簿", path: "/admin/users", icon: <Shield size={18}/>, desc: "データベース管理 & 権限付与" },
           { label: "システム告知", path: "/admin/news", icon: <Activity size={18}/>, desc: "全ユーザー向け通知の発信" },
-          { label: "インシデント報告", path: "/admin/reports", icon: <ShieldAlert size={18}/>, desc: "ユーザーからの不具合・違反報告" },
+          { 
+            label: "インシデント報告", 
+            path: "/admin/reports", 
+            icon: (
+              <div className="relative">
+                <ShieldAlert size={18}/>
+                {reportCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                  </span>
+                )}
+              </div>
+            ), 
+            desc: "ユーザーからの不具合・違反報告",
+            alert: reportCount > 0
+          },
           { label: "アセット大典", path: "/admin/compendium", icon: <BookOpen size={18}/>, desc: "称号・フレーム等の獲得条件管理" },
           { label: "カード中央台帳", path: "/admin/ledger", icon: <Layers size={18}/>, desc: "物理カードの登録 & ペアリング" },
           { label: "発行・登録手順", path: "/admin/onboarding", icon: <ShieldCheck size={18}/>, desc: "新規ユーザー・カード発行プロトコル" },

@@ -55,7 +55,7 @@ export default function ConfigAdminPage() {
         <section className="p-10 border border-white/5 bg-white/[0.02] space-y-8">
            <div className="flex items-center gap-3 border-b border-white/5 pb-4">
               <Sparkles size={16} className="text-azure-400" />
-              <h2 className="text-[11px] tracking-[0.4em] uppercase font-bold text-white">Asset Price Configuration (CP)</h2>
+              <h2 className="text-[11px] tracking-[0.4em] uppercase font-bold text-white">Asset Price Configuration (RT)</h2>
            </div>
 
            <div className="grid grid-cols-1 gap-6">
@@ -72,7 +72,7 @@ export default function ConfigAdminPage() {
                         onChange={(e) => updatePrice(rarity, Number(e.target.value))}
                         className="bg-white/5 border border-white/10 p-3 w-48 text-right font-mono text-azure-400 outline-none focus:border-azure-500 transition-all"
                       />
-                      <span className="absolute right-[-40px] top-1/2 -translate-y-1/2 text-[9px] opacity-20 font-bold">CP</span>
+                      <span className="absolute right-[-40px] top-1/2 -translate-y-1/2 text-[9px] opacity-20 font-bold">RT</span>
                    </div>
                 </div>
               ))}
