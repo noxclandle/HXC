@@ -27,7 +27,7 @@ export default function PurchasePage() {
     {
       id: "standard" as TierId,
       name: "Standard",
-      price: "¥3,000",
+      price: "¥100",
       type: "Original Design",
       desc: "Hexa Relationのフィロソフィーを体現するオリジナルデザイン。マットな質感が、ビジネスにおける誠実さを象徴します。",
       options: [{ label: "Original Black", value: "black" }],
