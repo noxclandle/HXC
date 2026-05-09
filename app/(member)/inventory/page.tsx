@@ -24,10 +24,17 @@ const CATEGORIES = [
   { id: "frame", name: "Frames", icon: Shield, sub: "外枠" },
   { id: "background", name: "Backgrounds", icon: Palette, sub: "背景" },
   { id: "effect", name: "Effects", icon: Sparkles, sub: "エフェクト" },
-  { id: "title", name: "Titles", icon: Trophy, sub: "称号" },
+  { id: "title", name: "Titles / 称号", icon: Trophy, sub: "称号" },
   { id: "pointer", name: "Pointers", icon: MousePointer2, sub: "軌跡" },
   { id: "sound", name: "Sounds", icon: Music, sub: "音響" },
 ];
+
+// Rarity Pricing (RT)
+// Common: 0
+// Rare: 2,000
+// Epic: 5,000
+// Legendary: 10,000
+// Mythic: 25,000
 
 export default function InventoryPage() {
   const { data: session, status } = useSession();
@@ -55,62 +62,83 @@ export default function InventoryPage() {
   });
 
   const [assets, setAssets] = useState<Asset[]>([
-    // Frames
-    { id: "Obsidian", name: "Obsidian Frame", type: "frame", rarity: "common", description: "標準的な外枠。ビジネスの誠実さを表現する。", unlocked: true },
-    { id: "Gold", name: "Heritage Gold", type: "frame", rarity: "epic", description: "伝統を感じさせる落ち着いた黄金色。", cost: 5000, unlocked: false },
+    // --- Frames (10) ---
+    { id: "Obsidian", name: "Obsidian", type: "frame", rarity: "common", description: "標準的な黒檀の外枠。誠実さの象徴。", unlocked: true },
+    { id: "Silver", name: "Sterling Silver", type: "frame", rarity: "rare", description: "鈍い光沢を放つ銀の枠。", cost: 2000, unlocked: false },
+    { id: "Gold", name: "Heritage Gold", type: "frame", rarity: "epic", description: "格式高い黄金の細工枠。", cost: 5000, unlocked: false },
+    { id: "Sakura", name: "Sakura Aura", type: "frame", rarity: "rare", description: "淡い紅色の残響を纏う枠。", cost: 2000, unlocked: false },
+    { id: "Emerald", name: "Emerald Pulse", type: "frame", rarity: "rare", description: "生命力を感じさせる深緑の輝き。", cost: 2000, unlocked: false },
+    { id: "Platinum", name: "Platinum Edge", type: "frame", rarity: "epic", description: "精巧な装飾が施された白金の縁。", cost: 5000, unlocked: false },
     { id: "Dynamic", name: "Azure Pulse", type: "frame", rarity: "legendary", description: "知性を感じさせる蒼い脈動。", cost: 10000, unlocked: false },
-    { id: "Sakura", name: "Sakura Aura", type: "frame", rarity: "rare", description: "優雅なピンクの残響。親しみやすさを演出する。", cost: 3000, unlocked: false },
-    { id: "Emerald", name: "Emerald Pulse", type: "frame", rarity: "rare", description: "生命力溢れる緑の輝き。成長と調和の証。", cost: 3000, unlocked: false },
-    { id: "Platinum", name: "Platinum Edge", type: "frame", rarity: "epic", description: "精巧な装飾が施された銀の縁。洗練されたプロフェッショナルへ。", cost: 8000, unlocked: false },
-    { id: "ImperialGold", name: "Imperial Gold", type: "frame", rarity: "legendary", description: "Black Member限定。圧倒的な存在感を放つ極厚の黄金フレーム。", cost: 999999, unlocked: false },
+    { id: "Crimson", name: "Crimson Guard", type: "frame", rarity: "legendary", description: "情熱的な深紅の防壁。", cost: 10000, unlocked: false },
+    { id: "Void", name: "Void Shell", type: "frame", rarity: "mythic", description: "全ての光を吸収する深淵の枠。", cost: 25000, unlocked: false },
+    { id: "ImperialGold", name: "Imperial Gold", type: "frame", rarity: "mythic", description: "圧倒的な威厳。頂点の黄金。", cost: 25000, unlocked: false },
     
-    // Backgrounds
-    { id: "Default", name: "Solid Void", type: "background", rarity: "common", description: "標準の無地背景。情報の透過性を最大化する。", unlocked: true },
-    { id: "Carbon", name: "Carbon Fiber", type: "background", rarity: "rare", description: "強靭なカーボン調のテクスチャ。", cost: 2000, unlocked: false },
-    { id: "MonochromeGrid", name: "Monochrome Grid", type: "background", rarity: "epic", description: "計算された緻密なグリッド線。理知的な印象を与える。", cost: 4500, unlocked: false },
-    { id: "BrushedMetal", name: "Brushed Metal", type: "background", rarity: "rare", description: "鈍く光るヘアライン加工の金属質。", cost: 3500, unlocked: false },
-    { id: "Nebula", name: "Cosmic Nebula", type: "background", rarity: "legendary", description: "深い宇宙を思わせる青の階調。", cost: 9000, unlocked: false },
-    { id: "SilkBlur", name: "Silk Blur", type: "background", rarity: "legendary", description: "微かな光の拡散。シルクのような滑らかな空間を演出。", cost: 9000, unlocked: false },
-    { id: "Stardust", name: "Stardust", type: "background", rarity: "rare", description: "星屑のような微細な輝きを散りばめた漆黒。", cost: 3000, unlocked: false },
-    { id: "RoyalGold", name: "Royal Gold", type: "background", rarity: "epic", description: "微かな金粉が舞う、格式高い黒金の世界。", cost: 5000, unlocked: false },
-    { id: "MidnightMist", name: "Midnight Mist", type: "background", rarity: "legendary", description: "静寂な霧が立ち込める、深淵のグラデーション。", cost: 8500, unlocked: false },
-    { id: "DigitalFlow", name: "Digital Flow", type: "background", rarity: "epic", description: "情報が流動するサイバー空間のシグナル。", cost: 5500, unlocked: false },
-    { id: "PrismFractal", name: "Prism Fractal", type: "background", rarity: "rare", description: "屈折した光が七色に揺らめく、透過の極致。", cost: 3500, unlocked: false },
+    // --- Backgrounds (10) ---
+    { id: "Default", name: "Solid Void", type: "background", rarity: "common", description: "標準の漆黒背景。", unlocked: true },
+    { id: "Carbon", name: "Carbon Fiber", type: "background", rarity: "rare", description: "精密なカーボンテクスチャ。", cost: 2000, unlocked: false },
+    { id: "BrushedMetal", name: "Brushed Metal", type: "background", rarity: "rare", description: "ヘアライン加工の金属質。", cost: 2000, unlocked: false },
+    { id: "MonochromeGrid", name: "Monochrome Grid", type: "background", rarity: "epic", description: "緻密な設計グリッド。", cost: 5000, unlocked: false },
+    { id: "Stardust", name: "Stardust", type: "background", rarity: "rare", description: "微細な星屑の瞬き。", cost: 2000, unlocked: false },
+    { id: "RoyalGold", name: "Royal Gold Dust", type: "background", rarity: "epic", description: "金粉が舞う格式高い空間。", cost: 5000, unlocked: false },
+    { id: "Nebula", name: "Cosmic Nebula", type: "background", rarity: "legendary", description: "静かなる宇宙の階調。", cost: 10000, unlocked: false },
+    { id: "SilkBlur", name: "Silk Blur", type: "background", rarity: "legendary", description: "滑らかな光の拡散。", cost: 10000, unlocked: false },
+    { id: "DigitalFlow", name: "Digital Flow", type: "background", rarity: "epic", description: "情報の奔流。", cost: 5000, unlocked: false },
+    { id: "PrismFractal", name: "Prism Fractal", type: "background", rarity: "mythic", description: "七色に屈折する光の幾何学。", cost: 25000, unlocked: false },
 
-    // Effects
-    { id: "None", name: "Clean", type: "effect", rarity: "common", description: "追加効果なし。純粋な情報を提示する。", unlocked: true },
-    { id: "Aethereal", name: "Aethereal Diffusion", type: "effect", rarity: "epic", description: "微弱なノイズによる透過エフェクト。存在の境界を曖昧にする。", cost: 6000, unlocked: false },
-    { id: "Glitch", name: "Digital Glitch", type: "effect", rarity: "rare", description: "時折発生するグリッチノイズ。技術的な洗練を演出。", cost: 3000, unlocked: false },
-    { id: "Interference", name: "Signal Interference", type: "effect", rarity: "legendary", description: "波紋のようなシグナル干渉。静かな存在感を放つ。", cost: 8000, unlocked: false },
-    { id: "Petals", name: "Falling Petals", type: "effect", rarity: "rare", description: "静かに舞い散る花びら。余白の美を強調する。", cost: 3000, unlocked: false },
+    // --- Effects (10) ---
+    { id: "None", name: "Clean", type: "effect", rarity: "common", description: "追加効果なし。純粋な情報の提示。", unlocked: true },
+    { id: "Glitch", name: "Digital Glitch", type: "effect", rarity: "rare", description: "技術的な洗練を感じさせるノイズ。", cost: 2000, unlocked: false },
+    { id: "Petals", name: "Falling Petals", type: "effect", rarity: "rare", description: "静かに舞い散る花びら。", cost: 2000, unlocked: false },
+    { id: "Snow", name: "Digital Snow", type: "effect", rarity: "rare", description: "静寂を演出する微細な粒子。", cost: 2000, unlocked: false },
+    { id: "Aethereal", name: "Aethereal Diffusion", type: "effect", rarity: "epic", description: "境界を曖昧にするノイズ。", cost: 5000, unlocked: false },
+    { id: "Scanline", name: "CRT Scanline", type: "effect", rarity: "epic", description: "レトロフューチャーな走査線。", cost: 5000, unlocked: false },
+    { id: "Interference", name: "Signal Interference", type: "effect", rarity: "legendary", description: "静かな波紋の干渉。", cost: 10000, unlocked: false },
+    { id: "Dust", name: "Cosmic Dust", type: "effect", rarity: "legendary", description: "漂う宇宙の塵。", cost: 10000, unlocked: false },
+    { id: "Aurora", name: "Boreal Aurora", type: "effect", rarity: "mythic", description: "揺らめく極光の残響。", cost: 25000, unlocked: false },
+    { id: "Singularity", name: "Singularity", type: "effect", rarity: "mythic", description: "中心へと収束する時空の歪み。", cost: 25000, unlocked: false },
 
-    { id: "ASSOCIATE", name: "ASSOCIATE", type: "title", rarity: "common", description: "初期称号。ネットワークの一員である証。", unlocked: true },
-    { id: "Initiate", name: "Initiate", type: "title", rarity: "common", description: "アカウントを作成し、システムに認識された証。", unlocked: true },
-    { id: "Observer", name: "Observer", type: "title", rarity: "common", description: "観測者。世界を記録し始めた者の称号。", unlocked: true },
-    { id: "Collector", name: "Collector", type: "title", rarity: "common", description: "実績：10人との接続を記録した証。", unlocked: false },
-    { id: "Messenger", name: "Messenger", type: "title", rarity: "rare", description: "実績：20人との接続を記録した証。", unlocked: false },
-    { id: "Connector", name: "Connector", type: "title", rarity: "rare", description: "世界を繋ぐ者。広範なネットワークを持つ証。", unlocked: false },
-    { id: "Void Voyager", name: "Void Voyager", type: "title", rarity: "epic", description: "実績：50人との接続を記録した証。", unlocked: false },
-    { id: "Strategist", name: "Strategist", type: "title", rarity: "epic", description: "実績：100人の人脈をアーカイブした証。", unlocked: false },
-    { id: "Tech Lead", name: "Tech Lead", type: "title", rarity: "epic", description: "実績：10人の技術者と共鳴した証。", unlocked: false },
-    { id: "Headhunter", name: "Headhunter", type: "title", rarity: "legendary", description: "実績：5人の重役クラスと共鳴した証。", unlocked: false },
-    { id: "Gilded Soul", name: "Gilded Soul", type: "title", rarity: "legendary", description: "実績：50,000 RTを保有する富の象徴。", unlocked: false },
-    { id: "The Sovereign", name: "The Sovereign", type: "title", rarity: "mythic", description: "実績：30人の重役クラスと共鳴した証。王権の象徴。", unlocked: false },
-    { id: "Mastermind", name: "Mastermind", type: "title", rarity: "mythic", description: "至高実績：ネットワークの構造を解明した知性。", unlocked: false },
-    { id: "Architect", name: "Architect", type: "title", rarity: "mythic", description: "管理者級特権。アーキテクチャに干渉する権限。", unlocked: false },
-    { id: "Chief Officer", name: "Chief Officer", type: "title", rarity: "mythic", description: "至高実績：システムの運営に関与する権限。", unlocked: false },
-    { id: "APEX", name: "APEX", type: "title", rarity: "mythic", description: "Black Card保有者専用。頂点に立つ者の称号。", unlocked: false },
-    { id: "Fixer", name: "Fixer", type: "title", rarity: "mythic", description: "創造主。唯一無二の存在。", unlocked: false },
-
-    { id: "Pure White Hex", name: "Pure White Hex", type: "pointer", rarity: "common", description: "純白の鋭い軌跡。", unlocked: true },
-    { id: "Azure Trace", name: "Azure Trace", type: "pointer", rarity: "rare", description: "知的な蒼い軌跡。", unlocked: false },
+    // --- Pointers (10) ---
+    { id: "Pure White Hex", name: "Standard White", type: "pointer", rarity: "common", description: "標準的な白い軌跡。", unlocked: true },
+    { id: "Azure Trace", name: "Azure Trace", type: "pointer", rarity: "rare", description: "知的な蒼い軌跡。", cost: 2000, unlocked: false },
+    { id: "Emerald Trace", name: "Emerald Pulse", type: "pointer", rarity: "rare", description: "生命力ある緑の軌跡。", cost: 2000, unlocked: false },
+    { id: "Ruby Trace", name: "Ruby Flare", type: "pointer", rarity: "rare", description: "情熱的な紅の軌跡。", cost: 2000, unlocked: false },
     { id: "Gold Trace", name: "Golden Aura", type: "pointer", rarity: "epic", description: "格式高い黄金の軌跡。", cost: 5000, unlocked: false },
-    { id: "Emerald Trace", name: "Emerald Pulse", type: "pointer", rarity: "rare", description: "生命力ある緑の軌跡。", cost: 3000, unlocked: false },
-    { id: "Violet Trace", name: "Violet Resonance", type: "pointer", rarity: "epic", description: "神秘的な紫の軌跡。", cost: 4500, unlocked: false },
-    { id: "Crimson Trace", name: "Crimson Ember", type: "pointer", rarity: "legendary", description: "情熱的な真紅의 軌跡。", cost: 8000, unlocked: false },
-    { id: "resonance", name: "Pure Resonance", type: "sound", rarity: "epic", description: "反転時：空間を震わせる標準的な共鳴音。", unlocked: false },
-    { id: "silver", name: "Silver Resonance", type: "sound", rarity: "rare", description: "反転時：透明感のある銀の鈴の音。", unlocked: false },
-    { id: "void", name: "Deep Resonance", type: "sound", rarity: "mythic", description: "反転時：重厚で静かな低音。", unlocked: false },
+    { id: "Violet Trace", name: "Violet Resonance", type: "pointer", rarity: "epic", description: "神秘的な紫の軌跡。", cost: 5000, unlocked: false },
+    { id: "Crimson Trace", name: "Crimson Ember", type: "pointer", rarity: "legendary", description: "消えない残り火の軌跡。", cost: 10000, unlocked: false },
+    { id: "Shadow Trace", name: "Ink Shadow", type: "pointer", rarity: "legendary", description: "空間を塗りつぶす墨の軌跡。", cost: 10000, unlocked: false },
+    { id: "Prism Trace", name: "Light Refraction", type: "pointer", rarity: "mythic", description: "虹色に輝く光の軌跡。", cost: 25000, unlocked: false },
+    { id: "Void Trace", name: "Reality Tear", type: "pointer", rarity: "mythic", description: "空間を切り裂く闇の軌跡。", cost: 25000, unlocked: false },
+
+    // --- Sounds (10) ---
+    { id: "resonance", name: "Resonance", type: "sound", rarity: "common", description: "標準的な共鳴音。", unlocked: true },
+    { id: "click", name: "Mechanical", type: "sound", rarity: "rare", description: "精密な機械のクリック音。", cost: 2000, unlocked: false },
+    { id: "wind", name: "Whisper", type: "sound", rarity: "rare", description: "微かな風の囁き。", cost: 2000, unlocked: false },
+    { id: "water", name: "Droplet", type: "sound", rarity: "rare", description: "静かな水滴の音。", cost: 2000, unlocked: false },
+    { id: "silver", name: "Silver Bell", type: "sound", rarity: "epic", description: "透明感のある銀の鈴。", cost: 5000, unlocked: false },
+    { id: "crystal", name: "Crystal Chord", type: "sound", rarity: "epic", description: "水晶が奏でる和音。", cost: 5000, unlocked: false },
+    { id: "deep", name: "Deep Impact", type: "sound", rarity: "legendary", description: "腹に響く重厚な低音。", cost: 10000, unlocked: false },
+    { id: "heaven", name: "Angelic Choir", type: "sound", rarity: "legendary", description: "天界の歌声の一節。", cost: 10000, unlocked: false },
+    { id: "void", name: "Deep Resonance", type: "sound", rarity: "mythic", description: "深淵からの呼び声。", cost: 25000, unlocked: false },
+    { id: "omega", name: "Eternal Chord", type: "sound", rarity: "mythic", description: "世界の終焉と始まりの音。", cost: 25000, unlocked: false },
+
+    // --- Titles (Existing) ---
+    { id: "ASSOCIATE", name: "ASSOCIATE", type: "title", rarity: "common", description: "初期称号。", unlocked: true },
+    { id: "Initiate", name: "Initiate", type: "title", rarity: "common", description: "アカウント作成の証。", unlocked: true },
+    { id: "Observer", name: "Observer", type: "title", rarity: "common", description: "世界の観測者。", unlocked: true },
+    { id: "Collector", name: "Collector", type: "title", rarity: "rare", description: "10人との共鳴。", cost: 2000, unlocked: false },
+    { id: "Messenger", name: "Messenger", type: "title", rarity: "rare", description: "20人との共鳴。", cost: 2000, unlocked: false },
+    { id: "Connector", name: "Connector", type: "title", rarity: "rare", description: "世界を繋ぐ者。", cost: 2000, unlocked: false },
+    { id: "Void Voyager", name: "Void Voyager", type: "title", rarity: "epic", description: "50人との共鳴。", cost: 5000, unlocked: false },
+    { id: "Strategist", name: "Strategist", type: "title", rarity: "epic", description: "100人の人脈。", cost: 5000, unlocked: false },
+    { id: "Tech Lead", name: "Tech Lead", type: "title", rarity: "epic", description: "技術者との深い絆。", cost: 5000, unlocked: false },
+    { id: "Headhunter", name: "Headhunter", type: "title", rarity: "legendary", description: "重役層との共鳴。", cost: 10000, unlocked: false },
+    { id: "Gilded Soul", name: "Gilded Soul", type: "title", rarity: "legendary", description: "富の象徴。", cost: 10000, unlocked: false },
+    { id: "The Sovereign", name: "The Sovereign", type: "title", rarity: "mythic", description: "王権の象徴。", cost: 25000, unlocked: false },
+    { id: "Mastermind", name: "Mastermind", type: "title", rarity: "mythic", description: "運営責任者。", cost: 25000, unlocked: false },
+    { id: "Manager", name: "Manager", type: "title", rarity: "mythic", description: "実務管理者。", cost: 25000, unlocked: false },
+    { id: "APEX", name: "APEX", type: "title", rarity: "mythic", description: "頂点のアイデンティティ。", cost: 25000, unlocked: false },
+    { id: "Fixer", name: "Fixer", type: "title", rarity: "mythic", description: "創造主。", cost: 25000, unlocked: false },
   ]);
 
   const getRarityStyle = (rarity: Asset["rarity"]) => {
@@ -135,7 +163,17 @@ export default function InventoryPage() {
           setProfile(data);
           setOwnedAssets(data.owned_assets || []);
           setUnlockedTitles(data.titles || ["ASSOCIATE"]);
-          setAssetPrices(data.asset_prices || {});
+          
+          // Apply pricing structure if not provided by server
+          const pricing = data.asset_prices || {
+            common: 0,
+            rare: 2000,
+            epic: 5000,
+            legendary: 10000,
+            mythic: 25000
+          };
+          setAssetPrices(pricing);
+
           if (data.equipped) setEquipped((prev: any) => ({ ...prev, ...data.equipped }));
         }
       } catch (err) { console.error(err); }
@@ -181,7 +219,7 @@ export default function InventoryPage() {
           setRTBalance(data.rt_balance);
           setOwnedAssets(data.owned_assets);
           
-          // 即座に装備して保存
+          // 即座に装備
           const newEquipped = { ...equipped, [activeCategory as keyof typeof equipped]: asset.id };
           setEquipped(newEquipped);
           handleCommit(newEquipped);
@@ -228,7 +266,7 @@ export default function InventoryPage() {
           <p className="text-[9px] lg:text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold hidden lg:block">宝物庫・アセット管理</p>
         </div>
         <div className="text-right">
-           <p className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60">Relation Token</p>
+           <p className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60">Relation Token Balance</p>
            <p className="text-xl lg:text-3xl font-extralight tracking-[0.2em] text-white">{Number(rtBalance).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
         </div>
       </header>
@@ -339,7 +377,7 @@ export default function InventoryPage() {
                               {isUnlocked ? <Check size={14} /> : <Lock size={14} />}
                            </div>
                            <div>
-                              <div className="flex flex-col lg:flex-row lg:items-center gap-1 lg:gap-3 mb-1">
+                              <div className="flex flex-col lg:items-start gap-1 mb-1">
                                  <h3 className="text-[10px] lg:text-[11px] tracking-[0.4em] uppercase font-bold">{asset.name}</h3>
                                  <span className={`text-[6px] lg:text-[7px] w-fit px-2 py-0.5 border uppercase tracking-widest font-bold ${getRarityStyle(asset.rarity)}`}>{asset.rarity}</span>
                               </div>
