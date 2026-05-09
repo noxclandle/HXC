@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       const price = session.amount_total || 0;
 
       // 1. Create the order
-      await prisma.order.create({
+      const newOrder = await prisma.order.create({
         data: {
           stripe_session_id: session.id,
           tier,
@@ -50,6 +50,20 @@ export async function POST(req: NextRequest) {
           status: "paid",
         },
       });
+
+      // 1.5 Notify admin via email
+      try {
+        await sendAdminOrderNotification({
+          id: newOrder.id,
+          customerName,
+          customerEmail,
+          tier,
+          variant,
+          price: price / 1,
+        });
+      } catch (mailError) {
+        console.error("Failed to send admin mail:", mailError);
+      }
 
       // 2. If it's an Apex Black tier, try to automatically grant black_member role
       if (tier === "Apex Black" && customerEmail) {
@@ -73,19 +87,6 @@ export async function POST(req: NextRequest) {
              }
           });
           console.log(`Automatically upgraded user ${existingUser.email} to black_member and granted exclusive assets.`);
-        }
-      }
-
-      console.log(`Successfully processed session: ${session.id}`);
-    } catch (dbError) {
-      console.error("Failed to save order to database:", dbError);
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
-    }
-  }
-
-  return NextResponse.json({ received: true });
-}
-ve assets.`);
         }
       }
 
