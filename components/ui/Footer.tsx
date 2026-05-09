@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Shield, FileText } from "lucide-react";
+import { Shield, FileText, Scale } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();

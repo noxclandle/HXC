@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Database, ShieldAlert, Newspaper, Users, BookOpen } from "lucide-react";
 import AdminNotificationBadge from "@/components/admin/AdminNotificationBadge";
+import OrderNotificationBadge from "@/components/admin/OrderNotificationBadge";
 
 export const metadata: Metadata = {
   title: "Admin | Hexa System",
