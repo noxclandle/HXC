@@ -29,8 +29,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid tier" }, { status: 400 });
     }
 
-    // Base URL for redirects
-    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+    // Base URL for redirects - dynamically detect from request
+    const host = req.headers.get("host") || "localhost:3000";
+    const protocol = host.includes("localhost") ? "http" : "https";
+    const baseUrl = `${protocol}://${host}`;
 
     // もし本番/テスト用の正しいAPIキーが設定されていない場合は、Stripe通信をバイパスして成功画面へ
     if (isMock) {
