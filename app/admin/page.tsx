@@ -8,12 +8,19 @@ import Link from "next/link";
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [reportCount, setReportCount] = useState(0);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const res = await fetch("/api/admin/stats");
         if (res.ok) setStats(await res.json());
+
+        const repRes = await fetch("/api/admin/report/count");
+        if (repRes.ok) {
+           const rData = await repRes.json();
+           setReportCount(rData.count);
+        }
       } catch (e) { console.error(e); }
       finally { setLoading(false); }
     };
