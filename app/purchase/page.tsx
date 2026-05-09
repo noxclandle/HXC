@@ -27,7 +27,7 @@ export default function PurchasePage() {
     {
       id: "standard" as TierId,
       name: "Standard",
-      price: "¥5,000",
+      price: "¥3,000",
       type: "Original Design",
       desc: "Hexa Relationのフィロソフィーを体現するオリジナルデザイン。マットな質感が、ビジネスにおける誠実さを象徴します。",
       options: [{ label: "Original Black", value: "black" }],
@@ -39,7 +39,7 @@ export default function PurchasePage() {
     {
       id: "executive" as TierId,
       name: "Executive",
-      price: "¥30,000",
+      price: "¥10,000",
       type: "Metallic Series",
       desc: "卓越した存在感を示すメタリック加工。伝統的な価値観と最新技術が融合した、エグゼクティブのための洗練された選択。",
       options: [
@@ -284,11 +284,11 @@ export default function PurchasePage() {
             >
               <div className="text-center md:text-left space-y-1">
                 <span className="text-[9px] uppercase tracking-[0.4em] text-white/30 block">
-                  {confirmStep === 0 ? "Confirm Selection" : confirmStep === 1 ? "Deepen Intent" : "Authorize Financiality"}
+                  Finalize Selection
                 </span>
                 <div className="flex items-center gap-4">
                   <span className="text-xl font-extralight tracking-[0.2em] text-white uppercase">
-                    {confirmStep === 0 ? `${selectedTierData?.name} Edition` : confirmStep === 1 ? "Permeate Reality" : "Final Authorization"}
+                    {selectedTierData?.name} Edition
                   </span>
                   <div className="h-4 w-[1px] bg-white/10 hidden md:block" />
                   <span className="text-lg font-light text-white/60 italic">{selectedTierData?.price}</span>
@@ -296,15 +296,12 @@ export default function PurchasePage() {
               </div>
               
               <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-                {confirmStep > 0 && (
-                  <button onClick={() => setConfirmStep(0)} className="px-6 py-4 border border-white/10 text-[9px] uppercase tracking-widest hover:bg-white/5">Cancel</button>
-                )}
                 <button 
                   onClick={handleCheckout}
                   disabled={loading}
                   className="w-full md:w-auto px-10 py-4 bg-white text-black hover:bg-[#d0d0d0] transition-all duration-500 font-bold tracking-[0.3em] text-[10px] uppercase flex items-center justify-center gap-4 group disabled:opacity-50 disabled:cursor-wait"
                 >
-                  {loading ? "Redirecting..." : confirmStep === 0 ? "Purchase Issuance" : confirmStep === 1 ? "Authorize Intent" : "Confirm Payment"}
+                  {loading ? "Redirecting..." : "Purchase Issuance"}
                   {!loading && <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />}
                 </button>
               </div>
@@ -340,14 +337,6 @@ export default function PurchasePage() {
         @keyframes infinite-scroll {
           from { transform: translateX(0); }
           to { transform: translateX(-50%); }
-        }
-        .animate-infinite-scroll {
-          animation: infinite-scroll 40s linear infinite;
-        }
-      `}</style>
-    </div>
-  );
-}   to { transform: translateX(-50%); }
         }
         .animate-infinite-scroll {
           animation: infinite-scroll 40s linear infinite;
