@@ -1,71 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { executeRTTransaction } from "@/lib/rt/engine";
-
-import { checkAndAwardTitles } from "@/lib/game/titles";
 
 /**
- * 相手の名刺をLibraryに保存するAPI
+ * 問い合わせの送信
  */
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const { name, email, subject, message } = await req.json();
+
+    if (!name || !email || !message) {
+      return NextResponse.json({ error: "Required fields missing" }, { status: 400 });
     }
 
-    const data = await req.json();
-    const { name, handle, email, phone, address, notes, role, coord_x = 0, coord_y = 0 } = data; // roleはOCRで取得した役職
-
-    // 肩書きによるRTの重み付け判定 (新バランス)
-    const isHighValue = /社長|代表|CEO|役員|Director|President/i.test(role || name || "");
-    const rtBonus = isHighValue ? 100 : 20;
-
-    // AIによるタグの自動生成
-    const ai_tags = [];
-    if (isHighValue) ai_tags.push("High-Value");
-    if (/エンジニア|開発|Tech/i.test(notes || role || "")) ai_tags.push("Technical");
-    if (/営業|Sales/i.test(notes || role || "")) ai_tags.push("Sales");
-    if (notes && notes.length > 0) ai_tags.push("Analyzed");
-
-    // ...
-
-    const contact = await prisma.contact.create({
+    const inquiry = await prisma.inquiry.create({
       data: {
-        owner_id: session.user.id,
         name,
-        handle_name: handle,
         email,
-        phone,
-        address,
-        notes: role || notes,
-        ai_tags, // 追加
-        coord_x,
-        coord_y,
+        subject: subject || "No Subject",
+        message,
+        status: "pending",
       },
     });
 
-    // RTの付与を実行
-    await executeRTTransaction(
-      session.user.id,
-      rtBonus,
-      "earn",
-      `Met a ${isHighValue ? "High-Value Identity" : "Soul"}: ${name}`
-    );
+    // TODO: 管理者に通知（Discord/Email等）を送るロジックをここに追加可能
 
-    // 称号のチェック
-    const newlyUnlocked = await checkAndAwardTitles(session.user.id);
-
-    return NextResponse.json({ 
-      success: true, 
-      contact,
-      newlyUnlocked // フロントエンドでエフェクトを表示するために返す
-    });
-  } catch (error: any) {
-// ...
-    console.error("Failed to save contact:", error);
-    return NextResponse.json({ error: "Failed to archive resonance." }, { status: 500 });
+    return NextResponse.json({ success: true, id: inquiry.id });
+  } catch (error) {
+    console.error("Inquiry Submission Error:", error);
+    return NextResponse.json({ error: "Failed to send inquiry" }, { status: 500 });
   }
 }

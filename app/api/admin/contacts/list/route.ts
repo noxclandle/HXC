@@ -1,0 +1,24 @@
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth/next";
+import { authOptions, ADMIN_ROLES } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
+
+export async function GET() {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !ADMIN_ROLES.includes(session.user.role)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const inquiries = await prisma.inquiry.findMany({
+      orderBy: { created_at: "desc" }
+    });
+
+    return NextResponse.json(inquiries);
+  } catch (error) {
+    console.error("Inquiry List Error:", error);
+    return NextResponse.json({ error: "Failed to fetch inquiries" }, { status: 500 });
+  }
+}
