@@ -35,8 +35,30 @@ export async function POST(req: NextRequest) {
 
     // もし本番/テスト用の正しいAPIキーが設定されていない場合は、Stripe通信をバイパスして成功画面へ
     if (isMock) {
-      console.log("Mocking Stripe Checkout. Redirecting to success page.");
-      return NextResponse.json({ url: `${baseUrl}/purchase/success?session_id=mock_session_${Date.now()}` });
+      console.log("Mocking Stripe Checkout. Creating record and redirecting.");
+      const mockSessionId = `mock_session_${Date.now()}`;
+      
+      // テスト用にDBに注文レコードを作成
+      await prisma.order.create({
+        data: {
+          stripe_session_id: mockSessionId,
+          tier: tier,
+          variant: variant || "Original",
+          price: numericPrice,
+          customer_email: "test@example.com",
+          customer_name: "テストユーザー",
+          shipping_address: {
+            postal_code: "150-0001",
+            state: "東京都",
+            city: "渋谷区",
+            line1: "神宮前1-2-3",
+            line2: "ヘキサビル 6F"
+          } as any,
+          status: "paid",
+        },
+      });
+
+      return NextResponse.json({ url: `${baseUrl}/purchase/success?session_id=${mockSessionId}` });
     }
 
     const session = await stripe.checkout.sessions.create({

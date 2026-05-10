@@ -190,8 +190,16 @@ export default function LedgerPage() {
                      {order.status === 'paid' ? '支払い済み' : order.status === 'shipped' ? '発送済み' : '完了'}
                    </span>
                 </div>
-                <div className="text-[9px] opacity-40 truncate pr-4" title={JSON.stringify(order.shipping_address)}>
-                   {order.customer_email}
+                <div className="flex flex-col gap-1 pr-4">
+                   <div className="flex items-center gap-2">
+                     <span className="text-[10px] text-white/80">{order.customer_email}</span>
+                   </div>
+                   {order.shipping_address && (
+                     <div className="text-[8px] opacity-40 leading-relaxed font-sans mt-1">
+                       <span className="mr-2">〒{(order.shipping_address as any).postal_code}</span>
+                       <span>{(order.shipping_address as any).state}{(order.shipping_address as any).city}{(order.shipping_address as any).line1}{(order.shipping_address as any).line2}</span>
+                     </div>
+                   )}
                 </div>
                 <div className="flex justify-end gap-2">
                    {order.status === 'paid' && (
