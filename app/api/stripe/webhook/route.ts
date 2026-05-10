@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { sendAdminOrderNotification } from "@/lib/mail";
+import { sendDiscordNotification } from "@/lib/discord";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_mock", {
   apiVersion: "2026-04-22.dahlia" as any,
@@ -61,6 +62,9 @@ export async function POST(req: NextRequest) {
           variant,
           price: price / 1,
         });
+        
+        // Discord Notification
+        await sendDiscordNotification(`【HXC監視局】新規注文を検知。プラン: ${tier}, バリアント: ${variant}, 顧客: ${customerName}`);
       } catch (mailError) {
         console.error("Failed to send admin mail:", mailError);
       }

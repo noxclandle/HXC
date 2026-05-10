@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 /**
  * 【管理者限定】カード台帳の一覧を取得する
  */
