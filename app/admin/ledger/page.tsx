@@ -145,7 +145,7 @@ export default function LedgerPage() {
       </header>
 
       {/* Orders Section */}
-      <section className="mb-20">
+      <section id="orders" className="mb-20">
         <div className="flex items-center gap-4 mb-8">
           <Package className="text-azure-400 opacity-60" size={18} />
           <h2 className="text-[11px] tracking-[0.5em] uppercase font-bold">Pending Orders (未発送の注文)</h2>

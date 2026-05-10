@@ -1,16 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    const allowedRoles = ["mastermind", "chief_officer", "architect"];
     
-    if (!session?.user?.id || !allowedRoles.includes(session.user.role)) {
+    if (!session?.user?.id || !ADMIN_ROLES.includes(session.user.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
