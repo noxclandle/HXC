@@ -27,6 +27,7 @@ export default function AdminLayout({
           <div className="flex gap-8 text-[9px] uppercase tracking-[0.2em] font-bold">
              <Link href="/admin/users" className="opacity-60 hover:text-azure-400 hover:opacity-100 transition-colors flex items-center gap-2"><Users size={12}/> ユーザー</Link>
              <Link href="/admin/news" className="opacity-60 hover:text-azure-400 hover:opacity-100 transition-colors flex items-center gap-2"><Newspaper size={12}/> お知らせ配信</Link>
+             <Link href="/admin/contacts" className="opacity-60 hover:text-azure-400 hover:opacity-100 transition-colors flex items-center gap-2"><MessageSquare size={12}/> 問い合わせ管理</Link>
              <OrderNotificationBadge />
              <AdminNotificationBadge />
           </div>

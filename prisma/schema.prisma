@@ -167,6 +167,20 @@ model Announcement {
   @@map("announcements")
 }
 
+model Inquiry {
+  id         String   @id @default(uuid()) @db.Uuid
+  name       String
+  email      String
+  subject    String?
+  message    String
+  status     String   @default("pending") // pending, replied, closed
+  replies    Json?    // Array of { text: string, sender: string, created_at: string }
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("inquiries")
+}
+
 model Order {
   id                String   @id @default(uuid()) @db.Uuid
   stripe_session_id String?  @unique
