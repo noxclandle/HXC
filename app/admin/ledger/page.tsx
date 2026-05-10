@@ -99,7 +99,10 @@ export default function LedgerPage() {
 
       reader.addEventListener("reading", ({ serialNumber }: any) => {
         const formattedUid = serialNumber.toUpperCase();
-        const autoSerial = `HXRL002026${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+        
+        // 既存の枚数+1から連番を生成 (例: 002026000001)
+        const nextNumber = (cards.length + 1).toString().padStart(6, '0');
+        const autoSerial = `002026${nextNumber}`;
         
         setNewCard(prev => ({
           ...prev,

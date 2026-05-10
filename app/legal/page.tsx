@@ -6,10 +6,10 @@ import Link from "next/link";
 
 export default function LegalPage() {
   const sections = [
-    { title: "販売業者", content: "Hexa Relation (※個人の場合は氏名)" },
-    { title: "代表責任者", content: "(※氏名を記載)" },
-    { title: "所在地", content: "(※住所を記載。必要に応じて開示請求に対応する旨を記載)" },
-    { title: "電話番号", content: "(※電話番号を記載)" },
+    { title: "販売業者", content: "Hexa Relation" },
+    { title: "代表責任者", content: "請求により遅滞なく開示いたします" },
+    { title: "所在地", content: "請求により遅滞なく開示いたします" },
+    { title: "電話番号", content: "請求により遅滞なく開示いたします" },
     { title: "メールアドレス", content: "support@hexa-relation.com" },
     { title: "販売価格", content: "各商品ページに記載の金額（税込）" },
     { title: "商品代金以外の必要料金", content: "配送料（日本国内一律無料 または ○○円）、決済手数料" },
