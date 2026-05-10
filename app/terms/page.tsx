@@ -1,73 +1,62 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 
 export default function TermsPage() {
+  const sections = [
+    {
+      title: "第1条（適用）",
+      content: "本規約は、Hexa Relation（以下「当組織」）が提供するサービス（以下「本サービス」）の利用条件を定めるものです。利用者は本規約に従って本サービスを利用するものとします。"
+    },
+    {
+      title: "第2条（利用登録）",
+      content: "本サービスの利用には、当組織が指定する方法による登録が必要です。登録にあたっては、真実かつ正確な情報を提供する必要があります。"
+    },
+    {
+      title: "第3条（物理カードの取り扱い）",
+      content: "本サービスに関連して発行される物理カードは、登録された利用者本人のみが使用できるものとします。カードの紛失、盗難による損害について当組織は一切の責任を負いません。"
+    },
+    {
+      title: "第4条（禁止事項）",
+      content: "利用者は、本サービスの利用にあたり、法令または公序良俗に違反する行為、本サービスの運営を妨害する行為、他者へのなりすまし行為等を行ってはなりません。"
+    },
+    {
+      title: "第5条（サービスの停止・変更）",
+      content: "当組織は、保守作業、システム障害、その他不可抗力により、利用者に事前通知することなく本サービスの提供を停止または中断することができるものとします。"
+    },
+    {
+      title: "第6条（免責事項）",
+      content: "当組織は、本サービスに起因して利用者に生じた損害について、当組織の故意または重過失による場合を除き、一切の責任を負いません。"
+    }
+  ];
+
   return (
-    <main className="min-h-screen pt-32 pb-24 px-6 flex flex-col items-center">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="max-w-3xl w-full"
-      >
-        <h1 className="text-3xl md:text-4xl tracking-[0.4em] uppercase font-light mb-16 text-center">
-          Terms of Service
-          <span className="block text-[10px] tracking-[0.2em] opacity-40 mt-4">利用規約</span>
+    <div className="max-w-4xl mx-auto pt-32 px-6 pb-24 text-moonlight min-h-screen">
+      <header className="mb-20">
+        <Link href="/" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity mb-8">
+          <ArrowLeft size={12} /> Back to Gateway
+        </Link>
+        <h1 className="text-2xl tracking-[0.5em] uppercase font-light mb-2 flex items-center gap-4">
+          <ShieldCheck className="text-azure-400 opacity-50" size={24} /> Terms of Service
         </h1>
+        <p className="text-[10px] tracking-widest text-azure-400 opacity-40 uppercase font-bold italic">利用規約</p>
+      </header>
 
-        <div className="space-y-16 text-xs md:text-sm tracking-widest leading-loose opacity-70">
-          <section>
-            <h2 className="text-lg tracking-[0.3em] uppercase mb-6 border-b border-white/10 pb-4 font-light text-moonlight">
-              1. Scope / 適用範囲
-            </h2>
-            <p className="mb-4">
-              本規約は、Hexa Relation（以下「当方」）が提供するHexa Cardおよび関連サービス（以下「本サービス」）の利用条件を定めるものです。
-              本サービスをご利用になる方（以下「ユーザー」）は、本規約に同意の上、利用するものとします。
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-lg tracking-[0.3em] uppercase mb-6 border-b border-white/10 pb-4 font-light text-moonlight">
-              2. Registration / アカウント管理
-            </h2>
-            <p className="mb-4">
-              ユーザーは、真実かつ正確な情報を用いてアカウント登録を行うものとします。
-              また、物理的なデバイス（Hexa Card）およびデジタルアカウントの管理責任はユーザー自身にあり、第三者への譲渡、貸与を禁じます。
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-lg tracking-[0.3em] uppercase mb-6 border-b border-white/10 pb-4 font-light text-moonlight">
-              3. Prohibited Acts / 禁止事項
-            </h2>
-            <ul className="list-disc pl-6 space-y-2">
-              <li>法令または公序良俗に違反する行為</li>
-              <li>本サービスのシステムへの不正アクセス</li>
-              <li>第三者または当方の知的財産権、プライバシーを侵害する行為</li>
-              <li>本サービスの運営を妨害するおそれのある行為</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-lg tracking-[0.3em] uppercase mb-6 border-b border-white/10 pb-4 font-light text-moonlight">
-              4. Disclaimer / 免責事項
-            </h2>
-            <p className="mb-4">
-              当方は、本サービスに事実上または法律上の瑕疵（安全性、信頼性、正確性、有効性、セキュリティなどに関する欠陥、エラーやバグ、権利侵害などを含みます）がないことを保証しておりません。
-            </p>
-            <p>
-              本サービスに起因してユーザーに生じたあらゆる損害について、当方は一切の責任を負いません。
-            </p>
-          </section>
-        </div>
-
-        <div className="mt-24 text-center">
-          <p className="text-[10px] tracking-[0.5em] uppercase opacity-30">
-            Last Updated: 2026.05.01 / 最終更新日
-          </p>
-        </div>
-      </motion.div>
-    </main>
+      <div className="space-y-12 border-t border-white/5 pt-12">
+        {sections.map((s, i) => (
+          <motion.div 
+            key={i}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05 }}
+          >
+            <h3 className="text-[10px] tracking-[0.2em] uppercase font-bold opacity-40 mb-4">{s.title}</h3>
+            <p className="text-sm tracking-widest leading-loose font-light opacity-80">{s.content}</p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
   );
 }
