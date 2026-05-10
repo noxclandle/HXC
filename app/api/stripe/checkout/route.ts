@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
     // 厳格な価格マッピング
     const PRICE_MAP: Record<string, number> = {
-      "Standard": 100,
+      "Standard": 3000,
       "Executive": 10000,
       "Apex": 1000000
     };
