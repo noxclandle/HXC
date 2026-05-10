@@ -28,17 +28,17 @@ export default function AdminNotificationBadge() {
 
   if (count === 0) {
     return (
-      <Link href="/admin/reports" className="hover:text-azure-400 hover:opacity-100 transition-colors flex items-center gap-2">
+      <Link href="/admin/reports" className="opacity-60 hover:text-azure-400 hover:opacity-100 transition-colors flex items-center gap-2">
         <ShieldAlert size={12}/> 通報・違反
       </Link>
     );
   }
 
   return (
-    <Link href="/admin/reports" className="text-rose-500 hover:text-rose-400 transition-colors flex items-center gap-2 font-bold relative group">
+    <Link href="/admin/reports" className="text-rose-500 hover:text-rose-400 transition-colors flex items-center gap-2 font-bold relative group cursor-pointer" title={`${count} 件の未処理の通報があります`}>
       <ShieldAlert size={12} className="animate-pulse" /> 
       通報・違反
-      <span className="absolute -top-1 -right-3 flex h-3 w-3">
+      <span className="absolute -top-1 -right-3 flex h-3 w-3 pointer-events-none">
         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
         <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500 text-[6px] text-white items-center justify-center font-mono">
           {count > 9 ? "!" : count}

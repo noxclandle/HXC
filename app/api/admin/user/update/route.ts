@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 
 /**
  * 【チーフオフィサー限定】他ユーザーの情報を強制更新するAPI
@@ -9,9 +9,8 @@ import { authOptions } from "@/lib/auth";
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    const allowedRoles = ["fixer", "mastermind", "manager"];
     
-    if (!session?.user?.id || !allowedRoles.includes((session.user as any).role)) {
+    if (!session?.user?.id || !ADMIN_ROLES.includes(session.user.role)) {
       return NextResponse.json({ error: "Forbidden: Administrative authority required." }, { status: 403 });
     }
 
@@ -25,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     // 更新対象がFixer本人の場合、管理者といえど変更を拒否
     const targetUser = await prisma.user.findUnique({ where: { id: userId } });
-    if (targetUser?.role === "fixer" && (session.user as any).role !== "fixer") {
+    if (targetUser?.role === "fixer" && session.user.role !== "fixer") {
        return NextResponse.json({ error: "Forbidden: You cannot modify the Fixer soul record." }, { status: 403 });
     }
 

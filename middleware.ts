@@ -1,5 +1,6 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import { ADMIN_ROLES } from "@/lib/auth";
 
 export default withAuth(
   function middleware(req) {
@@ -9,9 +10,8 @@ export default withAuth(
 
     if (isAdminPath) {
       const rank = token?.rank as string;
-      const allowedRoles = ["fixer", "mastermind", "manager"];
       
-      if (!isAuth || !allowedRoles.includes(token?.role as string)) {
+      if (!isAuth || !ADMIN_ROLES.includes(token?.role as string)) {
         return NextResponse.redirect(new URL("/hub", req.url));
       }
     }
