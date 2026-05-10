@@ -40,6 +40,9 @@ export default function LedgerPage() {
   };
 
   const updateOrderStatus = async (id: string, status: string) => {
+    const statusLabel = status === 'shipped' ? '発送済み' : '完了';
+    if (!confirm(`注文ステータスを「${statusLabel}」に更新しますか？`)) return;
+
     try {
       const res = await fetch("/api/admin/order/update", {
         method: "POST",
