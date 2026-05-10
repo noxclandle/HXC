@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { prisma } from "@/lib/prisma";
 import { getBaseUrl } from "@/lib/utils";
 
 const stripeKey = process.env.STRIPE_SECRET_KEY || "sk_test_mock";
