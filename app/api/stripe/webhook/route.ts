@@ -65,8 +65,8 @@ export async function POST(req: NextRequest) {
         console.error("Failed to send admin mail:", mailError);
       }
 
-      // 2. If it's an Apex Black tier, try to automatically grant black_member role
-      if (tier === "Apex Black" && customerEmail) {
+      // 2. If it's an Apex tier, try to automatically grant black_member role
+      if (tier === "Apex" && customerEmail) {
         const existingUser = await prisma.user.findUnique({
           where: { email: customerEmail }
         });
