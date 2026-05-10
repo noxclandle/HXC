@@ -193,21 +193,30 @@ export default function LedgerPage() {
                 <div className="text-[9px] opacity-40 truncate pr-4" title={JSON.stringify(order.shipping_address)}>
                    {order.customer_email}
                 </div>
-                <div className="flex justify-end gap-4">
-                   <button 
-                     onClick={() => updateOrderStatus(order.id, 'shipped')}
-                     className="p-2 hover:bg-white/5 text-azure-400/60 hover:text-azure-400 transition-all" 
-                     title="発送済みに更新"
-                   >
-                      <Truck size={14} />
-                   </button>
-                   <button 
-                     onClick={() => updateOrderStatus(order.id, 'completed')}
-                     className="p-2 hover:bg-white/5 text-emerald-400/60 hover:text-emerald-400 transition-all" 
-                     title="完了としてマーク"
-                   >
-                      <CheckCircle size={14} />
-                   </button>
+                <div className="flex justify-end gap-2">
+                   {order.status === 'paid' && (
+                     <button 
+                       onClick={() => updateOrderStatus(order.id, 'shipped')}
+                       className="flex items-center gap-2 px-4 py-2 bg-azure-500/5 border border-azure-500/20 hover:border-azure-500 text-azure-400 transition-all text-[8px] uppercase tracking-widest font-bold"
+                     >
+                        <Truck size={12} />
+                        発送完了としてマーク
+                     </button>
+                   )}
+                   {order.status === 'shipped' && (
+                     <button 
+                       onClick={() => updateOrderStatus(order.id, 'completed')}
+                       className="flex items-center gap-2 px-4 py-2 bg-emerald-500/5 border border-emerald-500/20 hover:border-emerald-500 text-emerald-400 transition-all text-[8px] uppercase tracking-widest font-bold"
+                     >
+                        <CheckCircle size={12} />
+                        取引を完了する
+                     </button>
+                   )}
+                   {order.status === 'completed' && (
+                     <span className="text-[8px] opacity-20 uppercase tracking-[0.2em] flex items-center gap-2 pr-4">
+                        <CheckCircle size={10} /> 処理済み
+                     </span>
+                   )}
                 </div>
               </div>
             ))
