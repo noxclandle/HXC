@@ -73,32 +73,36 @@ export default function HexaCardPreview({
 
   const getFrameStyle = () => {
     switch (frame) {
-      case "Silver": return "border-[2px] border-zinc-400 shadow-[0_0_15px_rgba(255,255,255,0.1)]";
-      case "Gold": return "border-[3px] border-amber-600/60 shadow-xl ring-1 ring-amber-500/20";
-      case "Dynamic": return "border-[3px] border-azure-500 shadow-[0_0_20px_rgba(59,130,246,0.3)] animate-pulse";
-      case "Sakura": return "border-[2px] border-rose-300 shadow-[0_0_25px_rgba(251,113,133,0.2)]";
-      case "Emerald": return "border-[2px] border-emerald-500 shadow-[0_0_20px_rgba(52,211,153,0.2)]";
-      case "Platinum": return "border-[4px] border-slate-400 shadow-[0_0_30px_rgba(255,255,255,0.4)] ring-1 ring-white/30";
-      case "Crimson": return "border-[3px] border-rose-700 shadow-[0_0_25px_rgba(225,29,72,0.3)]";
-      case "Void": return "border-[5px] border-zinc-900 shadow-[0_0_40px_rgba(0,0,0,1)] ring-1 ring-zinc-800";
-      case "ImperialGold": return "border-[5px] border-amber-500 shadow-[0_0_60px_rgba(245,158,11,0.5)] ring-2 ring-amber-300/40 bg-amber-900/10";
-      default: return "border-white/10 shadow-2xl";
+      case "Silver": return "border-[3px] border-zinc-300 shadow-[0_0_30px_rgba(255,255,255,0.2)] ring-1 ring-white/20";
+      case "Gold": return "border-[4px] border-amber-500 shadow-[0_0_40px_rgba(245,158,11,0.4)] ring-1 ring-amber-300/30";
+      case "Dynamic": return "border-[4px] border-azure-400 shadow-[0_0_40px_rgba(59,130,246,0.5)] animate-pulse";
+      case "Sakura": return "border-[3px] border-rose-400 shadow-[0_0_40px_rgba(251,113,133,0.4)] ring-1 ring-rose-200/30";
+      case "Emerald": return "border-[3px] border-emerald-400 shadow-[0_0_40px_rgba(52,211,153,0.4)] ring-1 ring-emerald-200/30";
+      case "Platinum": return "border-[5px] border-slate-300 shadow-[0_0_50px_rgba(255,255,255,0.6)] ring-2 ring-white/40";
+      case "Crimson": return "border-[4px] border-rose-600 shadow-[0_0_40px_rgba(225,29,72,0.5)] ring-1 ring-rose-400/30";
+      case "Void": return "border-[6px] border-zinc-800 shadow-[0_0_60px_rgba(0,0,0,1)] ring-2 ring-zinc-700 bg-black";
+      case "ImperialGold": return "border-[6px] border-amber-400 shadow-[0_0_80px_rgba(245,158,11,0.7)] ring-2 ring-amber-200/50 bg-amber-950/20";
+      case "BlackCard": return "border-[5px] border-zinc-700 shadow-[0_0_50px_rgba(255,255,255,0.15)] ring-2 ring-zinc-600 bg-black";
+      case "Obsidian": return "border-[3px] border-zinc-800 shadow-[0_0_30px_rgba(0,0,0,0.8)] ring-1 ring-zinc-700 bg-[#050505]";
+      default: return "border-white/20 shadow-2xl ring-1 ring-white/10";
     }
   };
 
   const getBackgroundStyle = () => {
     const bg = background || "Default";
     switch (bg) {
-      case "Carbon": return "bg-[#0A0A0A] bg-[radial-gradient(#1a1a1a_1px,transparent_1px)] bg-[size:4px_4px]";
-      case "BrushedMetal": return "bg-zinc-800 bg-[linear-gradient(105deg,#27272a_0%,#52525b_25%,#27272a_50%,#52525b_75%,#27272a_100%)]";
-      case "MonochromeGrid": return "bg-[#050505] bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:16px_16px]";
-      case "Stardust": return "bg-[#050508] bg-[radial-gradient(white_0.5px,transparent_0.5px)] bg-[size:24px_24px]";
-      case "RoyalGold": return "bg-[#0f0a05] bg-[radial-gradient(circle_at_50%_50%,rgba(180,139,94,0.1),transparent_70%)]";
-      case "Nebula": return "bg-[#020205] bg-[radial-gradient(circle_at_20%_20%,rgba(76,29,149,0.1),transparent_50%),radial-gradient(circle_at_80%_80%,rgba(30,58,138,0.1),transparent_50%)]";
-      case "SilkBlur": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/5 before:to-transparent before:blur-[80px]";
-      case "DigitalFlow": return "bg-[#010101] bg-[linear-gradient(rgba(59,130,246,0.02)_1px,transparent_1px)] bg-[size:100%_2px]";
-      case "PrismFractal": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-tr before:from-rose-500/10 before:via-azure-500/10 before:to-emerald-500/10";
-      default: return "bg-[#050505]";
+      case "Carbon": return "bg-[#0A0A0A] bg-[radial-gradient(#222_1px,transparent_1px)] bg-[size:6px_6px]";
+      case "BrushedMetal": return "bg-zinc-700 bg-[linear-gradient(105deg,#18181b_0%,#71717a_25%,#27272a_50%,#a1a1aa_75%,#18181b_100%)] opacity-90";
+      case "MonochromeGrid": return "bg-[#050505] bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff15_1px,transparent_1px)] bg-[size:20px_20px]";
+      case "Stardust": return "bg-[#050508] bg-[radial-gradient(white_1px,transparent_1px)] bg-[size:32px_32px] opacity-100";
+      case "RoyalGold": return "bg-[#1a1408] bg-[radial-gradient(circle_at_50%_50%,rgba(217,119,6,0.2),transparent_80%)]";
+      case "Nebula": return "bg-[#050510] bg-[radial-gradient(circle_at_20%_20%,rgba(139,92,246,0.3),transparent_60%),radial-gradient(circle_at_80%_80%,rgba(59,130,246,0.3),transparent_60%)]";
+      case "SilkBlur": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:via-transparent before:to-white/5 before:blur-[60px]";
+      case "DigitalFlow": return "bg-[#010101] bg-[linear-gradient(rgba(59,130,246,0.1)_1px,transparent_1px)] bg-[size:100%_4px] opacity-100";
+      case "PrismFractal": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-tr before:from-rose-500/20 before:via-azure-500/20 before:to-emerald-500/20 opacity-100";
+      case "BrandedHex": return "bg-[#050505] bg-[url('/logo.png')] bg-[length:40px_40px] bg-center opacity-30 mix-blend-luminosity";
+      case "BlackCard": return "bg-gradient-to-br from-zinc-900 via-black to-zinc-950";
+      default: return "bg-[#080808]";
     }
   };
 
@@ -107,20 +111,20 @@ export default function HexaCardPreview({
       case "Glitch":
         return (
           <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
-            <motion.div animate={{ y: [-5, 5, -5], opacity: [0.1, 0.3, 0.1] }} transition={{ duration: 0.2, repeat: Infinity }} className="absolute inset-0 bg-white/5 mix-blend-overlay" />
-            <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px]" />
+            <motion.div animate={{ y: [-10, 10, -10], opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 0.15, repeat: Infinity }} className="absolute inset-0 bg-white/10 mix-blend-overlay" />
+            <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.7)_50%)] bg-[length:100%_6px]" />
           </div>
         );
       case "Petals":
         return (
           <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
-             {[...Array(6)].map((_, i) => (
+             {[...Array(12)].map((_, i) => (
                <motion.div 
                  key={i} 
-                 initial={{ y: -20, x: Math.random() * 300, opacity: 0 }}
-                 animate={{ y: 500, x: (Math.random() * 300) + 50, opacity: [0, 0.4, 0], rotate: 360 }}
-                 transition={{ duration: 4 + Math.random() * 4, repeat: Infinity, delay: i * 1.5 }}
-                 className="absolute w-2 h-2 bg-rose-200/40 rounded-full blur-[1px]"
+                 initial={{ y: -20, x: Math.random() * 400, opacity: 0 }}
+                 animate={{ y: 600, x: (Math.random() * 400), opacity: [0, 0.7, 0], rotate: 720 }}
+                 transition={{ duration: 3 + Math.random() * 3, repeat: Infinity, delay: i * 0.8 }}
+                 className="absolute w-3 h-3 bg-rose-300/60 rounded-full blur-[1px]"
                />
              ))}
           </div>
@@ -128,51 +132,53 @@ export default function HexaCardPreview({
       case "Snow":
         return (
           <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
-             {[...Array(15)].map((_, i) => (
+             {[...Array(30)].map((_, i) => (
                <motion.div 
                  key={i} 
                  initial={{ y: -10, x: Math.random() * 400, opacity: 0 }}
-                 animate={{ y: 600, opacity: [0, 0.6, 0] }}
-                 transition={{ duration: 3 + Math.random() * 3, repeat: Infinity, delay: i * 0.4 }}
-                 className="absolute w-0.5 h-0.5 bg-white/60 rounded-full"
+                 animate={{ y: 600, opacity: [0, 0.9, 0] }}
+                 transition={{ duration: 2 + Math.random() * 2, repeat: Infinity, delay: i * 0.2 }}
+                 className="absolute w-1 h-1 bg-white/80 rounded-full blur-[0.5px]"
                />
              ))}
           </div>
         );
       case "Aethereal":
-        return <motion.div animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_0%,transparent_70%)] z-20" />;
+        return <motion.div animate={{ opacity: [0.4, 0.8, 0.4] }} transition={{ duration: 3, repeat: Infinity }} className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_80%)] z-20" />;
       case "Scanline":
-        return <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_2px,3px_100%] pointer-events-none z-20" />;
+        return <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.4)_50%),linear-gradient(90deg,rgba(255,0,0,0.12),rgba(0,255,0,0.05),rgba(0,0,255,0.12))] bg-[size:100%_3px,4px_100%] pointer-events-none z-20" />;
       case "Interference":
         return (
           <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
-             <motion.div animate={{ x: [-100, 400] }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} className="w-20 h-full bg-white/5 blur-3xl -skew-x-12" />
+             <motion.div animate={{ x: [-200, 600] }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }} className="w-40 h-full bg-white/10 blur-[60px] -skew-x-24" />
+             <motion.div animate={{ x: [600, -200] }} transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }} className="w-20 h-full bg-azure-500/10 blur-[40px] skew-x-12 absolute top-0" />
           </div>
         );
       case "Dust":
         return (
           <div className="absolute inset-0 pointer-events-none z-20">
-             {[...Array(20)].map((_, i) => (
+             {[...Array(40)].map((_, i) => (
                <motion.div 
                  key={i} 
                  animate={{ 
                    x: [Math.random() * 400, Math.random() * 400], 
                    y: [Math.random() * 600, Math.random() * 600],
-                   opacity: [0, 0.3, 0] 
+                   opacity: [0, 0.6, 0] 
                  }}
-                 transition={{ duration: 10 + Math.random() * 10, repeat: Infinity }}
-                 className="absolute w-1 h-1 bg-white/20 rounded-full blur-[2px]"
+                 transition={{ duration: 5 + Math.random() * 5, repeat: Infinity }}
+                 className="absolute w-1.5 h-1.5 bg-white/40 rounded-full blur-[1px]"
                />
              ))}
           </div>
         );
       case "Aurora":
-        return <motion.div animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 5, repeat: Infinity }} className="absolute inset-0 bg-gradient-to-t from-emerald-500/10 via-azure-500/5 to-transparent mix-blend-screen z-20" />;
+        return <motion.div animate={{ opacity: [0.5, 0.9, 0.5] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-0 bg-gradient-to-t from-emerald-400/20 via-azure-400/10 to-transparent mix-blend-screen z-20" />;
       case "Singularity":
         return (
           <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden flex items-center justify-center">
-             <motion.div animate={{ scale: [1, 1.2, 1], rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="w-64 h-64 border border-white/5 rounded-full blur-xl" />
-             <motion.div animate={{ scale: [0.8, 1, 0.8], rotate: -360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="absolute w-48 h-48 border border-white/10 rounded-full blur-md" />
+             <motion.div animate={{ scale: [1, 1.4, 1], rotate: 360 }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} className="w-80 h-80 border-2 border-white/10 rounded-full blur-2xl" />
+             <motion.div animate={{ scale: [0.7, 1.1, 0.7], rotate: -360 }} transition={{ duration: 12, repeat: Infinity, ease: "linear" }} className="absolute w-64 h-64 border-2 border-white/20 rounded-full blur-xl" />
+             <motion.div animate={{ opacity: [0.1, 0.4, 0.1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-0 bg-black/60" />
           </div>
         );
       default: return null;
