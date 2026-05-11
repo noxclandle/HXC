@@ -68,9 +68,15 @@ export default function LandingPage() {
           </Link>
         </div>
 
-        <div className="flex gap-12 justify-center opacity-20 mt-8">
-           <Zap size={14} className="hover:opacity-100 transition-opacity cursor-help text-white" />
-           <ShieldCheck size={14} className="hover:opacity-100 transition-opacity cursor-help text-white" />
+        <div className="flex flex-col items-center gap-4 mt-8">
+           <div className="flex gap-12 justify-center opacity-20">
+              <Zap size={14} className="hover:opacity-100 transition-opacity cursor-help text-white" />
+              <ShieldCheck size={14} className="hover:opacity-100 transition-opacity cursor-help text-white" />
+           </div>
+           <div className="flex items-center gap-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+              <span className="text-[8px] uppercase tracking-[0.4em] opacity-30 font-bold">Protocol Active / Central Node Online</span>
+           </div>
         </div>
       </motion.div>
 

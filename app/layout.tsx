@@ -3,9 +3,34 @@ import "./globals.css";
 import GeometricBackground from "@/components/background/GeometricBackground";
 
 export const metadata: Metadata = {
-  title: "Hexa Card | Premium Identity",
-  description: "Synchronize your identity via the Hexa Card.",
+  title: {
+    default: "Hexa Card | Premium Identity",
+    template: "%s | Hexa Protocol"
+  },
+  description: "Beyond existence. A high-end identity synchronization system for the chosen few.",
   manifest: "/manifest.json",
+  openGraph: {
+    title: "Hexa Card | Premium Identity",
+    description: "Synchronize your identity via the Hexa Card. A masterpiece of gothic tech and minimal chic.",
+    url: "https://hxc.hexa-relation.com",
+    siteName: "Hexa Relation",
+    images: [
+      {
+        url: "/logo.png", // Replace with a dedicated OG image later if available
+        width: 800,
+        height: 800,
+        alt: "Hexa Relation Logo",
+      },
+    ],
+    locale: "ja_JP",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hexa Card | Premium Identity",
+    description: "Beyond existence. A masterpiece of gothic tech and minimal chic.",
+    images: ["/logo.png"],
+  },
 };
 
 export const viewport: Viewport = {

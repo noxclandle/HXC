@@ -88,6 +88,7 @@ export default function AdminDashboardPage() {
           { label: "カード中央台帳", path: "/admin/ledger", icon: <Layers size={18}/>, desc: "物理カードの登録 & ペアリング" },
           { label: "発行・登録手順", path: "/admin/onboarding", icon: <ShieldCheck size={18}/>, desc: "新規ユーザー・カード発行プロトコル" },
           { label: "システム構成", path: "/admin/config", icon: <Database size={18}/>, desc: "価格設定 & 内部パラメータ" },
+          { label: "データバックアップ", path: "/api/admin/backup/export", icon: <Layers size={18}/>, desc: "全データのJSONエクスポート" },
         ].map((link) => (
           <Link 
             key={link.path} href={link.path} 
@@ -103,39 +104,6 @@ export default function AdminDashboardPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-1 gap-12">
-        <section className="space-y-6">
-          <div className="flex justify-between items-center border-b border-white/5 pb-4">
-            <h2 className="text-[10px] tracking-[0.4em] uppercase opacity-40 flex items-center gap-2">
-              <Database size={14} /> Latest System Ledger (最新の取引履歴)
-            </h2>
-            <Link href="/admin/ledger" className="text-[8px] uppercase tracking-widest opacity-20 hover:opacity-100 transition-opacity">すべて表示</Link>
-          </div>
-          <div className="space-y-1">
-             {loading ? (
-               <div className="py-12 text-center text-[10px] opacity-10 uppercase tracking-[1em]">Scanning Registry...</div>
-             ) : (
-               stats?.recentTransactions?.map((t: any, i: number) => (
-                 <div key={i} className="p-5 bg-white/[0.01] border border-white/[0.03] flex justify-between items-center hover:bg-white/[0.03] transition-all">
-                    <div className="flex items-center gap-6">
-                      <span className="text-[8px] opacity-20 font-mono">#{t.id}</span>
-                      <div className="flex flex-col">
-                        <span className="text-[10px] tracking-widest uppercase font-bold text-white/80">{t.userName}</span>
-                        <span className="text-[8px] opacity-30 uppercase">{t.description}</span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                       <p className={`text-[11px] font-mono font-bold ${t.amount < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
-                          {t.amount > 0 ? '+' : ''}{t.amount.toLocaleString()} RT
-                       </p>
-                       <p className="text-[7px] opacity-20 uppercase mt-1">{new Date(t.date).toLocaleString()}</p>
-                    </div>
-                 </div>
-               ))
-             )}
-          </div>
-        </section>
-      </div>
     </div>
   );
 }
