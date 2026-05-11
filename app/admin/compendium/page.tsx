@@ -11,9 +11,9 @@ export default function TitleCompendiumPage() {
     { name: "Void Voyager", rarity: "epic", condition: "50人以上のユーザーと接続を記録。" },
     { name: "Strategist", rarity: "epic", condition: "100人以上のユーザーと接続を記録。広範な影響力の証。" },
     { name: "Headhunter", rarity: "epic", condition: "経営層（社長・代表等）5人以上との接続。" },
-    { name: "The Sovereign", rarity: "legendary", condition: "経営層30人以上との接続。支配的なネットワークの構築。" },
+    { name: "The Sovereign", rarity: "mythic", condition: "経営層30人以上との接続。支配的なネットワークの構築。" },
     { name: "Tech Lead", rarity: "rare", condition: "開発・技術職10人以上との接続。" },
-    { name: "Gilded Soul", rarity: "legendary", condition: "50,000 CP以上を保有する資産家。" },
+    { name: "Gilded Soul", rarity: "epic", condition: "50,000 CP以上を保有する資産家。" },
     { name: "Mastermind", rarity: "mythic", condition: "なにもかも作り替える力。" },
     { name: "Chief Officer", rarity: "mythic", condition: "システムの全権を掌握せし創設者。解放条件なし。" },
   ];
