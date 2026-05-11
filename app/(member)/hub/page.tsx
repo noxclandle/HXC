@@ -8,14 +8,17 @@ import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
-// 阿部寛スピードのための即時表示シェル
+// 改善されたスケルトン：高級感のあるシマー効果
 function HubSkeleton() {
   return (
-    <div className="max-w-7xl mx-auto pt-24 px-6 animate-pulse">
-       <div className="h-12 w-48 bg-white/5 mb-12" />
+    <div className="max-w-7xl mx-auto pt-24 px-6">
+       <div className="h-10 w-64 bg-white/5 rounded-sm mb-12 animate-pulse" />
        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          <div className="lg:col-span-8 h-96 bg-white/[0.02] border border-white/5" />
-          <div className="lg:col-span-4 h-96 bg-white/[0.02] border border-white/5" />
+          <div className="lg:col-span-8 h-[500px] bg-white/[0.01] border border-white/5 rounded-sm animate-pulse" />
+          <div className="lg:col-span-4 space-y-8">
+             <div className="h-64 bg-white/[0.01] border border-white/5 rounded-sm animate-pulse" />
+             <div className="h-64 bg-white/[0.01] border border-white/5 rounded-sm animate-pulse" />
+          </div>
        </div>
     </div>
   );
