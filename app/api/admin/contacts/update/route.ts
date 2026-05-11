@@ -17,22 +17,25 @@ export async function POST(req: NextRequest) {
     const inquiry = await prisma.inquiry.findUnique({ where: { id } });
     if (!inquiry) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    const currentReplies = (inquiry.replies as any[]) || [];
-    const newReplies = [
-      ...currentReplies,
-      {
-        text: replyText,
-        sender: session.user.name || "Admin",
-        created_at: new Date().toISOString()
-      }
-    ];
+    const data: any = {
+      status: status || "replied"
+    };
+
+    if (replyText) {
+      const currentReplies = (inquiry.replies as any[]) || [];
+      data.replies = [
+        ...currentReplies,
+        {
+          text: replyText,
+          sender: session.user.name || "Admin",
+          created_at: new Date().toISOString()
+        }
+      ];
+    }
 
     const updatedInquiry = await prisma.inquiry.update({
       where: { id },
-      data: {
-        replies: newReplies,
-        status: status || "replied",
-      }
+      data
     });
 
     // TODO: ここで実際にユーザーにメールを送るロジック（Resend等）を追加予定
