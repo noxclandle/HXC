@@ -56,6 +56,30 @@ export default function AdminContactsPage() {
     }
   };
 
+  const handleStatusUpdate = async (status: string) => {
+    if (!selectedInquiry) return;
+    const label = status === "closed" ? "対応完了" : "未対応";
+    if (!confirm(`この問い合わせを「${label}」にしますか？`)) return;
+
+    try {
+      const res = await fetch("/api/admin/contacts/update", {
+        method: "POST",
+        body: JSON.stringify({
+          id: selectedInquiry.id,
+          status: status
+        })
+      });
+
+      if (res.ok) {
+        fetchInquiries();
+        const updated = await res.json();
+        setSelectedInquiry(updated);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const statusBadge = (status: string) => {
     switch (status) {
       case "pending": return <span className="px-2 py-0.5 border border-amber-500/20 text-amber-500 bg-amber-500/5 text-[8px] uppercase font-bold tracking-widest">Pending</span>;
@@ -131,9 +155,26 @@ export default function AdminContactsPage() {
                          <h2 className="text-lg font-light tracking-widest">{selectedInquiry.name}</h2>
                          <p className="text-[10px] text-azure-400 font-mono opacity-60">{selectedInquiry.email}</p>
                        </div>
-                       <div className="text-right space-y-2">
-                         <span className="text-[9px] tracking-[0.4em] uppercase opacity-40 block">Received At</span>
-                         <p className="text-[10px] font-mono">{new Date(selectedInquiry.created_at).toLocaleString()}</p>
+                       <div className="flex flex-col items-end gap-4">
+                         <div className="text-right space-y-1">
+                           <span className="text-[9px] tracking-[0.4em] uppercase opacity-40 block">Received At</span>
+                           <p className="text-[10px] font-mono">{new Date(selectedInquiry.created_at).toLocaleString()}</p>
+                         </div>
+                         {selectedInquiry.status !== "closed" ? (
+                           <button 
+                             onClick={() => handleStatusUpdate("closed")}
+                             className="flex items-center gap-2 px-4 py-1.5 border border-white/10 hover:border-emerald-500/50 hover:bg-emerald-500/5 text-emerald-400/60 hover:text-emerald-400 transition-all text-[8px] uppercase tracking-widest font-bold"
+                           >
+                              <CheckCircle size={12} /> 対応済みにする
+                           </button>
+                         ) : (
+                           <button 
+                             onClick={() => handleStatusUpdate("pending")}
+                             className="flex items-center gap-2 px-4 py-1.5 border border-white/10 hover:border-amber-500/50 hover:bg-amber-500/5 text-amber-400/60 hover:text-amber-400 transition-all text-[8px] uppercase tracking-widest font-bold"
+                           >
+                              <Clock size={12} /> 未対応に戻す
+                           </button>
+                         )}
                        </div>
                     </div>
 
