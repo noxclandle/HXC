@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Camera, Book, ShieldCheck, ChevronRight, Newspaper } from "lucide-react";
+import { Camera, Book, ShieldCheck, ChevronRight, Newspaper, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import MonthlyReport from "@/components/ui/MonthlyReport";
 import ConstellationView from "@/components/ui/ConstellationView";
 import IdentityReflection from "@/components/ui/IdentityReflection";
+import GeometricAngel from "@/components/ui/GeometricAngel";
 
 export default function HubClientUI({ 
   initialStats, 
@@ -21,6 +22,8 @@ export default function HubClientUI({
   const [realStats, setRealStatus] = useState(initialStats);
   const [contacts, setContacts] = useState(initialContacts);
   const [latestNews, setLatestNews] = useState(initialNews);
+  const [mood, setMood] = useState<'stable' | 'excited' | 'unstable'>('stable');
+  const [isResonating, setIsResonating] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -43,6 +46,29 @@ export default function HubClientUI({
         if (nData.length > 0) setLatestNews(nData[0]);
       }
     } catch (err) { console.error(err); }
+  };
+
+  const handleResonance = async () => {
+    setIsResonating(true);
+    setMood('excited');
+    
+    try {
+      // AIを叩かず、純粋に報酬とステータス更新のみ行う
+      const res = await fetch("/api/user/daily-resonance", { method: "POST" });
+      if (res.ok) {
+        await fetchData();
+        setTimeout(() => {
+          setMood('stable');
+          setIsResonating(false);
+        }, 3000);
+      } else {
+        setMood('unstable');
+        setIsResonating(false);
+      }
+    } catch (e) {
+      setMood('unstable');
+      setIsResonating(false);
+    }
   };
 
   useEffect(() => {
@@ -121,6 +147,30 @@ export default function HubClientUI({
         </div>
 
         <aside className="lg:col-span-4 space-y-12">
+           {/* Geometric Angel & Resonance Section */}
+           <div className="p-8 border border-white/5 bg-white/[0.02] flex flex-col items-center text-center space-y-6">
+              <div className="opacity-30 text-[8px] tracking-[0.5em] uppercase font-bold mb-2">Resident Guardian</div>
+              <GeometricAngel level={Number(realStats?.exp || 0) / 100} mood={mood} size={180} />
+              
+              <div className="space-y-2">
+                <p className="text-[10px] tracking-widest opacity-40 uppercase">
+                  {mood === 'excited' ? 'Resonance active' : mood === 'unstable' ? 'Connection weak' : 'Awaiting observation'}
+                </p>
+                <button 
+                  onClick={handleResonance}
+                  disabled={isResonating}
+                  className={`mt-4 px-6 py-2 border text-[9px] tracking-[0.4em] uppercase transition-all flex items-center gap-3 mx-auto ${
+                    isResonating 
+                      ? 'border-white/10 text-white/20' 
+                      : 'border-white/20 text-white hover:bg-white/5 hover:border-white'
+                  }`}
+                >
+                  <Sparkles size={12} className={isResonating ? 'animate-spin' : ''} />
+                  {isResonating ? 'Communing...' : 'Commune'}
+                </button>
+              </div>
+           </div>
+
            <div className="p-1 bg-gradient-to-b from-white/5 to-transparent">
               <div className="mb-6 opacity-30 px-4 text-[9px] tracking-[0.4em] uppercase font-bold text-white">
                  <p>Monthly Insight</p>
