@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Music, Sparkles, UserCheck, Check, Lock, Wallet, Trophy, ArrowLeft, MousePointer2, Smartphone, Layout, Type, Palette, Eye } from "lucide-react";
+import { Shield, Music, Sparkles, UserCheck, Check, Lock, Wallet, Trophy, ArrowLeft, MousePointer2, Smartphone, Layout, Type, Palette, Eye, Zap, Gem } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 import { useToast } from "@/components/ui/ResonanceToast";
 import { playResonanceSound } from "@/lib/audio/resonance";
 
@@ -14,7 +15,7 @@ export const dynamic = "force-dynamic";
 interface Asset {
   id: string;
   name: string;
-  type: "frame" | "sound" | "effect" | "angel" | "title" | "pointer" | "background" | "fontFamily";
+  type: "frame" | "sound" | "effect" | "angel" | "title" | "pointer" | "background" | "fontFamily" | "aura";
   rarity: "common" | "rare" | "epic" | "legendary" | "mythic";
   description: string;
   unlocked: boolean;
@@ -23,11 +24,18 @@ interface Asset {
 
 const CATEGORIES = [
   { id: "frame", name: "Frames", icon: Shield, sub: "外枠" },
+  { id: "aura", name: "Auras", icon: Zap, sub: "オーラ" },
   { id: "background", name: "Backgrounds", icon: Palette, sub: "背景" },
   { id: "effect", name: "Effects", icon: Sparkles, sub: "エフェクト" },
   { id: "title", name: "Titles / 称号", icon: Trophy, sub: "称号" },
   { id: "pointer", name: "Pointers", icon: MousePointer2, sub: "軌跡" },
   { id: "sound", name: "Sounds", icon: Music, sub: "音響" },
+];
+
+const RT_PACKS = [
+  { id: "rt_small", price: 1000, rt: 2000, label: "Seed Infusion", description: "少量のRTを注入し、共鳴の端緒を開く。" },
+  { id: "rt_medium", price: 5000, rt: 11000, label: "Orbital Surge", description: "推奨パック。広範なカスタマイズを可能にする。" },
+  { id: "rt_large", price: 10000, rt: 23000, label: "Primordial Pulse", description: "最大限の同調。すべての境界を超える力を得る。" },
 ];
 
 export default function InventoryPage() {
@@ -42,6 +50,7 @@ export default function InventoryPage() {
   const [assetPrices, setAssetPrices] = useState<Record<string, number>>({});
   const [previewAsset, setPreviewAsset] = useState<Asset | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showRTPurchase, setShowRTPurchase] = useState(false);
   
   const [equipped, setEquipped] = useState<any>({
     frame: "Obsidian",
@@ -52,10 +61,22 @@ export default function InventoryPage() {
     sound: "resonance",
     pointer: "Pure White Hex",
     angel: "Sentinel",
+    aura: "None",
     orientation: "horizontal" as "horizontal" | "vertical"
   });
 
   const [assets, setAssets] = useState<Asset[]>([
+    // --- Auras (10 new) ---
+    { id: "None", name: "No Aura", type: "aura", rarity: "common", description: "静寂。オーラを纏わない。", unlocked: true },
+    { id: "WhiteMist", name: "White Mist", type: "aura", rarity: "rare", description: "境界から漏れ出す白い霧。", cost: 3000, unlocked: false },
+    { id: "AzureFlame", name: "Azure Flame", type: "aura", rarity: "rare", description: "知性を燃やす蒼い炎。", cost: 3000, unlocked: false },
+    { id: "GoldenHalo", name: "Golden Halo", type: "aura", rarity: "epic", description: "神聖な黄金の輪郭。", cost: 8000, unlocked: false },
+    { id: "VioletHaze", name: "Violet Haze", type: "aura", rarity: "rare", description: "神秘的な紫の霞。", cost: 3000, unlocked: false },
+    { id: "EmeraldDust", name: "Emerald Dust", type: "aura", rarity: "rare", description: "生命を育む緑の粒子。", cost: 3000, unlocked: false },
+    { id: "CrimsonFlare", name: "Crimson Flare", type: "aura", rarity: "epic", description: "情熱が爆発する深紅の輝き。", cost: 8000, unlocked: false },
+    { id: "VoidEclipse", name: "Void Eclipse", type: "aura", rarity: "mythic", description: "光を飲み込む漆黒のオーラ。", cost: 50000, unlocked: false },
+    { id: "PrismGlow", name: "Prism Glow", type: "aura", rarity: "mythic", description: "全波長を網羅する究極の輝き。", cost: 50000, unlocked: false },
+    { id: "CyberGrid", name: "Cyber Grid", type: "aura", rarity: "epic", description: "電子の格子が漂う。技術の極致。", cost: 8000, unlocked: false },
     // --- Frames (10) ---
     { id: "Obsidian", name: "Obsidian", type: "frame", rarity: "common", description: "標準的な黒檀の外枠。誠実さの象徴。", unlocked: true },
     { id: "Silver", name: "Sterling Silver", type: "frame", rarity: "rare", description: "鈍い光沢を放つ銀の枠。", cost: 3000, unlocked: false },
@@ -254,11 +275,56 @@ export default function InventoryPage() {
           <h1 className="text-3xl lg:text-5xl tracking-[0.3em] lg:tracking-[0.5em] uppercase font-extralight text-white">Treasury</h1>
           <p className="text-[9px] lg:text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold hidden lg:block">宝物庫・アセット管理</p>
         </div>
-        <div className="text-right">
+        <div className="text-right flex flex-col items-end gap-2">
            <p className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60">RT Balance</p>
-           <p className="text-xl lg:text-3xl font-extralight tracking-[0.2em] text-white">{Number(rtBalance).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
+           <div className="flex items-center gap-4 group">
+              <p className="text-xl lg:text-3xl font-extralight tracking-[0.2em] text-white">{Number(rtBalance).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
+              <button 
+                onClick={() => setShowRTPurchase(!showRTPurchase)}
+                className={`p-2 border transition-all ${showRTPurchase ? "bg-white text-void border-white" : "border-white/10 hover:border-azure-500 hover:bg-azure-500/10"}`}
+              >
+                <Gem size={16} className={showRTPurchase ? "" : "text-azure-400"} />
+              </button>
+           </div>
         </div>
       </header>
+
+      {/* RT Purchase Section (Sanctuary) */}
+      <AnimatePresence>
+        {showRTPurchase && (
+          <motion.section 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mb-12 overflow-hidden border-b border-white/5 pb-12"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {RT_PACKS.map((pack) => (
+                <button
+                  key={pack.id}
+                  onClick={() => {
+                    // Stripe決済への遷移ロジック（後で実装）
+                    showToast(`Initiating Infusion: ${pack.label}`, "success");
+                  }}
+                  className="group p-8 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-azure-500/40 transition-all text-left flex flex-col gap-4 relative overflow-hidden"
+                >
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-[10px] tracking-[0.4em] uppercase font-bold text-azure-400">{pack.label}</h3>
+                    <Gem size={14} className="opacity-20 group-hover:opacity-100 group-hover:text-azure-400 transition-all" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-extralight tracking-widest text-white">{pack.rt.toLocaleString()} <span className="text-[10px] opacity-30">RT</span></p>
+                    <p className="text-[12px] opacity-60 mt-1">¥{pack.price.toLocaleString()}</p>
+                  </div>
+                  <p className="text-[9px] tracking-widest opacity-30 uppercase leading-relaxed mt-4">{pack.description}</p>
+                </button>
+              ))}
+            </div>
+            <p className="text-[8px] tracking-[0.5em] uppercase opacity-20 text-center mt-8 italic">意志の注入を確定させ、共鳴の境界を拡張してください。</p>
+          </motion.section>
+        )}
+      </AnimatePresence>
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
         {/* Preview Container */}
