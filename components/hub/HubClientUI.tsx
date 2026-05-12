@@ -137,32 +137,37 @@ export default function HubClientUI({
              </Link>
           </div>
 
-          <section className="space-y-6">
+          <section className="space-y-6 pb-12">
              <div className="flex justify-between items-end border-b border-white/5 pb-4 text-[10px] tracking-[0.5em] uppercase opacity-30 font-bold italic text-white">
                 <h2>Network Constellation / 人脈の星図</h2>
                 <Link href="/library" className="text-[8px] uppercase tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity flex items-center gap-2 text-white">Open Archive</Link>
              </div>
-             <ConstellationView contacts={contacts} />
+             <div className="relative bg-white/[0.01] border border-white/5 p-4 rounded-sm overflow-hidden">
+                <ConstellationView contacts={contacts} />
+             </div>
           </section>
         </div>
 
         <aside className="lg:col-span-4 space-y-12">
            {/* Geometric Angel & Resonance Section */}
-           <div className="p-8 border border-white/5 bg-white/[0.02] flex flex-col items-center text-center space-y-6">
-              <div className="opacity-30 text-[8px] tracking-[0.5em] uppercase font-bold mb-2">Resident Guardian</div>
-              <GeometricAngel level={Number(realStats?.exp || 0) / 100} mood={mood} size={180} />
+           <div className="p-8 border border-white/5 bg-white/[0.02] flex flex-col items-center text-center space-y-6 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-azure-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="opacity-30 text-[8px] tracking-[0.5em] uppercase font-bold mb-2 relative z-10">Resident Guardian</div>
+              <div className="relative z-10">
+                <GeometricAngel level={Number(realStats?.exp || 0) / 100} mood={mood} size={180} />
+              </div>
               
-              <div className="space-y-2">
+              <div className="space-y-2 relative z-10">
                 <p className="text-[10px] tracking-widest opacity-40 uppercase">
                   {mood === 'excited' ? 'Resonance active' : mood === 'unstable' ? 'Connection weak' : 'Awaiting observation'}
                 </p>
                 <button 
                   onClick={handleResonance}
                   disabled={isResonating}
-                  className={`mt-4 px-6 py-2 border text-[9px] tracking-[0.4em] uppercase transition-all flex items-center gap-3 mx-auto ${
+                  className={`mt-4 px-10 py-3 border text-[9px] tracking-[0.4em] uppercase transition-all flex items-center gap-3 mx-auto ${
                     isResonating 
                       ? 'border-white/10 text-white/20' 
-                      : 'border-white/20 text-white hover:bg-white/5 hover:border-white'
+                      : 'border-white/20 text-white hover:bg-white/5 hover:border-white shadow-lg'
                   }`}
                 >
                   <Sparkles size={12} className={isResonating ? 'animate-spin' : ''} />
@@ -179,20 +184,7 @@ export default function HubClientUI({
               <MonthlyReport />
            </div>
            
-           <section className="space-y-6 px-4">
-             <h2 className="text-[10px] tracking-[0.5em] uppercase opacity-30 font-bold italic text-white">Recent Connections</h2>
-             <div className="space-y-3">
-                {contacts.slice(0, 5).map((c) => (
-                   <div key={c.id} className="flex items-center justify-between p-3 border border-white/5 bg-white/[0.01]">
-                      <div className="flex items-center gap-3">
-                         <div className="w-6 h-6 border border-white/10 rounded-full flex items-center justify-center text-[8px] opacity-40 uppercase text-white">{c.name[0]}</div>
-                         <p className="text-[10px] tracking-widest uppercase opacity-60 truncate max-w-[150px] text-white">{c.name}</p>
-                      </div>
-                      <ChevronRight size={12} className="opacity-20 text-white" />
-                   </div>
-                ))}
-             </div>
-           </section>
+           {/* Removed redundant Recent Connections list for a cleaner, focused look */}
 
            {latestNews && (
              <section className="px-4 mt-12 border-t border-white/5 pt-8">

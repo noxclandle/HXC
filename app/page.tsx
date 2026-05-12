@@ -1,87 +1,93 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Hexagon, ShieldCheck, Zap } from "lucide-react";
+import { ShieldCheck, Zap } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function LandingPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
+    <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center relative overflow-hidden bg-void">
+      {/* Optimized Background Glow: No images, just CSS */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-azure-500/5 blur-[120px] rounded-full animate-pulse" />
+      </div>
+
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.5, ease: "easeOut" }}
-        className="relative mb-8"
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="relative mb-12"
       >
-        <div className="absolute inset-0 animate-slow-spin opacity-20 blur-3xl">
-           <img src="/logo.png" alt="Company Logo" className="w-[320px] h-[320px] object-contain" />
+        <div className="relative z-10 w-[180px] h-[180px] md:w-[240px] md:h-[240px]">
+           <Image 
+             src="/logo.png" 
+             alt="Hexa Card Logo" 
+             fill
+             priority
+             className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]" 
+           />
         </div>
-        <img src="/logo.png" alt="Hexa Card Logo" className="w-[240px] h-[240px] object-contain relative z-10 drop-shadow-[0_0_20px_rgba(0,100,255,0.2)]" />
       </motion.div>
 
       <motion.h1
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 1 }}
-        className="text-5xl md:text-7xl font-extralight tracking-[0.2em] uppercase mb-4"
+        transition={{ delay: 0.3, duration: 0.8 }}
+        className="text-4xl md:text-6xl font-extralight tracking-[0.25em] uppercase mb-4 text-white"
       >
         Hexa Card
-        <span className="block text-[10px] md:text-xs tracking-[0.8em] opacity-20 mt-4 ml-[0.8em]">アイデンティティの透過</span>
+        <span className="block text-[9px] md:text-[10px] tracking-[0.8em] opacity-30 mt-6 ml-[0.8em]">アイデンティティの透過</span>
       </motion.h1>
 
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 1 }}
-        className="text-gothic-silver max-w-lg mb-12 tracking-widest text-sm leading-relaxed"
+        transition={{ delay: 0.6, duration: 0.8 }}
+        className="text-white/40 max-w-sm mb-16 tracking-[0.2em] text-[10px] md:text-[11px] leading-relaxed uppercase"
       >
-        物理と仮想の境界線を透過する。<br />
-        <span className="text-[10px] opacity-40 block mt-2 uppercase tracking-[0.2em]">Permeating the boundaries between physical and virtual.</span>
-        HEXA CARDが、あなたの存在を再定義する。<br />
-        <span className="text-[10px] opacity-40 block mt-2 uppercase tracking-[0.2em]">Redefining your existence through the Hexa Card.</span>
+        Permeating the boundaries between physical and virtual.<br />
+        Redefining existence.
       </motion.p>
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="flex flex-col gap-8 items-center"
+        transition={{ delay: 0.9, duration: 0.8 }}
+        className="flex flex-col gap-10 items-center z-10"
       >
         <div className="flex flex-col md:flex-row gap-6 items-center">
           <Link
             href="/purchase"
-            className="group relative px-20 py-6 overflow-hidden transition-all duration-700 bg-white text-void shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:scale-105 active:scale-95"
+            className="group relative px-16 py-5 overflow-hidden transition-all duration-500 bg-white text-void hover:bg-azure-50 transition-colors shadow-2xl"
           >
-            <span className="relative z-10 tracking-[0.8em] uppercase text-[11px] font-bold">
+            <span className="relative z-10 tracking-[0.6em] uppercase text-[10px] font-bold">
               Order Card
             </span>
           </Link>
 
           <Link
             href="/activate"
-            className="group relative px-16 py-6 overflow-hidden transition-all duration-700"
+            className="group relative px-12 py-5 overflow-hidden transition-all duration-500"
           >
-            <div className="absolute inset-0 border border-white/20 group-hover:border-white/40 transition-all duration-700" />
-            <span className="relative z-10 tracking-[0.6em] uppercase text-[10px] font-bold text-white/60 group-hover:text-white transition-colors">
-              Activate Card
+            <div className="absolute inset-0 border border-white/10 group-hover:border-white/30 transition-all" />
+            <span className="relative z-10 tracking-[0.5em] uppercase text-[9px] font-bold text-white/40 group-hover:text-white transition-colors">
+              Activate
             </span>
           </Link>
         </div>
 
-        <div className="flex flex-col items-center gap-4 mt-8">
-           <div className="flex gap-12 justify-center opacity-20">
-              <Zap size={14} className="hover:opacity-100 transition-opacity cursor-help text-white" />
-              <ShieldCheck size={14} className="hover:opacity-100 transition-opacity cursor-help text-white" />
+        <div className="flex flex-col items-center gap-5 mt-4">
+           <div className="flex gap-10 justify-center opacity-10">
+              <Zap size={12} className="text-white" />
+              <ShieldCheck size={12} className="text-white" />
            </div>
            <div className="flex items-center gap-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
-              <span className="text-[8px] uppercase tracking-[0.4em] opacity-30 font-bold">Protocol Active / Central Node Online</span>
+              <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[7px] uppercase tracking-[0.5em] opacity-20 font-bold">Protocol Active / Central Node Online</span>
            </div>
         </div>
       </motion.div>
-
-      {/* Decorative lines */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-px h-32 bg-gradient-to-t from-moonlight/50 to-transparent" />
     </main>
   );
 }
