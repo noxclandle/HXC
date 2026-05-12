@@ -77,11 +77,16 @@ export default function InventoryPage() {
     { id: "VoidEclipse", name: "Void Eclipse", type: "aura", rarity: "mythic", description: "光を飲み込む漆黒のオーラ。", cost: 50000, unlocked: false },
     { id: "PrismGlow", name: "Prism Glow", type: "aura", rarity: "mythic", description: "全波長を網羅する究極の輝き。", cost: 50000, unlocked: false },
     { id: "CyberGrid", name: "Cyber Grid", type: "aura", rarity: "epic", description: "電子の格子が漂う。技術の極致。", cost: 8000, unlocked: false },
-    // --- Frames (10) ---
+    // --- Frames (15) ---
     { id: "Obsidian", name: "Obsidian", type: "frame", rarity: "common", description: "標準的な黒檀の外枠。誠実さの象徴。", unlocked: true },
     { id: "Silver", name: "Sterling Silver", type: "frame", rarity: "rare", description: "鈍い光沢を放つ銀の枠。", cost: 3000, unlocked: false },
     { id: "Gold", name: "Heritage Gold", type: "frame", rarity: "epic", description: "格式高い黄金の細工枠。", cost: 8000, unlocked: false },
     { id: "Sakura", name: "Sakura Aura", type: "frame", rarity: "rare", description: "淡い紅色の残響を纏う枠。", cost: 3000, unlocked: false },
+    { id: "RoseGold", name: "Rose Gold Elegance", type: "frame", rarity: "epic", description: "気品あるピンクゴールドの枠。", cost: 8000, unlocked: false },
+    { id: "PearlWhite", name: "Pearl Essence", type: "frame", rarity: "rare", description: "真珠のような柔らかな輝き。", cost: 3000, unlocked: false },
+    { id: "Moonlight", name: "Moonlight Silver", type: "frame", rarity: "rare", description: "月光を宿した静かな銀枠。", cost: 3000, unlocked: false },
+    { id: "Grace", name: "Graceful Lace", type: "frame", rarity: "epic", description: "繊細なレースを模した白の細工枠。", cost: 8000, unlocked: false },
+    { id: "Silk", name: "Silk Ribbon", type: "frame", rarity: "rare", description: "絹のようになめらかな質感の枠。", cost: 3000, unlocked: false },
     { id: "Emerald", name: "Emerald Pulse", type: "frame", rarity: "rare", description: "生命力を感じさせる深緑の輝き。", cost: 3000, unlocked: false },
     { id: "Platinum", name: "Platinum Edge", type: "frame", rarity: "epic", description: "精巧な装飾が施された白金の縁。", cost: 8000, unlocked: false },
     { id: "Dynamic", name: "Azure Pulse", type: "frame", rarity: "epic", description: "知性を感じさせる蒼い脈動。", cost: 8000, unlocked: false },
@@ -89,8 +94,13 @@ export default function InventoryPage() {
     { id: "Void", name: "Void Shell", type: "frame", rarity: "mythic", description: "全ての光を吸収する深淵の枠。", cost: 50000, unlocked: false },
     { id: "ImperialGold", name: "Imperial Gold", type: "frame", rarity: "mythic", description: "圧倒的な威厳。頂点の黄金。", cost: 50000, unlocked: false },
     
-    // --- Backgrounds (10) ---
+    // --- Backgrounds (15) ---
     { id: "Default", name: "Solid Void", type: "background", rarity: "common", description: "標準の漆黒背景。", unlocked: true },
+    { id: "PastelSakura", name: "Eternal Sakura", type: "background", rarity: "rare", description: "淡い桜色が舞う春の情景。", cost: 3000, unlocked: false },
+    { id: "PearlVeil", name: "Pearl Veil", type: "background", rarity: "rare", description: "真珠層のような虹色の光沢。", cost: 3000, unlocked: false },
+    { id: "SilkSheet", name: "White Silk", type: "background", rarity: "rare", description: "高級な絹布のドレープ。", cost: 3000, unlocked: false },
+    { id: "GraceGradient", name: "Graceful Dawn", type: "background", rarity: "epic", description: "夜明けのような淡い紫と金の階調。", cost: 8000, unlocked: false },
+    { id: "CrystalGlass", name: "Frozen Crystal", type: "background", rarity: "epic", description: "凍てついたクリスタルの輝き。", cost: 8000, unlocked: false },
     { id: "Carbon", name: "Carbon Fiber", type: "background", rarity: "rare", description: "精密なカーボンテクスチャ。", cost: 3000, unlocked: false },
     { id: "BrushedMetal", name: "Brushed Metal", type: "background", rarity: "rare", description: "ヘアライン加工の金属質。", cost: 3000, unlocked: false },
     { id: "MonochromeGrid", name: "Monochrome Grid", type: "background", rarity: "epic", description: "緻密な設計グリッド。", cost: 8000, unlocked: false },
@@ -101,8 +111,13 @@ export default function InventoryPage() {
     { id: "DigitalFlow", name: "Digital Flow", type: "background", rarity: "epic", description: "情報の奔流。", cost: 8000, unlocked: false },
     { id: "PrismFractal", name: "Prism Fractal", type: "background", rarity: "mythic", description: "七色に屈折する光の幾何学。", cost: 50000, unlocked: false },
 
-    // --- Effects (10) ---
+    // --- Effects (15) ---
     { id: "None", name: "Clean", type: "effect", rarity: "common", description: "追加効果なし。純粋な情報の提示。", unlocked: true },
+    { id: "Sparkle", name: "Fairy Dust", type: "effect", rarity: "rare", description: "幻想的に煌めく小さな光。", cost: 3000, unlocked: false },
+    { id: "FallingFlowers", name: "Falling Grace", type: "effect", rarity: "rare", description: "天から舞い降りる白い花弁。", cost: 3000, unlocked: false },
+    { id: "Feathers", name: "Angelic Feathers", type: "effect", rarity: "epic", description: "ゆっくりと漂う純白の羽。", cost: 8000, unlocked: false },
+    { id: "Bubbles", name: "Champagne Bubbles", type: "effect", rarity: "rare", description: "華やかに立ち昇る気泡。", cost: 3000, unlocked: false },
+    { id: "Ribbons", name: "Streaming Ribbons", type: "effect", rarity: "epic", description: "優雅に流れる光のリボン。", cost: 8000, unlocked: false },
     { id: "Glitch", name: "Digital Glitch", type: "effect", rarity: "rare", description: "技術的な洗練を感じさせるノイズ。", cost: 3000, unlocked: false },
     { id: "Petals", name: "Falling Petals", type: "effect", rarity: "rare", description: "静かに舞い散る花びら。", cost: 3000, unlocked: false },
     { id: "Snow", name: "Digital Snow", type: "effect", rarity: "rare", description: "静寂を演出する微細な粒子。", cost: 3000, unlocked: false },
@@ -302,9 +317,23 @@ export default function InventoryPage() {
               {RT_PACKS.map((pack) => (
                 <button
                   key={pack.id}
-                  onClick={() => {
-                    // Stripe決済への遷移ロジック（後で実装）
-                    showToast(`Initiating Infusion: ${pack.label}`, "success");
+                  onClick={async () => {
+                    try {
+                      showToast(`Opening Sanctuary...`, "success");
+                      const res = await fetch("/api/stripe/rt-checkout", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ packId: pack.id })
+                      });
+                      const data = await res.json();
+                      if (data.url) {
+                        window.location.href = data.url;
+                      } else {
+                        showToast(data.error || "Connection failed.", "error");
+                      }
+                    } catch (e) {
+                      showToast("Gateway error.", "error");
+                    }
                   }}
                   className="group p-8 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-azure-500/40 transition-all text-left flex flex-col gap-4 relative overflow-hidden"
                 >

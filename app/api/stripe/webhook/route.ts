@@ -27,7 +27,27 @@ export async function POST(req: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session;
 
     try {
-      // カスタムフィールドから名前を取得
+      const type = session.metadata?.type;
+
+      if (type === "rt_purchase") {
+        const userId = session.metadata?.userId;
+        const rtAmount = parseInt(session.metadata?.rtAmount || "0");
+
+        if (userId && rtAmount > 0) {
+          await prisma.user.update({
+            where: { id: userId },
+            data: {
+              rt_balance: { increment: BigInt(rtAmount) }
+            }
+          });
+          
+          await sendDiscordNotification(`【HXC監視局】RTチャージを検知。ユーザーID: ${userId}, 付与RT: ${rtAmount}`);
+          console.log(`Successfully granted ${rtAmount} RT to user ${userId}`);
+        }
+        return NextResponse.json({ received: true });
+      }
+
+      // 既存の物理カード注文ロジック
       const customNameField = session.custom_fields?.find((f) => f.key === "customer_name");
       const customerName = customNameField?.text?.value || session.customer_details?.name || "Unknown";
       
