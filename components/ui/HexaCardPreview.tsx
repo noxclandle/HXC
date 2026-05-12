@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { Rotate3d, Building2, User, Phone, Mail, Instagram, Facebook, Twitter, MessageCircle } from "lucide-react";
@@ -27,6 +28,7 @@ export interface HexaCardProps {
   frame?: string;
   background?: string;
   effect?: string;
+  aura?: string;
   fontFamily?: string;
   scaleName?: "standard" | "impact" | "maximum";
   scaleTitle?: "standard" | "impact" | "maximum";
@@ -44,7 +46,7 @@ export default function HexaCardPreview({
   orientation = "horizontal", 
   alignName = "center", alignReading = "center", alignCompany = "center",
   alignTitle = "center", alignPhone = "center", alignEmail = "center",
-  frame = "Obsidian", background = "Default", effect = "None", fontFamily = "Standard", 
+  frame = "Obsidian", background = "Default", effect = "None", aura = "None", fontFamily = "Standard", 
   scaleName = "standard", scaleTitle = "standard", scaleCompany = "standard",
   sound = "resonance",
   link_x, link_instagram, link_line, link_facebook,
@@ -69,6 +71,40 @@ export default function HexaCardPreview({
     setIsFlipped(!isFlipped);
     onFlip?.(!isFlipped);
     setTimeout(() => setIsRotating(false), 800);
+  };
+
+  const getAuraLayer = () => {
+    switch (aura) {
+      case "WhiteMist":
+        return <motion.div animate={{ opacity: [0.1, 0.3, 0.1], scale: [1, 1.1, 1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-[-20px] bg-white/20 blur-[40px] rounded-full z-0" />;
+      case "AzureFlame":
+        return <motion.div animate={{ opacity: [0.2, 0.4, 0.2], scale: [1, 1.2, 1] }} transition={{ duration: 3, repeat: Infinity }} className="absolute inset-[-30px] bg-azure-500/30 blur-[50px] rounded-full z-0" />;
+      case "GoldenHalo":
+        return <motion.div animate={{ opacity: [0.3, 0.6, 0.3], rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="absolute inset-[-40px] border-[10px] border-amber-500/20 blur-[20px] rounded-full z-0" />;
+      case "VioletHaze":
+        return <motion.div animate={{ opacity: [0.2, 0.4, 0.2], scale: [1, 1.1, 1] }} transition={{ duration: 5, repeat: Infinity }} className="absolute inset-[-25px] bg-purple-500/25 blur-[45px] rounded-full z-0" />;
+      case "EmeraldDust":
+        return (
+          <div className="absolute inset-[-20px] z-0 pointer-events-none">
+             {[...Array(15)].map((_, i) => (
+               <motion.div key={i} animate={{ y: [0, -20, 0], opacity: [0, 0.4, 0] }} transition={{ duration: 2 + Math.random() * 2, repeat: Infinity, delay: i * 0.1 }} className="absolute w-1 h-1 bg-emerald-400 rounded-full" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }} />
+             ))}
+          </div>
+        );
+      case "CrimsonFlare":
+        return <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 0.5, repeat: Infinity }} className="absolute inset-[-35px] bg-rose-600/30 blur-[60px] rounded-full z-0" />;
+      case "VoidEclipse":
+        return <div className="absolute inset-[-50px] bg-black blur-[80px] opacity-80 z-0" />;
+      case "PrismGlow":
+        return <motion.div animate={{ rotate: 360 }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} className="absolute inset-[-40px] bg-[conic-gradient(from_0deg,red,orange,yellow,green,blue,indigo,violet,red)] opacity-20 blur-[50px] rounded-full z-0" />;
+      case "CyberGrid":
+        return (
+          <div className="absolute inset-[-20px] z-0 overflow-hidden opacity-20">
+             <div className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f6_1px,transparent_1px),linear-gradient(to_bottom,#3b82f6_1px,transparent_1px)] bg-[size:10px_10px]" />
+          </div>
+        );
+      default: return null;
+    }
   };
 
   const getFrameStyle = () => {
@@ -226,11 +262,16 @@ export default function HexaCardPreview({
       onMouseLeave={() => { x.set(0); y.set(0); }}
       onClick={handleFlip}
     >
+      {/* Aura Layer (Behind Card) */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-visible flex items-center justify-center">
+         {getAuraLayer()}
+      </div>
+
       <motion.div
         style={{ rotateX, rotateY: finalRotateY, transformStyle: "preserve-3d", width: "100%", height: "100%" }}
         animate={{ scale: isRotating ? 0.96 : 1 }}
         transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
-        className="relative"
+        className="relative z-10"
       >
         <motion.div style={{ opacity: glowOpacity, rotateY: 90, backfaceVisibility: "hidden" }} className="absolute inset-0 bg-white/10 blur-3xl z-20 pointer-events-none" />
 
@@ -244,8 +285,8 @@ export default function HexaCardPreview({
           {isVertical ? (
             <div className="h-full p-8 md:p-12 flex flex-col items-center justify-between text-center relative overflow-hidden">
                <div className={`w-full flex flex-col items-center z-10 ${getAlignClass(alignCompany)}`}>
-                  <div className="w-16 h-16 md:w-20 md:h-20 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
-                     {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={32} className="text-white/10" />}
+                  <div className="w-16 h-16 md:w-20 md:h-20 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative">
+                     {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={32} className="text-white/10" />}
                   </div>
                   <p className={`tracking-[0.25em] uppercase text-white font-medium leading-relaxed mt-4 truncate w-full`} style={{ fontSize: `${getFieldScale('company', true) * 12}px` }}>{company || "CORPORATION"}</p>
                </div>
@@ -269,8 +310,8 @@ export default function HexaCardPreview({
           ) : (
             <div className="h-full p-8 md:p-12 flex flex-col justify-between relative text-center overflow-hidden">
               <header className={`w-full flex flex-row items-center gap-4 z-10 ${getAlignClass(alignCompany)}`}>
-                 <div className="w-12 h-12 md:w-16 md:h-16 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0">
-                    {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-2" /> : <Building2 size={24} className="text-white/10" />}
+                 <div className="w-12 h-12 md:w-16 md:h-16 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative">
+                    {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={24} className="text-white/10" />}
                  </div>
                  <p className="tracking-[0.3em] uppercase text-white/80 font-medium leading-tight truncate" style={{ fontSize: `${getFieldScale('company', false) * 12}px` }}>{company || "CORPORATION"}</p>
               </header>
@@ -303,8 +344,8 @@ export default function HexaCardPreview({
             <div className="h-full p-10 md:p-16 flex flex-col justify-between items-center w-full">
               <div />
               <div className="space-y-6 relative z-10 w-full flex flex-col items-center">
-                <div className="w-28 h-28 md:w-36 md:h-36 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl">
-                   {faceUrl ? <img src={faceUrl} alt="Portrait" className="w-full h-full object-cover" /> : <User size={48} className="text-white/5" />}
+                <div className="w-28 h-28 md:w-36 md:h-36 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl relative">
+                   {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={48} className="text-white/5" />}
                 </div>
                 <div className="space-y-4 w-full">
                    <p className="text-[11px] md:text-[13px] tracking-[0.6em] uppercase text-white/30">Verified Identity</p>
@@ -323,8 +364,8 @@ export default function HexaCardPreview({
             </div>
           ) : (
             <div className="h-full p-6 md:p-8 flex flex-row items-center justify-center gap-8 md:gap-12 w-full">
-               <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl shrink-0">
-                  {faceUrl ? <img src={faceUrl} alt="Portrait" className="w-full h-full object-cover" /> : <User size={40} className="text-white/5" />}
+               <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl shrink-0 relative">
+                  {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={40} className="text-white/5" />}
                </div>
                <div className="flex flex-col justify-center text-left flex-1 min-w-0">
                   <p className="text-[9px] md:text-[11px] tracking-[0.5em] uppercase text-white/30 mb-2">Verified Identity</p>
@@ -344,4 +385,5 @@ export default function HexaCardPreview({
       </motion.div>
     </div>
   );
+}
 }
