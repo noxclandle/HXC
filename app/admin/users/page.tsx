@@ -229,7 +229,11 @@ export default function UsersAdminPage() {
                <header className="mb-10">
                   <p className="text-[8px] tracking-[0.5em] uppercase text-azure-400 font-bold mb-2">ユーザー詳細検査</p>
                   <h2 className="text-3xl tracking-[0.2em] uppercase font-extralight">{inspectUser.name}</h2>
-                  <p className="text-[10px] opacity-40 font-mono mt-1">{inspectUser.id}</p>
+                  <div className="flex items-center gap-4 mt-2">
+                    <p className="text-[10px] opacity-40 font-mono">ID: {inspectUser.id}</p>
+                    <p className="text-[10px] text-azure-400 font-mono">UID: {inspectUser.card_uid || "NONE"}</p>
+                    <p className="text-[10px] text-azure-400 font-mono">SERIAL: {inspectUser.card_serial || "NONE"}</p>
+                  </div>
                </header>
 
                <div className="grid grid-cols-2 gap-12">

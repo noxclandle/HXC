@@ -11,8 +11,7 @@ export default function Footer() {
       <div className="max-w-4xl mx-auto flex flex-col items-center gap-12">
         {/* Branding */}
         <Link href="/" className="flex flex-col items-center text-center group">
-          <span className="text-2xl tracking-[1em] uppercase font-light text-moonlight ml-[1em] group-hover:opacity-70 transition-opacity">HEXA CARD</span>
-          <span className="text-[10px] tracking-[0.4em] uppercase opacity-30 mt-4">by Hexa Relation</span>
+          <span className="text-[11px] tracking-[1.2em] uppercase font-light text-moonlight/60 group-hover:text-moonlight transition-all">Hexa Relation</span>
         </Link>
 
         {/* Navigation/Legal Links */}

@@ -183,12 +183,25 @@ export default function LedgerPage() {
 
       {/* Orders Section */}
       <section id="orders" className="mb-20">
-        <div className="flex items-center gap-4 mb-8">
-          <Package className="text-azure-400 opacity-60" size={18} />
-          <h2 className="text-[11px] tracking-[0.5em] uppercase font-bold">Pending Orders (未発送の注文)</h2>
-          <span className="px-2 py-0.5 bg-azure-500/10 text-azure-400 text-[9px] rounded font-mono">
-            {orders.filter(o => o.status !== 'completed').length}
-          </span>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div className="flex items-center gap-4">
+            <Package className="text-azure-400 opacity-60" size={18} />
+            <h2 className="text-[11px] tracking-[0.5em] uppercase font-bold">Orders Management (注文管理)</h2>
+          </div>
+          <div className="flex gap-4">
+            <div className="px-4 py-2 bg-amber-500/5 border border-amber-500/20 rounded flex flex-col items-center min-w-[100px]">
+              <span className="text-[7px] uppercase tracking-widest opacity-40 mb-1">未対応 (Paid)</span>
+              <span className="text-lg font-mono text-amber-500">{orders.filter(o => o.status === 'paid').length}</span>
+            </div>
+            <div className="px-4 py-2 bg-azure-500/5 border border-azure-500/20 rounded flex flex-col items-center min-w-[100px]">
+              <span className="text-[7px] uppercase tracking-widest opacity-40 mb-1">発送済み (Shipped)</span>
+              <span className="text-lg font-mono text-azure-500">{orders.filter(o => o.status === 'shipped').length}</span>
+            </div>
+            <div className="px-4 py-2 bg-emerald-500/5 border border-emerald-500/20 rounded flex flex-col items-center min-w-[100px]">
+              <span className="text-[7px] uppercase tracking-widest opacity-40 mb-1">完了 (Done)</span>
+              <span className="text-lg font-mono text-emerald-400">{orders.filter(o => o.status === 'completed').length}</span>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-5 p-4 border-b border-white/5 text-[9px] uppercase tracking-[0.2em] opacity-30 font-bold">
@@ -205,8 +218,18 @@ export default function LedgerPage() {
           ) : orders.length === 0 ? (
             <div className="py-12 text-center text-[10px] uppercase opacity-10 tracking-widest italic">注文履歴はありません</div>
           ) : (
-            orders.map((order) => (
-              <div key={order.id} className="grid grid-cols-5 p-5 bg-white/[0.02] border border-white/5 items-center text-xs">
+            orders
+              .sort((a, b) => {
+                // 未対応(paid) -> 発送済み(shipped) -> 完了(completed) の順で表示
+                const score = { 'paid': 0, 'shipped': 1, 'completed': 2 };
+                return (score[a.status as keyof typeof score] ?? 3) - (score[b.status as keyof typeof score] ?? 3);
+              })
+              .map((order) => (
+              <div key={order.id} className={`grid grid-cols-5 p-5 border items-center text-xs transition-all ${
+                order.status === 'paid' ? 'bg-amber-500/[0.03] border-amber-500/20' : 
+                order.status === 'shipped' ? 'bg-azure-500/[0.02] border-azure-500/10' : 
+                'bg-white/[0.01] border-white/5 opacity-60'
+              }`}>
                 <div className="flex flex-col gap-1">
                   <span className="text-[10px] text-white opacity-80">{order.customer_name}</span>
                   <span className="text-[8px] opacity-30">{new Date(order.created_at).toLocaleDateString()}</span>

@@ -1,14 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShieldCheck, Zap } from "lucide-react";
+import { ShieldCheck, Zap, ArrowRight, CreditCard, Sparkles } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function LandingPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center relative overflow-hidden bg-void">
-      {/* Optimized Background Glow: No images, just CSS */}
+      {/* Background Glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-azure-500/5 blur-[120px] rounded-full animate-pulse" />
       </div>
@@ -61,8 +61,8 @@ export default function LandingPage() {
             href="/purchase"
             className="group relative px-16 py-5 overflow-hidden transition-all duration-500 bg-white text-void hover:bg-azure-50 transition-colors shadow-2xl"
           >
-            <span className="relative z-10 tracking-[0.6em] uppercase text-[10px] font-bold">
-              Order Card
+            <span className="relative z-10 tracking-[0.6em] uppercase text-[10px] font-bold flex items-center gap-2">
+              <CreditCard size={12} /> Order Card
             </span>
           </Link>
 

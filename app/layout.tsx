@@ -57,16 +57,20 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        {/* Preload critical assets */}
+        <link rel="preload" href="/logo.png" as="image" />
       </head>
-      <body className="bg-void text-moonlight min-h-screen flex flex-col">
+      <body className="bg-void text-moonlight min-h-screen flex flex-col antialiased">
         <NextAuthProvider>
           <ResonanceToastProvider>
             <GeometricBackground />
-            <ResonanceInteraction />
-            <main className="flex-grow">
-              {children}
-            </main>
-            <Footer />
+            <div className="relative z-10 flex-grow flex flex-col">
+              <ResonanceInteraction />
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Footer />
+            </div>
           </ResonanceToastProvider>
         </NextAuthProvider>
       </body>

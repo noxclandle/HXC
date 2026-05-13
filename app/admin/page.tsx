@@ -88,6 +88,7 @@ export default function AdminDashboardPage() {
           { label: "カード中央台帳", path: "/admin/ledger", icon: <Layers size={18}/>, desc: "物理カードの登録 & ペアリング" },
           { label: "発行・登録手順", path: "/admin/onboarding", icon: <ShieldCheck size={18}/>, desc: "新規ユーザー・カード発行プロトコル" },
           { label: "システム構成", path: "/admin/config", icon: <Database size={18}/>, desc: "価格設定 & 内部パラメータ" },
+          { label: "システム実行ログ", path: "/admin/logs", icon: <Database size={18}/>, desc: "全管理操作の証跡記録" },
           { label: "データバックアップ", path: "/api/admin/backup/export", icon: <Layers size={18}/>, desc: "全データのJSONエクスポート" },
         ].map((link) => (
           <Link 

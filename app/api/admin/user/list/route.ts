@@ -24,6 +24,13 @@ export async function GET(req: NextRequest) {
         created_at: true,
         owned_assets: true,
         unlocked_titles: true,
+        exp: true,
+        card: {
+          select: {
+            uid: true,
+            internal_serial: true
+          }
+        }
       },
       orderBy: { created_at: "desc" },
     });
@@ -32,6 +39,9 @@ export async function GET(req: NextRequest) {
     const safeUsers = users.map((u) => ({
       ...u,
       rt: u.rt_balance.toString(),
+      exp: u.exp.toString(),
+      card_uid: u.card?.uid || null,
+      card_serial: u.card?.internal_serial || null
     }));
 
     return NextResponse.json(safeUsers);
