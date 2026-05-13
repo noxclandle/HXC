@@ -9,6 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useToast } from "@/components/ui/ResonanceToast";
 import { playResonanceSound } from "@/lib/audio/resonance";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +52,7 @@ export default function InventoryPage() {
   const [previewAsset, setPreviewAsset] = useState<Asset | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [showRTPurchase, setShowRTPurchase] = useState(false);
+  const [confirmingAsset, setConfirmingAsset] = useState<Asset | null>(null);
   
   const [equipped, setEquipped] = useState<any>({
     frame: "Obsidian",
@@ -174,9 +176,9 @@ export default function InventoryPage() {
   const getRarityStyle = (rarity: Asset["rarity"]) => {
     switch (rarity) {
       case "mythic": return "text-white border-white/40 bg-black shadow-[0_0_15px_rgba(255,255,255,0.2)]";
-      case "legendary": return "text-rose-500 border-rose-500/20 bg-rose-500/5";
-      case "epic": return "text-orange-500 border-orange-500/20 bg-orange-500/5";
-      case "rare": return "text-purple-400 border-purple-500/20 bg-purple-500/5";
+      case "legendary": return "text-rose-500 border-rose-500/20 bg-rose-50/5";
+      case "epic": return "text-orange-500 border-orange-500/20 bg-orange-50/5";
+      case "rare": return "text-purple-400 border-purple-500/20 bg-purple-50/5";
       case "common": return "text-white/40 border-white/5 bg-white/[0.01]";
     }
   };
@@ -223,34 +225,30 @@ export default function InventoryPage() {
 
   const handleUnlock = async (asset: Asset) => {
     if (unlockingAsset || profile?.role === "fixer") return;
-    const cost = assetPrices[asset.rarity] || 0;
-    if (confirm(`Unlock ${asset.name} for ${cost.toLocaleString()} RT?`)) {
-      setUnlockingAsset(asset.id);
-      try {
-        const res = await fetch("/api/user/unlock", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ assetId: asset.id, rarity: asset.rarity })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          showToast(`Unlocked: ${asset.name}`, "success");
-          setRTBalance(data.rt_balance);
-          setOwnedAssets(data.owned_assets);
-          const newEquipped = { ...equipped, [activeCategory as keyof typeof equipped]: asset.id };
-          setEquipped(newEquipped);
-          handleCommit(newEquipped);
-        } else {
-          showToast(data.error || "Unlock failed", "error");
-        }
-      } catch (err) { console.error(err); }
-      finally { setUnlockingAsset(null); }
-    }
+    setUnlockingAsset(asset.id);
+    try {
+      const res = await fetch("/api/user/unlock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assetId: asset.id, rarity: asset.rarity })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(`Resonance Established: ${asset.name}`, "success");
+        setRTBalance(data.rt_balance);
+        setOwnedAssets(data.owned_assets);
+        const newEquipped = { ...equipped, [activeCategory as keyof typeof equipped]: asset.id };
+        setEquipped(newEquipped);
+        handleCommit(newEquipped);
+      } else {
+        showToast(data.error || "Unlock failed", "error");
+      }
+    } catch (err) { console.error(err); }
+    finally { setUnlockingAsset(null); setConfirmingAsset(null); }
   };
 
   const handlePreviewAsset = (asset: Asset) => {
     setPreviewAsset(asset);
-    // サウンドカテゴリの場合はその場で音を鳴らす
     if (asset.type === "sound") {
       playResonanceSound(asset.id);
     }
@@ -263,7 +261,7 @@ export default function InventoryPage() {
       : (asset.rarity === "common" || ownedAssets.includes(asset.id)));
     
     if (!isUnlocked) {
-      handleUnlock(asset);
+      setConfirmingAsset(asset);
       return;
     }
     const newEquipped = { ...equipped, [activeCategory as keyof typeof equipped]: asset.id };
@@ -281,7 +279,16 @@ export default function InventoryPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto pt-24 lg:pt-32 px-4 lg:px-6 pb-24 text-moonlight">
+    <div className="max-w-7xl mx-auto pt-24 lg:pt-32 px-4 lg:px-6 pb-24 text-moonlight overflow-x-hidden">
+      <ConfirmationModal 
+        isOpen={!!confirmingAsset}
+        onClose={() => setConfirmingAsset(null)}
+        onConfirm={() => confirmingAsset && handleUnlock(confirmingAsset)}
+        title={`Unlock ${confirmingAsset?.name}`}
+        description={`Do you wish to permeate the boundary and acquire this asset?`}
+        cost={assetPrices[confirmingAsset?.rarity || 'common'] || 0}
+      />
+
       <header className="mb-8 lg:mb-20 flex justify-between items-end">
         <div className="space-y-4">
           <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-30 hover:opacity-100 transition-opacity mb-4 lg:mb-8">
@@ -358,7 +365,7 @@ export default function InventoryPage() {
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
         {/* Preview Container */}
         <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/95 backdrop-blur-lg pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[38vh] lg:h-auto flex items-center justify-center">
-           <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-hidden group flex flex-col items-center w-full">
+           <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-visible group flex flex-col items-center w-full">
               {previewAsset && (
                  <div className="absolute top-0 left-0 w-full h-[1px] bg-azure-500 animate-pulse z-50" />
               )}
@@ -380,7 +387,7 @@ export default function InventoryPage() {
                  </button>
               </div>
 
-              <div className="py-1 lg:py-0 w-full flex justify-center scale-[0.6] xs:scale-[0.75] sm:scale-85 lg:scale-100 origin-center lg:origin-top transition-transform duration-500">
+              <div className="py-1 lg:py-0 w-full flex justify-center scale-[0.6] xs:scale-[0.75] sm:scale-85 lg:scale-100 origin-center lg:origin-top transition-transform duration-500 relative z-20">
                 <HexaCardPreview 
                   name={profile?.name || session?.user?.name || "ARCHITECT"} 
                   reading={profile?.handle || profile?.reading}
@@ -393,6 +400,7 @@ export default function InventoryPage() {
                   frame={displayEquipped.frame}
                   background={displayEquipped.background}
                   effect={displayEquipped.effect}
+                  aura={displayEquipped.aura}
                   fontFamily={displayEquipped.fontFamily}
                   sound={displayEquipped.sound}
                   orientation={displayEquipped.orientation}
@@ -430,7 +438,7 @@ export default function InventoryPage() {
 
            <div className="space-y-4 lg:max-h-[700px] overflow-y-visible lg:overflow-y-auto lg:pr-4 custom-scrollbar">
               <AnimatePresence mode="wait">
-                <motion.div key={activeCategory} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="grid grid-cols-1 gap-4 px-2 lg:px-0">
+                <motion.div key={activeCategory} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="grid grid-cols-1 gap-4 px-2 lg:px-0 pb-12">
                   {filteredAssets.filter(asset => {
                     if (profile?.role === "fixer") return true;
                     return asset.type !== "title" || unlockedTitles.includes(asset.id);
@@ -463,7 +471,6 @@ export default function InventoryPage() {
                           </div>
 
                           <div className="flex items-center gap-3">
-                            {/* Preview Button (Try-on) */}
                             {!isActive && (
                               <button 
                                 onClick={() => handlePreviewAsset(asset)}
@@ -474,7 +481,6 @@ export default function InventoryPage() {
                               </button>
                             )}
                             
-                            {/* Action Button (Equip or Unlock) */}
                             <button 
                               onClick={() => handleSelectAsset(asset)}
                               className={`px-4 py-3 border text-[8px] uppercase tracking-[0.2em] font-bold transition-all ${isUnlocked ? (isActive ? "bg-white text-void border-white" : "border-white/20 opacity-40 hover:opacity-100 hover:border-white") : "bg-azure-600/10 border-azure-600/30 text-azure-400"}`}
