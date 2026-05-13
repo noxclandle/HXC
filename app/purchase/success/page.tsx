@@ -1,30 +1,60 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
+import { CheckCircle, ArrowRight, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { CheckCircle, Shield } from "lucide-react";
 
 export default function PurchaseSuccessPage() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 text-center">
-      <div className="w-16 h-16 border border-white/20 rounded-full flex items-center justify-center mb-8 bg-white/5">
-        <CheckCircle size={32} className="text-white" />
+    <main className="min-h-screen bg-void flex flex-col items-center justify-center p-6 text-center">
+      <div className="max-w-md w-full space-y-12">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="flex justify-center"
+        >
+          <div className="w-24 h-24 rounded-full border border-azure-500/30 flex items-center justify-center bg-azure-500/5 relative">
+            <ShieldCheck size={40} className="text-azure-400" />
+            <motion.div 
+              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="absolute inset-0 bg-azure-500 blur-2xl rounded-full -z-10" 
+            />
+          </div>
+        </motion.div>
+
+        <div className="space-y-4">
+          <h1 className="text-2xl tracking-[0.5em] uppercase font-light text-white">Identity Established</h1>
+          <p className="text-[10px] tracking-widest text-azure-400 opacity-60 uppercase">決済が正常に完了しました</p>
+        </div>
+
+        <div className="p-8 border border-white/5 bg-white/[0.02] text-left space-y-6">
+           <div className="space-y-1">
+              <span className="text-[8px] uppercase tracking-widest opacity-30">Transaction ID</span>
+              <p className="font-mono text-[10px] text-white/60 truncate">{sessionId || "PROTOCOL_MOCK_SUCCESS"}</p>
+           </div>
+           <p className="text-[11px] leading-relaxed tracking-widest text-white/40 uppercase">
+              貴方のカードは現在、Hexa Protocolに基づき製造工程に入りました。<br />
+              発行完了まで、今暫くお待ちください。<br />
+              進行状況はメンバーハブから確認可能です。
+           </p>
+        </div>
+
+        <div className="flex flex-col gap-4">
+           <Link 
+             href="/hub"
+             className="w-full py-5 bg-white text-void text-[10px] font-bold tracking-[0.5em] uppercase hover:bg-azure-50 transition-all shadow-xl flex items-center justify-center gap-4"
+           >
+             Return to Hub <ArrowRight size={14} />
+           </Link>
+           <p className="text-[7px] tracking-widest opacity-20 uppercase">Authorized by Hexa Relation</p>
+        </div>
       </div>
-      
-      <h1 className="text-3xl font-extralight tracking-[0.3em] uppercase mb-4">
-        決済が完了しました
-      </h1>
-      
-      <p className="text-sm tracking-widest text-white/50 max-w-md leading-relaxed mb-12">
-        ご注文ありがとうございます。<br />
-        これよりカードの製造・発行手続きに入ります。<br />
-        お手元に届くまで通常2週間前後のお時間をいただいております。<br />
-        カードがお手元に届きましたら、スマートフォンにかざしてアカウントのアクティベーション（本登録）を完了させてください。
-      </p>
-      
-      <Link 
-        href="/"
-        className="px-8 py-4 border border-white/20 text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all flex items-center gap-3"
-      >
-        <Shield size={14} /> トップページへ戻る
-      </Link>
-    </div>
+    </main>
   );
 }

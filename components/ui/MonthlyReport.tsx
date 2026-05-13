@@ -4,12 +4,14 @@ import { motion } from "framer-motion";
 import { BarChart3, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
-export default function MonthlyReport() {
+export default function MonthlyReport({ stats }: { stats?: any }) {
+  const currentMonth = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(new Date());
+  
   const report = {
-    month: "April 2026",
-    newConnections: 12,
-    topTag: "High-Value",
-    summary: "今月は経営層との繋がりが30%増加しました。あなたのネットワークはより強固なものへと進化しています。"
+    month: currentMonth,
+    newConnections: stats?.monthly_connections || 0,
+    topTag: stats?.top_tag || "Unknown",
+    summary: stats?.monthly_summary || "今月はデータの蓄積フェーズです。カード交換を重ねることで、ここに詳細な分析が表示されます。"
   };
 
   return (
@@ -27,7 +29,7 @@ export default function MonthlyReport() {
             <p className="text-[8px] uppercase opacity-30">New Links</p>
             <div className="flex items-baseline gap-2">
               <span className="text-xl font-extralight">+{report.newConnections}</span>
-              <TrendingUp size={10} className="text-emerald-400 opacity-60" />
+              {report.newConnections > 0 && <TrendingUp size={10} className="text-emerald-400 opacity-60" />}
             </div>
           </div>
           <div className="space-y-1">
