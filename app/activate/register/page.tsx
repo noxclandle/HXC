@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Hexagon, UserCheck, ShieldCheck, Mail, Lock, Briefcase, Fingerprint, CheckCircle2 } from "lucide-react";
+import { Hexagon, UserCheck, Mail, Lock, CheckCircle2, Fingerprint } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 
@@ -17,12 +17,10 @@ function RegisterContent() {
     handle: "",
     email: "",
     password: "",
-    title: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [step, setStep] = useState(0);
-  const [registeredSlug, setRegisteredSlug] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +29,6 @@ function RegisterContent() {
       return;
     }
     setError("");
-    setStep(1);
     setLoading(true);
 
     try {
@@ -47,72 +44,34 @@ function RegisterContent() {
 
       const data = await res.json();
       if (res.ok) {
-        setRegisteredSlug(data.slug);
+        setStep(1);
         // 自動ログインを試行
-        await signIn("credentials", {
+        const signInRes = await signIn("credentials", {
           email: formData.email,
           password: formData.password,
           redirect: false,
         });
-        
-        // 登録成功、次はハードウェアへの書き込み（ステップ2）
-        setStep(2);
+
+        if (signInRes?.ok) {
+          // デバイスの紐付けをバックグラウンドで試行
+          fetch("/api/auth/bind-device", { method: "POST" })
+            .then(res => res.json())
+            .then(d => {
+              if (d.deviceToken) localStorage.setItem("hxc_soul_fragment", d.deviceToken);
+            })
+            .catch(e => console.warn("Background binding failed"));
+
+          setTimeout(() => {
+            router.push("/hub");
+          }, 2000);
+        } else {
+          router.push("/login");
+        }
       } else {
         setError(data.error || "登録に失敗しました。");
-        setStep(0);
       }
     } catch (err) {
       setError("通信エラーが発生しました。");
-      setStep(0);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleHardwareWrite = async () => {
-    if (!registeredSlug) return;
-    setError("");
-    setLoading(true);
-
-    try {
-      if (!("NDEFReader" in window)) {
-        throw new Error("This browser does not support NFC writing.");
-      }
-
-      const ndef = new (window as any).NDEFReader();
-      const publicUrl = `${window.location.origin}/p/${registeredSlug}`;
-      
-      // 書き込み実行
-      await ndef.write({
-        records: [{ recordType: "url", data: publicUrl }]
-      });
-
-      // 物理的ロック（読み取り専用化）の試行
-      if ("makeReadOnly" in ndef) {
-        try {
-          await ndef.makeReadOnly();
-        } catch (lockError) {
-          console.warn("Hardware lock not supported on this device/chip.");
-        }
-      }
-
-      setStep(3);
-      
-      // 自動ログイン後にデバイスを紐付ける
-      try {
-        const bindRes = await fetch("/api/auth/bind-device", { method: "POST" });
-        if (bindRes.ok) {
-          const { deviceToken } = await bindRes.json();
-          localStorage.setItem("hxc_soul_fragment", deviceToken);
-        }
-      } catch (e) { console.warn("Auto device binding failed, but registration is complete."); }
-
-      setTimeout(() => {
-        router.push("/hub");
-      }, 3000);
-    } catch (err: any) {
-      console.error("Write error:", err);
-      setError("刻印に失敗しました。カードを離さず、もう一度ボタンを押してください。");
     } finally {
       setLoading(false);
     }
@@ -120,8 +79,9 @@ function RegisterContent() {
 
   return (
     <AnimatePresence mode="wait">
-        {step === 0 && (
+        {step === 0 ? (
           <motion.div 
+            key="form"
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             exit={{ opacity: 0, scale: 0.9 }}
@@ -138,16 +98,16 @@ function RegisterContent() {
             <div className="p-5 border border-white/5 bg-white/[0.02] text-left space-y-3">
                <div className="flex justify-between items-center text-[8px] uppercase tracking-widest opacity-30">
                   <span>Hardware UID</span>
-                  <span className="text-azure-400 font-mono select-all">{uid || "AUTO-DETECTED"}</span>
+                  <span className="text-azure-400 font-mono">{uid || "DETECTED"}</span>
                </div>
                <div className="flex justify-between items-center text-[8px] uppercase tracking-widest opacity-30">
-                  <span>Assigned Serial</span>
-                  <span className="text-white font-mono">{serial || "HXC-PENDING"}</span>
+                  <span>Protocol Status</span>
+                  <span className="text-emerald-500 font-bold tracking-widest">READY TO SYNC</span>
                </div>
             </div>
 
             {error && (
-              <div className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[10px] tracking-widest uppercase">
+              <div className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[10px] tracking-widest uppercase text-center">
                  {error}
               </div>
             )}
@@ -157,135 +117,50 @@ function RegisterContent() {
                 <div className="space-y-2">
                   <label className="text-[9px] uppercase tracking-[0.3em] opacity-30 flex items-center gap-2 font-bold"><UserCheck size={14}/> Name / 氏名</label>
                   <input
-                    type="text"
-                    required
-                    value={formData.name}
+                    type="text" required value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="福井 豪"
-                    className="w-full bg-white/[0.03] border border-white/10 p-4 tracking-widest focus:border-azure-500 outline-none transition-all text-white text-xs placeholder:opacity-20"
+                    className="w-full bg-white/[0.03] border border-white/10 p-4 tracking-widest focus:border-azure-500 outline-none transition-all text-white text-xs"
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[9px] uppercase tracking-[0.3em] opacity-30 flex items-center gap-2 font-bold"><Fingerprint size={14}/> Reading / フリガナ</label>
                   <input
-                    type="text"
-                    required
-                    value={formData.handle}
+                    type="text" required value={formData.handle}
                     onChange={(e) => setFormData({ ...formData, handle: e.target.value })}
                     placeholder="フクイ ゴウ"
-                    className="w-full bg-white/[0.03] border border-white/10 p-4 tracking-widest focus:border-azure-500 outline-none transition-all text-white text-xs placeholder:opacity-20"
+                    className="w-full bg-white/[0.03] border border-white/10 p-4 tracking-widest focus:border-azure-500 outline-none transition-all text-white text-xs"
                   />
                 </div>
               </div>
 
               {[
-                { label: "Login Email / メールアドレス", key: "email", icon: <Mail size={14}/>, placeholder: "your@email.com", type: "email" },
-                { label: "Password / パスワード", key: "password", icon: <Lock size={14}/>, placeholder: "••••••••", type: "password" },
-                { label: "Job Title / 役職・肩書き", key: "title", icon: <Briefcase size={14}/>, placeholder: "Architect" },
+                { label: "Login Email", key: "email", icon: <Mail size={14}/>, placeholder: "your@email.com", type: "email" },
+                { label: "Password", key: "password", icon: <Lock size={14}/>, placeholder: "••••••••", type: "password" },
               ].map((f) => (
                 <div key={f.key} className="space-y-2">
                   <label className="text-[9px] uppercase tracking-[0.3em] opacity-30 flex items-center gap-2 font-bold">{f.icon} {f.label}</label>
                   <input
-                    type={f.type || "text"}
-                    required={f.key !== "title"}
+                    type={f.type || "text"} required
                     value={(formData as any)[f.key]}
                     onChange={(e) => setFormData({ ...formData, [f.key]: e.target.value })}
                     placeholder={f.placeholder}
-                    className="w-full bg-white/[0.03] border border-white/10 p-4 tracking-widest focus:border-azure-500 outline-none transition-all text-white text-xs placeholder:opacity-20"
+                    className="w-full bg-white/[0.03] border border-white/10 p-4 tracking-widest focus:border-azure-500 outline-none transition-all text-white text-xs"
                   />
                 </div>
               ))}
 
               <button
-                type="submit"
-                className="w-full py-6 bg-white text-void font-bold text-[11px] tracking-[0.8em] uppercase shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:bg-azure-50 transition-all mt-8 active:scale-[0.98]"
+                type="submit" disabled={loading}
+                className="w-full py-6 bg-white text-void font-bold text-[11px] tracking-[0.8em] uppercase shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:bg-azure-50 transition-all mt-8 active:scale-[0.98] disabled:opacity-50"
               >
-                Confirm Identity
+                {loading ? "Synchronizing..." : "Confirm Identity"}
               </button>
             </form>
-
-            <p className="text-[8px] tracking-[0.3em] opacity-20 uppercase leading-relaxed">
-               ボタンを押すことで、聖域の規約に同意したものとみなされます。<br />
-               一度刻まれた情報は物理鍵と不可分となります。
-            </p>
           </motion.div>
-        )}
-
-        {step === 1 && (
+        ) : (
           <motion.div 
-            key="sync" 
-            initial={{ opacity: 0, scale: 0.9 }} 
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center"
-          >
-            <div className="relative mb-16">
-               <motion.div
-                 animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
-                 transition={{ duration: 3, repeat: Infinity }}
-                 className="absolute inset-0 bg-azure-500 blur-[120px] rounded-full"
-               />
-               <motion.div animate={{ rotate: 360 }} transition={{ duration: 12, repeat: Infinity, ease: "linear" }} className="text-azure-500/20">
-                 <Hexagon size={280} strokeWidth={0.2} />
-               </motion.div>
-               <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
-                 <div className="w-16 h-16 border-t-2 border-azure-400 rounded-full animate-spin" />
-                 <span className="text-[10px] tracking-[1em] uppercase text-azure-400 font-bold ml-[1em] animate-pulse">Establishing Identity</span>
-               </div>
-            </div>
-            <h2 className="text-2xl tracking-[0.5em] uppercase font-light text-white">Writing Archive</h2>
-            <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase max-w-xs leading-relaxed mt-4">
-               あなたの意志と、物理の鍵を聖域へ刻んでいます。<br />
-               接続を切断しないでください。
-            </p>
-          </motion.div>
-        )}
-
-        {step === 2 && (
-          <motion.div 
-            key="inscription" 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-md w-full space-y-10"
-          >
-            <header className="space-y-4">
-              <div className="w-16 h-16 border border-azure-400/40 flex items-center justify-center mx-auto rounded-full mb-8 relative">
-                 <motion.div animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }} transition={{ duration: 2, repeat: Infinity }} className="absolute inset-0 bg-azure-400 rounded-full" />
-                 <Fingerprint size={32} className="text-azure-400" />
-              </div>
-              <h2 className="text-2xl tracking-[0.4em] uppercase font-light text-white">Hardware Inscription</h2>
-              <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400">物理デバイスへの最終刻印</p>
-            </header>
-
-            <div className="p-8 border border-white/10 bg-white/[0.02] space-y-6 text-center">
-               <p className="text-[11px] tracking-widest leading-relaxed opacity-60">
-                 聖域への登録が完了しました。<br />
-                 最後に、お手元のカードに「名刺URL」を直接刻み、物理的な書き換えロックをかけます。
-               </p>
-               <div className="py-4 border-y border-white/5 font-mono text-[10px] text-azure-400 tracking-tighter">
-                  TARGET: /p/{registeredSlug}
-               </div>
-            </div>
-
-            {error && <div className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[10px] tracking-widest uppercase">{error}</div>}
-
-            <button
-              onClick={handleHardwareWrite}
-              disabled={loading}
-              className="w-full py-6 bg-white text-void font-bold text-[11px] tracking-[0.8em] uppercase shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:bg-azure-50 transition-all active:scale-[0.98]"
-            >
-              {loading ? "Synchronizing..." : "Inscribe & Lock"}
-            </button>
-            
-            <p className="text-[8px] tracking-[0.3em] opacity-20 uppercase leading-relaxed text-center">
-               この操作により、カードはあなたの専用鍵として永久に固定されます。<br />
-               二度と中身を書き換えることはできません。
-            </p>
-          </motion.div>
-        )}
-
-        {step === 3 && (
-          <motion.div 
-            key="finalized" 
+            key="success" 
             initial={{ opacity: 0, scale: 0.9 }} 
             animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center"
@@ -294,9 +169,9 @@ function RegisterContent() {
                <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.1, 0.4, 0.1] }} transition={{ duration: 1.5, repeat: Infinity }} className="absolute inset-0 bg-white blur-[100px] rounded-full" />
                <CheckCircle2 size={120} className="text-white relative z-10" />
             </div>
-            <h2 className="text-3xl tracking-[0.6em] uppercase font-extralight text-white">Eternalized</h2>
+            <h2 className="text-3xl tracking-[0.6em] uppercase font-extralight text-white">Identity Established</h2>
             <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase mt-4">
-               刻印は完了しました。聖域へお進みください。
+               情報の刻印が完了しました。聖域へ遷移します。
             </p>
           </motion.div>
         )}

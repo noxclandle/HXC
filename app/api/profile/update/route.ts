@@ -23,35 +23,54 @@ export async function POST(req: NextRequest) {
 
     const currentEquipped = (currentUser?.equipped_assets as any) || {};
 
-    const updatedUser = await prisma.user.update({
-      where: { email: session.user.email },
-      data: {
-        name: name,
-        handle_name: reading, // Save 'reading' to handle_name
-        link_website: website,
-        link_x: link_x,
-        link_instagram: link_instagram,
-        link_line: link_line,
-        link_facebook: link_facebook,
-        photo_url: photo_url,
-        logo_url: logo_url,
-        phone: phone,
-        equipped_assets: {
-          ...currentEquipped,
-          orientation: orientation,
-          hAlign: hAlign,
-          vAlign: vAlign
-        },
-        ai_config: {
-          profile: {
-            ...((currentUser?.ai_config as any)?.profile || {}),
-            title: title,
-            bio: bio,
-            company: company,
-            contact_email: email
+    const updatedUser = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.update({
+        where: { email: session.user.email },
+        data: {
+          name: name,
+          handle_name: reading,
+          link_website: website,
+          link_x: link_x,
+          link_instagram: link_instagram,
+          link_line: link_line,
+          link_facebook: link_facebook,
+          photo_url: photo_url,
+          logo_url: logo_url,
+          phone: phone,
+          equipped_assets: {
+            ...currentEquipped,
+            orientation: orientation,
+            hAlign: hAlign,
+            vAlign: vAlign
+          },
+          ai_config: {
+            profile: {
+              ...((currentUser?.ai_config as any)?.profile || {}),
+              title: title,
+              bio: bio,
+              company: company,
+              contact_email: email
+            }
           }
         }
-      }
+      });
+
+      // システムログに記録
+      await tx.auditLog.create({
+        data: {
+          user_id: user.id,
+          action: "profile_update",
+          details: {
+            name,
+            reading,
+            title,
+            company,
+            updated_at: new Date().toISOString()
+          }
+        }
+      });
+
+      return user;
     });
 
     return NextResponse.json({ success: true, user: updatedUser });
