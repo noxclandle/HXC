@@ -14,6 +14,8 @@ interface UserData {
   exp: string;
   owned_assets: string[];
   unlocked_titles: string[];
+  card_uid?: string | null;
+  card_serial?: string | null;
 }
 
 export default function UsersAdminPage() {

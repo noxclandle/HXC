@@ -84,6 +84,38 @@ export default function LedgerPage() {
     }
   };
 
+  const generateRandomSerial = (existingCards: any[]) => {
+    const year = "2026";
+    let version = 0;
+    
+    // 現在の台帳から使用済みのシリアルを抽出
+    const usedSerials = new Set(existingCards.map(c => c.internal_serial));
+
+    while (version < 100) {
+      const vStr = version.toString().padStart(2, '0');
+      const prefix = `${vStr}${year}`;
+      
+      // このバージョンの使用数をカウント
+      const countInVersion = existingCards.filter(c => c.internal_serial.startsWith(prefix)).length;
+
+      if (countInVersion < 100000) {
+        // 5桁の乱数を生成（重複があればリトライ）
+        let attempts = 0;
+        while (attempts < 1000) {
+          const randomSuffix = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+          const candidate = `${prefix}${randomSuffix}`;
+          
+          if (!usedSerials.has(candidate)) {
+            return candidate;
+          }
+          attempts++;
+        }
+      }
+      version++;
+    }
+    return "OVERFLOW"; // 1000万枚を超えた場合
+  };
+
   const [isScanning, setIsScanning] = useState(false);
   const [provisioningMode, setProvisioningMode] = useState(false);
 
