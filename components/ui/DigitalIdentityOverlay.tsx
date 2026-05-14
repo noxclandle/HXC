@@ -153,7 +153,7 @@ export default function DigitalIdentityOverlay({ user }: DigitalCardProps) {
                 <div className="space-y-6">
                   <p className="text-[8px] tracking-[0.3em] opacity-30 uppercase leading-relaxed">
                     相手の標準カメラで読み取らせることで、<br />
-                    あなたの聖域（プロフィール）へ招待します。
+                    あなたの境界（プロフィール）へ招待します。
                   </p>
                   
                   <div className="flex justify-center gap-4">

@@ -86,7 +86,7 @@ export default function ResidentAgent() {
       const data = await res.json();
       if (data.success) {
         setHasDaily(true);
-        showToast(`Grace Received / 聖域の恩寵を受信 (+${data.amount} RT)`, "success");
+        showToast(`Grace Received / 境界の恩寵を受信 (+${data.amount} RT)`, "success");
         window.dispatchEvent(new CustomEvent("rt-grace-received"));
       }
     } catch (e) { console.error(e); }
@@ -96,7 +96,7 @@ export default function ResidentAgent() {
     { q: "名刺の作り方は？", a: "左上のメニューから「Profile Edit」を選んでください。名前、ロゴ、顔写真などを設定して「Commit」を押せば完成です。" },
     { q: "RTを貯めるには？", a: "毎日天使に話しかけて「Daily Light」を受け取るか、新しい名刺交換（スキャン）を行うことで貯めることができます。" },
     { q: "縦型と横型はどう変える？", a: "編集画面や宝物庫のプレビュー右上にあるアイコンで、いつでも切り替えが可能です。" },
-    { q: "公式サポート", a: "不具合やご要望は、公式サポート（support@hexa-card.io）までご連絡ください。" },
+    { q: "公式サポート", a: "不具合やご要望は、公式サポート（support@hexa-relation.com）までご連絡ください。" },
   ];
 
   const notices = [
@@ -119,7 +119,7 @@ export default function ResidentAgent() {
                <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-[11px] tracking-[0.5em] uppercase text-white mb-1">Concierge Angel</h3>
-                    <p className="text-[8px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400">聖域の案内人 / {stage.name}</p>
+                    <p className="text-[8px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400">境界の案内人 / {stage.name}</p>
                   </div>
                   <button onClick={() => setIsOpen(false)} className="opacity-20 hover:opacity-100 transition-opacity"><X size={18}/></button>
                </div>
@@ -165,7 +165,7 @@ export default function ResidentAgent() {
                   <motion.div key="portal" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="space-y-8">
                     <div className="space-y-4">
                       <p className="text-[10px] tracking-widest leading-relaxed opacity-60 italic">
-                        &quot;主（あるじ）よ、本日の聖域の状態をお伝えします。深淵との接続は安定しており、あなたの存在は確実に刻まれています。&quot;
+                        &quot;主（あるじ）よ、本日の境界の状態をお伝えします。深層との接続は安定しており、あなたの存在は確実に刻まれています。&quot;
                       </p>
 
                       {!isSoulLinked && (
@@ -261,7 +261,7 @@ export default function ResidentAgent() {
                     <div className="pt-4 mt-8 border-t border-white/5">
                        <p className="text-[7px] tracking-[0.2em] opacity-30 uppercase text-center">
                           Further questions? Reach out to the architects.<br/>
-                          (support@hexa-card.io)
+                          (support@hexa-relation.com)
                        </p>
                     </div>
                   </motion.div>

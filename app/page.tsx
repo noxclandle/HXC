@@ -22,7 +22,7 @@ export default function LandingPage() {
         <div className="relative z-10 w-[180px] h-[180px] md:w-[240px] md:h-[240px]">
            <Image 
              src="/logo.png" 
-             alt="Hexa Card Logo" 
+             alt="Hexa Relation Logo" 
              fill
              priority
              className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]" 
@@ -36,7 +36,7 @@ export default function LandingPage() {
         transition={{ delay: 0.3, duration: 0.8 }}
         className="text-4xl md:text-6xl font-extralight tracking-[0.25em] uppercase mb-4 text-white"
       >
-        Hexa Card
+        Hexa Relation
         <span className="block text-[9px] md:text-[10px] tracking-[0.8em] opacity-30 mt-6 ml-[0.8em]">アイデンティティの透過</span>
       </motion.h1>
 

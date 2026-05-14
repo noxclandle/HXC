@@ -41,7 +41,7 @@ export default function CheckoutPage() {
             <div className="absolute inset-0 bg-void/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                <div className="flex flex-col items-center gap-2">
                  <Lock size={20} className="opacity-40" />
-                 <span className="text-[8px] tracking-[0.5em] uppercase opacity-40">Awaiting Ritual Authorization</span>
+                 <span className="text-[8px] tracking-[0.5em] uppercase opacity-40">Awaiting Resonance Authorization</span>
                </div>
             </div>
           </motion.div>
@@ -49,7 +49,7 @@ export default function CheckoutPage() {
       </div>
 
       <footer className="mt-24 text-center opacity-10 text-[8px] tracking-[0.5em] uppercase leading-relaxed">
-        Payments are currently disabled.<br />Rituals must be authorized by the Chief Officer.
+        Payments are currently disabled.<br />Resonances must be authorized by the Chief Officer.
       </footer>
     </div>
   );

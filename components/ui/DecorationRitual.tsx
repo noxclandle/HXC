@@ -4,9 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Award, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export default function DecorationRitual({ title, isVisible, onComplete }: { title: string, isVisible: boolean, onComplete: () => void }) {
+export default function DecorationResonance({ title, isVisible, onComplete }: { title: string, isVisible: boolean, onComplete: () => void }) {
   // 称号名から色を判定
-  const getRitualColor = (title: string) => {
+  const getResonanceColor = (title: string) => {
     if (title === "Messenger") return "#4DD0E1"; // 水色
     if (title === "Void Voyager") return "#BA68C8"; // 紫
     if (title === "Headhunter") return "#FFD54F"; // 金
@@ -15,7 +15,7 @@ export default function DecorationRitual({ title, isVisible, onComplete }: { tit
     return "#E0E0E0"; // デフォルト（白銀）
   };
 
-  const ritualColor = getRitualColor(title);
+  const ritualColor = getResonanceColor(title);
 
   useEffect(() => {
     if (isVisible) {

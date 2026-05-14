@@ -1,17 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendDiscordNotification } from "@/lib/discord";
+import { z } from "zod";
+
+const inquirySchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  subject: z.string().optional(),
+  message: z.string().min(1, "Message is required"),
+});
 
 /**
  * 問い合わせの送信
  */
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, subject, message } = await req.json();
+    const body = await req.json();
+    const result = inquirySchema.safeParse(body);
 
-    if (!name || !email || !message) {
-      return NextResponse.json({ error: "Required fields missing" }, { status: 400 });
+    if (!result.success) {
+      return NextResponse.json({ error: "Invalid request", details: result.error.format() }, { status: 400 });
     }
+
+    const { name, email, subject, message } = result.data;
 
     const inquiry = await prisma.inquiry.create({
       data: {

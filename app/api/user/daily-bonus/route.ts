@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { executeRTTransaction } from "@/lib/rt/engine";
 
 /**
- * 1日1回の聖域の光（デイリーボーナス）を付与する
+ * 1日1回の境界の光（デイリーボーナス）を付与する
  */
 export async function POST(req: NextRequest) {
   try {
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       session.user.id,
       bonusRT,
       "earn",
-      "Daily Sanctuary Light"
+      "Daily Boundary Light"
     );
 
     // 受領日時を更新
@@ -42,6 +42,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, amount: bonusRT });
   } catch (error) {
-    return NextResponse.json({ error: "Sanctuary connection unstable." }, { status: 500 });
+    return NextResponse.json({ error: "Boundary connection unstable." }, { status: 500 });
   }
 }

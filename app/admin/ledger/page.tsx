@@ -85,42 +85,13 @@ export default function LedgerPage() {
   };
 
   const [isScanning, setIsScanning] = useState(false);
+  const [provisioningMode, setProvisioningMode] = useState(false);
 
-  const generateRandomSerial = (existingCards: any[]) => {
-    const year = "2026";
-    let version = 0;
-    
-    // 現在の台帳から使用済みのシリアルを抽出
-    const usedSerials = new Set(existingCards.map(c => c.internal_serial));
-
-    while (version < 100) {
-      const vStr = version.toString().padStart(2, '0');
-      const prefix = `${vStr}${year}`;
-      
-      // このバージョンの使用数をカウント
-      const countInVersion = existingCards.filter(c => c.internal_serial.startsWith(prefix)).length;
-
-      if (countInVersion < 100000) {
-        // 5桁の乱数を生成（重複があればリトライ）
-        let attempts = 0;
-        while (attempts < 1000) {
-          const randomSuffix = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
-          const candidate = `${prefix}${randomSuffix}`;
-          
-          if (!usedSerials.has(candidate)) {
-            return candidate;
-          }
-          attempts++;
-        }
-      }
-      version++;
-    }
-    return "OVERFLOW"; // 1000万枚を超えた場合
-  };
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hxc.hexa-relation.com";
 
   const startScan = async () => {
     if (!("NDEFReader" in window)) {
-      alert("このブラウザ/デバイスはNFCスキャンに対応していません。");
+      alert("このデバイス/ブラウザはNFCスキャン(WebNFC)に対応していません。\niPhone(iOS)をご利用の場合は、App Storeから「NFC Tools」等のアプリを使用し、UIDを手動でコピー＆ペーストしてください。");
       return;
     }
 
@@ -129,8 +100,8 @@ export default function LedgerPage() {
       const reader = new (window as any).NDEFReader();
       await reader.scan();
 
-      reader.addEventListener("reading", ({ serialNumber }: any) => {
-        const formattedUid = serialNumber.toUpperCase();
+      reader.onreading = async ({ serialNumber }: any) => {
+        const formattedUid = serialNumber.toUpperCase().replace(/:/g, "");
         
         // 乱数ベースのシリアル生成 (例: 00202612345)
         const autoSerial = generateRandomSerial(cards);
@@ -140,8 +111,22 @@ export default function LedgerPage() {
           uid: formattedUid,
           serial: prev.serial || autoSerial
         }));
+
+        if (provisioningMode) {
+          try {
+            const writeUrl = `${baseUrl}/api/card/${formattedUid}`;
+            await reader.write({
+              records: [{ recordType: "url", data: writeUrl }]
+            });
+            alert(`書き込み成功: ${writeUrl}\nUID: ${formattedUid}\n※書き換え不可(Lock)設定は手動アプリ(NFC Tools等)で行ってください。`);
+          } catch (writeError) {
+            console.error("NFC Write Error:", writeError);
+            alert("読み取りは成功しましたが、書き込みに失敗しました。カードがロックされている可能性があります。");
+          }
+        }
+        
         setIsScanning(false);
-      });
+      };
 
     } catch (error) {
       console.error("NFC Scan Error:", error);
@@ -292,7 +277,19 @@ export default function LedgerPage() {
       {/* Slot Creation Form */}
       <section className="mb-16 p-8 border border-moonlight/10 bg-gothic-dark/20 backdrop-blur-md">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-[10px] tracking-[0.4em] uppercase opacity-40 font-bold">Create New Card Slot (新規カード枠の作成)</h2>
+          <div className="flex flex-col gap-2">
+            <h2 className="text-[10px] tracking-[0.4em] uppercase opacity-40 font-bold">Create New Card Slot (新規カード枠の作成)</h2>
+            <div className="flex items-center gap-3">
+              <input 
+                type="checkbox" id="provision" checked={provisioningMode} 
+                onChange={(e) => setProvisioningMode(e.target.checked)}
+                className="w-3 h-3 border-moonlight/20 bg-void accent-azure-500"
+              />
+              <label htmlFor="provision" className="text-[9px] uppercase tracking-widest text-azure-400 font-bold cursor-pointer">
+                Provisioning Mode (スキャン時にカードへURLを書き込む)
+              </label>
+            </div>
+          </div>
           <button 
             onClick={startScan} 
             disabled={isScanning}
@@ -323,7 +320,8 @@ export default function LedgerPage() {
           </div>
         </div>
         <p className="mt-4 text-[9px] opacity-30 italic leading-relaxed">
-           * [スキャン開始] を押し、物理カードをデバイスにタッチするとUIDが自動取得されます。シリアルは自動生成されますが、手動入力も可能です。
+           * [スキャン開始] を押し、物理カードをデバイスにタッチするとUIDが自動取得されます。(Android Chromeのみ)<br />
+           * iPhone(iOS)をご利用の場合は、NFC Tools等のアプリでタグを読み取り、UID(Serial Number)をコピーして上部フォームへ直接ペーストしてください。
         </p>
       </section>
 

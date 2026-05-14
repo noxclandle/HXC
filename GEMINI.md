@@ -1,4 +1,4 @@
-# Hexa Card Project Guidelines
+# Hexa Relation Project Guidelines
 
 ## Brand Aesthetic & Copywriting Tone
 The brand identity is a blend of High-end/Luxury, Cyber/Tech, and Minimal/Chic, with **Minimal/Chic** being the dominant guiding principle. 
@@ -19,3 +19,14 @@ The brand identity is a blend of High-end/Luxury, Cyber/Tech, and Minimal/Chic, 
 *   **Triple Confirmation Policy:** Any operation that triggers the Gemini API or involves financial costs (e.g., actual credit card charges, not just RT) MUST be confirmed by the user **three times** via distinct UI steps/modals.
     *   This applies even in development to prevent accidental token consumption.
     *   The wording should remain within the "Minimal/Chic" aesthetic (e.g., "Confirm Resonance", "Deepen Connection", "Authorize Finality").
+*   **Input Validation:** ALL API endpoints MUST use `zod` for schema validation. Never trust raw input from `req.json()` or `searchParams`.
+*   **Transaction Integrity:** Financial or RT-related operations must use Prisma transactions (`$transaction`) with explicit balance checks to prevent negative values.
+*   **NFC Smart Routing:** The entry point `/api/card/[uid]` must intelligently route users:
+    *   `Owner` -> `/hub` (Dashboard)
+    *   `Others` -> `/p/[slug]` (Public Profile)
+    *   `Unregistered` -> `/activate` (Registration)
+*   **UID Normalization:** All NFC UIDs must be normalized to "Uppercase, No Colons" (e.g., `04A23B...`) before database storage or lookup.
+
+## Workspace Integrity
+*   **Professional Cleanliness:** Do not leave temporary files, logs, or "junk" files (e.g., `.txt`, `.html`) in the root directory. Use `.gitignore` for local-only files.
+*   **Brand Consistency:** Use `grep` or similar tools to ensure forbidden words (聖域, 深淵, etc.) are not introduced in copy or mock data.

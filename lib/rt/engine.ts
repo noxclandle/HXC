@@ -1,15 +1,46 @@
 import { prisma } from "@/lib/prisma";
 
+export type RTTransactionType = "earn" | "spend" | "transfer";
+
+interface RTTransactionResult {
+  user: any;
+  transaction: any;
+}
+
 /**
- * RTの増減を実行し、履歴を記録する
+ * RTの増減を実行し、履歴を記録する。
+ * トランザクションにより原子性を保証し、負の残高を防止する。
  */
-export async function executeRTTransaction(userId: string, amount: number, type: "earn" | "spend" | "transfer", description: string) {
+export async function executeRTTransaction(
+  userId: string, 
+  amount: number, 
+  type: RTTransactionType, 
+  description: string
+): Promise<RTTransactionResult> {
+  // 数値の妥当性チェック
+  if (isNaN(amount) || amount === 0) {
+    throw new Error("Invalid transaction amount.");
+  }
+
   return await prisma.$transaction(async (tx) => {
-    // 1. ユーザーの残高とEXPを更新
+    // 1. 現在の残高を確認（楽観的ロックの代わりにトランザクション内で最新値を取得）
+    const currentUser = await tx.user.findUnique({
+      where: { id: userId },
+      select: { rt_balance: true }
+    });
+
+    if (!currentUser) throw new Error("User not found.");
+
+    const newBalance = currentUser.rt_balance + BigInt(amount);
+
+    // 消費（spend）または転送（transfer）の場合の残高不足チェック
+    if (newBalance < BigInt(0)) {
+      throw new Error("Insufficient RT balance.");
+    }
+
+    // 2. ユーザーの残高とEXPを更新
     const updateData: any = {
-      rt_balance: {
-        increment: BigInt(amount),
-      },
+      rt_balance: newBalance,
     };
 
     // 獲得（earn）の場合のみEXPも増やす
@@ -17,17 +48,12 @@ export async function executeRTTransaction(userId: string, amount: number, type:
       updateData.exp = { increment: BigInt(amount) };
     }
 
-    const user = await tx.user.update({
+    const updatedUser = await tx.user.update({
       where: { id: userId },
       data: updateData,
     });
 
-    // 残高不足チェック（消費の場合）
-    if (user.rt_balance < BigInt(0)) {
-      throw new Error("Insufficient RT balance.");
-    }
-
-    // 2. トランザクション履歴を作成
+    // 3. トランザクション履歴を作成
     const transaction = await tx.rTTransaction.create({
       data: {
         user_id: userId,
@@ -37,15 +63,15 @@ export async function executeRTTransaction(userId: string, amount: number, type:
       },
     });
 
-    return { user, transaction };
+    return { user: updatedUser, transaction };
   });
 }
 
 /**
  * ランダム報酬（浮遊報酬）の計算
- * @returns 0.1%の確率で高額、それ以外は少額のRT
+ * @returns 1%の確率で高額、それ以外は少額のRT
  */
-export function calculateFloatingReward() {
+export function calculateFloatingReward(): number {
   const lucky = Math.random() < 0.01;
   return lucky ? Math.floor(Math.random() * 100) + 50 : Math.floor(Math.random() * 5) + 1;
 }

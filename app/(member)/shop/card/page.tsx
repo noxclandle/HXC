@@ -13,7 +13,7 @@ export default function CardShopPage() {
       id: "obsidian",
       name: "Obsidian Edition",
       price: "0 RT",
-      desc: "漆黒の火山岩を彷彿とさせる標準モデル。誠実さと神秘性を両立したビジネスの正装。",
+      desc: "ボイドの火山岩を彷彿とさせる標準モデル。誠実さと神秘性を両立したビジネスの正装。",
       features: ["NFC NTAG215 内蔵", "高耐傷性マット加工", "QRコード刻印対応"],
       color: "from-zinc-800 to-black",
       borderColor: "border-zinc-700",
@@ -117,12 +117,12 @@ export default function CardShopPage() {
                <span className="text-3xl font-extralight italic">{activeCard.price}</span>
             </div>
             <button className="px-12 py-4 bg-moonlight text-void text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-colors">
-              Request Ritual
+              Request Resonance
             </button>
           </div>
 
           <p className="text-[8px] tracking-[0.3em] opacity-20 uppercase leading-relaxed">
-            * 物理カードの発行には「Mastermind」または「Chief Officer」による承認儀式が必要です。<br />
+            * 物理カードの発行には「Mastermind」または「Chief Officer」による承認共鳴が必要です。<br />
             * 発行後、お手元に届くまで約2週間ほどの浄化期間を要します。
           </p>
         </div>

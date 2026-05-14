@@ -2,15 +2,24 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { z } from "zod";
+
+const reportSchema = z.object({
+  targetUserId: z.string().min(1, "Target User ID is required"),
+  reason: z.string().min(1, "Reason is required"),
+});
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    const { targetUserId, reason } = await req.json();
+    const body = await req.json();
+    const parseResult = reportSchema.safeParse(body);
 
-    if (!targetUserId || !reason) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!parseResult.success) {
+      return NextResponse.json({ error: "Invalid request", details: parseResult.error.format() }, { status: 400 });
     }
+
+    const { targetUserId, reason } = parseResult.data;
 
     const targetUser = await prisma.user.findUnique({ where: { id: targetUserId } });
     if (!targetUser) {
