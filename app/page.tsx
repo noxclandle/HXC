@@ -77,6 +77,13 @@ export default function LandingPage() {
           </Link>
         </div>
 
+        <Link 
+          href="/login" 
+          className="mt-4 text-[8px] tracking-[0.4em] uppercase text-white/20 hover:text-azure-400 transition-colors font-bold"
+        >
+          — Identity Access (Sign In) —
+        </Link>
+
         <div className="flex flex-col items-center gap-5 mt-4">
            <div className="flex gap-10 justify-center opacity-10">
               <Zap size={12} className="text-white" />
