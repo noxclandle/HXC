@@ -3,8 +3,8 @@ export function getBaseUrl() {
     return window.location.origin;
   }
   
-  if (process.env.NEXTAUTH_URL) {
-    return process.env.NEXTAUTH_URL;
+  if (process.env.NEXT_PUBLIC_BASE_URL) {
+    return process.env.NEXT_PUBLIC_BASE_URL;
   }
 
   // Vercel deployment URL

@@ -22,7 +22,7 @@ export async function sendAdminOrderNotification(order: {
     Total: ${order.price.toLocaleString()} JPY
 
     Please access the Central Asset Ledger to process:
-    ${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/admin/ledger
+    ${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/admin/ledger
     `);
 
   // To implement Resend:

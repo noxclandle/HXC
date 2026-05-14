@@ -16,6 +16,7 @@ interface UserData {
   unlocked_titles: string[];
   card_uid?: string | null;
   card_serial?: string | null;
+  created_at: string;
 }
 
 export default function UsersAdminPage() {
@@ -309,7 +310,7 @@ export default function UsersAdminPage() {
                   <div className="flex justify-between items-center bg-white/[0.02] p-6 border border-white/5">
                      <div>
                         <p className="text-[8px] uppercase tracking-[0.4em] opacity-40 mb-1">アカウント作成日</p>
-                        <p className="text-[10px] tracking-widest uppercase font-mono">{new Date((inspectUser as any).created_at).toLocaleDateString()}</p>
+                        <p className="text-[10px] tracking-widest uppercase font-mono">{new Date(inspectUser.created_at).toLocaleDateString()}</p>
                      </div>
                      <div className="text-right">
                         <p className="text-[8px] uppercase tracking-[0.4em] opacity-40 mb-1">保有トークン / 累計EXP</p>

@@ -140,7 +140,7 @@ export default function InventoryPage() {
     { id: "Crimson Trace", name: "Crimson Ember", type: "pointer", rarity: "epic", description: "消えない残り火の軌跡。", cost: 8000, unlocked: false },
     { id: "Shadow Trace", name: "Ink Shadow", type: "pointer", rarity: "epic", description: "空間を塗りつぶす墨の軌跡。", cost: 8000, unlocked: false },
     { id: "Prism Trace", name: "Light Refraction", type: "pointer", rarity: "mythic", description: "虹色に輝く光の軌跡。", cost: 50000, unlocked: false },
-    { id: "Void Trace", name: "Reality Tear", type: "pointer", rarity: "mythic", description: "空間を切り裂く闇の軌跡。", cost: 50000, unlocked: false },
+    { id: "Void Trace", name: "Reality Tear", type: "pointer", rarity: "mythic", description: "空間を切り裂くボイドの軌跡。", cost: 50000, unlocked: false },
 
     // --- Sounds (10) ---
     { id: "resonance", name: "Resonance", type: "sound", rarity: "common", description: "標準的な共鳴音。", unlocked: true },

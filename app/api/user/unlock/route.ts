@@ -2,15 +2,29 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { z } from "zod";
+import { executeRTTransaction } from "@/lib/rt/engine";
+
+const unlockSchema = z.object({
+  assetId: z.string().min(1),
+  rarity: z.string().min(1),
+});
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { assetId, rarity } = await req.json();
+    const body = await req.json();
+    const parseResult = unlockSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      return NextResponse.json({ error: "Invalid request", details: parseResult.error.format() }, { status: 400 });
+    }
+
+    const { assetId, rarity } = parseResult.data;
     
     const assetPricesConfig = await prisma.systemConfig.findUnique({
       where: { key: 'asset_prices' }
@@ -24,15 +38,11 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email }
+      where: { id: session.user.id }
     });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    if (Number(user.rt_balance) < cost) {
-      return NextResponse.json({ error: "Insufficient RT Balance" }, { status: 400 });
     }
 
     const ownedAssets = Array.isArray(user.owned_assets) ? [...user.owned_assets] : [];
@@ -41,33 +51,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Asset already unlocked" }, { status: 400 });
     }
 
-    // トランザクションで残高減算とアセット追加を同時に行う
-    const [updatedUser] = await prisma.$transaction([
-      prisma.user.update({
-        where: { email: session.user.email },
-        data: {
-          rt_balance: { decrement: BigInt(cost) },
-          owned_assets: Array.from(new Set([...ownedAssets, assetId]))
-        }
-      }),
-      prisma.rTTransaction.create({
-        data: {
-          user_id: user.id,
-          amount: -cost,
-          type: "spend",
-          description: `Unlocked asset: ${assetId} (${rarity})`
-        }
-      })
-    ]);
+    // executeRTTransactionを使用して残高減算と履歴作成を統合
+    const { user: updatedUser } = await executeRTTransaction(
+      session.user.id,
+      -cost,
+      "spend",
+      `Unlocked asset: ${assetId} (${rarity})`
+    );
+
+    // アセットの追加
+    const finalUser = await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        owned_assets: Array.from(new Set([...ownedAssets, assetId]))
+      }
+    });
 
     return NextResponse.json({ 
       success: true, 
-      rt_balance: updatedUser.rt_balance.toString(),
-      owned_assets: updatedUser.owned_assets 
+      rt_balance: finalUser.rt_balance.toString(),
+      owned_assets: finalUser.owned_assets 
     });
 
   } catch (error: any) {
     console.error("Unlock error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }

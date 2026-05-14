@@ -1,6 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { z } from "zod";
+import { executeRTTransaction } from "@/lib/rt/engine";
+
+const registerSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  handle: z.string().min(1, "Handle is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  uid: z.string().min(1, "UID is required"),
+  role: z.string().optional(),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  title: z.string().optional(),
+});
 
 /**
  * 新規ユーザー登録と物理カードの有効化を行うAPI
@@ -8,12 +22,14 @@ import bcrypt from "bcryptjs";
  */
 export async function POST(req: NextRequest) {
   try {
-    const data = await req.json();
-    const { name, handle, email, password, role, phone, address, uid } = data;
+    const body = await req.json();
+    const parseResult = registerSchema.safeParse(body);
 
-    if (!uid || !email || !password) {
-      return NextResponse.json({ error: "Required fields missing." }, { status: 400 });
+    if (!parseResult.success) {
+      return NextResponse.json({ error: "Invalid request", details: parseResult.error.format() }, { status: 400 });
     }
+
+    const { name, handle, email, password, phone, address, uid, title } = parseResult.data;
 
     const normalizedUid = uid.replace(/:/g, "").toUpperCase();
 
@@ -38,21 +54,21 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 3. ユーザーの作成とカードの有効化（トランザクション）
-    const result = await prisma.$transaction(async (tx) => {
-      const newUser = await tx.user.create({
+    const newUser = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
         data: {
           email,
           password: hashedPassword,
           name,
-          handle_name: handle, // フリガナ/ハンドル
-          role: "member", // 初期ロール
+          handle_name: handle,
+          role: "member",
           rank: "Initiate",
           address,
           phone,
-          rt_balance: 100n, // 初期ポイント
+          rt_balance: 0n, // 最初は0で作成し、後でexecuteRTTransactionで付与
           ai_config: {
             profile: {
-              title: data.title || "",
+              title: title || "",
             }
           },
           equipped_assets: {
@@ -70,19 +86,32 @@ export async function POST(req: NextRequest) {
       });
 
       await tx.card.update({
-        where: { uid },
+        where: { uid: card!.uid },
         data: {
-          user_id: newUser.id,
+          user_id: user.id,
           status: "active",
           activated_at: new Date(),
           issued_at: new Date()
         }
       });
 
-      return newUser;
+      return user;
     });
 
-    return NextResponse.json({ success: true, userId: result.id, slug: result.handle_name });
+    // 初期ポイント付与 (executeRTTransaction)
+    try {
+      await executeRTTransaction(
+        newUser.id,
+        100,
+        "earn",
+        "Initial Registration Bonus"
+      );
+    } catch (rtError) {
+      console.error("Failed to grant initial RT:", rtError);
+      // 登録自体は成功しているので、ここではエラーを握り潰すかログのみ
+    }
+
+    return NextResponse.json({ success: true, userId: newUser.id, slug: newUser.handle_name });
   } catch (error: any) {
     console.error("Registration error:", error);
     if (error.code === "P2002") {

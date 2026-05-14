@@ -4,9 +4,34 @@ import { useState, useEffect } from "react";
 import { Search, ShieldAlert, CreditCard, RotateCcw, Lock, Package, CheckCircle, Truck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+interface Card {
+  uid: string;
+  serial: string;
+  status: string;
+  user?: string | null;
+  internal_serial: string;
+}
+
+interface Order {
+  id: string;
+  customer_name: string;
+  customer_email: string;
+  created_at: string;
+  tier: string;
+  variant?: string | null;
+  status: string;
+  shipping_address?: {
+    postal_code?: string;
+    state?: string;
+    city?: string;
+    line1?: string;
+    line2?: string;
+  } | null;
+}
+
 export default function LedgerPage() {
-  const [cards, setCards] = useState<any[]>([]);
-  const [orders, setOrders] = useState<any[]>([]);
+  const [cards, setCards] = useState<Card[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [newCard, setNewCard] = useState({ uid: "", serial: "" });
@@ -84,7 +109,7 @@ export default function LedgerPage() {
     }
   };
 
-  const generateRandomSerial = (existingCards: any[]) => {
+  const generateRandomSerial = (existingCards: Card[]) => {
     const year = "2026";
     let version = 0;
     
@@ -132,7 +157,8 @@ export default function LedgerPage() {
       const reader = new (window as any).NDEFReader();
       await reader.scan();
 
-      reader.onreading = async ({ serialNumber }: any) => {
+      reader.onreading = async (event: any) => {
+        const serialNumber = event.serialNumber;
         const formattedUid = serialNumber.toUpperCase().replace(/:/g, "");
         
         // 乱数ベースのシリアル生成 (例: 00202612345)
