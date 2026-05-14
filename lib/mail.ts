@@ -15,7 +15,7 @@ export async function sendAdminOrderNotification(order: {
   console.log(`[MAILER] Sending order notification to ${adminEmail}`);
   console.log(`[MAILER] Subject: NEW ORDER - ${order.tier} - ${order.customerName}`);
   console.log(`[MAILER] Content: 
-    New Hexa Card order received.
+    New Hexa Relation order received.
     - Order ID: ${order.id}
     - Customer: ${order.customerName} (${order.customerEmail})
     - Plan: ${order.tier} (${order.variant})

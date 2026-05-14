@@ -2,8 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { z } from "zod";
 
 export const dynamic = "force-dynamic";
+
+const purchaseSchema = z.object({
+  assetId: z.string().min(1, "Asset ID is required"),
+  cost: z.number().min(0, "Cost must be a positive number"),
+});
 
 /**
  * アイテム購入API
@@ -13,7 +19,14 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { assetId, cost } = await req.json();
+    const body = await req.json();
+    const parseResult = purchaseSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      return NextResponse.json({ error: "Invalid request", details: parseResult.error.format() }, { status: 400 });
+    }
+
+    const { assetId, cost } = parseResult.data;
 
     // トランザクション処理
     const result = await prisma.$transaction(async (tx) => {

@@ -2,6 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
+import { z } from "zod";
+
+const userUpdateSchema = z.object({
+  userId: z.string(),
+  name: z.string().min(1).max(100).optional(),
+  handle: z.string().max(100).optional(),
+  address: z.string().max(255).optional(),
+  phone: z.string().max(20).optional(),
+  rank: z.string().optional(),
+  role: z.string().optional(),
+});
 
 /**
  * 【チーフオフィサー限定】他ユーザーの情報を強制更新するAPI
@@ -14,8 +25,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden: Administrative authority required." }, { status: 403 });
     }
 
-    const data = await req.json();
-    const { userId, name, handle, address, phone, rank, role } = data;
+    const body = await req.json();
+    const parseResult = userUpdateSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      return NextResponse.json({ error: "Invalid data format", details: parseResult.error.format() }, { status: 400 });
+    }
+
+    const { userId, name, handle, address, phone, rank, role } = parseResult.data;
 
     // 【重要】Fixerロールの付与はシステム側で完全にブロック
     if (role === "fixer") {
@@ -45,7 +62,7 @@ export async function POST(req: NextRequest) {
       data: {
         user_id: session.user.id,
         action: "MASTER_OVERRIDE",
-        details: { targetUserId: userId, changes: data }
+        details: { targetUserId: userId, changes: body }
       }
     });
 

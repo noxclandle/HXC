@@ -76,7 +76,7 @@ export default function InventoryPage() {
     { id: "VioletHaze", name: "Violet Haze", type: "aura", rarity: "rare", description: "神秘的な紫の霞。", cost: 3000, unlocked: false },
     { id: "EmeraldDust", name: "Emerald Dust", type: "aura", rarity: "rare", description: "生命を育む緑の粒子。", cost: 3000, unlocked: false },
     { id: "CrimsonFlare", name: "Crimson Flare", type: "aura", rarity: "epic", description: "情熱が爆発する深紅の輝き。", cost: 8000, unlocked: false },
-    { id: "VoidEclipse", name: "Void Eclipse", type: "aura", rarity: "mythic", description: "光を飲み込む漆黒のオーラ。", cost: 50000, unlocked: false },
+    { id: "VoidEclipse", name: "Void Eclipse", type: "aura", rarity: "mythic", description: "光を飲み込むボイドのオーラ。", cost: 50000, unlocked: false },
     { id: "PrismGlow", name: "Prism Glow", type: "aura", rarity: "mythic", description: "全波長を網羅する究極の輝き。", cost: 50000, unlocked: false },
     { id: "CyberGrid", name: "Cyber Grid", type: "aura", rarity: "epic", description: "電子の格子が漂う。技術の極致。", cost: 8000, unlocked: false },
     // --- Frames (15) ---
@@ -93,11 +93,11 @@ export default function InventoryPage() {
     { id: "Platinum", name: "Platinum Edge", type: "frame", rarity: "epic", description: "精巧な装飾が施された白金の縁。", cost: 8000, unlocked: false },
     { id: "Dynamic", name: "Azure Pulse", type: "frame", rarity: "epic", description: "知性を感じさせる蒼い脈動。", cost: 8000, unlocked: false },
     { id: "Crimson", name: "Crimson Guard", type: "frame", rarity: "epic", description: "情熱的な深紅の防壁。", cost: 8000, unlocked: false },
-    { id: "Void", name: "Void Shell", type: "frame", rarity: "mythic", description: "全ての光を吸収する深淵の枠。", cost: 50000, unlocked: false },
+    { id: "Void", name: "Void Shell", type: "frame", rarity: "mythic", description: "全ての光を吸収する深層の枠。", cost: 50000, unlocked: false },
     { id: "ImperialGold", name: "Imperial Gold", type: "frame", rarity: "mythic", description: "圧倒的な威厳。頂点の黄金。", cost: 50000, unlocked: false },
     
     // --- Backgrounds (15) ---
-    { id: "Default", name: "Solid Void", type: "background", rarity: "common", description: "標準の漆黒背景。", unlocked: true },
+    { id: "Default", name: "Solid Void", type: "background", rarity: "common", description: "標準のボイド背景。", unlocked: true },
     { id: "PastelSakura", name: "Eternal Sakura", type: "background", rarity: "rare", description: "淡い桜色が舞う春の情景。", cost: 3000, unlocked: false },
     { id: "PearlVeil", name: "Pearl Veil", type: "background", rarity: "rare", description: "真珠層のような虹色の光沢。", cost: 3000, unlocked: false },
     { id: "SilkSheet", name: "White Silk", type: "background", rarity: "rare", description: "高級な絹布のドレープ。", cost: 3000, unlocked: false },
@@ -151,7 +151,7 @@ export default function InventoryPage() {
     { id: "crystal", name: "Crystal Chord", type: "sound", rarity: "epic", description: "水晶が奏でる和音。", cost: 8000, unlocked: false },
     { id: "deep", name: "Deep Impact", type: "sound", rarity: "epic", description: "腹に響く重厚な低音。", cost: 8000, unlocked: false },
     { id: "heaven", name: "Angelic Choir", type: "sound", rarity: "epic", description: "天界の歌声の一節。", cost: 8000, unlocked: false },
-    { id: "void", name: "Deep Resonance", type: "sound", rarity: "mythic", description: "深淵からの呼び声。", cost: 50000, unlocked: false },
+    { id: "void", name: "Deep Resonance", type: "sound", rarity: "mythic", description: "深層からの呼び声。", cost: 50000, unlocked: false },
     { id: "omega", name: "Eternal Chord", type: "sound", rarity: "mythic", description: "世界の終焉と始まりの音。", cost: 50000, unlocked: false },
 
     // --- Titles ---
@@ -311,7 +311,7 @@ export default function InventoryPage() {
         </div>
       </header>
 
-      {/* RT Purchase Section (Sanctuary) */}
+      {/* RT Purchase Section (Boundary) */}
       <AnimatePresence>
         {showRTPurchase && (
           <motion.section 
@@ -326,7 +326,7 @@ export default function InventoryPage() {
                   key={pack.id}
                   onClick={async () => {
                     try {
-                      showToast(`Opening Sanctuary...`, "success");
+                      showToast(`Opening Boundary...`, "success");
                       const res = await fetch("/api/stripe/rt-checkout", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },

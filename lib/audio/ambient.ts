@@ -1,5 +1,5 @@
 /**
- * 聖域の環境音 (Ambient BGM) を生成・管理する
+ * 境界の環境音 (Ambient BGM) を生成・管理する
  * Web Audio API を使用して、合成音（Space Hum）やホワイトノイズ（Rain）をリアルタイム生成する
  */
 export class AmbientManager {

@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // 背景を再び漆黒へ
+        // 背景を再びボイドへ
         void: "#000000", 
         // テキストを純白へ
         moonlight: "#FFFFFF",

@@ -29,7 +29,17 @@ export default function LoginPage() {
       if (result?.error) {
         setError("Invalid Credentials / 認証に失敗しました");
       } else if (result?.ok) {
-        router.push("/hub");
+        // セッション情報を取得してリダイレクト先を決定
+        const sessionRes = await fetch("/api/auth/session");
+        const session = await sessionRes.json();
+        
+        const adminRoles = ["admin", "fixer", "chief_officer", "mastermind", "architect", "manager"];
+        
+        if (session?.user?.role && adminRoles.includes(session.user.role)) {
+          router.push("/gate");
+        } else {
+          router.push("/hub");
+        }
       }
     } catch (err) {
       setError("Connection Severed / 接続が遮断されました");

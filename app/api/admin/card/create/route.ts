@@ -16,11 +16,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { uid, serial } = await req.json();
+    const { uid: rawUid, serial } = await req.json();
 
-    if (!uid || !serial) {
+    if (!rawUid || !serial) {
       return NextResponse.json({ error: "UID and Serial are required." }, { status: 400 });
     }
+
+    const uid = rawUid.replace(/:/g, "").toUpperCase();
 
     const card = await prisma.card.create({
       data: {

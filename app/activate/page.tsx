@@ -15,20 +15,20 @@ function ActivateContent() {
   const [step, setStep] = useState<"idle" | "scanning" | "verifying" | "success" | "error">("idle");
   const [error, setError] = useState("");
 
-  // もしURLに既にUIDが含まれている場合（QRコードからのアクセスなど）
+  // もしURLに既にUIDが含まれている場合（カードタップからのアクセス）
   useEffect(() => {
     if (uid) {
       setStep("verifying");
       const timer = setTimeout(() => {
-        setStep("success");
-      }, 1500);
+        router.push(`/activate/register?uid=${uid}&serial=${serial}`);
+      }, 2000); // 演出のために2秒待機
       return () => clearTimeout(timer);
     }
-  }, [uid]);
+  }, [uid, serial, router]);
 
   const handleStartScan = async () => {
     if (!("NDEFReader" in window)) {
-      setError("お使いの端末は物理鍵の同期に対応していません。別のブラウザでお試しください。");
+      setError("お使いの端末は物理鍵の同期に対応していません。ブラウザが制限されているか、非対応デバイスです。");
       setStep("error");
       return;
     }
@@ -42,6 +42,7 @@ function ActivateContent() {
         const formattedUid = serialNumber.toUpperCase();
         setStep("verifying");
         setTimeout(() => {
+          // シリアルが不明な場合はUIDのみで遷移
           router.push(`/activate/register?uid=${formattedUid}`);
         }, 2000);
       });
@@ -74,10 +75,12 @@ function ActivateContent() {
           </div>
           <div className="space-y-4">
             <h2 className="text-2xl tracking-[0.4em] uppercase font-extralight text-white">Identity Activation</h2>
-            <p className="text-[10px] tracking-widest opacity-30 uppercase">お手元のカードを同期して、アイデンティティを確立してください</p>
+            <p className="text-[10px] tracking-widest opacity-30 uppercase text-center max-w-xs mx-auto">
+              物理鍵を認識できませんでした。ブラウザの指示に従って再スキャンするか、カードをかざし直してください
+            </p>
           </div>
           <button onClick={handleStartScan} className="px-16 py-5 border border-white/20 hover:border-white transition-all bg-white/5 tracking-[0.4em] text-[10px] font-bold uppercase shadow-2xl">
-            Start Synchronization
+            Start Manual Scan
           </button>
         </motion.div>
       )}
@@ -89,30 +92,16 @@ function ActivateContent() {
             <div className="relative z-10 flex flex-col items-center gap-8">
               <Loader2 className="animate-spin text-white opacity-40" size={60} strokeWidth={1} />
               <span className="text-[8px] tracking-[1em] uppercase text-white opacity-40 animate-pulse font-bold ml-[1em]">
-                {step === "scanning" ? "Awaiting Card" : "Establishing Link"}
+                {uid ? "Observation Detected" : (step === "scanning" ? "Awaiting Card" : "Establishing Link")}
               </span>
             </div>
           </div>
           <h2 className="text-2xl tracking-[0.5em] uppercase font-light text-white">
-            {step === "scanning" ? "Syncing..." : "Protocol Active"}
+            {uid ? "Resonance Observed" : (step === "scanning" ? "Syncing..." : "Protocol Active")}
           </h2>
           <p className="text-white/30 text-[10px] tracking-[0.2em] uppercase mt-4">
-             {step === "scanning" ? "カードをスマートフォンにかざしてください" : "物理と仮想の境界線を透過中..."}
+             {uid ? "物理鍵を検知しました。情報を透過中..." : (step === "scanning" ? "カードをスマートフォンにかざしてください" : "物理と仮想の境界線を透過中...")}
           </p>
-        </motion.div>
-      )}
-
-      {step === "success" && (
-        <motion.div key="success" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center max-w-sm w-full relative">
-          <CheckCircle2 size={80} className="text-azure-400 mb-8" />
-          <h2 className="text-3xl tracking-[0.4em] uppercase mb-4 text-white">Established</h2>
-          <p className="text-gothic-silver text-[10px] tracking-widest mb-12 leading-relaxed uppercase">
-             物理鍵の同期に成功しました。<br />
-             アイデンティティの新規確立を開始します。
-          </p>
-          <Link href={`/activate/register?uid=${uid}&serial=${serial}`} className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.5em] uppercase flex items-center justify-center gap-3 hover:bg-azure-50 transition-all shadow-xl">
-            Next: Identity Registry
-          </Link>
         </motion.div>
       )}
     </AnimatePresence>

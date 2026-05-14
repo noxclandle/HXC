@@ -171,7 +171,7 @@ function RegisterContent() {
             </div>
             <h2 className="text-3xl tracking-[0.6em] uppercase font-extralight text-white">Identity Established</h2>
             <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase mt-4">
-               情報の刻印が完了しました。聖域へ遷移します。
+               情報の刻印が完了しました。境界へ遷移します。
             </p>
           </motion.div>
         )}

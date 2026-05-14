@@ -10,9 +10,9 @@ export default function Footer() {
     <footer className="mt-auto border-t border-white/5 bg-void/50 backdrop-blur-md pt-16 pb-12 px-6">
       <div className="max-w-4xl mx-auto flex flex-col items-center gap-12">
         {/* Branding */}
-        <Link href="/" className="flex flex-col items-center text-center group">
-          <span className="text-[11px] tracking-[1.2em] uppercase font-light text-moonlight/60 group-hover:text-moonlight transition-all">Hexa Relation</span>
-        </Link>
+        <div className="flex flex-col items-center text-center group">
+          <span className="text-[11px] tracking-[1.2em] uppercase font-light text-moonlight/60">Hexa Relation</span>
+        </div>
 
         {/* Navigation/Legal Links */}
         <div className="flex flex-wrap justify-center gap-x-12 gap-y-6">

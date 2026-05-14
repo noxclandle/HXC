@@ -5,7 +5,7 @@ import { Sparkles, Hexagon } from "lucide-react";
 import { playResonanceSound } from "@/lib/audio/resonance";
 import { useEffect } from "react";
 
-export default function ResonanceRitual({ partnerName, onComplete }: { partnerName: string, onComplete: () => void }) {
+export default function ResonanceResonance({ partnerName, onComplete }: { partnerName: string, onComplete: () => void }) {
   useEffect(() => {
     playResonanceSound("silver"); // 高貴な共鳴音
   }, []);

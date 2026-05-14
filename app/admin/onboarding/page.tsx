@@ -1,46 +1,46 @@
 "use client";
 
-import { Layers, ShieldCheck, Mail, Smartphone, Fingerprint, Lock, CheckCircle2 } from "lucide-react";
+import { Layers, ShieldCheck, Mail, Smartphone, Fingerprint, Lock, CheckCircle2, CreditCard, ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 export default function OnboardingGuidePage() {
   const protocols = [
     {
       step: "01",
-      title: "物理デバイスの特定 (UID Extraction)",
-      desc: "手元の新しい物理カードをNFCアプリ（NFC Tools等）でスキャンし、UID（例: 04:2F:3B...）を確認します。",
+      title: "物理チップの識別 (Identity Scrutiny)",
+      desc: "手元の新品カード(NTAG215)のシリアル番号(UID)を確認します。iPhoneの方は無料アプリ「NFC Tools」を使い、[Read] → [Serial Number] をコピーしてください。",
       icon: <Fingerprint size={20} />,
-      link: "/admin/ledger",
-      linkText: "台帳を開く"
     },
     {
       step: "02",
-      title: "中央台帳への登録 (Ledger Inscription)",
-      desc: "カード中央台帳（Ledger）にて「Add New Card」を行い、抽出したUIDと管理用のシリアル番号（例: HXC-101）を登録します。状態は「未発行 (unissued)」になります。",
+      title: "台帳登録と書き込み (Provisioning)",
+      desc: "管理者ページの「カード中央台帳(Ledger)」を開きます。[Provisioning Mode]をONにしてカードをスキャンするか、UIDを手入力して枠を作成してください。この時、カードには名刺URLが書き込まれます。",
       icon: <Layers size={20} />,
+      link: "/admin/ledger",
+      linkText: "台帳を開いて実行する"
     },
     {
       step: "03",
-      title: "デバイスの浄化 (Card Clearing)",
-      desc: "カードの中身が空であることを確認します。URLなどが書き込まれている場合は削除し、真っ新な状態にします。これにより登録時の干渉を防ぎます。",
+      title: "物理的な凍結 (Eternal Lock)",
+      desc: "書き込み済みのカードを、アプリ(NFC Tools等)を使用して「Read-Only (読み取り専用)」にロックします。これにより、第三者による上書きを永久に防ぎます。※一度行うと元に戻せません。",
       icon: <Lock size={20} />,
     },
     {
       step: "04",
-      title: "ユニットの発送 (Logistics)",
-      desc: "物理カードを客（ユーザー）へ発送します。カードにはまだ何の個人情報も含まれていません。",
+      title: "ユニットの発送 (Delivery)",
+      desc: "セットアップ済みのカードをユーザーへ届けます。封筒等にシリアル番号を控えておくと管理がスムーズです。",
       icon: <Mail size={20} />,
     },
     {
       step: "05",
-      title: "ユーザーによる同調 (Activation)",
-      desc: "ユーザーがカードを受け取り、サイトの /activate からスキャンします。台帳のUIDと照合され、ユーザー自身の情報（氏名、メアド等）を入力します。",
+      title: "タップ・アクティベート (User Sync)",
+      desc: "ユーザーがカードをスマホでタップすると、自動的に登録画面が開きます。ユーザーは氏名等を入力するだけで、瞬時に名刺が有効化されます。",
       icon: <Smartphone size={20} />,
     },
     {
       step: "06",
-      title: "最終刻印とロック (The Eternal Inscription)",
-      desc: "登録の最後に、システムが自動生成した名刺URLを物理チップに書き込み、同時に「読み取り専用」ロックをかけます。これで唯一無二の名刺が完成します。",
+      title: "運用の開始 (Protocol Active)",
+      desc: "登録完了後、同じカードをタップすれば、所有者本人なら管理画面、それ以外ならデジタル名刺がスマートに表示されます。名刺交換の準備は完了です。",
       icon: <ShieldCheck size={20} />,
     },
   ];
@@ -49,9 +49,26 @@ export default function OnboardingGuidePage() {
     <div className="max-w-4xl mx-auto p-12 bg-void text-moonlight min-h-screen">
       <header className="mb-16 border-b border-white/5 pb-8">
         <Link href="/admin" className="text-[8px] uppercase tracking-widest opacity-40 hover:opacity-100 transition-all mb-8 block">← Back to Oversight</Link>
-        <h1 className="text-2xl tracking-[0.5em] uppercase font-light mb-2 text-white">Onboarding Protocol</h1>
-        <p className="text-[10px] tracking-widest text-azure-400 opacity-40 uppercase font-bold italic">新規ユーザー・物理カード発行手順</p>
+        <h1 className="text-2xl tracking-[0.5em] uppercase font-light mb-2 text-white">Issue Protocol</h1>
+        <p className="text-[10px] tracking-widest text-azure-400 opacity-40 uppercase font-bold italic">カード発行・配布ガイドライン (iOS/Android対応)</p>
       </header>
+
+      <div className="bg-azure-500/5 border border-azure-500/20 p-8 mb-16 space-y-4">
+         <div className="flex items-center gap-4 text-azure-400">
+            <CreditCard size={24} />
+            <h2 className="text-[12px] tracking-[0.4em] uppercase font-bold">最もシンプルな発行手順</h2>
+         </div>
+         <p className="text-[11px] tracking-widest leading-relaxed opacity-60 uppercase">
+            1. **iPhone**の「NFC Tools」アプリで新品カードを読み、UIDをコピーする。<br/>
+            2. **台帳**ページでUIDを貼り付け、枠を作成する。<br/>
+            3. アプリでURL `https://hxc.hexa-relation.com/api/card/[UID]` をカードに書き込む。<br/>
+            4. アプリでカードを「ロック(読み取り専用)」する。<br/>
+            5. 完成。ユーザーへ発送。
+         </p>
+         <Link href="https://apps.apple.com/jp/app/nfc-tools/id1252962749" target="_blank" className="inline-flex items-center gap-2 text-[8px] uppercase tracking-widest text-azure-400 opacity-60 hover:opacity-100 underline underline-offset-4">
+            Get NFC Tools for iOS <ExternalLink size={10} />
+         </Link>
+      </div>
 
       <div className="space-y-12">
         {protocols.map((p, i) => (

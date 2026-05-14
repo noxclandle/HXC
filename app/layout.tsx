@@ -4,15 +4,15 @@ import GeometricBackground from "@/components/background/GeometricBackground";
 
 export const metadata: Metadata = {
   title: {
-    default: "Hexa Card | Premium Identity",
+    default: "Hexa Relation | Premium Identity",
     template: "%s | Hexa Protocol"
   },
   description: "Beyond existence. A high-end identity synchronization system for the chosen few.",
   manifest: "/manifest.json",
   openGraph: {
-    title: "Hexa Card | Premium Identity",
-    description: "Synchronize your identity via the Hexa Card. A masterpiece of gothic tech and minimal chic.",
-    url: "https://hxc.hexa-relation.com",
+    title: "Hexa Relation | Premium Identity",
+    description: "Synchronize your identity via the Hexa Relation system. A masterpiece of gothic tech and minimal chic.",
+    url: "https://hexa-relation.com",
     siteName: "Hexa Relation",
     images: [
       {

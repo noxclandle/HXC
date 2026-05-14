@@ -2,6 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { z } from "zod";
+
+const profileUpdateSchema = z.object({
+  name: z.string().optional(),
+  reading: z.string().optional(),
+  title: z.string().optional(),
+  website: z.string().url().or(z.literal("")).optional(),
+  bio: z.string().optional(),
+  company: z.string().optional(),
+  photo_url: z.string().url().or(z.literal("")).optional(),
+  logo_url: z.string().url().or(z.literal("")).optional(),
+  orientation: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().email().or(z.literal("")).optional(),
+  hAlign: z.string().optional(),
+  vAlign: z.string().optional(),
+  link_x: z.string().optional(),
+  link_instagram: z.string().optional(),
+  link_line: z.string().optional(),
+  link_facebook: z.string().optional(),
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,11 +32,17 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
+    const result = profileUpdateSchema.safeParse(body);
+
+    if (!result.success) {
+      return NextResponse.json({ error: "Invalid request", details: result.error.format() }, { status: 400 });
+    }
+
     const { 
       name, reading, title, website, bio, company, photo_url, logo_url, 
       orientation, phone, email, hAlign, vAlign,
       link_x, link_instagram, link_line, link_facebook
-    } = body;
+    } = result.data;
 
     const currentUser = await prisma.user.findUnique({
       where: { email: session.user.email }

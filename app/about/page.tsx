@@ -31,7 +31,7 @@ export default function InvitationPage() {
         className="mb-24 flex flex-col items-center text-center max-w-2xl"
       >
         <img src="/logo.png" className="w-24 h-24 mb-16 opacity-40 animate-pulse" />
-        <h1 className="text-4xl md:text-5xl tracking-[0.2em] uppercase font-extralight mb-8 italic">Hexa Card</h1>
+        <h1 className="text-4xl md:text-5xl tracking-[0.2em] uppercase font-extralight mb-8 italic">Hexa Relation</h1>
         <p className="text-sm tracking-[0.3em] opacity-40 leading-relaxed uppercase">
           物理的な制約を超え、<br />
           あなたのアイデンティティを世界へ拡張する。

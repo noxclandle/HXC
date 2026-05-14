@@ -98,11 +98,11 @@ export default function ScanPage() {
         {status === "idle" && (
           <motion.div key="idle" className="flex flex-col items-center p-12 w-full max-w-sm">
             <header className="text-center mb-16 space-y-2">
-              <h2 className="text-xl tracking-[0.6em] uppercase font-light">Resonance Ritual</h2>
-              <p className="text-[9px] tracking-[0.4em] opacity-30 uppercase italic">共鳴の儀式を開始します</p>
+              <h2 className="text-xl tracking-[0.6em] uppercase font-light">Resonance Connection</h2>
+              <p className="text-[9px] tracking-[0.4em] opacity-30 uppercase italic">共鳴の接続を開始します</p>
             </header>
 
-            {/* Visual Guide (儀式の図解) */}
+            {/* Visual Guide (共鳴の図解) */}
             <div className="relative w-full aspect-[3/4] mb-16 flex items-center justify-center">
               {/* Phone Silhouette */}
               <div className="absolute w-48 h-80 border border-moonlight/10 bg-gothic-dark/40 rounded-[40px] shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col items-center pt-8">
@@ -167,7 +167,7 @@ export default function ScanPage() {
             >
               Authorize Permeation
             </button>
-            <button onClick={() => setStatus("idle")} className="text-[8px] opacity-20 uppercase tracking-[0.4em]">Abort Ritual</button>
+            <button onClick={() => setStatus("idle")} className="text-[8px] opacity-20 uppercase tracking-[0.4em]">Abort Resonance</button>
           </motion.div>
         )}
 

@@ -3,8 +3,13 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { z } from "zod";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
+
+const chatSchema = z.object({
+  prompt: z.string().min(1, "Prompt is required"),
+});
 
 /**
  * 【真・高度AI】Gemini APIを使い、ユーザーの人脈データを基に知的な回答を生成する
@@ -14,7 +19,14 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { prompt } = await req.json();
+    const body = await req.json();
+    const parseResult = chatSchema.safeParse(body);
+    
+    if (!parseResult.success) {
+      return NextResponse.json({ error: "Invalid request", details: parseResult.error.format() }, { status: 400 });
+    }
+
+    const { prompt } = parseResult.data;
 
     // 1. ユーザーの「記憶（名刺データ）」を収集
     const contacts = await prisma.contact.findMany({
@@ -40,7 +52,7 @@ export async function POST(req: NextRequest) {
       } else if (query.includes("イベント") || query.includes("戦略")) {
         aiResponse = "現在のあなたのネットワークには技術者が多く集まっています。次回のイベントでは、意思決定層（CEO/役員）との深い共鳴を優先すべきです。";
       } else {
-        aiResponse = "深淵の知能があなたの問いを受け取りました。あなたの築き上げた人脈（星座）から最適な解を導き出します。現在は静寂のモード（Simulation Mode）で稼働中です。";
+        aiResponse = "深層の知能があなたの問いを受け取りました。あなたの築き上げた人脈（星座）から最適な解を導き出します。現在は静寂のモード（Simulation Mode）で稼働中です。";
       }
 
       return NextResponse.json({ text: aiResponse });
@@ -52,12 +64,12 @@ export async function POST(req: NextRequest) {
     const knowledgeBase = contacts.map(c => `- ${c.name} (${c.handle_name || "なし"}): ${c.notes} [Tags: ${Array.isArray(c.ai_tags) ? c.ai_tags.join(",") : ""}]`).join("\n");
     
     const systemPrompt = `
-あなたは Hexa Card (HXC) システムの専属コンシェルジュです。
+あなたは Hexa Relation システムの専属コンシェルジュです。
 ユーザーは「管理者」または「メンバー」であり、あなたは彼らの人脈（ライブラリ）の守護者です。
 
 【あなたの美学】
 - 知的で、冷静沈着。
-- 言葉遣いは丁寧だが、どこか神秘的で「漆黒の美学」を感じさせる。
+- 言葉遣いは丁寧だが、どこか神秘的で「ボイドの美学」を感じさせる。
 - ユーザーを「主（あるじ）」または「あなた」と呼びます。
 
 【ユーザーの現在の知識（Library）】
