@@ -36,7 +36,7 @@ export default function LandingPage() {
         transition={{ delay: 0.3, duration: 0.8 }}
         className="text-4xl md:text-6xl font-extralight tracking-[0.25em] uppercase mb-4 text-white"
       >
-        Hexa Relation
+        Hexa Card
         <span className="block text-[9px] md:text-[10px] tracking-[0.8em] opacity-30 mt-6 ml-[0.8em]">アイデンティティの透過</span>
       </motion.h1>
 
