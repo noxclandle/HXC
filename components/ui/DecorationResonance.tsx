@@ -15,7 +15,7 @@ export default function DecorationResonance({ title, isVisible, onComplete }: { 
     return "#E0E0E0"; // デフォルト（白銀）
   };
 
-  const ritualColor = getResonanceColor(title);
+  const resonanceColor = getResonanceColor(title);
 
   useEffect(() => {
     if (isVisible) {
@@ -41,11 +41,11 @@ export default function DecorationResonance({ title, isVisible, onComplete }: { 
                  animate={{ opacity: [0, 0.2, 0], scale: [1, 2, 1.5] }}
                  transition={{ duration: 4, repeat: Infinity, delay: i * 0.5 }}
                  className="absolute top-1/2 left-1/2 w-[200vw] h-[1px] origin-left"
-                 style={{ backgroundColor: ritualColor }}
+                 style={{ backgroundColor: resonanceColor }}
                />
              ))}
           </div>
-          {/* ... (rest of the award UI using ritualColor) ... */}
+          {/* ... (rest of the award UI using resonanceColor) ... */}
           <motion.div
             initial={{ scale: 0.5, opacity: 0, y: 50 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -53,8 +53,8 @@ export default function DecorationResonance({ title, isVisible, onComplete }: { 
             className="relative mb-16"
           >
             <div className="w-32 h-32 border border-moonlight/30 rounded-full flex items-center justify-center relative">
-               <Award size={64} style={{ color: ritualColor }} className="animate-pulse" strokeWidth={0.5} />
-               <div className="absolute inset-0 border rounded-full animate-ping" style={{ borderColor: ritualColor, boxShadow: `0 0 30px ${ritualColor}` }} />
+               <Award size={64} style={{ color: resonanceColor }} className="animate-pulse" strokeWidth={0.5} />
+               <div className="absolute inset-0 border rounded-full animate-ping" style={{ borderColor: resonanceColor, boxShadow: `0 0 30px ${resonanceColor}` }} />
             </div>
           </motion.div>
 
@@ -64,12 +64,12 @@ export default function DecorationResonance({ title, isVisible, onComplete }: { 
             transition={{ delay: 1.5 }}
             className="space-y-6"
           >
-            <h2 className="text-sm tracking-[0.8em] uppercase opacity-40">Divine Bestowal</h2>
+            <h2 className="text-sm tracking-[0.8em] uppercase opacity-40">Authorized Enhancement</h2>
             <h1 className="text-4xl tracking-[0.4em] uppercase font-extralight italic text-white drop-shadow-[0_0_10px_white]">
                {title}
             </h1>
             <p className="text-[10px] tracking-[0.3em] uppercase opacity-40 mt-8">
-               チーフオフィサーの意志により、あなたの魂は昇華されました。
+               権限の付与により、あなたのアイデンティティは拡張されました。
             </p>
           </motion.div>
 

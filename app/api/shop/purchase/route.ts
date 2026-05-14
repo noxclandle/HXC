@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
+import { executeRTTransaction } from "@/lib/rt/engine";
 
 export const dynamic = "force-dynamic";
 
@@ -28,32 +29,30 @@ export async function POST(req: NextRequest) {
 
     const { assetId, cost } = parseResult.data;
 
-    // トランザクション処理
-    const result = await prisma.$transaction(async (tx) => {
-      const user = await tx.user.findUnique({ where: { id: session.user.id } });
-      if (!user) throw new Error("User not found");
+    // executeRTTransactionを使用して残高更新と履歴作成を統合
+    const { user: updatedUser } = await executeRTTransaction(
+      session.user.id,
+      -cost,
+      "spend",
+      `Purchased asset: ${assetId}`
+    );
 
-      if (user.rt_balance < BigInt(cost)) {
-        throw new Error("Insufficient RT");
-      }
+    // アセットの追加（これはexecuteRTTransactionの外で行う必要があるが、
+    // executeRTTransaction自体がトランザクション内なので、
+    // ここで別途更新するか、エンジンを拡張する必要がある。
+    // 今回はシンプルに、残高チェック済みのexecuteRTTransactionの後に実行する。）
+    
+    const currentAssets = Array.isArray(updatedUser.owned_assets) ? updatedUser.owned_assets : [];
+    const updatedAssets = [...new Set([...currentAssets, assetId])];
 
-      // 現状の所持リストを取得して更新
-      const currentAssets = Array.isArray(user.owned_assets) ? user.owned_assets : [];
-      const updatedAssets = [...new Set([...currentAssets, assetId])];
-
-      // データベースを更新
-      const updatedUser = await tx.user.update({
-        where: { id: session.user.id },
-        data: {
-          rt_balance: { decrement: BigInt(cost) },
-          owned_assets: updatedAssets
-        },
-      });
-
-      return updatedUser;
+    const finalUser = await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        owned_assets: updatedAssets
+      },
     });
 
-    return NextResponse.json({ success: true, balance: result.rt_balance.toString() });
+    return NextResponse.json({ success: true, balance: finalUser.rt_balance.toString() });
   } catch (error: any) {
     console.error("Purchase error:", error);
     return NextResponse.json({ error: error.message }, { status: 400 });

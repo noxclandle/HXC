@@ -4,9 +4,17 @@ import { useState, useEffect } from "react";
 import { Plus, Trash2, Send, Activity } from "lucide-react";
 import { useToast } from "@/components/ui/ResonanceToast";
 
+interface NewsItem {
+  id: string;
+  title: string;
+  content: string;
+  type: string;
+  created_at: string;
+}
+
 export default function AdminNewsPage() {
   const { showToast } = useToast();
-  const [news, setNews] = useState<any[]>([]);
+  const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPublishing, setIsPublishing] = useState(false);
   const [formData, setFormData] = useState({ title: "", content: "", type: "update" });

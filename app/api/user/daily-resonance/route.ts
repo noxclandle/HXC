@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { executeRTTransaction } from "@/lib/rt/engine";
 
 /**
  * デイリー共鳴（Resonance）報酬付与API
@@ -26,39 +27,39 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // デイリーチェック（24時間以内は不可、または日付が変わったらOKなどのロジック）
+    // デイリーチェック
     const now = new Date();
     const lastDaily = user.last_daily_at ? new Date(user.last_daily_at) : null;
     
-    // 簡易的に「今日すでに実行したか」を判定
     const isSameDay = lastDaily && 
       lastDaily.getFullYear() === now.getFullYear() &&
       lastDaily.getMonth() === now.getMonth() &&
       lastDaily.getDate() === now.getDate();
 
     if (isSameDay) {
-      // 開発中につき、テストしやすくするために400を返すが、本番では適切なメッセージを。
-      // return NextResponse.json({ error: "Already resonated today." }, { status: 400 });
+      return NextResponse.json({ error: "Already resonated today." }, { status: 400 });
     }
 
     // 報酬額の設定
-    const RT_REWARD = 100n;
-    const EXP_REWARD = 50n;
+    const RT_REWARD = 100;
 
-    // データベース更新
-    const updatedUser = await prisma.user.update({
+    // executeRTTransactionを使用してRTとEXPを更新（earnタイプは自動的にEXPも付与する）
+    const { user: updatedUser } = await executeRTTransaction(
+      userId,
+      RT_REWARD,
+      "earn",
+      "Daily Resonance Reward"
+    );
+
+    // last_daily_atの更新
+    await prisma.user.update({
       where: { id: userId },
-      data: {
-        rt_balance: { increment: RT_REWARD },
-        exp: { increment: EXP_REWARD },
-        last_daily_at: now
-      }
+      data: { last_daily_at: now }
     });
 
     return NextResponse.json({ 
       success: true, 
       added_rt: RT_REWARD, 
-      added_exp: EXP_REWARD,
       new_balance: Number(updatedUser.rt_balance)
     });
 

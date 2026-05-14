@@ -34,15 +34,16 @@ export async function POST(req: NextRequest) {
         const rtAmount = parseInt(session.metadata?.rtAmount || "0");
 
         if (userId && rtAmount > 0) {
-          await prisma.user.update({
-            where: { id: userId },
-            data: {
-              rt_balance: { increment: BigInt(rtAmount) }
-            }
-          });
+          const { executeRTTransaction } = await import("@/lib/rt/engine");
+          await executeRTTransaction(
+            userId,
+            rtAmount,
+            "earn",
+            `Stripe RT Purchase (Session: ${session.id})`
+          );
           
           await sendDiscordNotification(`【HXC監視局】RTチャージを検知。ユーザーID: ${userId}, 付与RT: ${rtAmount}`);
-          console.log(`Successfully granted ${rtAmount} RT to user ${userId}`);
+          console.log(`Successfully granted ${rtAmount} RT to user ${userId} via executeRTTransaction`);
         }
         return NextResponse.json({ received: true });
       }
