@@ -28,12 +28,8 @@ async function HubLoader() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) redirect("/login");
 
-  const [stats, contacts, news] = await Promise.all([
+  const [stats, news] = await Promise.all([
     getUserStatus(session.user.email),
-    prisma.contact.findMany({
-      where: { owner_id: (session.user as any).id },
-      orderBy: { created_at: "desc" }
-    }),
     prisma.announcement.findMany({
       where: { is_published: true },
       orderBy: { created_at: "desc" },
@@ -43,16 +39,9 @@ async function HubLoader() {
 
   if (!stats) redirect("/activate");
 
-  const contactsWithCoords = contacts.map((c) => ({
-    ...c,
-    x: Math.random() * 80 + 10,
-    y: Math.random() * 80 + 10
-  }));
-
   return (
     <HubClientUI 
       initialStats={stats} 
-      initialContacts={contactsWithCoords} 
       initialNews={news[0] || null} 
     />
   );

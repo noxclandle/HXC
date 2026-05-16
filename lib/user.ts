@@ -6,7 +6,27 @@ export async function getUserStatus(email: string | null | undefined) {
 
   const user = await prisma.user.findUnique({
     where: { email: normalizedEmail },
-    include: { card: true }
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      rank: true,
+      rt_balance: true,
+      exp: true,
+      unlocked_titles: true,
+      owned_assets: true,
+      handle_name: true,
+      logo_url: true,
+      photo_url: true,
+      link_website: true,
+      phone: true,
+      ai_config: true,
+      equipped_assets: true,
+      card: {
+        select: { uid: true }
+      }
+    }
   });
 
   if (!user) return null;
