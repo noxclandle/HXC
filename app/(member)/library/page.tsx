@@ -41,12 +41,12 @@ export default function LibraryPage() {
     <div className="min-h-screen bg-void text-moonlight pt-24 pb-24 px-4 md:px-8">
       <header className="max-w-6xl mx-auto mb-12">
         <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-30 hover:opacity-100 transition-opacity mb-8">
-          <ArrowLeft size={12} /> Back to Hub
+          <ArrowLeft size={12} /> Back to Home
         </Link>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
-            <h1 className="text-3xl md:text-5xl tracking-[0.3em] md:tracking-[0.5em] uppercase font-extralight text-white mb-2">Great Archive</h1>
-            <p className="text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold">人脈の集積所・名刺帳</p>
+            <h1 className="text-3xl md:text-5xl tracking-[0.3em] md:tracking-[0.5em] uppercase font-extralight text-white mb-2">Contacts</h1>
+            <p className="text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold">名刺帳・ライブラリ</p>
           </div>
           <div className="relative w-full md:w-80 group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-azure-400 transition-colors" size={16} />

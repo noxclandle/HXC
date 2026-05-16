@@ -111,15 +111,14 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
 
       <div className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center px-6">
         <header className="text-center space-y-2 mb-20">
-           <p className="text-[9px] tracking-[0.8em] uppercase opacity-20 font-bold text-white">{isOwner ? "Your Sanctum Entry" : "Identity Verification"}</p>
+           <p className="text-[9px] tracking-[0.8em] uppercase opacity-20 font-bold text-white">{isOwner ? "Owner Access" : "User Profile"}</p>
            <div className="h-px w-8 bg-white/10 mx-auto" />
            {isOwner && (
              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4">
-                <Link href="/hub" className="text-[10px] tracking-[0.4em] uppercase text-azure-400 hover:text-white transition-colors border border-azure-500/20 px-4 py-2 bg-azure-500/5">Enter Hub / 拠点へ移動</Link>
+                <Link href="/hub" className="text-[10px] tracking-[0.4em] uppercase text-azure-400 hover:text-white transition-colors border border-azure-500/20 px-4 py-2 bg-azure-500/5">Go to Home / 拠点へ移動</Link>
              </motion.div>
            )}
         </header>
-
         <motion.div 
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}

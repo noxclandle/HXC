@@ -35,8 +35,8 @@ export default function ConfirmationModal({ isOpen, onClose, onConfirm, title, d
   const getStepText = () => {
     switch (step) {
       case 1: return "意志を確認 (Verify Intent)";
-      case 2: return "共鳴を確定 (Deepen Resonance)";
-      case 3: return "境界を透過 (Authorize Finality)";
+      case 2: return "購入を確定 (Confirm Purchase)";
+      case 3: return "取引を完了 (Authorize Finality)";
       default: return "";
     }
   };

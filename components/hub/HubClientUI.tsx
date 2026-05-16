@@ -46,7 +46,7 @@ export default function HubClientUI({
       }
     } catch (err) { 
       console.error(err);
-      showToast("Synchronization Failed / 同期エラー", "error");
+      showToast("Sync Failed / 同期エラー", "error");
     }
   }, [showToast]);
 
@@ -60,16 +60,16 @@ export default function HubClientUI({
       
       if (res.ok) {
         await fetchData();
-        showToast("Resonance Established / 共鳴完了", "success");
+        showToast("Bonus Received / 報酬受取完了", "success");
         setTimeout(() => {
           setMood('stable');
           setIsResonating(false);
         }, 3000);
       } else {
         if (data.error === "Already resonated today.") {
-          showToast("Already Resonated / 本日の共鳴は完了しています", "info");
+          showToast("Already Received / 本日は受取済みです", "info");
         } else {
-          showToast("Resonance Interrupted / 共鳴失敗", "error");
+          showToast("Bonus Failed / 受取失敗", "error");
         }
         setMood('unstable');
         setTimeout(() => {
@@ -80,7 +80,7 @@ export default function HubClientUI({
     } catch (e) {
       setMood('unstable');
       setIsResonating(false);
-      showToast("Resonance Interrupted / 共鳴失敗", "error");
+      showToast("Bonus Failed / 受取失敗", "error");
     }
   };
 
@@ -105,8 +105,8 @@ export default function HubClientUI({
     <div className="max-w-7xl mx-auto pt-24 px-6 pb-24 relative text-moonlight">
       <header className="mb-12 flex flex-col md:flex-row justify-between items-start gap-8">
         <div className="space-y-4">
-          <h1 className="text-2xl md:text-3xl tracking-[0.2em] md:tracking-[0.4em] uppercase font-extralight mb-2 text-white">Member Hub</h1>
-          <p className="text-[9px] md:text-[10px] tracking-[0.2em] md:tracking-[0.4em] uppercase opacity-40">System Dashboard</p>
+          <h1 className="text-2xl md:text-3xl tracking-[0.2em] md:tracking-[0.4em] uppercase font-extralight mb-2 text-white">Home</h1>
+          <p className="text-[9px] md:text-[10px] tracking-[0.2em] md:tracking-[0.4em] uppercase opacity-40">My Page</p>
         </div>
         <div className="flex items-start gap-8 w-full md:w-auto justify-between md:justify-end">
            <div className="text-left md:text-right flex flex-col items-start md:items-end w-full">
@@ -150,15 +150,15 @@ export default function HubClientUI({
              <Link href="/scan" className="group p-8 border border-azure-500/20 bg-azure-500/[0.03] hover:bg-azure-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-azure-500/40" />
                 <div>
-                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white">Identity Archive</h2>
-                   <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400/60">人脈の記録 (撮影)</p>
+                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white">Scan Card</h2>
+                   <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400/60">紙名刺をスキャンする</p>
                 </div>
                 <Camera size={32} className="opacity-20 group-hover:opacity-60 transition-all text-white" />
              </Link>
              <Link href="/library" className="group p-8 border border-bronze-500/20 bg-bronze-500/[0.03] hover:bg-bronze-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-bronze-500/40" />
                 <div>
-                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white">Great Library</h2>
+                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white">Contacts</h2>
                    <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-bronze-400/60">名刺帳・ライブラリ</p>
                 </div>
                 <Book size={32} className="opacity-20 group-hover:opacity-60 transition-all text-white" />
@@ -183,9 +183,9 @@ export default function HubClientUI({
                     <div className="text-[10px] tracking-[0.4em] text-azure-400 font-bold uppercase mb-4">Initial Guidance</div>
                     <p className="text-[11px] leading-relaxed tracking-widest text-white/70 uppercase">
                       ようこそ、Hexa Relationへ。<br />
-                      貴方のアイデンティティは確立されました。<br />
-                      「Commune」で世界と共鳴し、<br />
-                      「Identity Archive」で人脈を深めましょう。
+                      貴方のページが作成されました。<br />
+                      「Daily Bonus」で報酬を受け取り、<br />
+                      「Scan Card」で人脈を広げましょう。
                     </p>
                     <button 
                       onClick={closeGuide}
@@ -202,7 +202,7 @@ export default function HubClientUI({
                     className="flex flex-col items-center space-y-6 w-full"
                   >
                     <div className="opacity-30 text-[8px] tracking-[0.5em] uppercase font-bold mb-2 relative z-10 flex items-center gap-2">
-                       Resident Concierge
+                       Concierge
                        {latestNews && (
                          <span className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
                        )}
@@ -225,7 +225,7 @@ export default function HubClientUI({
                     
                     <div className="space-y-2 relative z-10 w-full">
                       <p className="text-[10px] tracking-widest opacity-40 uppercase">
-                        {mood === 'excited' ? 'Resonance active' : mood === 'unstable' ? 'Connection weak' : 'Awaiting observation'}
+                        {mood === 'excited' ? 'Bonus active' : mood === 'unstable' ? 'Connection weak' : 'Awaiting daily bonus'}
                       </p>
                       <button 
                         onClick={handleResonance}
@@ -237,7 +237,7 @@ export default function HubClientUI({
                         }`}
                       >
                         <Sparkles size={12} className={isResonating ? 'animate-spin' : ''} />
-                        {isResonating ? 'Communing...' : 'Commune'}
+                        {isResonating ? 'Loading...' : 'Daily Bonus'}
                       </button>
                     </div>
                   </motion.div>

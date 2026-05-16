@@ -43,15 +43,15 @@ function ActivateContent() {
             />
           </div>
           <div className="space-y-4">
-            <h2 className="text-2xl tracking-[0.4em] uppercase font-extralight text-white">Awaiting Resonance</h2>
+            <h2 className="text-2xl tracking-[0.4em] uppercase font-extralight text-white">Waiting for Card...</h2>
             <p className="text-[10px] tracking-widest opacity-30 uppercase text-center max-w-xs mx-auto leading-relaxed">
-              物理鍵（カード）をスマートフォンにかざしてください。<br />
+              物理カードをスマートフォンにかざしてください。<br />
               通知が表示されたら、それをタップして同期を完了させます。
             </p>
           </div>
           <div className="mt-8 py-6 px-10 border border-white/5 bg-white/[0.02] rounded-sm flex flex-col items-center gap-4">
              <Smartphone size={24} className="opacity-20 animate-bounce" />
-             <p className="text-[8px] tracking-[0.3em] uppercase opacity-40 font-bold">Scanning for Proximity...</p>
+             <p className="text-[8px] tracking-[0.3em] uppercase opacity-40 font-bold">Waiting for proximity...</p>
           </div>
         </motion.div>
       )}
@@ -63,13 +63,13 @@ function ActivateContent() {
             <div className="relative z-10 flex flex-col items-center gap-8">
               <Loader2 className="animate-spin text-white opacity-40" size={60} strokeWidth={1} />
               <span className="text-[8px] tracking-[1em] uppercase text-white opacity-40 animate-pulse font-bold ml-[1em]">
-                Observation Detected
+                Card Detected
               </span>
             </div>
           </div>
-          <h2 className="text-2xl tracking-[0.5em] uppercase font-light text-white">Resonance Observed</h2>
+          <h2 className="text-2xl tracking-[0.5em] uppercase font-light text-white">Card Detected</h2>
           <p className="text-white/30 text-[10px] tracking-[0.2em] uppercase mt-4">
-             物理鍵を検知しました。情報を透過中...
+             物理カードを検知しました。情報を読み取り中...
           </p>
         </motion.div>
       )}

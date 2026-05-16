@@ -98,8 +98,8 @@ export default function ScanPage() {
         {status === "idle" && (
           <motion.div key="idle" className="flex flex-col items-center p-12 w-full max-w-sm">
             <header className="text-center mb-16 space-y-2">
-              <h2 className="text-xl tracking-[0.6em] uppercase font-light">Resonance Connection</h2>
-              <p className="text-[9px] tracking-[0.4em] opacity-30 uppercase italic">共鳴の接続を開始します</p>
+              <h2 className="text-xl tracking-[0.6em] uppercase font-light">Scan Card</h2>
+              <p className="text-[9px] tracking-[0.4em] opacity-30 uppercase font-bold text-azure-400">名刺をスキャンする</p>
             </header>
 
             {/* Visual Guide (紙名刺の電子化) */}
@@ -160,7 +160,7 @@ export default function ScanPage() {
               >
                 Open Camera
               </button>
-              <button onClick={() => router.back()} className="text-[9px] opacity-20 uppercase tracking-[0.4em] hover:opacity-50 transition-opacity">Return to Sanctum</button>
+              <button onClick={() => router.back()} className="text-[9px] opacity-20 uppercase tracking-[0.4em] hover:opacity-50 transition-opacity">Return to Home</button>
             </div>
           </motion.div>
         )}
