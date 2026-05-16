@@ -219,7 +219,7 @@ export default function InventoryPage() {
         body: JSON.stringify({ equipped: customEquipped || equipped })
       });
       if (res.ok) {
-        showToast("Synchronized / 装備を同期しました", "success");
+        showToast("Saved / 装備を更新しました", "success");
         window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
       } else {
         showToast("Error / 保存に失敗しました", "error");
@@ -239,7 +239,7 @@ export default function InventoryPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        showToast(`Resonance Established: ${asset.name}`, "success");
+        showToast(`Item Unlocked: ${asset.name}`, "success");
         setRTBalance(data.rt_balance);
         setOwnedAssets(data.owned_assets);
         const newEquipped = { ...equipped, [activeCategory as keyof typeof equipped]: asset.id };
@@ -297,10 +297,10 @@ export default function InventoryPage() {
       <header className="mb-8 lg:mb-20 flex justify-between items-end">
         <div className="space-y-4">
           <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-30 hover:opacity-100 transition-opacity mb-4 lg:mb-8">
-            <ArrowLeft size={12} /> Back to Hub / 拠点へ戻る
+            <ArrowLeft size={12} /> Back to Home / 拠点へ戻る
           </Link>
-          <h1 className="text-3xl lg:text-5xl tracking-[0.3em] lg:tracking-[0.5em] uppercase font-extralight text-white">Treasury</h1>
-          <p className="text-[9px] lg:text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold hidden lg:block">宝物庫・アセット管理</p>
+          <h1 className="text-3xl lg:text-5xl tracking-[0.3em] lg:tracking-[0.5em] uppercase font-extralight text-white">Shop & Items</h1>
+          <p className="text-[9px] lg:text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold hidden lg:block">ショップ・アイテム管理</p>
         </div>
         <div className="text-right flex flex-col items-end gap-2">
            <p className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60">RT Balance</p>
@@ -331,7 +331,7 @@ export default function InventoryPage() {
                   key={pack.id}
                   onClick={async () => {
                     try {
-                      showToast(`Opening Boundary...`, "success");
+                      showToast(`Processing...`, "success");
                       const res = await fetch("/api/stripe/rt-checkout", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -362,7 +362,7 @@ export default function InventoryPage() {
                 </button>
               ))}
             </div>
-            <p className="text-[8px] tracking-[0.5em] uppercase opacity-20 text-center mt-8 italic">意志の注入を確定させ、共鳴の境界を拡張してください。</p>
+            <p className="text-[8px] tracking-[0.5em] uppercase opacity-20 text-center mt-8 italic">購入内容を確認し、決済を完了してください。</p>
           </motion.section>
         )}
       </AnimatePresence>
@@ -415,7 +415,7 @@ export default function InventoryPage() {
               </div>
 
               <div className="lg:hidden text-center mt-[-15%] pb-1 flex flex-col items-center gap-1">
-                 <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">Live Resonance Preview</p>
+                 <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">Live Preview</p>
                  {previewAsset && <span className="text-[6px] text-azure-400 uppercase font-bold tracking-widest animate-pulse">Previewing: {previewAsset.name}</span>}
               </div>
            </div>

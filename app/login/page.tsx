@@ -77,8 +77,8 @@ export default function LoginPage() {
       >
         <div className="flex flex-col items-center mb-16 text-center">
           <img src="/logo.png" alt="Logo" className="w-20 h-20 opacity-40 mb-10 hover:opacity-100 transition-opacity duration-1000" />
-          <h1 className="text-2xl tracking-[0.8em] uppercase font-extralight mb-2">Authenticating</h1>
-          <p className="text-[8px] tracking-[0.4em] opacity-20 uppercase font-bold">魂の認証プロセス</p>
+          <h1 className="text-2xl tracking-[0.8em] uppercase font-extralight mb-2">Sign In</h1>
+          <p className="text-[8px] tracking-[0.4em] opacity-20 uppercase font-bold">認証プロセス</p>
         </div>
 
         <motion.form
@@ -132,7 +132,7 @@ export default function LoginPage() {
               disabled={isLoading}
               className={`w-full py-5 bg-white text-void text-[10px] font-bold tracking-[0.8em] uppercase hover:bg-emerald-50 transition-all shadow-2xl relative overflow-hidden ${isLoading && 'opacity-50'}`}
             >
-              {isLoading ? "Synchronizing..." : "Enter Sanctum"}
+              {isLoading ? "Signing In..." : "Sign In"}
               {isLoading && (
                 <motion.div 
                   animate={{ left: ["-100%", "100%"] }}
@@ -146,7 +146,7 @@ export default function LoginPage() {
           <div className="text-center pt-8">
             <p className="text-[7px] tracking-[0.4em] opacity-20 uppercase">
               物理カードをかざしてもログインできない場合は、<br/>
-              アカウント情報で一度同調を行ってください。
+              メールアドレスとパスワードでログインしてください。
             </p>
           </div>
         </motion.form>

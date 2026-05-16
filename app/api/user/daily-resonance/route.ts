@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       userId,
       RT_REWARD,
       "earn",
-      "Daily Resonance Reward"
+      "Daily Bonus Reward"
     );
 
     // last_daily_atの更新
