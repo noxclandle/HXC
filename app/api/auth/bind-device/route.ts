@@ -25,7 +25,19 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    return NextResponse.json({ success: true, deviceToken });
+    const response = NextResponse.json({ success: true, deviceToken });
+    
+    // Cookieにも保存（サーバーサイドでの識別の用）
+    // 400日間有効（ほぼ永久的）なCookieを設定
+    response.cookies.set("hxc_soul_fragment", deviceToken, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 400,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax"
+    });
+
+    return response;
   } catch (error: any) {
     console.error("Device binding error:", error);
     return NextResponse.json({ error: "Failed to bind device." }, { status: 500 });

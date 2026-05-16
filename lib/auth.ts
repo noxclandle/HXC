@@ -50,15 +50,16 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
+        const email = credentials.email.toLowerCase();
 
         // 1. データベースからユーザーを検索
         try {
           const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
+            where: { email },
           });
 
           if (!user) {
-            console.error("Auth Error: User not found ->", credentials.email);
+            console.error("Auth Error: User not found ->", email);
             return null;
           }
 

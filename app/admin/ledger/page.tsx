@@ -141,56 +141,7 @@ export default function LedgerPage() {
     return "OVERFLOW"; // 1000万枚を超えた場合
   };
 
-  const [isScanning, setIsScanning] = useState(false);
-  const [provisioningMode, setProvisioningMode] = useState(false);
-
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hxc.hexa-relation.com";
-
-  const startScan = async () => {
-    if (!("NDEFReader" in window)) {
-      alert("このデバイス/ブラウザはNFCスキャン(WebNFC)に対応していません。\niPhone(iOS)をご利用の場合は、App Storeから「NFC Tools」等のアプリを使用し、UIDを手動でコピー＆ペーストしてください。");
-      return;
-    }
-
-    try {
-      setIsScanning(true);
-      const reader = new (window as any).NDEFReader();
-      await reader.scan();
-
-      reader.onreading = async (event: any) => {
-        const serialNumber = event.serialNumber;
-        const formattedUid = serialNumber.toUpperCase().replace(/:/g, "");
-        
-        // 乱数ベースのシリアル生成 (例: 00202612345)
-        const autoSerial = generateRandomSerial(cards);
-        
-        setNewCard(prev => ({
-          ...prev,
-          uid: formattedUid,
-          serial: prev.serial || autoSerial
-        }));
-
-        if (provisioningMode) {
-          try {
-            const writeUrl = `${baseUrl}/api/card/${formattedUid}`;
-            await reader.write({
-              records: [{ recordType: "url", data: writeUrl }]
-            });
-            alert(`書き込み成功: ${writeUrl}\nUID: ${formattedUid}\n※書き換え不可(Lock)設定は手動アプリ(NFC Tools等)で行ってください。`);
-          } catch (writeError) {
-            console.error("NFC Write Error:", writeError);
-            alert("読み取りは成功しましたが、書き込みに失敗しました。カードがロックされている可能性があります。");
-          }
-        }
-        
-        setIsScanning(false);
-      };
-
-    } catch (error) {
-      console.error("NFC Scan Error:", error);
-      setIsScanning(false);
-    }
-  };
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : "https://hxc.hexa-relation.com";
 
   const createSlot = async () => {
     if (!newCard.uid || !newCard.serial) return;
@@ -209,6 +160,16 @@ export default function LedgerPage() {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const copyWriteUrl = () => {
+    if (!newCard.uid) {
+      alert("先に物理UIDを入力してください。");
+      return;
+    }
+    const url = `${baseUrl}/api/card/${newCard.uid.toUpperCase().replace(/:/g, "")}`;
+    navigator.clipboard.writeText(url);
+    alert(`書き込み用URLをコピーしました:\n${url}\n\nこれをNFC Tools等のアプリでカードに書き込んでください。`);
   };
 
   return (
@@ -263,7 +224,6 @@ export default function LedgerPage() {
           ) : (
             orders
               .sort((a, b) => {
-                // 未対応(paid) -> 発送済み(shipped) -> 完了(completed) の順で表示
                 const score = { 'paid': 0, 'shipped': 1, 'completed': 2 };
                 return (score[a.status as keyof typeof score] ?? 3) - (score[b.status as keyof typeof score] ?? 3);
               })
@@ -335,40 +295,35 @@ export default function LedgerPage() {
       {/* Slot Creation Form */}
       <section className="mb-16 p-8 border border-moonlight/10 bg-gothic-dark/20 backdrop-blur-md">
         <div className="flex justify-between items-center mb-6">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
             <h2 className="text-[10px] tracking-[0.4em] uppercase opacity-40 font-bold">Create New Card Slot (新規カード枠の作成)</h2>
-            <div className="flex items-center gap-3">
-              <input 
-                type="checkbox" id="provision" checked={provisioningMode} 
-                onChange={(e) => setProvisioningMode(e.target.checked)}
-                className="w-3 h-3 border-moonlight/20 bg-void accent-azure-500"
-              />
-              <label htmlFor="provision" className="text-[9px] uppercase tracking-widest text-azure-400 font-bold cursor-pointer">
-                Provisioning Mode (スキャン時にカードへURLを書き込む)
-              </label>
-            </div>
+            <p className="text-[8px] tracking-widest opacity-30">物理UIDとシリアル番号を紐付けてシステムに登録します。</p>
           </div>
-          <button 
-            onClick={startScan} 
-            disabled={isScanning}
-            className={`px-8 py-2 border ${isScanning ? "border-emerald-500 text-emerald-400 animate-pulse" : "border-moonlight/20 text-moonlight opacity-40 hover:opacity-100 hover:bg-white/5"} text-[9px] tracking-[0.4em] uppercase transition-all`}
-          >
-            {isScanning ? "スキャン中..." : "スキャン開始"}
-          </button>
+          {newCard.uid && (
+            <button 
+              onClick={copyWriteUrl}
+              className="px-6 py-2 border border-azure-500/30 text-azure-400 text-[8px] uppercase tracking-widest hover:bg-azure-500/10 transition-all"
+            >
+              書き込み用URLをコピー
+            </button>
+          )}
         </div>
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-1 space-y-1">
             <label className="text-[8px] uppercase opacity-30 tracking-widest">物理 UID</label>
             <input
-              type="text" placeholder="04:A2:3F:..." value={newCard.uid}
-              onChange={(e) => setNewCard({ ...newCard, uid: e.target.value })}
+              type="text" placeholder="04A23F..." value={newCard.uid}
+              onChange={(e) => {
+                const val = e.target.value.toUpperCase().replace(/:/g, "");
+                setNewCard(prev => ({ ...prev, uid: val, serial: prev.serial || generateRandomSerial(cards) }));
+              }}
               className="w-full bg-void border border-moonlight/10 p-3 text-xs tracking-widest outline-none focus:border-moonlight transition-all uppercase"
             />
           </div>
           <div className="flex-1 space-y-1">
             <label className="text-[8px] uppercase opacity-30 tracking-widest">シリアル番号</label>
             <input
-              type="text" placeholder="HXC-2026-XXXX" value={newCard.serial}
+              type="text" placeholder="2026..." value={newCard.serial}
               onChange={(e) => setNewCard({ ...newCard, serial: e.target.value })}
               className="w-full bg-void border border-moonlight/10 p-3 text-xs tracking-widest outline-none focus:border-moonlight transition-all uppercase"
             />
@@ -377,10 +332,14 @@ export default function LedgerPage() {
             <button onClick={createSlot} className="px-12 py-3 bg-moonlight text-void text-[10px] font-bold uppercase tracking-[0.6em] hover:bg-white transition-all shadow-xl">作成</button>
           </div>
         </div>
-        <p className="mt-4 text-[9px] opacity-30 italic leading-relaxed">
-           * [スキャン開始] を押し、物理カードをデバイスにタッチするとUIDが自動取得されます。(Android Chromeのみ)<br />
-           * iPhone(iOS)をご利用の場合は、NFC Tools等のアプリでタグを読み取り、UID(Serial Number)をコピーして上部フォームへ直接ペーストしてください。
-        </p>
+        <div className="mt-4 p-4 bg-white/5 border border-white/5 space-y-2">
+           <p className="text-[9px] opacity-40 leading-relaxed font-bold uppercase tracking-widest">Manual Setup Guide:</p>
+           <p className="text-[9px] opacity-30 leading-relaxed">
+              1. iPhone等で「NFC Tools」アプリを起動し、カードを読み取ってUIDを取得・入力してください。<br />
+              2. [書き込み用URLをコピー] を押し、アプリの「書き込み」メニューからURL(Record)を追加してカードに書き込みます。<br />
+              3. 最後に「ロック(Read-Only)」設定を行ってください。※一度ロックすると書き換え不可になります。
+           </p>
+        </div>
       </section>
 
       <div className="flex items-center gap-4 mb-8">

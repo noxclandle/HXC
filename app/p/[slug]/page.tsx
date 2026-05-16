@@ -98,20 +98,29 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
   useEffect(() => {
     let mounted = true;
     fetch(`/api/profile/${params.slug}`)
-      .then((res) => res.json())
+      .then((res) => res.ok ? res.json() : null)
       .then((d) => {
         if (mounted) {
-          setData(d);
+          if (!d || d.error) {
+            setData(null);
+          } else {
+            setData(d);
+          }
           // データ取得後、少し間を置いて演出を開始
           setTimeout(() => {
             setLoading(false);
             // アンヴェイル演出（2秒程度）の後にUIを完全表示
-            setTimeout(() => setShowUI(true), 2500);
+            if (d && !d.error) {
+              setTimeout(() => setShowUI(true), 2500);
+            }
           }, 800);
         }
       })
       .catch(() => {
-        if (mounted) setLoading(false);
+        if (mounted) {
+          setData(null);
+          setLoading(false);
+        }
       });
     return () => {
       mounted = false;

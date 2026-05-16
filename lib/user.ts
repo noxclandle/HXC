@@ -1,8 +1,11 @@
 import { prisma } from "@/lib/prisma";
 
-export async function getUserStatus(email: string) {
+export async function getUserStatus(email: string | null | undefined) {
+  if (!email) return null;
+  const normalizedEmail = email.toLowerCase();
+
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { email: normalizedEmail },
     include: { card: true }
   });
 
@@ -82,13 +85,25 @@ export async function getUserStatus(email: string) {
 }
 
 export async function getPublicProfile(slug: string) {
+  // UUID形式かどうかを判定する正規表現
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+
+  const conditions: any[] = [
+    { handle_name: { equals: slug, mode: "insensitive" as const } },
+    { name: { equals: slug.replace(/-/g, " "), mode: "insensitive" as const } },
+  ];
+
+  if (isUuid) {
+    conditions.push({ id: slug });
+  }
+
+  if (slug === "architect") {
+    conditions.push({ email: "str1yf5x@gmail.com" });
+  }
+
   const user = await prisma.user.findFirst({
     where: {
-      OR: [
-        { handle_name: { equals: slug, mode: "insensitive" } },
-        { name: { equals: slug.replace(/-/g, " "), mode: "insensitive" } },
-        slug === "architect" ? { email: "str1yf5x@gmail.com" } : {}
-      ]
+      OR: conditions
     },
     select: {
       id: true,

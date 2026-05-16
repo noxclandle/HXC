@@ -29,7 +29,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid request", details: parseResult.error.format() }, { status: 400 });
     }
 
-    const { name, handle, email, password, phone, address, uid, title } = parseResult.data;
+    const { name, handle, email: rawEmail, password, phone, address, uid, title } = parseResult.data;
+    const email = rawEmail.toLowerCase();
 
     const normalizedUid = uid.replace(/:/g, "").toUpperCase();
 
@@ -98,7 +99,8 @@ export async function POST(req: NextRequest) {
       return user;
     });
 
-    // 初期ポイント付与 (executeRTTransaction)
+    // 初期ポイント付与とデバイス紐付け
+    let deviceToken = "";
     try {
       await executeRTTransaction(
         newUser.id,
@@ -106,12 +108,22 @@ export async function POST(req: NextRequest) {
         "earn",
         "Initial Registration Bonus"
       );
-    } catch (rtError) {
-      console.error("Failed to grant initial RT:", rtError);
-      // 登録自体は成功しているので、ここではエラーを握り潰すかログのみ
+
+      // デバイス紐付け用のトークン生成
+      const crypto = require("crypto");
+      deviceToken = crypto.randomBytes(32).toString("hex");
+      await prisma.deviceBinding.create({
+        data: {
+          user_id: newUser.id,
+          device_token: deviceToken,
+          user_agent: req.headers.get("user-agent") || "Unknown Device"
+        }
+      });
+    } catch (err) {
+      console.error("Post-registration steps failed:", err);
     }
 
-    return NextResponse.json({ success: true, userId: newUser.id, slug: newUser.handle_name });
+    return NextResponse.json({ success: true, userId: newUser.id, slug: newUser.handle_name, deviceToken });
   } catch (error: any) {
     console.error("Registration error:", error);
     if (error.code === "P2002") {

@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
       return user;
     });
 
-    return NextResponse.json({ success: true, user: updatedUser });
+    return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("Profile update error:", error);
     return NextResponse.json({ error: "Failed to update identity." }, { status: 500 });
