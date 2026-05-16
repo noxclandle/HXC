@@ -12,34 +12,27 @@ import { useToast } from "@/components/ui/ResonanceToast";
 
 export default function HubClientUI({ 
   initialStats, 
-  initialContacts, 
   initialNews 
 }: { 
   initialStats: any, 
-  initialContacts: any[], 
   initialNews: any 
 }) {
   const { data: session } = useSession();
   const { showToast } = useToast();
   const [realStats, setRealStatus] = useState(initialStats);
-  const [contacts, setContacts] = useState(initialContacts);
   const [latestNews, setLatestNews] = useState(initialNews);
   const [mood, setMood] = useState<'stable' | 'excited' | 'unstable'>('stable');
   const [isResonating, setIsResonating] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
+  const [greeting, setGreeting] = useState("Awaiting daily bonus");
 
   const fetchData = useCallback(async () => {
     try {
-      const [statusRes, contactsRes, newsRes] = await Promise.all([
+      const [statusRes, newsRes] = await Promise.all([
         fetch("/api/user/status", { cache: "no-store" }),
-        fetch("/api/contacts/list", { cache: "no-store" }),
         fetch("/api/news", { cache: "no-store" })
       ]);
       if (statusRes.ok) setRealStatus(await statusRes.json());
-      if (contactsRes.ok) {
-        const cData = await contactsRes.json();
-        setContacts(cData);
-      }
       if (newsRes.ok) {
         const nData = await newsRes.json();
         if (nData.length > 0) setLatestNews(nData[0]);
@@ -61,6 +54,9 @@ export default function HubClientUI({
       if (res.ok) {
         await fetchData();
         showToast("Bonus Received / 報酬受取完了", "success");
+        if (typeof navigator !== "undefined" && navigator.vibrate) {
+          navigator.vibrate([15]); // 高級感のある短い振動
+        }
         setTimeout(() => {
           setMood('stable');
           setIsResonating(false);
@@ -85,7 +81,12 @@ export default function HubClientUI({
   };
 
   useEffect(() => {
-    // 初回ログイン時にガイドを表示するロジック（簡易版）
+    const hour = new Date().getHours();
+    if (hour < 5) setGreeting("静かな夜ですね。");
+    else if (hour < 11) setGreeting("おはようございます。");
+    else if (hour < 17) setGreeting("こんにちは。");
+    else setGreeting("こんばんは。");
+
     const hasSeenGuide = localStorage.getItem("hxc-guide-seen");
     if (!hasSeenGuide) {
       setShowGuide(true);
@@ -161,7 +162,7 @@ export default function HubClientUI({
                    <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white">Contacts</h2>
                    <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-bronze-400/60">名刺帳・ライブラリ</p>
                 </div>
-                <Book size={32} className="opacity-20 group-hover:opacity-60 transition-all text-white" />
+                < Book size={32} className="opacity-20 group-hover:opacity-60 transition-all text-white" />
              </Link>
           </div>
         </div>
@@ -211,16 +212,16 @@ export default function HubClientUI({
                       <GeometricAngel level={Math.floor(Math.sqrt(Number(realStats?.exp || 0) / 10)) + 1} mood={mood} size={180} />
                       
                       {/* Speech Bubble for News/Alerts */}
-                      {latestNews && (
-                        <motion.div 
-                          initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          className="absolute -top-4 -right-12 bg-white/10 backdrop-blur-md border border-white/10 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl pointer-events-none"
-                        >
-                           <p className="text-[7px] uppercase tracking-widest text-azure-400 font-bold mb-1 italic">Notice</p>
-                           <p className="text-[9px] leading-tight text-white/80 line-clamp-2">{latestNews.title}</p>
-                        </motion.div>
-                      )}
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        className="absolute -top-4 -right-12 bg-white/10 backdrop-blur-md border border-white/10 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl pointer-events-none"
+                      >
+                         <p className="text-[7px] uppercase tracking-widest text-azure-400 font-bold mb-1 italic">Notice</p>
+                         <p className="text-[9px] leading-tight text-white/80 line-clamp-2">
+                           {latestNews ? latestNews.title : greeting}
+                         </p>
+                      </motion.div>
                     </div>
                     
                     <div className="space-y-2 relative z-10 w-full">

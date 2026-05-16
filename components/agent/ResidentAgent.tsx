@@ -118,8 +118,8 @@ export default function ResidentAgent() {
             <div className="p-6 bg-gradient-to-b from-white/5 to-transparent border-b border-white/5">
                <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-[11px] tracking-[0.5em] uppercase text-white mb-1">Concierge Angel</h3>
-                    <p className="text-[8px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400">境界の案内人 / {stage.name}</p>
+                    <h3 className="text-[11px] tracking-[0.5em] uppercase text-white mb-1">Concierge</h3>
+                    <p className="text-[8px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400">常駐コンシェルジュ</p>
                   </div>
                   <button onClick={() => setIsOpen(false)} className="opacity-20 hover:opacity-100 transition-opacity"><X size={18}/></button>
                </div>
@@ -127,7 +127,7 @@ export default function ResidentAgent() {
                {/* Evolution Bar */}
                <div className="space-y-2">
                   <div className="flex justify-between text-[7px] tracking-widest uppercase opacity-40">
-                    <span>Resonance Level {level}</span>
+                    <span>Rank Level {level}</span>
                     <span>{userExp} EXP</span>
                   </div>
                   <div className="h-[1px] w-full bg-white/10">
@@ -144,8 +144,8 @@ export default function ResidentAgent() {
             <div className="flex border-b border-white/5 bg-black/20">
                {[
                  { id: "portal", label: "Portal", icon: Shield },
-                 { id: "notices", label: "Annals", icon: Bell },
-                 { id: "help", label: "Scripture", icon: HelpCircle },
+                 { id: "notices", label: "Notice", icon: Bell },
+                 { id: "help", label: "Help", icon: HelpCircle },
                ].map((tab) => (
                  <button 
                    key={tab.id}
@@ -164,8 +164,8 @@ export default function ResidentAgent() {
                 {activeTab === "portal" && (
                   <motion.div key="portal" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="space-y-8">
                     <div className="space-y-4">
-                      <p className="text-[10px] tracking-widest leading-relaxed opacity-60 italic">
-                        &quot;主（あるじ）よ、本日の境界の状態をお伝えします。深層との接続は安定しており、あなたの存在は確実に刻まれています。&quot;
+                      <p className="text-[10px] tracking-widest leading-relaxed opacity-60">
+                        &quot;ようこそ、主。こちらは貴方の活動をサポートする窓口です。何かお手伝いしましょうか？&quot;
                       </p>
 
                       {!isSoulLinked && (
@@ -177,23 +177,23 @@ export default function ResidentAgent() {
 
                       <div className="grid grid-cols-2 gap-3">
                          <div className="p-4 bg-white/[0.02] border border-white/5 rounded-sm">
-                            <p className="text-[7px] opacity-40 uppercase tracking-widest mb-1">Energy Balance</p>
+                            <p className="text-[7px] opacity-40 uppercase tracking-widest mb-1">RT Balance</p>
                             <p className="text-sm font-light tracking-widest text-white">{Number(rtBalance).toLocaleString()} <span className="text-[8px] opacity-20">RT</span></p>
                          </div>
                          <div className="p-4 bg-white/[0.02] border border-white/5 rounded-sm">
-                            <p className="text-[7px] opacity-40 uppercase tracking-widest mb-1">Identity Rank</p>
+                            <p className="text-[7px] opacity-40 uppercase tracking-widest mb-1">Rank</p>
                             <p className="text-sm font-light tracking-widest text-azure-400 uppercase italic">Initiate</p>
                          </div>
                       </div>
                     </div>
 
                     <div className="space-y-3">
-                      <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">Sacred Actions</p>
+                      <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">Menu</p>
                       {!hasDaily && (
                         <button onClick={collectDaily} className="w-full p-4 bg-white text-void flex items-center justify-between group transition-all hover:bg-azure-50">
                            <div className="flex items-center gap-3">
                               <Sparkles size={14}/>
-                              <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Daily Light / 恩寵を受け取る</span>
+                              <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Daily Bonus / 報酬を受け取る</span>
                            </div>
                            <ChevronRight size={14}/>
                         </button>
@@ -201,7 +201,7 @@ export default function ResidentAgent() {
                       <Link href="/inventory" onClick={() => setIsOpen(false)} className="w-full p-4 bg-white/5 border border-white/10 flex items-center justify-between group transition-all hover:border-white/30">
                          <div className="flex items-center gap-3">
                             <Trophy size={14} className="opacity-40 group-hover:opacity-100 transition-opacity" />
-                            <span className="text-[9px] tracking-[0.2em] uppercase">Treasury / 宝物庫を覗く</span>
+                            <span className="text-[9px] tracking-[0.2em] uppercase">Shop & Items / アイテム・装備</span>
                          </div>
                          <ChevronRight size={14} className="opacity-20"/>
                       </Link>
