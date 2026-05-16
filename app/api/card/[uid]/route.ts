@@ -42,12 +42,27 @@ export async function GET(req: NextRequest, { params }: { params: { uid: string 
 
   // 3. アクティブな場合
   if (card.status === "active") {
-    // 所有者本人がログインしている場合 -> ダッシュボード（編集画面）へ
+    // A. セッションによる確認（既存）
     if (session?.user?.id === card.user_id) {
       return NextResponse.redirect(new URL("/hub", req.url));
     }
+
+    // B. クッキー（Soul-Link）による確認
+    const soulToken = req.cookies.get("hxc_soul_fragment")?.value;
+    if (soulToken && card.user_id) {
+      const binding = await prisma.deviceBinding.findFirst({
+        where: {
+          user_id: card.user_id,
+          device_token: soulToken
+        }
+      });
+      if (binding) {
+        // 端末が一致したため、本人とみなしてHubへ
+        return NextResponse.redirect(new URL("/hub", req.url));
+      }
+    }
     
-    // 他人の場合（または未ログイン） -> その人の公開電子名刺へ
+    // 他人の場合（または未ログインかつ紐付けなし） -> その人の公開電子名刺へ
     // ユーザーが設定したslugがあればそれを使用、なければIDを使用
     const slug = card.user?.handle_name || card.user_id;
     return NextResponse.redirect(new URL(`/p/${slug}`, req.url));

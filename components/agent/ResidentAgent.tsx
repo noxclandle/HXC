@@ -170,8 +170,8 @@ export default function ResidentAgent() {
 
                       {!isSoulLinked && (
                         <button onClick={bindDevice} className="w-full p-4 border border-azure-500/30 bg-azure-500/5 text-azure-400 flex flex-col items-center gap-2 group hover:bg-azure-500/10 transition-all">
-                           <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Bind This Device / この端末を同期</span>
-                           <span className="text-[7px] opacity-50 uppercase text-center">次回からカードをかざすだけでログイン</span>
+                           <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Establish Permanent Link / この端末を永久同期</span>
+                           <span className="text-[7px] opacity-50 uppercase text-center">このiPhoneを貴方の正当な証として刻みます</span>
                         </button>
                       )}
 

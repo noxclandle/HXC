@@ -45,6 +45,12 @@ function RegisterContent() {
       const data = await res.json();
       if (res.ok) {
         setStep(1);
+        
+        // デバイス紐付け用トークンを即座に保存
+        if (data.deviceToken) {
+          localStorage.setItem("hxc_soul_fragment", data.deviceToken);
+        }
+
         // 自動ログインを試行
         const signInRes = await signIn("credentials", {
           email: formData.email,
@@ -53,14 +59,6 @@ function RegisterContent() {
         });
 
         if (signInRes?.ok) {
-          // デバイスの紐付けをバックグラウンドで試行
-          fetch("/api/auth/bind-device", { method: "POST" })
-            .then(res => res.json())
-            .then(d => {
-              if (d.deviceToken) localStorage.setItem("hxc_soul_fragment", d.deviceToken);
-            })
-            .catch(e => console.warn("Background binding failed"));
-
           setTimeout(() => {
             router.push("/hub");
           }, 2000);
