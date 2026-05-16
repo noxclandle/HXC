@@ -6,9 +6,9 @@ import { Sparkles, ArrowRight, Zap, Check, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 const RT_PACKS = [
-  { id: "pack_100", amount: 100, price: 1000, label: "Minor Resonance", desc: "基本的な調律と1回のアセット召喚に。" },
-  { id: "pack_500", amount: 500, price: 4500, label: "Significant Pulse", desc: "深層との強い同期。5回分の召喚エネルギー。", popular: true },
-  { id: "pack_1200", amount: 1200, price: 10000, label: "Grand Vibration", desc: "長期的な活動を支える膨大なエネルギー。" },
+  { id: "pack_1000", amount: 2000, price: 1000, label: "Minor Resonance", desc: "基本的な調律と1回のアセット召喚に。" },
+  { id: "pack_5000", amount: 11000, price: 5000, label: "Significant Pulse", desc: "深層との強い同期。5回分の召喚エネルギー。", popular: true },
+  { id: "pack_10000", amount: 23000, price: 10000, label: "Grand Vibration", desc: "長期的な活動を支える膨大なエネルギー。" },
 ];
 
 export default function ChargePage() {
@@ -90,7 +90,7 @@ export default function ChargePage() {
            <div className="space-y-2 text-center md:text-left">
               <p className="text-[9px] tracking-[0.4em] opacity-30 uppercase font-bold">Selected Protocol</p>
               <div className="flex items-baseline gap-4 justify-center md:justify-start">
-                 <span className="text-xl tracking-widest text-white uppercase font-light">{selectedPack.amount} RT</span>
+                 <span className="text-xl tracking-widest text-white uppercase font-light">{selectedPack.amount.toLocaleString()} RT</span>
                  <span className="text-sm opacity-20 italic">for ¥{selectedPack.price.toLocaleString()}</span>
               </div>
            </div>
@@ -98,7 +98,7 @@ export default function ChargePage() {
            <button 
              onClick={handleCharge}
              disabled={loading}
-             className="px-16 py-5 bg-white text-void text-[11px] font-bold tracking-[0.8em] uppercase hover:bg-emerald-50 transition-all shadow-[0_0_50px_rgba(255,255,255,0.1)] active:scale-95 disabled:opacity-50"
+             className="px-16 py-5 bg-white text-void text-[11px] font-bold tracking-[0.8em] uppercase shadow-[0_0_50px_rgba(255,255,255,0.1)] active:scale-95 disabled:opacity-50"
            >
              {loading ? "Establishing..." : "Authorize Charge"}
            </button>
