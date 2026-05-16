@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useToast } from "@/components/ui/ResonanceToast";
 import { playResonanceSound } from "@/lib/audio/resonance";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import { useSearchParams } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,11 @@ const RT_PACKS = [
 export default function InventoryPage() {
   const { data: session, status } = useSession();
   const { showToast } = useToast();
-  const [activeCategory, setActiveCategory] = useState("frame");
+  const searchParams = useSearchParams();
+  const activeCategoryFromUrl = searchParams.get("category");
+  const showPurchaseFromUrl = searchParams.get("purchase") === "true";
+
+  const [activeCategory, setActiveCategory] = useState(activeCategoryFromUrl || "frame");
   const [rtBalance, setRTBalance] = useState("0");
   const [isSaving, setIsSaving] = useState(false);
   const [unlockingAsset, setUnlockingAsset] = useState<string | null>(null);
@@ -51,7 +56,7 @@ export default function InventoryPage() {
   const [assetPrices, setAssetPrices] = useState<Record<string, number>>({});
   const [previewAsset, setPreviewAsset] = useState<Asset | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [showRTPurchase, setShowRTPurchase] = useState(false);
+  const [showRTPurchase, setShowRTPurchase] = useState(showPurchaseFromUrl);
   const [confirmingAsset, setConfirmingAsset] = useState<Asset | null>(null);
   
   const [equipped, setEquipped] = useState<any>({
