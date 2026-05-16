@@ -106,7 +106,7 @@ export default function HubClientUI({
               <p className="text-[9px] uppercase tracking-[0.5em] text-white/30 mb-1">Relation Token</p>
               <div className="flex items-center justify-start md:justify-end gap-4">
                  <p className="text-2xl font-extralight tracking-[0.1em] text-white">{Number(realStats?.rt_balance || 0).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
-                 <Link href="/purchase" className="px-2 py-1 border border-azure-500/30 bg-azure-500/5 text-azure-400 text-[7px] tracking-[0.2em] font-bold uppercase hover:bg-azure-500/10 transition-all">
+                 <Link href="/charge" className="px-2 py-1 border border-azure-500/30 bg-azure-500/5 text-azure-400 text-[7px] tracking-[0.2em] font-bold uppercase hover:bg-azure-500/10 transition-all">
                     Charge / RT購入
                  </Link>
               </div>
@@ -139,16 +139,16 @@ export default function HubClientUI({
              <Link href="/scan" className="group p-8 border border-azure-500/20 bg-azure-500/[0.03] hover:bg-azure-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-azure-500/40" />
                 <div>
-                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white">Scan Card</h2>
-                   <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400/60">名刺スキャン</p>
+                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white">Identity Archive</h2>
+                   <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400/60">人脈の記録 (撮影)</p>
                 </div>
                 <Camera size={32} className="opacity-20 group-hover:opacity-60 transition-all text-white" />
              </Link>
              <Link href="/library" className="group p-8 border border-bronze-500/20 bg-bronze-500/[0.03] hover:bg-bronze-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-bronze-500/40" />
                 <div>
-                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white">My Archive</h2>
-                   <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-bronze-400/60">名刺帳・人脈管理</p>
+                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white">Great Library</h2>
+                   <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-bronze-400/60">名刺帳・ライブラリ</p>
                 </div>
                 <Book size={32} className="opacity-20 group-hover:opacity-60 transition-all text-white" />
              </Link>
@@ -172,9 +172,9 @@ export default function HubClientUI({
                     <div className="text-[10px] tracking-[0.4em] text-azure-400 font-bold uppercase mb-4">Initial Guidance</div>
                     <p className="text-[11px] leading-relaxed tracking-widest text-white/70 uppercase">
                       ようこそ、Hexa Relationへ。<br />
-                      まずは「Scan Card」で貴方の存在を<br />
-                      ネットワークへ刻んでください。<br />
-                      この守護者は貴方の成長と共に進化します。
+                      貴方のアイデンティティは確立されました。<br />
+                      「Commune」で世界と共鳴し、<br />
+                      「Identity Archive」で人脈を深めましょう。
                     </p>
                     <button 
                       onClick={closeGuide}
@@ -192,7 +192,7 @@ export default function HubClientUI({
                   >
                     <div className="opacity-30 text-[8px] tracking-[0.5em] uppercase font-bold mb-2 relative z-10">Resident Guardian</div>
                     <div className="relative z-10 py-4">
-                      <GeometricAngel level={Number(realStats?.exp || 0) / 100} mood={mood} size={180} />
+                      <GeometricAngel level={Math.floor(Math.sqrt(Number(realStats?.exp || 0) / 10)) + 1} mood={mood} size={180} />
                     </div>
                     
                     <div className="space-y-2 relative z-10 w-full">
