@@ -56,6 +56,8 @@ export default function HubClientUI({
     
     try {
       const res = await fetch("/api/user/daily-resonance", { method: "POST" });
+      const data = await res.json();
+      
       if (res.ok) {
         await fetchData();
         showToast("Resonance Established / 共鳴完了", "success");
@@ -64,7 +66,16 @@ export default function HubClientUI({
           setIsResonating(false);
         }, 3000);
       } else {
-        throw new Error("Failed");
+        if (data.error === "Already resonated today.") {
+          showToast("Already Resonated / 本日の共鳴は完了しています", "info");
+        } else {
+          showToast("Resonance Interrupted / 共鳴失敗", "error");
+        }
+        setMood('unstable');
+        setTimeout(() => {
+          setMood('stable');
+          setIsResonating(false);
+        }, 3000);
       }
     } catch (e) {
       setMood('unstable');
@@ -191,7 +202,7 @@ export default function HubClientUI({
                     className="flex flex-col items-center space-y-6 w-full"
                   >
                     <div className="opacity-30 text-[8px] tracking-[0.5em] uppercase font-bold mb-2 relative z-10 flex items-center gap-2">
-                       Resident Guardian
+                       Resident Concierge
                        {latestNews && (
                          <span className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
                        )}
@@ -206,7 +217,7 @@ export default function HubClientUI({
                           animate={{ opacity: 1, scale: 1, y: 0 }}
                           className="absolute -top-4 -right-12 bg-white/10 backdrop-blur-md border border-white/10 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl pointer-events-none"
                         >
-                           <p className="text-[7px] uppercase tracking-widest text-azure-400 font-bold mb-1 italic">System Message</p>
+                           <p className="text-[7px] uppercase tracking-widest text-azure-400 font-bold mb-1 italic">Notice</p>
                            <p className="text-[9px] leading-tight text-white/80 line-clamp-2">{latestNews.title}</p>
                         </motion.div>
                       )}
