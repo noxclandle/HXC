@@ -190,9 +190,26 @@ export default function HubClientUI({
                     animate={{ opacity: 1 }}
                     className="flex flex-col items-center space-y-6 w-full"
                   >
-                    <div className="opacity-30 text-[8px] tracking-[0.5em] uppercase font-bold mb-2 relative z-10">Resident Guardian</div>
+                    <div className="opacity-30 text-[8px] tracking-[0.5em] uppercase font-bold mb-2 relative z-10 flex items-center gap-2">
+                       Resident Guardian
+                       {latestNews && (
+                         <span className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+                       )}
+                    </div>
                     <div className="relative z-10 py-4">
                       <GeometricAngel level={Math.floor(Math.sqrt(Number(realStats?.exp || 0) / 10)) + 1} mood={mood} size={180} />
+                      
+                      {/* Speech Bubble for News/Alerts */}
+                      {latestNews && (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          className="absolute -top-4 -right-12 bg-white/10 backdrop-blur-md border border-white/10 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl pointer-events-none"
+                        >
+                           <p className="text-[7px] uppercase tracking-widest text-azure-400 font-bold mb-1 italic">System Message</p>
+                           <p className="text-[9px] leading-tight text-white/80 line-clamp-2">{latestNews.title}</p>
+                        </motion.div>
+                      )}
                     </div>
                     
                     <div className="space-y-2 relative z-10 w-full">
@@ -211,13 +228,6 @@ export default function HubClientUI({
                         <Sparkles size={12} className={isResonating ? 'animate-spin' : ''} />
                         {isResonating ? 'Communing...' : 'Commune'}
                       </button>
-                      
-                      <button 
-                        onClick={() => setShowGuide(true)}
-                        className="mt-4 text-[7px] tracking-[0.5em] uppercase opacity-20 hover:opacity-100 transition-opacity mx-auto block"
-                      >
-                        Show Guidance
-                      </button>
                     </div>
                   </motion.div>
                 )}
@@ -231,33 +241,6 @@ export default function HubClientUI({
               </div>
               <MonthlyReport stats={realStats} />
            </div>
-           
-           {/* Removed redundant Recent Connections list for a cleaner, focused look */}
-
-           {latestNews && (
-             <section className="px-4 mt-12 border-t border-white/5 pt-8">
-               <h2 className="text-[8px] tracking-[0.5em] uppercase opacity-30 font-bold flex items-center gap-2 mb-4 text-white">
-                  <Newspaper size={10} />
-                  System Broadcast
-               </h2>
-               <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                     <span className={`w-1 h-1 rounded-full ${
-                        latestNews.type === 'alert' ? 'bg-rose-500' : 
-                        latestNews.type === 'event' ? 'bg-amber-500' : 
-                        'bg-azure-500'
-                     }`} />
-                     <p className="text-xs font-light tracking-widest text-white/80">{latestNews.title}</p>
-                    </div>
-                    <p className="text-[10px] tracking-wider opacity-40 line-clamp-2 leading-relaxed text-white">
-                       {latestNews.content}
-                    </p>
-                    <p className="text-[8px] tracking-widest opacity-20 font-mono mt-2 text-white">
-                       {new Date(latestNews.created_at).toLocaleDateString()}
-                    </p>
-                 </div>
-               </section>
-             )}
           </aside>
         </div>
     </div>
