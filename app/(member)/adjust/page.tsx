@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, Volume2, Shield, Gem } from "lucide-react";
 
-export default function TuningShopPage() {
+export default function AdjustShopPage() {
   const items = [
     { name: "Silver Whisper", type: "Sound", cost: 1000, locked: false },
     { name: "Obsidian Frame", type: "Frame", cost: 2500, locked: true },
@@ -15,7 +15,7 @@ export default function TuningShopPage() {
     <div className="max-w-4xl mx-auto pt-24 px-6 pb-24 text-moonlight">
       <header className="mb-16">
         <h1 className="text-2xl tracking-[0.4em] uppercase mb-2">The Exchange</h1>
-        <p className="text-[10px] tracking-widest opacity-40 uppercase">Transcendent Tuning Assets</p>
+        <p className="text-[10px] tracking-widest opacity-40 uppercase">Transcendent Adjust Assets</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

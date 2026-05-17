@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Book, Sparkles, Trophy, Music2, Volume2, VolumeX, Shield, Bell, HelpCircle, ChevronRight, Zap } from "lucide-react";
 import Link from "next/link";
 import { ambientManager } from "@/lib/audio/ambient";
-import { useToast } from "@/components/ui/ResonanceToast";
+import { useToast } from "@/components/ui/ConnectionToast";
 
 export default function ResidentAgent() {
   const [isOpen, setIsOpen] = useState(false);
@@ -305,7 +305,7 @@ export default function ResidentAgent() {
             />
           )}
 
-          {/* Stage 3 (Seraph): Sacred Geometry Fragment */}
+          {/* Stage 3 (Seraph): Official Geometry Fragment */}
           {level >= 30 && (
             <motion.div 
               animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.3, 0.1] }} 

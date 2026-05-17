@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { BookOpen, Star, Shield, Zap, Award, Target, Users } from "lucide-react";
 
-export default function TitleCompendiumPage() {
+export default function TitleListPage() {
   const compendium = [
     { name: "ASSOCIATE", rarity: "common", condition: "初期付与。同盟の一員である証。" },
     { name: "Collector", rarity: "rare", condition: "10人以上のユーザーと接続を記録。" },
@@ -33,7 +33,7 @@ export default function TitleCompendiumPage() {
       <header className="mb-16 border-b border-white/5 pb-8">
         <h1 className="text-xl tracking-[0.6em] uppercase flex items-center gap-4">
           <BookOpen className="text-azure-400" size={20} />
-          Protocol Compendium
+          Protocol List
         </h1>
         <p className="text-[9px] tracking-widest opacity-40 uppercase mt-2">Active Titles and Achievement Conditions</p>
       </header>

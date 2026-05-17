@@ -7,8 +7,8 @@ import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
-import { useToast } from "@/components/ui/ResonanceToast";
-import { playResonanceSound } from "@/lib/audio/resonance";
+import { useToast } from "@/components/ui/ConnectionToast";
+import { playConnectionSound } from "@/lib/audio/resonance";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { useSearchParams } from "next/navigation";
 
@@ -142,14 +142,14 @@ export default function InventoryPage() {
     { id: "Emerald Trace", name: "Emerald Pulse", type: "pointer", rarity: "rare", description: "生命力ある緑の軌跡。", cost: 3000, unlocked: false },
     { id: "Ruby Trace", name: "Ruby Flare", type: "pointer", rarity: "rare", description: "情熱的な紅の軌跡。", cost: 3000, unlocked: false },
     { id: "Gold Trace", name: "Golden Aura", type: "pointer", rarity: "epic", description: "格式高い黄金の軌跡。", cost: 8000, unlocked: false },
-    { id: "Violet Trace", name: "Violet Resonance", type: "pointer", rarity: "epic", description: "神秘的な紫の軌跡。", cost: 8000, unlocked: false },
+    { id: "Violet Trace", name: "Violet Connection", type: "pointer", rarity: "epic", description: "神秘的な紫の軌跡。", cost: 8000, unlocked: false },
     { id: "Crimson Trace", name: "Crimson Ember", type: "pointer", rarity: "epic", description: "消えない残り火の軌跡。", cost: 8000, unlocked: false },
     { id: "Shadow Trace", name: "Ink Shadow", type: "pointer", rarity: "epic", description: "空間を塗りつぶす墨の軌跡。", cost: 8000, unlocked: false },
     { id: "Prism Trace", name: "Light Refraction", type: "pointer", rarity: "mythic", description: "虹色に輝く光の軌跡。", cost: 50000, unlocked: false },
     { id: "Void Trace", name: "Reality Tear", type: "pointer", rarity: "mythic", description: "空間を切り裂くボイドの軌跡。", cost: 50000, unlocked: false },
 
     // --- Sounds (10) ---
-    { id: "resonance", name: "Resonance", type: "sound", rarity: "common", description: "標準的な共鳴音。", unlocked: true },
+    { id: "resonance", name: "Connection", type: "sound", rarity: "common", description: "標準的な共鳴音。", unlocked: true },
     { id: "click", name: "Mechanical", type: "sound", rarity: "rare", description: "精密な機械のクリック音。", cost: 3000, unlocked: false },
     { id: "wind", name: "Whisper", type: "sound", rarity: "rare", description: "微かな風の囁き。", cost: 3000, unlocked: false },
     { id: "water", name: "Droplet", type: "sound", rarity: "rare", description: "静かな水滴の音。", cost: 3000, unlocked: false },
@@ -157,7 +157,7 @@ export default function InventoryPage() {
     { id: "crystal", name: "Crystal Chord", type: "sound", rarity: "epic", description: "水晶が奏でる和音。", cost: 8000, unlocked: false },
     { id: "deep", name: "Deep Impact", type: "sound", rarity: "epic", description: "腹に響く重厚な低音。", cost: 8000, unlocked: false },
     { id: "heaven", name: "Angelic Choir", type: "sound", rarity: "epic", description: "天界の歌声の一節。", cost: 8000, unlocked: false },
-    { id: "void", name: "Deep Resonance", type: "sound", rarity: "mythic", description: "深層からの呼び声。", cost: 50000, unlocked: false },
+    { id: "void", name: "Deep Connection", type: "sound", rarity: "mythic", description: "深層からの呼び声。", cost: 50000, unlocked: false },
     { id: "omega", name: "Eternal Chord", type: "sound", rarity: "mythic", description: "世界の終焉と始まりの音。", cost: 50000, unlocked: false },
 
     // --- Titles ---
@@ -256,7 +256,7 @@ export default function InventoryPage() {
   const handlePreviewAsset = (asset: Asset) => {
     setPreviewAsset(asset);
     if (asset.type === "sound") {
-      playResonanceSound(asset.id);
+      playConnectionSound(asset.id);
     }
   };
 

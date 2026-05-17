@@ -6,7 +6,7 @@ import { User, Building2, Globe, Shield, Save, ArrowLeft, Languages, Camera, Inf
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import HexaCardPreview, { Alignment } from "@/components/ui/HexaCardPreview";
-import { useToast } from "@/components/ui/ResonanceToast";
+import { useToast } from "@/components/ui/ConnectionToast";
 
 export default function ProfileEditPage() {
   const { data: session } = useSession();

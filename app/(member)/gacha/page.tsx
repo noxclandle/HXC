@@ -3,17 +3,17 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Box, RefreshCw } from "lucide-react";
-import { playResonanceSound } from "@/lib/audio/resonance";
+import { playConnectionSound } from "@/lib/audio/resonance";
 
 export default function GachaPage() {
   const [isSpinning, setIsSpinning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [rarityColor, setRarityColor] = useState("rgba(224, 224, 224, 0.5)");
 
-  const handleSummon = () => {
+  const handleGacha = () => {
     setIsSpinning(true);
     setResult(null);
-    playResonanceSound("void");
+    playConnectionSound("void");
 
     setTimeout(() => {
       setIsSpinning(false);
@@ -26,14 +26,14 @@ export default function GachaPage() {
       const win = items[Math.floor(Math.random() * items.length)];
       setResult(win.name);
       setRarityColor(win.color);
-      playResonanceSound(win.rarity === "rare" ? "silver" : "default");
+      playConnectionSound(win.rarity === "rare" ? "silver" : "default");
     }, 3000);
   };
 
   return (
     <div className="max-w-4xl mx-auto pt-32 px-6 pb-24 text-moonlight text-center">
       <header className="mb-24">
-        <h1 className="text-2xl tracking-[0.6em] uppercase font-extralight mb-4">Ethereal Summon</h1>
+        <h1 className="text-2xl tracking-[0.6em] uppercase font-extralight mb-4">Ethereal Gacha</h1>
         <p className="text-[10px] tracking-[0.4em] opacity-40 uppercase italic">Spend 500 RT to summon a fragment of the soul.</p>
       </header>
 
@@ -52,10 +52,10 @@ export default function GachaPage() {
                  <div className="absolute inset-0 border border-moonlight/10 animate-slow-spin" />
               </div>
               <button 
-                onClick={handleSummon}
+                onClick={handleGacha}
                 className="px-16 py-5 bg-moonlight text-void text-[11px] font-bold tracking-[0.8em] uppercase hover:bg-white transition-all shadow-[0_0_30px_rgba(224,224,224,0.2)]"
               >
-                Summon
+                Gacha
               </button>
             </motion.div>
           )}

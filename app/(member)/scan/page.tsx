@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, X, Check, Loader2, ScanLine } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { playResonanceSound } from "@/lib/audio/resonance";
+import { playConnectionSound } from "@/lib/audio/resonance";
 
 export default function ScanPage() {
   const [status, setStatus] = useState<"idle" | "scanning" | "processing" | "confirm" | "confirm_step2" | "confirm_step3">("idle");
@@ -21,13 +21,13 @@ export default function ScanPage() {
   };
 
   const proceedToStep3 = () => {
-    playResonanceSound("resonance");
+    playConnectionSound("resonance");
     setStatus("confirm_step3"); // 2段階目
   };
 
   const startProcessing = async () => {
     if (!pendingFile) return;
-    playResonanceSound("silver");
+    playConnectionSound("silver");
     setStatus("processing"); // 3段階目 (最終承認) -> 処理開始
     
     // APIへ画像を送信
@@ -81,7 +81,7 @@ export default function ScanPage() {
 
       if (res.ok) {
         const result = await res.json();
-        setAiInsight(`Resonance Complete. Synergy: ${Math.floor(Math.random() * 20) + 70}% detected.`);
+        setAiInsight(`Connection Complete. Synergy: ${Math.floor(Math.random() * 20) + 70}% detected.`);
         setTimeout(() => router.push("/library"), 3000);
       } else {
         setAiInsight("Connection Severed: Failed to anchor the identity.");
@@ -180,7 +180,7 @@ export default function ScanPage() {
             >
               Authorize Permeation
             </button>
-            <button onClick={() => setStatus("idle")} className="text-[8px] opacity-20 uppercase tracking-[0.4em]">Abort Resonance</button>
+            <button onClick={() => setStatus("idle")} className="text-[8px] opacity-20 uppercase tracking-[0.4em]">Abort Connection</button>
           </motion.div>
         )}
 

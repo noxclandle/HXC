@@ -21,8 +21,8 @@ export async function sendAdminOrderNotification(order: {
     - Plan: ${order.tier} (${order.variant})
     Total: ${order.price.toLocaleString()} JPY
 
-    Please access the Central Asset Ledger to process:
-    ${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/admin/ledger
+    Please access the Central Asset Registry to process:
+    ${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/admin/registry
     `);
 
   // To implement Resend:

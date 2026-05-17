@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { executeRTTransaction } from "@/lib/rt/engine";
 
 /**
- * デイリー共鳴（Resonance）報酬付与API
+ * デイリー共鳴（Connection）報酬付与API
  * POST /api/user/daily-resonance
  */
 export async function POST(req: NextRequest) {
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error("Resonance Error:", error);
+    console.error("Connection Error:", error);
     return NextResponse.json({ error: "Failed to connect with the core." }, { status: 500 });
   }
 }

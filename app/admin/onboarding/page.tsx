@@ -14,9 +14,9 @@ export default function OnboardingGuidePage() {
     {
       step: "02",
       title: "台帳登録と書き込み (Provisioning)",
-      desc: "管理者ページの「カード中央台帳(Ledger)」を開きます。[Provisioning Mode]をONにしてカードをスキャンするか、UIDを手入力して枠を作成してください。この時、カードには名刺URLが書き込まれます。",
+      desc: "管理者ページの「カード中央台帳(Registry)」を開きます。[Provisioning Mode]をONにしてカードをスキャンするか、UIDを手入力して枠を作成してください。この時、カードには名刺URLが書き込まれます。",
       icon: <Layers size={20} />,
-      link: "/admin/ledger",
+      link: "/admin/registry",
       linkText: "台帳を開いて実行する"
     },
     {

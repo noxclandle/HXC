@@ -29,14 +29,14 @@ interface Order {
   } | null;
 }
 
-export default function LedgerPage() {
+export default function RegistryPage() {
   const [cards, setCards] = useState<Card[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [newCard, setNewCard] = useState({ uid: "", serial: "" });
 
-  const fetchLedger = async () => {
+  const fetchRegistry = async () => {
     try {
       const res = await fetch("/api/admin/card/list");
       if (res.ok) {
@@ -82,7 +82,7 @@ export default function LedgerPage() {
   };
 
   useEffect(() => {
-    fetchLedger();
+    fetchRegistry();
     fetchOrders();
   }, []);
 
@@ -96,7 +96,7 @@ export default function LedgerPage() {
         body: JSON.stringify({ uid, status: nextStatus })
       });
     } catch (e) {
-      fetchLedger();
+      fetchRegistry();
     }
   };
 
@@ -151,7 +151,7 @@ export default function LedgerPage() {
         body: JSON.stringify(newCard)
       });
       if (res.ok) {
-        fetchLedger();
+        fetchRegistry();
         setNewCard({ uid: "", serial: "" });
       } else {
         const err = await res.json();
@@ -178,7 +178,7 @@ export default function LedgerPage() {
         <div>
           <h1 className="text-xl tracking-[0.6em] uppercase flex items-center gap-4">
             <CreditCard className="text-moonlight opacity-40" size={20} />
-            Central Asset Ledger
+            Central Asset Registry
           </h1>
           <p className="text-[10px] tracking-widest opacity-40 uppercase mt-2">中央台帳：物理カードの登録、注文管理、およびペアリング</p>
         </div>
@@ -344,7 +344,7 @@ export default function LedgerPage() {
 
       <div className="flex items-center gap-4 mb-8">
           <CreditCard className="text-moonlight opacity-40" size={18} />
-          <h2 className="text-[11px] tracking-[0.5em] uppercase font-bold">Inventory Ledger (在庫台帳)</h2>
+          <h2 className="text-[11px] tracking-[0.5em] uppercase font-bold">Inventory Registry (在庫台帳)</h2>
       </div>
 
       {/* Table Headers */}
@@ -356,7 +356,7 @@ export default function LedgerPage() {
          <div className="text-right">Action</div>
       </div>
 
-      {/* Ledger Rows */}
+      {/* Registry Rows */}
       <div className="space-y-1">
         {loading ? (
           <div className="py-24 text-center animate-pulse text-[10px] uppercase opacity-20 tracking-widest">台帳を同期中...</div>

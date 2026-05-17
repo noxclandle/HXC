@@ -12,7 +12,7 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
-export function ResonanceToastProvider({ children }: { children: React.ReactNode }) {
+export function ConnectionToastProvider({ children }: { children: React.ReactNode }) {
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
   const showToast = useCallback((message: string, type: ToastType = "success") => {
@@ -66,6 +66,6 @@ export function ResonanceToastProvider({ children }: { children: React.ReactNode
 
 export const useToast = () => {
   const context = useContext(ToastContext);
-  if (!context) throw new Error("useToast must be used within ResonanceToastProvider");
+  if (!context) throw new Error("useToast must be used within ConnectionToastProvider");
   return context;
 }

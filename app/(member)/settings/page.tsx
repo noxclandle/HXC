@@ -63,7 +63,7 @@ export default function SettingsPage() {
   return (
     <div className="max-w-6xl mx-auto pt-24 px-6 pb-24 text-moonlight">
       <header className="mb-16">
-        <h1 className="text-3xl tracking-[0.4em] uppercase mb-2 font-extralight">Tuning</h1>
+        <h1 className="text-3xl tracking-[0.4em] uppercase mb-2 font-extralight">Adjust</h1>
         <p className="text-xs tracking-widest opacity-40 uppercase italic">Customizing your physical reflection.</p>
       </header>
 
