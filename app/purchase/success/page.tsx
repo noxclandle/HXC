@@ -28,7 +28,7 @@ function SuccessContent() {
       </motion.div>
 
       <div className="space-y-4">
-        <h1 className="text-2xl tracking-[0.5em] uppercase font-light text-white">Identity Established</h1>
+        <h1 className="text-2xl tracking-[0.5em] uppercase font-light text-white">Order Complete</h1>
         <p className="text-[10px] tracking-widest text-azure-400 opacity-60 uppercase">決済が正常に完了しました</p>
       </div>
 
@@ -38,7 +38,7 @@ function SuccessContent() {
             <p className="font-mono text-[10px] text-white/60 truncate">{sessionId || "PROTOCOL_MOCK_SUCCESS"}</p>
          </div>
          <p className="text-[11px] leading-relaxed tracking-widest text-white/40 uppercase">
-            貴方のカードは現在、Hexa Protocolに基づき製造工程に入りました。<br />
+            貴方のカードは現在、Hexa Systemに基づき製造工程に入りました。<br />
             発行完了まで、今暫くお待ちください。<br />
             進行状況はメンバーハブから確認可能です。
          </p>

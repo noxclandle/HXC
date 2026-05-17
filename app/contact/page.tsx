@@ -61,7 +61,7 @@ export default function ContactPage() {
 
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="space-y-2">
-            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">Identity Name / お名前</label>
+            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">Full Name / お名前</label>
             <input
               required
               type="text"

@@ -66,7 +66,7 @@ export default function DigitalIdentityOverlay({ user }: DigitalCardProps) {
         className="flex items-center gap-3 px-6 py-3 border border-moonlight/10 bg-gothic-dark/40 hover:bg-white/5 transition-all group"
       >
         <QrCode size={18} className="opacity-40 group-hover:opacity-100 group-hover:text-emerald-400 transition-all" />
-        <span className="text-[10px] tracking-[0.4em] uppercase opacity-60 group-hover:opacity-100">Digital Identity</span>
+        <span className="text-[10px] tracking-[0.4em] uppercase opacity-60 group-hover:opacity-100">Digital Card</span>
       </button>
 
       <AnimatePresence>

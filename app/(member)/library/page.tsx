@@ -52,7 +52,7 @@ export default function LibraryPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-azure-400 transition-colors" size={16} />
             <input 
               type="text" 
-              placeholder="Search Identity..."
+              placeholder="Search Contacts..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-white/[0.02] border border-white/5 p-4 pl-12 text-[11px] tracking-widest focus:border-azure-500/40 outline-none transition-all uppercase"
@@ -65,7 +65,7 @@ export default function LibraryPage() {
         {loading ? (
           <div className="py-24 text-center">
             <div className="w-8 h-8 border-2 border-white/5 border-t-white/40 rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-[10px] tracking-[1em] uppercase opacity-20 ml-[1em]">Synchronizing Archive</p>
+            <p className="text-[10px] tracking-[1em] uppercase opacity-20 ml-[1em]">Updating Contacts</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="py-24 border border-dashed border-white/5 text-center">

@@ -33,7 +33,7 @@ export default function TitleListPage() {
       <header className="mb-16 border-b border-white/5 pb-8">
         <h1 className="text-xl tracking-[0.6em] uppercase flex items-center gap-4">
           <BookOpen className="text-azure-400" size={20} />
-          Protocol List
+          Item List
         </h1>
         <p className="text-[9px] tracking-widest opacity-40 uppercase mt-2">Active Titles and Achievement Conditions</p>
       </header>

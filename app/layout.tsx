@@ -2,10 +2,11 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import GeometricBackground from "@/components/background/GeometricBackground";
 
+// Build Triggered: 2026-05-17
 export const metadata: Metadata = {
   title: {
     default: "Hexa Card | Premium Identity",
-    template: "%s | Hexa Protocol"
+    template: "%s | Hexa System"
   },
   description: "Beyond existence. A high-end identity synchronization system for the chosen few.",
   manifest: "/manifest.json",

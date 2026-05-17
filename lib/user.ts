@@ -23,6 +23,10 @@ export async function getUserStatus(email: string | null | undefined) {
       phone: true,
       ai_config: true,
       equipped_assets: true,
+      link_x: true,
+      link_instagram: true,
+      link_line: true,
+      link_facebook: true,
       card: {
         select: { uid: true }
       }

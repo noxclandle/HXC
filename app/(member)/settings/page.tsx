@@ -159,7 +159,7 @@ export default function SettingsPage() {
                 disabled={isReporting}
                 className="w-full py-4 border border-azure-400/30 text-azure-400 text-[9px] tracking-[0.4em] uppercase font-bold hover:bg-azure-400 hover:text-white transition-all disabled:opacity-20"
               >
-                {isReporting ? "Transmitting..." : "Submit Observation"}
+                {isReporting ? "Transmitting..." : "Submit Report"}
               </button>
 
               <AnimatePresence>

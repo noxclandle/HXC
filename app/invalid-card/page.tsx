@@ -13,7 +13,7 @@ function InvalidCardContent() {
   return (
     <div className="flex flex-col items-center">
       <ShieldAlert size={80} className="text-rose-500 mb-8" />
-      <h1 className="text-2xl tracking-[0.4em] uppercase mb-4 text-white">Identity Denied</h1>
+      <h1 className="text-2xl tracking-[0.4em] uppercase mb-4 text-white">Invalid Card</h1>
       <p className="text-[10px] tracking-widest text-rose-500/60 uppercase font-bold mb-12">未登録または無効なデバイスです</p>
       
       <div className="p-8 border border-white/5 bg-white/[0.02] mb-12 max-w-sm">
@@ -25,7 +25,7 @@ function InvalidCardContent() {
 
       <div className="flex flex-col gap-4 w-full max-w-xs">
         <Link href="/purchase" className="py-4 bg-white text-void font-bold text-[10px] tracking-[0.4em] uppercase hover:bg-azure-50 transition-all flex items-center justify-center gap-3">
-           Order New Identity
+           Order New Card
         </Link>
         <Link href="/" className="py-4 border border-white/10 text-white/40 text-[9px] tracking-[0.4em] uppercase hover:border-white/20 transition-all flex items-center justify-center gap-2">
            <ArrowLeft size={12} /> Return to Void

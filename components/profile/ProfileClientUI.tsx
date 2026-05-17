@@ -184,7 +184,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
             </div>
          </div>
 
-         <p className="text-[7px] tracking-[0.4em] uppercase opacity-20 italic">Encrypted via Hexa Protocol</p>
+         <p className="text-[7px] tracking-[0.4em] uppercase opacity-20 italic">Encrypted via Hexa System</p>
       </section>
 
       {/* Feature section */}

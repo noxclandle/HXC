@@ -101,9 +101,9 @@ export default function UsersAdminPage() {
       <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
         <div>
           <h1 className="text-2xl tracking-[0.5em] uppercase mb-2 flex items-center gap-4">
-            <Shield className="text-azure-400 opacity-50" size={24} /> Identity Registry
+            <Shield className="text-azure-400 opacity-50" size={24} /> User Registry
           </h1>
-          <p className="text-[10px] tracking-widest text-azure-400 opacity-40 uppercase">Hexa Protocol / ユーザー登録・権限管理</p>
+          <p className="text-[10px] tracking-widest text-azure-400 opacity-40 uppercase">Hexa System / ユーザー登録・権限管理</p>
         </div>
 
         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
@@ -222,7 +222,7 @@ export default function UsersAdminPage() {
         )}
       </AnimatePresence>
 
-      {/* Inspect Identity Modal */}
+      {/* Inspect User Modal */}
       <AnimatePresence>
         {inspectUser && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-void/95 backdrop-blur-md z-50 flex items-center justify-center p-6">

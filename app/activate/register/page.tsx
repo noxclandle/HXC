@@ -89,7 +89,7 @@ function RegisterContent() {
               <div className="w-12 h-12 border border-azure-500/30 bg-azure-500/5 flex items-center justify-center mx-auto rotate-45 mb-6">
                  <Hexagon size={20} className="text-azure-400 -rotate-45" />
               </div>
-              <h2 className="text-2xl tracking-[0.4em] uppercase font-light text-white">Establish Identity</h2>
+              <h2 className="text-2xl tracking-[0.4em] uppercase font-light text-white">Create Profile</h2>
               <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400">アイデンティティの新規確立</p>
             </header>
 
@@ -152,7 +152,7 @@ function RegisterContent() {
                 type="submit" disabled={loading}
                 className="w-full py-6 bg-white text-void font-bold text-[11px] tracking-[0.8em] uppercase shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:bg-azure-50 transition-all mt-8 active:scale-[0.98] disabled:opacity-50"
               >
-                {loading ? "Synchronizing..." : "Confirm Identity"}
+                {loading ? "Synchronizing..." : "Complete Profile"}
               </button>
             </form>
           </motion.div>
@@ -167,7 +167,7 @@ function RegisterContent() {
                <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.1, 0.4, 0.1] }} transition={{ duration: 1.5, repeat: Infinity }} className="absolute inset-0 bg-white blur-[100px] rounded-full" />
                <CheckCircle2 size={120} className="text-white relative z-10" />
             </div>
-            <h2 className="text-3xl tracking-[0.6em] uppercase font-extralight text-white">Identity Established</h2>
+            <h2 className="text-3xl tracking-[0.6em] uppercase font-extralight text-white">Order Complete</h2>
             <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase mt-4">
                情報の刻印が完了しました。境界へ遷移します。
             </p>
