@@ -281,19 +281,28 @@ export default function HubClientUI({
                       <p className="text-[10px] tracking-widest opacity-40 uppercase">
                         {mood === 'excited' ? 'Bonus active' : mood === 'unstable' ? 'Connection weak' : 'Awaiting daily bonus'}
                       </p>
-                      <button 
-                        onClick={handleConnection}
-                        disabled={isResonating}
-                        className={`mt-4 px-10 py-3 border text-[9px] tracking-[0.4em] uppercase transition-all flex items-center gap-3 mx-auto ${
-                          isResonating 
-                            ? 'border-white/10 text-white/20' 
-                            : 'border-white/20 text-white hover:bg-white/5 hover:border-white shadow-lg'
-                        }`}
-                      >
-                        <Sparkles size={12} className={isResonating ? 'animate-spin' : ''} />
-                        {isResonating ? 'Loading...' : 'Daily Bonus'}
-                      </button>
+
+                      <AnimatePresence>
+                        {(!realStats?.last_daily_at || new Date(realStats.last_daily_at).toDateString() !== new Date().toDateString()) && (
+                          <motion.button 
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            onClick={handleResonance}
+                            disabled={isResonating}
+                            className={`mt-4 px-10 py-3 border text-[9px] tracking-[0.4em] uppercase transition-all flex items-center gap-3 mx-auto ${
+                              isResonating 
+                                ? 'border-white/10 text-white/20' 
+                                : 'border-white/20 text-white hover:bg-white/5 hover:border-white shadow-lg'
+                            }`}
+                          >
+                            <Sparkles size={12} className={isResonating ? 'animate-spin' : ''} />
+                            {isResonating ? 'Loading...' : 'Daily Bonus'}
+                          </motion.button>
+                        )}
+                      </AnimatePresence>
                     </div>
+
                   </motion.div>
                 )}
               </AnimatePresence>
