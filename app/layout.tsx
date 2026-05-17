@@ -4,6 +4,7 @@ import GeometricBackground from "@/components/background/GeometricBackground";
 
 // Build Triggered: 2026-05-17
 export const metadata: Metadata = {
+  metadataBase: new URL("https://hxc.hexa-relation.com"),
   title: {
     default: "Hexa Card | Premium Identity",
     template: "%s | Hexa System"
