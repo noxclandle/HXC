@@ -105,6 +105,10 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
             setData(null);
           } else {
             setData(d);
+            // 名刺検知時に高級感のある振動を発生
+            if (typeof navigator !== "undefined" && navigator.vibrate) {
+              navigator.vibrate([20, 30, 20]);
+            }
           }
           // データ取得後、少し間を置いて演出を開始
           setTimeout(() => {
