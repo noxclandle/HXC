@@ -63,10 +63,31 @@ export default function ProfileEditPage() {
 
     setIsUploading(type);
     try {
-      const compressed = await compressImage(file, type === "logo" ? 400 : 800);
-      updateField(type === "face" ? "faceUrl" : "logoUrl", compressed);
-      showToast("Image Processed / 画像を最適化しました", "success");
+      // 1. 画像を圧縮して軽量化
+      const compressedBase64 = await compressImage(file, type === "logo" ? 400 : 800);
+      
+      // 2. Base64をBlobに変換してFormDataを作成
+      const resBlob = await fetch(compressedBase64);
+      const blob = await resBlob.blob();
+      const formData = new FormData();
+      formData.append("file", blob, `upload.${type === "face" ? "jpg" : "png"}`);
+      formData.append("type", type === "face" ? "photo" : "logo");
+
+      // 3. R2アップロードAPIを叩く
+      const uploadRes = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadRes.ok) throw new Error("Upload failed");
+
+      const uploadData = await uploadRes.json();
+      
+      // 4. DB保存用のフィールドをR2のURLで更新
+      updateField(type === "face" ? "faceUrl" : "logoUrl", uploadData.url);
+      showToast("Image Optimized / 画像を最適化して保存しました", "success");
     } catch (err) {
+      console.error(err);
       showToast("Upload Failed / 処理に失敗しました", "error");
     } finally {
       setIsUploading(null);
