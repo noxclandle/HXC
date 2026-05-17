@@ -205,6 +205,20 @@ export default function ResidentAgent() {
                          </div>
                          <ChevronRight size={14} className="opacity-20"/>
                       </Link>
+                      <Link href="/gacha" onClick={() => setIsOpen(false)} className="w-full p-4 bg-azure-500/5 border border-azure-500/10 flex items-center justify-between group transition-all hover:bg-azure-500/10">
+                         <div className="flex items-center gap-3">
+                            <Sparkles size={14} className="text-azure-400 opacity-60 group-hover:opacity-100 transition-opacity" />
+                            <span className="text-[9px] tracking-[0.2em] uppercase text-azure-300">Gacha / アイテム抽選</span>
+                         </div>
+                         <ChevronRight size={14} className="text-azure-400 opacity-20"/>
+                      </Link>
+                      <button onClick={() => { setIsOpen(false); alert("Apple/Googleウォレットへの追加機能を準備中です。\n現在は名刺ページ下部のQRコードをスクリーンショットして保存、またはホーム画面に追加してご利用ください。"); }} className="w-full p-4 bg-white/[0.02] border border-white/5 flex items-center justify-between group transition-all hover:bg-white/5">
+                         <div className="flex items-center gap-3">
+                            <Smartphone size={14} className="opacity-30 group-hover:opacity-100 transition-opacity" />
+                            <span className="text-[9px] tracking-[0.2em] uppercase">Add to Wallet / ウォレット追加</span>
+                         </div>
+                         <ChevronRight size={14} className="opacity-10"/>
+                      </button>
                     </div>
 
                     <div className="space-y-3">
