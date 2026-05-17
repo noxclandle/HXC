@@ -11,8 +11,8 @@ const profileUpdateSchema = z.object({
   website: z.string().url().or(z.literal("")).optional(),
   bio: z.string().optional(),
   company: z.string().optional(),
-  photo_url: z.string().url().or(z.literal("")).optional(),
-  logo_url: z.string().url().or(z.literal("")).optional(),
+  photo_url: z.string().url().or(z.literal("")).or(z.literal("IMAGE_LARGE")).optional(),
+  logo_url: z.string().url().or(z.literal("")).or(z.literal("IMAGE_LARGE")).optional(),
   orientation: z.string().optional(),
   phone: z.string().optional(),
   email: z.string().email().or(z.literal("")).optional(),
@@ -50,6 +50,10 @@ export async function POST(req: NextRequest) {
 
     const currentEquipped = (currentUser?.equipped_assets as any) || {};
 
+    // 画像が "IMAGE_LARGE"（以前の取得で省略されたフラグ）の場合は、既存のデータを維持する
+    const finalPhotoUrl = photo_url === "IMAGE_LARGE" ? currentUser?.photo_url : photo_url;
+    const finalLogoUrl = logo_url === "IMAGE_LARGE" ? currentUser?.logo_url : logo_url;
+
     const updatedUser = await prisma.$transaction(async (tx) => {
       const user = await tx.user.update({
         where: { id: session.user.id },
@@ -61,8 +65,8 @@ export async function POST(req: NextRequest) {
           link_instagram: link_instagram,
           link_line: link_line,
           link_facebook: link_facebook,
-          photo_url: photo_url,
-          logo_url: logo_url,
+          photo_url: finalPhotoUrl,
+          logo_url: finalLogoUrl,
           phone: phone,
           equipped_assets: {
             ...currentEquipped,

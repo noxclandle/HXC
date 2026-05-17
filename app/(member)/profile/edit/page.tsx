@@ -110,6 +110,19 @@ export default function ProfileEditPage() {
         const res = await fetch("/api/user/status", { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
+          
+          // 画像が巨大な場合の非同期取得
+          if (data.photo_url === "IMAGE_LARGE") {
+            fetch("/api/user/resource?type=photo").then(res => res.json()).then(res => {
+              if (res.data) setFormData(prev => ({ ...prev, faceUrl: res.data }));
+            });
+          }
+          if (data.logo_url === "IMAGE_LARGE") {
+            fetch("/api/user/resource?type=logo").then(res => res.json()).then(res => {
+              if (res.data) setFormData(prev => ({ ...prev, logoUrl: res.data }));
+            });
+          }
+
           setFormData({
             name: data.name || session?.user?.name || "",
             reading: data.handle || "", 
