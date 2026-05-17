@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Camera, Book, ShieldCheck, ChevronRight, Newspaper, Sparkles } from "lucide-react";
+import { Camera, Book, ShieldCheck, ChevronRight, Newspaper, Sparkles, Smartphone } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";

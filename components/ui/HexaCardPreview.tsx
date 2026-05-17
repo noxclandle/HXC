@@ -371,7 +371,7 @@ export default function HexaCardPreview({
                    {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={48} className="text-white/5" />}
                 </div>
                 <div className="space-y-4 w-full">
-                   <p className="text-[11px] md:text-[13px] tracking-[0.6em] uppercase text-white/30">Verified Identity</p>
+                   <p className="text-[11px] md:text-[13px] tracking-[0.6em] uppercase text-white/30">Official Profile</p>
                    <div className="h-px w-12 bg-white/10 mx-auto" />
                    <p className="text-[12px] md:text-[15px] tracking-[0.1em] uppercase text-white/90 leading-relaxed italic max-w-sm mx-auto line-clamp-5 px-4 whitespace-pre-wrap">
                      {bio || "Hexa Relation Protocol"}
@@ -391,7 +391,7 @@ export default function HexaCardPreview({
                   {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={40} className="text-white/5" />}
                </div>
                <div className="flex flex-col justify-center text-left flex-1 min-w-0">
-                  <p className="text-[9px] md:text-[11px] tracking-[0.5em] uppercase text-white/30 mb-2">Verified Identity</p>
+                  <p className="text-[9px] md:text-[11px] tracking-[0.5em] uppercase text-white/30 mb-2">Official Profile</p>
                   <p className="text-[10px] md:text-[13px] tracking-[0.05em] uppercase text-white/90 leading-relaxed italic line-clamp-4 whitespace-pre-wrap mb-4 border-l border-white/10 pl-4">
                     {bio || "Hexa Relation Protocol"}
                   </p>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, Building2, Globe, Shield, Save, ArrowLeft, Languages, Camera, Info, Upload, RotateCcw, Layout, Smartphone, AlignLeft, AlignCenter, AlignRight, Check, Type } from "lucide-react";
+import { User, Building2, Globe, Shield, Save, ArrowLeft, Languages, Camera, Info, Upload, RotateCcw, Layout, Smartphone, AlignLeft, AlignCenter, AlignRight, Check, Type, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import HexaCardPreview, { Alignment } from "@/components/ui/HexaCardPreview";
@@ -302,7 +302,7 @@ export default function ProfileEditPage() {
               </div>
 
               <div className="lg:hidden text-center mt-[-15%] pb-1">
-                 <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">Live Identity Preview</p>
+                 <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">Live Preview</p>
               </div>
            </div>
         </div>

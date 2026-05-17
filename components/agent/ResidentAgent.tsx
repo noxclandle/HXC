@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Book, Sparkles, Trophy, Music2, Volume2, VolumeX, Shield, Bell, HelpCircle, ChevronRight, Zap } from "lucide-react";
+import { X, Book, Sparkles, Trophy, Music2, Volume2, VolumeX, Shield, Bell, HelpCircle, ChevronRight, Zap, Smartphone } from "lucide-react";
 import Link from "next/link";
 import { ambientManager } from "@/lib/audio/ambient";
 import { useToast } from "@/components/ui/ConnectionToast";
@@ -100,7 +100,7 @@ export default function ResidentAgent() {
   ];
 
   const notices = [
-    { date: "2024.05.07", title: "Identity Synchronization Logic Updated", tag: "System" },
+    { date: "2024.05.07", title: "User Sync Logic Updated", tag: "System" },
     { date: "2024.05.01", title: "New Asset: Imperial Gold Frame Released", tag: "Asset" },
   ];
 
@@ -114,7 +114,7 @@ export default function ResidentAgent() {
             exit={{ opacity: 0, y: 20, scale: 0.95 }} 
             className="mb-6 w-[360px] bg-void/90 border border-white/10 shadow-2xl backdrop-blur-2xl overflow-hidden flex flex-col h-[520px] rounded-sm"
           >
-            {/* Header: Angel Identity */}
+            {/* Header: Concierge Profile */}
             <div className="p-6 bg-gradient-to-b from-white/5 to-transparent border-b border-white/5">
                <div className="flex justify-between items-start mb-4">
                   <div>

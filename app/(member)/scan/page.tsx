@@ -196,7 +196,7 @@ export default function ScanPage() {
               onClick={startProcessing} 
               className="w-full py-5 bg-moonlight text-void text-[11px] font-bold tracking-[0.8em] uppercase shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-105 transition-all"
             >
-              Commence Observation
+              Start Scan
             </button>
             <button onClick={() => setStatus("idle")} className="text-[8px] opacity-20 uppercase tracking-[0.4em]">Withdraw</button>
           </motion.div>
@@ -212,7 +212,7 @@ export default function ScanPage() {
                className="w-full h-px bg-moonlight shadow-[0_0_20px_white] absolute z-10"
              />
              <div className="relative z-20 text-center">
-                <p className="text-[10px] tracking-[0.5em] uppercase opacity-60">Synchronizing Identity...</p>
+                <p className="text-[10px] tracking-[0.5em] uppercase opacity-60">Processing Card...</p>
              </div>
           </motion.div>
         )}
@@ -226,7 +226,7 @@ export default function ScanPage() {
 
         {status === "confirm" && (
           <motion.div key="confirm" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md p-8 flex flex-col items-center h-full overflow-y-auto pt-24">
-            <h3 className="text-[10px] tracking-[0.5em] uppercase opacity-30 mb-12 text-center">Identity Verified</h3>
+            <h3 className="text-[10px] tracking-[0.5em] uppercase opacity-30 mb-12 text-center">Profile Found</h3>
             
             <div className="w-full aspect-[1.6/1] bg-gothic-dark border border-moonlight/20 p-8 relative mb-12 shadow-2xl">
                <header className="flex justify-between items-start">

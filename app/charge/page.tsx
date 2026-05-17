@@ -86,7 +86,7 @@ export default function SimpleChargePage() {
 
         <footer className="mt-32 text-center">
            <p className="text-[8px] tracking-[0.4em] opacity-10 uppercase italic">
-              Authorized by Hexa Protocol Commerce
+              Secured by Hexa System
            </p>
         </footer>
       </div>

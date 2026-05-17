@@ -7,7 +7,7 @@ export default function OnboardingGuidePage() {
   const protocols = [
     {
       step: "01",
-      title: "物理チップの識別 (Identity Scrutiny)",
+      title: "物理チップの識別 (Card Setup)",
       desc: "手元の新品カード(NTAG215)のシリアル番号(UID)を確認します。iPhoneの方は無料アプリ「NFC Tools」を使い、[Read] → [Serial Number] をコピーしてください。",
       icon: <Fingerprint size={20} />,
     },
@@ -33,13 +33,13 @@ export default function OnboardingGuidePage() {
     },
     {
       step: "05",
-      title: "タップ・アクティベート (User Sync)",
+      title: "タップ・アクティベート (User Linking)",
       desc: "ユーザーがカードをスマホでタップすると、自動的に登録画面が開きます。ユーザーは氏名等を入力するだけで、瞬時に名刺が有効化されます。",
       icon: <Smartphone size={20} />,
     },
     {
       step: "06",
-      title: "運用の開始 (Protocol Active)",
+      title: "運用の開始 (System Active)",
       desc: "登録完了後、同じカードをタップすれば、所有者本人なら管理画面、それ以外ならデジタル名刺がスマートに表示されます。名刺交換の準備は完了です。",
       icon: <ShieldCheck size={20} />,
     },
@@ -49,7 +49,7 @@ export default function OnboardingGuidePage() {
     <div className="max-w-4xl mx-auto p-12 bg-void text-moonlight min-h-screen">
       <header className="mb-16 border-b border-white/5 pb-8">
         <Link href="/admin" className="text-[8px] uppercase tracking-widest opacity-40 hover:opacity-100 transition-all mb-8 block">← Back to Oversight</Link>
-        <h1 className="text-2xl tracking-[0.5em] uppercase font-light mb-2 text-white">Issue Protocol</h1>
+        <h1 className="text-2xl tracking-[0.5em] uppercase font-light mb-2 text-white">Card Issuance</h1>
         <p className="text-[10px] tracking-widest text-azure-400 opacity-40 uppercase font-bold italic">カード発行・配布ガイドライン (iOS/Android対応)</p>
       </header>
 
@@ -104,7 +104,7 @@ export default function OnboardingGuidePage() {
       <footer className="mt-20 p-8 border border-white/5 bg-white/[0.01] text-center">
          <div className="flex justify-center gap-2 mb-4 text-emerald-500">
             <CheckCircle2 size={16} />
-            <span className="text-[9px] tracking-[0.4em] uppercase font-bold">Standard Protocol Validated</span>
+            <span className="text-[9px] tracking-[0.4em] uppercase font-bold">System Validated</span>
          </div>
          <p className="text-[9px] tracking-[0.2em] opacity-20 uppercase leading-relaxed">
             上記の手順により、偽造不可能なアイデンティティと物理の鍵を安全に紐付けることができます。<br/>

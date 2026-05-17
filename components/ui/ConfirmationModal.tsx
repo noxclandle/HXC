@@ -91,7 +91,7 @@ export default function ConfirmationModal({ isOpen, onClose, onConfirm, title, d
               </div>
 
               <p className="text-[7px] tracking-[0.2em] opacity-20 uppercase">
-                Step {step} of 3: Authorized by Hexa Protocol
+                Step {step} of 3: Authorized by Hexa System
               </p>
             </div>
           </motion.div>

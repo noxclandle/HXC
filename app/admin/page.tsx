@@ -38,7 +38,7 @@ export default function AdminDashboardPage() {
     <div className="max-w-7xl mx-auto p-12 bg-void text-moonlight min-h-screen">
       <header className="mb-16">
         <h1 className="text-2xl tracking-[0.5em] uppercase font-light mb-2">Admin Panel</h1>
-        <p className="text-[10px] tracking-widest text-azure-400 opacity-40 uppercase italic font-bold">Hexa Protocol / 管理ハブ v1.0.2</p>
+        <p className="text-[10px] tracking-widest text-azure-400 opacity-40 uppercase italic font-bold">Hexa System / 管理ハブ v1.0.2</p>
       </header>
 
       {/* Main Stats */}

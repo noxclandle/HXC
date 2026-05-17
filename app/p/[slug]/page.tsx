@@ -172,7 +172,7 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
                   className="mt-8 text-center"
                 >
                   <p className="text-[10px] tracking-[0.6em] uppercase text-white/60 font-light">
-                    Identity Found
+                    Profile Found
                   </p>
                   <p className="text-[12px] tracking-[0.4em] uppercase text-white mt-2 font-bold">
                     {data.name}
