@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Phone, Download, Share2, ArrowRight, ShieldCheck, Sparkles, Smartphone, Layers, Network, AlertCircle, ChevronDown } from "lucide-react";
+import { Mail, Phone, Download, Share2, ArrowRight, ShieldCheck, Sparkles, Smartphone, Layers, Network, AlertCircle, ChevronDown, QrCode } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import GeometricBackground from "@/components/background/GeometricBackground";
 import ResonanceInteraction from "@/components/ui/ResonanceInteraction";
@@ -10,6 +10,7 @@ import Link from "next/link";
 import ResidentAgent from "@/components/agent/ResidentAgent";
 import { signIn } from "next-auth/react";
 import { useEffect } from "react";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?: boolean }) {
   const [showReport, setShowReport] = useState(false);
@@ -160,6 +161,31 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
            <ChevronDown size={14} className="text-white" />
         </motion.div>
       </div>
+
+      {/* Digital QR Exchange Section */}
+      <section className="relative z-10 w-full max-w-lg mx-auto py-24 px-6 border-t border-white/5 flex flex-col items-center space-y-12">
+         <div className="text-center space-y-4">
+            <h3 className="text-[10px] tracking-[0.5em] uppercase font-bold text-azure-400">Digital Handshake</h3>
+            <p className="text-[8px] tracking-[0.2em] uppercase opacity-40">物理カードがない場合は、このQRを読み取ってください</p>
+         </div>
+         
+         <div className="p-6 bg-white border border-white/10 shadow-[0_0_50px_rgba(59,130,246,0.2)] rounded-xl relative group">
+            <div className="absolute inset-[-10px] border border-azure-500/20 rounded-2xl animate-pulse" />
+            <QRCodeSVG 
+              value={typeof window !== "undefined" ? window.location.href : `https://hxc.hexa-relation.com/p/${data.handle_name || data.id}`}
+              size={180}
+              level="H"
+              includeMargin={false}
+              fgColor="#020202"
+              bgColor="#FFFFFF"
+            />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white border-2 border-void flex items-center justify-center rounded-sm">
+               <QrCode size={16} className="text-void" />
+            </div>
+         </div>
+
+         <p className="text-[7px] tracking-[0.4em] uppercase opacity-20 italic">Encrypted via Hexa Protocol</p>
+      </section>
 
       {/* Feature section */}
       <section className="relative z-10 w-full max-w-5xl py-48 px-6 border-t border-white/5 space-y-32">

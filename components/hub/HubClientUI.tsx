@@ -186,18 +186,18 @@ export default function HubClientUI({
              <Link href="/scan" className="group p-8 border border-azure-500/20 bg-azure-500/[0.03] hover:bg-azure-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-azure-500/40" />
                 <div>
-                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white">Scan Card</h2>
-                   <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400/60">紙名刺をスキャンする</p>
+                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100">Scan Card</h2>
+                   <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-azure-300 group-hover:opacity-100">紙名刺をスキャンする</p>
                 </div>
-                <Camera size={32} className="opacity-20 group-hover:opacity-60 transition-all text-white" />
+                <Camera size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
              </Link>
              <Link href="/library" className="group p-8 border border-bronze-500/20 bg-bronze-500/[0.03] hover:bg-bronze-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-bronze-500/40" />
                 <div>
-                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white">Contacts</h2>
-                   <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-bronze-400/60">名刺帳・ライブラリ</p>
+                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100">Contacts</h2>
+                   <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-bronze-300 group-hover:opacity-100">名刺帳・ライブラリ</p>
                 </div>
-                < Book size={32} className="opacity-20 group-hover:opacity-60 transition-all text-white" />
+                < Book size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
              </Link>
           </div>
         </div>
