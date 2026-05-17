@@ -4,9 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Award, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export default function DecorationResonance({ title, isVisible, onComplete }: { title: string, isVisible: boolean, onComplete: () => void }) {
+export default function DecorationConnection({ title, isVisible, onComplete }: { title: string, isVisible: boolean, onComplete: () => void }) {
   // 称号名から色を判定
-  const getResonanceColor = (title: string) => {
+  const getConnectionColor = (title: string) => {
     if (title === "Messenger") return "#4DD0E1"; // 水色
     if (title === "Void Voyager") return "#BA68C8"; // 紫
     if (title === "Headhunter") return "#FFD54F"; // 金
@@ -15,7 +15,7 @@ export default function DecorationResonance({ title, isVisible, onComplete }: { 
     return "#E0E0E0"; // デフォルト（白銀）
   };
 
-  const resonanceColor = getResonanceColor(title);
+  const resonanceColor = getConnectionColor(title);
 
   useEffect(() => {
     if (isVisible) {

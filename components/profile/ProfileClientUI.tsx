@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Phone, Download, Share2, ArrowRight, ShieldCheck, Sparkles, Smartphone, Layers, Network, AlertCircle, ChevronDown, QrCode } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import GeometricBackground from "@/components/background/GeometricBackground";
-import ResonanceInteraction from "@/components/ui/ResonanceInteraction";
+import ConnectionInteraction from "@/components/ui/ConnectionInteraction";
 import Link from "next/link";
 import ResidentAgent from "@/components/agent/ResidentAgent";
 import { signIn } from "next-auth/react";
@@ -87,7 +87,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
   return (
     <main className="min-h-screen bg-void text-moonlight relative overflow-x-hidden overflow-y-auto custom-scrollbar flex flex-col items-center">
       <GeometricBackground />
-      <ResonanceInteraction />
+      <ConnectionInteraction />
       {isOwner && <ResidentAgent />}
 
       {!isOwner && (

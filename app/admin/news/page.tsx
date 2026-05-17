@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus, Trash2, Send, Activity } from "lucide-react";
-import { useToast } from "@/components/ui/ResonanceToast";
+import { useToast } from "@/components/ui/ConnectionToast";
 
 interface NewsItem {
   id: string;

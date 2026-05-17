@@ -21,7 +21,7 @@ export default function ScheduledTasksPage() {
       <header className="mb-16 border-b border-moonlight/10 pb-8">
         <h1 className="text-xl tracking-[0.6em] uppercase flex items-center gap-4">
           <Clock className="text-moonlight opacity-40" size={20} />
-          Scheduled Resonances
+          Scheduled Connections
         </h1>
         <p className="text-[9px] tracking-widest opacity-40 uppercase mt-2">Managing the Future Footprints of the Void</p>
       </header>

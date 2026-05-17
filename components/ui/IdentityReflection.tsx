@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Layout, Smartphone, Share2, Sparkles, Edit3, Trophy } from "lucide-react";
 import Link from "next/link";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
-import { useToast } from "@/components/ui/ResonanceToast";
+import { useToast } from "@/components/ui/ConnectionToast";
 
 export default function IdentityReflection({ user }: { user: any }) {
   const { showToast } = useToast();

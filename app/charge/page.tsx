@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, ArrowLeft, Check, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useToast } from "@/components/ui/ResonanceToast";
+import { useToast } from "@/components/ui/ConnectionToast";
 
 const RT_PACKS = [
   { id: "rt_small", price: 1000, rt: 2000, label: "2,000 RT Pack", description: "基本的なポイント補充。1回のアセット購入に。" },

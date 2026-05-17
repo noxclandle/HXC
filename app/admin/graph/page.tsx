@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Share2, Filter, ZoomIn, Activity, Download } from "lucide-react";
 
-export default function ResonanceGraphPage() {
+export default function ConnectionGraphPage() {
   const [nodes, setNodes] = useState<any[]>([]);
   const [focusedId, setFocusedId] = useState<string | null>(null);
   const [timeStep, setTimeStep] = useState(100);

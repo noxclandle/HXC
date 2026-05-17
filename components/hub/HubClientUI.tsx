@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import MonthlyReport from "@/components/ui/MonthlyReport";
 import IdentityReflection from "@/components/ui/IdentityReflection";
 import GeometricAngel from "@/components/ui/GeometricAngel";
-import { useToast } from "@/components/ui/ResonanceToast";
+import { useToast } from "@/components/ui/ConnectionToast";
 
 export default function HubClientUI({ 
   initialStats, 
@@ -76,7 +76,7 @@ export default function HubClientUI({
     }
   }, []);
 
-  const handleResonance = async () => {
+  const handleConnection = async () => {
     setIsResonating(true);
     setMood('excited');
     
@@ -203,7 +203,7 @@ export default function HubClientUI({
         </div>
 
         <aside className="lg:col-span-4 space-y-12">
-           {/* Geometric Angel & Resonance Section */}
+           {/* Geometric Angel & Connection Section */}
            <div className="p-8 border border-white/5 bg-white/[0.02] flex flex-col items-center text-center space-y-6 relative overflow-hidden group min-h-[400px] justify-center">
               <div className="absolute inset-0 bg-azure-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
               
@@ -264,7 +264,7 @@ export default function HubClientUI({
                         {mood === 'excited' ? 'Bonus active' : mood === 'unstable' ? 'Connection weak' : 'Awaiting daily bonus'}
                       </p>
                       <button 
-                        onClick={handleResonance}
+                        onClick={handleConnection}
                         disabled={isResonating}
                         className={`mt-4 px-10 py-3 border text-[9px] tracking-[0.4em] uppercase transition-all flex items-center gap-3 mx-auto ${
                           isResonating 

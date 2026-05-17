@@ -27,14 +27,14 @@ export default function OrderNotificationBadge() {
 
   if (count === 0) {
     return (
-      <Link href="/admin/ledger" className="opacity-60 hover:text-azure-400 hover:opacity-100 transition-colors flex items-center gap-2">
+      <Link href="/admin/registry" className="opacity-60 hover:text-azure-400 hover:opacity-100 transition-colors flex items-center gap-2">
         <Package size={12}/> カード台帳
       </Link>
     );
   }
 
   return (
-    <Link href="/admin/ledger#orders" className="text-azure-400 hover:text-azure-300 transition-colors flex items-center gap-2 font-bold relative group cursor-pointer" title={`${count} 件の未発送の注文があります`}>
+    <Link href="/admin/registry#orders" className="text-azure-400 hover:text-azure-300 transition-colors flex items-center gap-2 font-bold relative group cursor-pointer" title={`${count} 件の未発送の注文があります`}>
       <Package size={12} className="animate-pulse" /> 
       カード台帳
       <span className="absolute -top-1 -right-3 flex h-3 w-3 pointer-events-none">

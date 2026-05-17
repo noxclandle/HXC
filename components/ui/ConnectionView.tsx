@@ -2,12 +2,12 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Hexagon } from "lucide-react";
-import { playResonanceSound } from "@/lib/audio/resonance";
+import { playConnectionSound } from "@/lib/audio/resonance";
 import { useEffect } from "react";
 
-export default function ResonanceResonance({ partnerName, onComplete }: { partnerName: string, onComplete: () => void }) {
+export default function ConnectionConnection({ partnerName, onComplete }: { partnerName: string, onComplete: () => void }) {
   useEffect(() => {
-    playResonanceSound("silver"); // 高貴な共鳴音
+    playConnectionSound("silver"); // 高貴な共鳴音
   }, []);
 
   return (
@@ -18,7 +18,7 @@ export default function ResonanceResonance({ partnerName, onComplete }: { partne
       className="fixed inset-0 z-[200] bg-void flex flex-col items-center justify-center p-8 text-center"
       onAnimationComplete={() => setTimeout(onComplete, 4000)}
     >
-      {/* Central Resonance Orb */}
+      {/* Central Connection Orb */}
       <div className="relative mb-24">
         <motion.div
           animate={{ scale: [1, 2, 1], opacity: [0.2, 0.4, 0.2] }}

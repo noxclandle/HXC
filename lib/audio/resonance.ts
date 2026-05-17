@@ -2,7 +2,7 @@
  * 名刺受信時の共鳴音を生成・再生する
  * 複数のオシレーターを重ね、神秘的な「共鳴」を演出する
  */
-export function playResonanceSound(type: string = "resonance") {
+export function playConnectionSound(type: string = "resonance") {
   if (typeof window === "undefined") return;
 
   const context = new (window.AudioContext || (window as any).webkitAudioContext)();

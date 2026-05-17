@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { Rotate3d, Building2, User, Phone, Mail, Instagram, Facebook, Twitter, MessageCircle } from "lucide-react";
-import { playResonanceSound } from "@/lib/audio/resonance";
+import { playConnectionSound } from "@/lib/audio/resonance";
 
 export type Alignment = "left" | "center" | "right";
 
@@ -67,7 +67,7 @@ export default function HexaCardPreview({
     if (isRotating) return;
     setIsRotating(true);
     const soundType = (sound?.toLowerCase() || "resonance") as any;
-    playResonanceSound(soundType);
+    playConnectionSound(soundType);
     setIsFlipped(!isFlipped);
     onFlip?.(!isFlipped);
     setTimeout(() => setIsRotating(false), 800);

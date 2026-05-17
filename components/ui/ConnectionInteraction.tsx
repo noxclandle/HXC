@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
  * 軌跡 (Pointer) アセットの色彩と形状をリアルタイムに同期させる
  * パフォーマンス向上のため、Framer Motionを使わずCanvasで描画する
  */
-export default function ResonanceInteraction() {
+export default function ConnectionInteraction() {
   const { data: session } = useSession();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointerConfig = useRef({ color: "#FFFFFF", size: 8, shape: "hex" });
@@ -26,7 +26,7 @@ export default function ResonanceInteraction() {
           case "Emerald Pulse": pointerConfig.current = { color: "#10B981", size: 10, shape: "hex" }; break;
           case "Ruby Flare": pointerConfig.current = { color: "#F43F5E", size: 12, shape: "star" }; break;
           case "Gold Trace": pointerConfig.current = { color: "#F59E0B", size: 10, shape: "hex" }; break;
-          case "Violet Resonance": pointerConfig.current = { color: "#8B5CF6", size: 10, shape: "hex" }; break;
+          case "Violet Connection": pointerConfig.current = { color: "#8B5CF6", size: 10, shape: "hex" }; break;
           case "Crimson Ember": pointerConfig.current = { color: "#EF4444", size: 14, shape: "flare" }; break;
           case "Shadow Trace": pointerConfig.current = { color: "#111111", size: 18, shape: "ink" }; break;
           case "Prism Trace": pointerConfig.current = { color: "rgba(255,255,255,0.8)", size: 12, shape: "prism" }; break;

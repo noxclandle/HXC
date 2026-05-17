@@ -12,7 +12,7 @@ export async function GET(req: NextRequest, { params }: { params: { uid: string 
   const uid = params.uid.replace(/:/g, "").toUpperCase();
   const session = await getServerSession(authOptions);
 
-  // 1. 台帳（Ledger）を確認
+  // 1. 台帳（Registry）を確認
   // DB側がコロンありで登録されている可能性も考慮し、両方で検索を試みるか、
   // あるいはDB側の検索時にコロンを無視する（PostgreSQLの機能や、あるいはアプリケーション側で管理）
   // ここではまず完全一致で試し、見つからなければコロン付きでも試す

@@ -154,7 +154,7 @@ export default function MasterOverridePage() {
                 <Save size={14} /> Commit Changes
               </button>
               <button className="w-full py-4 border border-rose-500/20 text-[10px] tracking-[0.5em] uppercase flex items-center justify-center gap-2 hover:bg-rose-500/20 transition-all">
-                <RotateCcw size={14} /> Reset Resonance
+                <RotateCcw size={14} /> Reset Connection
               </button>
             </div>
           </div>

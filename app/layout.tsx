@@ -41,9 +41,9 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
-import ResonanceInteraction from "@/components/ui/ResonanceInteraction";
+import ConnectionInteraction from "@/components/ui/ConnectionInteraction";
 import NextAuthProvider from "@/components/providers/NextAuthProvider";
-import { ResonanceToastProvider } from "@/components/ui/ResonanceToast";
+import { ConnectionToastProvider } from "@/components/ui/ConnectionToast";
 import Footer from "@/components/ui/Footer";
 
 export default function RootLayout({
@@ -77,16 +77,16 @@ export default function RootLayout({
           }}
         />
         <NextAuthProvider>
-          <ResonanceToastProvider>
+          <ConnectionToastProvider>
             <GeometricBackground />
             <div className="relative z-10 flex-grow flex flex-col">
-              <ResonanceInteraction />
+              <ConnectionInteraction />
               <main className="flex-grow">
                 {children}
               </main>
               <Footer />
             </div>
-          </ResonanceToastProvider>
+          </ConnectionToastProvider>
         </NextAuthProvider>
       </body>
     </html>

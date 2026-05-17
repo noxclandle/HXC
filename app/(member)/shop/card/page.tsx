@@ -117,7 +117,7 @@ export default function CardShopPage() {
                <span className="text-3xl font-extralight italic">{activeCard.price}</span>
             </div>
             <button className="px-12 py-4 bg-moonlight text-void text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-colors">
-              Request Resonance
+              Request Connection
             </button>
           </div>
 

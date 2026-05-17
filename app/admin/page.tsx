@@ -84,8 +84,8 @@ export default function AdminDashboardPage() {
             desc: "ユーザーからの不具合・違反報告",
             alert: reportCount > 0
           },
-          { label: "アセット大典", path: "/admin/compendium", icon: <BookOpen size={18}/>, desc: "称号・フレーム等の獲得条件管理" },
-          { label: "カード中央台帳", path: "/admin/ledger", icon: <Layers size={18}/>, desc: "物理カードの登録 & ペアリング" },
+          { label: "アセット大典", path: "/admin/items", icon: <BookOpen size={18}/>, desc: "称号・フレーム等の獲得条件管理" },
+          { label: "カード中央台帳", path: "/admin/registry", icon: <Layers size={18}/>, desc: "物理カードの登録 & ペアリング" },
           { label: "発行・登録手順", path: "/admin/onboarding", icon: <ShieldCheck size={18}/>, desc: "新規ユーザー・カード発行プロトコル" },
           { label: "システム構成", path: "/admin/config", icon: <Database size={18}/>, desc: "価格設定 & 内部パラメータ" },
           { label: "システム実行ログ", path: "/admin/logs", icon: <Database size={18}/>, desc: "全管理操作の証跡記録" },
