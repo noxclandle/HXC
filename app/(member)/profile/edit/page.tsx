@@ -363,6 +363,50 @@ export default function ProfileEditPage() {
               <section className="space-y-10 p-4 lg:p-0">
                 <header className="flex items-center gap-4 opacity-40 border-b border-white/5 pb-4">
                    <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-[10px]">02</div>
+                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold text-white opacity-100">Visual Assets / 画像・ロゴ</h3>
+                </header>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+                   {/* Profile Photo */}
+                   <div className="space-y-4">
+                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Profile Photo / 本人写真</label>
+                      <div className="relative group w-full aspect-square md:w-32 md:h-32 bg-white/[0.05] border border-azure-500/30 flex flex-col items-center justify-center cursor-pointer hover:bg-azure-500/10 transition-all overflow-hidden shadow-[0_0_20px_rgba(59,130,246,0.1)]">
+                         {formData.faceUrl ? (
+                            <img src={formData.faceUrl} alt="Preview" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                         ) : (
+                            <User size={32} className="opacity-20" />
+                         )}
+                         <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleImageUpload(e, "face")} />
+                         {isUploading === "face" && <div className="absolute inset-0 bg-void/80 flex items-center justify-center"><Loader2 size={24} className="animate-spin text-azure-400" /></div>}
+                         <div className="absolute bottom-0 w-full py-2 bg-black/60 backdrop-blur-md">
+                            <p className="text-[8px] text-center uppercase tracking-widest font-bold text-white">Upload New / 変更する</p>
+                         </div>
+                      </div>
+                      <p className="text-[8px] opacity-20 uppercase tracking-widest">推奨: 正方形 / 自動で軽量化されます</p>
+                   </div>
+
+                   {/* Logo Photo */}
+                   <div className="space-y-4">
+                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Brand Logo / 会社ロゴ</label>
+                      <div className="relative group w-full aspect-video md:w-48 md:h-32 bg-white/[0.05] border border-azure-500/30 flex flex-col items-center justify-center cursor-pointer hover:bg-azure-500/10 transition-all overflow-hidden shadow-[0_0_20px_rgba(59,130,246,0.1)]">
+                         {formData.logoUrl ? (
+                            <img src={formData.logoUrl} alt="Preview" className="w-full h-full object-contain p-4 opacity-80 group-hover:opacity-100 transition-opacity" />
+                         ) : (
+                            <Building2 size={32} className="opacity-20" />
+                         )}
+                         <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleImageUpload(e, "logo")} />
+                         {isUploading === "logo" && <div className="absolute inset-0 bg-void/80 flex items-center justify-center"><Loader2 size={24} className="animate-spin text-azure-400" /></div>}
+                         <div className="absolute bottom-0 w-full py-2 bg-black/60 backdrop-blur-md">
+                            <p className="text-[8px] text-center uppercase tracking-widest font-bold text-white">Upload New / 変更する</p>
+                         </div>
+                      </div>
+                      <p className="text-[8px] opacity-20 uppercase tracking-widest">推奨: 背景透過PNG / 横長</p>
+                   </div>
+                </div>
+              </section>
+
+              <section className="space-y-10 p-4 lg:p-0">
+                <header className="flex items-center gap-4 opacity-40 border-b border-white/5 pb-4">
+                   <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-[10px]">03</div>
                    <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">Social & Links / 接続設定</h3>
                 </header>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
