@@ -21,7 +21,7 @@ export default function AdminLayout({
           <Link href="/admin" className="flex items-center gap-4 hover:opacity-80 transition-opacity">
             <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
             <div className="flex flex-col">
-              <span className="text-sm tracking-[0.4em] uppercase font-light">Central Oversight</span>
+              <span className="text-sm tracking-[0.4em] uppercase font-light">Admin Panel</span>
               <span className="text-[8px] tracking-[0.2em] opacity-40 uppercase">Hexa System Admin</span>
             </div>
           </Link>

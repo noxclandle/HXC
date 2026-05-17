@@ -66,7 +66,7 @@ export default function ScanPage() {
   };
 
   const handleArchive = async () => {
-    setAiInsight("Synchronizing with the Great Archive...");
+    setAiInsight("Synchronizing with the Contacts...");
     
     try {
       const res = await fetch("/api/contacts", {

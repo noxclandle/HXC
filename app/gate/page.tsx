@@ -30,18 +30,18 @@ export default function GatePage() {
           >
             <Hexagon size={24} className="text-white opacity-20 -rotate-45" />
           </motion.div>
-          <h1 className="text-2xl tracking-[0.8em] uppercase font-extralight text-white">Zero Point</h1>
+          <h1 className="text-2xl tracking-[0.8em] uppercase font-extralight text-white">Gateway</h1>
           <p className="text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold text-azure-400">プロトコル・ゲートウェイ</p>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Member Hub */}
+          {/* Home */}
           <Link href="/hub" className="group p-10 border border-white/5 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04] transition-all relative overflow-hidden">
             <div className="relative z-10">
               <div className="mb-8 text-white opacity-20 group-hover:opacity-100 transition-opacity">
                 <User size={32} strokeWidth={1} />
               </div>
-              <h2 className="text-sm tracking-[0.5em] uppercase font-bold mb-2">Member Hub</h2>
+              <h2 className="text-sm tracking-[0.5em] uppercase font-bold mb-2">Home</h2>
               <p className="text-[9px] opacity-20 uppercase tracking-widest leading-relaxed">アイデンティティ管理・ライブラリ・接続</p>
             </div>
             <div className="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
@@ -56,7 +56,7 @@ export default function GatePage() {
                 <div className="mb-8 text-azure-400 opacity-40 group-hover:opacity-100 transition-opacity">
                   <Shield size={32} strokeWidth={1} />
                 </div>
-                <h2 className="text-sm tracking-[0.5em] uppercase font-bold mb-2 text-white">Central Oversight</h2>
+                <h2 className="text-sm tracking-[0.5em] uppercase font-bold mb-2 text-white">Admin Panel</h2>
                 <p className="text-[9px] opacity-20 uppercase tracking-widest leading-relaxed">全権限・台帳・システム監視・布告</p>
               </div>
               <div className="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
@@ -75,7 +75,7 @@ export default function GatePage() {
         </div>
 
         <footer className="mt-20 text-center">
-           <p className="text-[8px] tracking-[0.8em] opacity-10 uppercase font-bold">Protocol Gate / Unauthorized Access Logged</p>
+           <p className="text-[8px] tracking-[0.8em] opacity-10 uppercase font-bold">System Gate / Unauthorized Access Logged</p>
         </footer>
       </div>
     </main>
