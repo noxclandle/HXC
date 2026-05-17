@@ -68,7 +68,7 @@ function ProfileSkeleton() {
 
         <div className="text-center space-y-4">
           <p className="text-[10px] tracking-[1em] uppercase text-white/30 font-extralight ml-[1em]">
-            Syncing Identity
+            Connecting...
           </p>
           <div className="flex justify-center gap-4">
             {[...Array(3)].map((_, i) => (
@@ -145,7 +145,7 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
             animate={{ opacity: 1 }}
             className="min-h-screen flex items-center justify-center text-[10px] tracking-[0.5em] uppercase text-white/40"
           >
-            Identity Dissolved
+            Profile Not Found
           </motion.div>
         ) : (
           <div key="content" className="relative">
@@ -172,7 +172,7 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
                   className="mt-8 text-center"
                 >
                   <p className="text-[10px] tracking-[0.6em] uppercase text-white/60 font-light">
-                    Resonance Established
+                    Identity Found
                   </p>
                   <p className="text-[12px] tracking-[0.4em] uppercase text-white mt-2 font-bold">
                     {data.name}
