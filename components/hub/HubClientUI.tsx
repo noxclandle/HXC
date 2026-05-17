@@ -24,7 +24,9 @@ export default function HubClientUI({
   const [mood, setMood] = useState<'stable' | 'excited' | 'unstable'>('stable');
   const [isResonating, setIsResonating] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
-  const [greeting, setGreeting] = useState("Awaiting daily bonus");
+  const [greeting, setGreeting] = useState("");
+
+  const isBonusAvailable = !realStats?.last_daily_at || new Date(realStats.last_daily_at).toDateString() !== new Date().toDateString();
 
   const fetchData = useCallback(async () => {
     try {
@@ -114,12 +116,6 @@ export default function HubClientUI({
   };
 
   useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 5) setGreeting("静かな夜ですね。");
-    else if (hour < 11) setGreeting("おはようございます。");
-    else if (hour < 17) setGreeting("こんにちは。");
-    else setGreeting("こんばんは。");
-
     const hasSeenGuide = localStorage.getItem("hxc-guide-seen");
     if (!hasSeenGuide) {
       setShowGuide(true);
@@ -129,6 +125,18 @@ export default function HubClientUI({
     window.addEventListener("hxc-assets-updated", handleUpdate);
     return () => window.removeEventListener("hxc-assets-updated", handleUpdate);
   }, [fetchData]);
+
+  useEffect(() => {
+    if (isBonusAvailable) {
+      setGreeting("Awaiting daily bonus");
+    } else {
+      const hour = new Date().getHours();
+      if (hour < 5) setGreeting("静かな夜ですね。");
+      else if (hour < 11) setGreeting("おはようございます。");
+      else if (hour < 17) setGreeting("こんにちは。");
+      else setGreeting("こんばんは。");
+    }
+  }, [isBonusAvailable]);
 
   const closeGuide = () => {
     setShowGuide(false);
@@ -259,28 +267,47 @@ export default function HubClientUI({
                       </motion.div>
                     </div>
                     
-                    <div className="space-y-2 relative z-10 w-full">
-                      <p className="text-[10px] tracking-widest opacity-40 uppercase">
-                        {mood === 'excited' ? 'Bonus active' : mood === 'unstable' ? 'Connection weak' : 'Awaiting daily bonus'}
-                      </p>
-
-                      <AnimatePresence>
-                        {(!realStats?.last_daily_at || new Date(realStats.last_daily_at).toDateString() !== new Date().toDateString()) && (
-                          <motion.button 
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            onClick={handleConnection}
-                            disabled={isResonating}
-                            className={`mt-4 px-10 py-3 border text-[9px] tracking-[0.4em] uppercase transition-all flex items-center gap-3 mx-auto ${
-                              isResonating 
-                                ? 'border-white/10 text-white/20' 
-                                : 'border-white/20 text-white hover:bg-white/5 hover:border-white shadow-lg'
-                            }`}
+                    <div className="space-y-2 relative z-10 w-full min-h-[80px] flex flex-col justify-center">
+                      <AnimatePresence mode="wait">
+                        {isBonusAvailable ? (
+                          <motion.div
+                            key="bonus-active"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="space-y-2"
                           >
-                            <Sparkles size={12} className={isResonating ? 'animate-spin' : ''} />
-                            {isResonating ? 'Loading...' : 'Daily Bonus'}
-                          </motion.button>
+                            <p className="text-[10px] tracking-widest opacity-40 uppercase">
+                              {mood === 'excited' ? 'Bonus active' : mood === 'unstable' ? 'Connection weak' : 'Awaiting daily bonus'}
+                            </p>
+
+                            <motion.button 
+                              onClick={handleConnection}
+                              disabled={isResonating}
+                              className={`mt-2 px-10 py-3 border text-[9px] tracking-[0.4em] uppercase transition-all flex items-center gap-3 mx-auto ${
+                                isResonating 
+                                  ? 'border-white/10 text-white/20' 
+                                  : 'border-white/20 text-white hover:bg-white/5 hover:border-white shadow-lg'
+                              }`}
+                            >
+                              <Sparkles size={12} className={isResonating ? 'animate-spin' : ''} />
+                              {isResonating ? 'Loading...' : 'Daily Bonus'}
+                            </motion.button>
+                          </motion.div>
+                        ) : (
+                           <motion.div
+                             key="bonus-claimed"
+                             initial={{ opacity: 0 }}
+                             animate={{ opacity: 1 }}
+                             className="space-y-1"
+                           >
+                             <p className="text-[8px] tracking-[0.5em] uppercase font-bold opacity-20">
+                               Connection Stable
+                             </p>
+                             <p className="text-[7px] tracking-[0.3em] uppercase opacity-10 font-medium">
+                               Bonus already claimed
+                             </p>
+                           </motion.div>
                         )}
                       </AnimatePresence>
                     </div>

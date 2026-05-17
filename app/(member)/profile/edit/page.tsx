@@ -224,7 +224,7 @@ export default function ProfileEditPage() {
   useEffect(() => {
     if (!isLoaded) return;
     if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => performAutoSave(formData, equipped), 1500);
+    timerRef.current = setTimeout(() => performAutoSave(formData, equipped), 1000);
     return () => clearTimeout(timerRef.current);
   }, [formData, equipped, isLoaded, performAutoSave]);
 

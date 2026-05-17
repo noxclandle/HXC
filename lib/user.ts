@@ -27,6 +27,7 @@ export async function getUserStatus(email: string | null | undefined) {
       link_instagram: true,
       link_line: true,
       link_facebook: true,
+      last_daily_at: true,
       card: {
         select: { uid: true }
       }
@@ -78,6 +79,7 @@ export async function getUserStatus(email: string | null | undefined) {
     exp_max: isFixer ? "10000" : "1000", // EXPの上限表示用
     rank: isFixer ? "Fixer" : user.rank,
     role: isFixer ? "fixer" : user.role, // Force role to fixer in UI
+    last_daily_at: user.last_daily_at,
     titles: titles,
     owned_assets: ownedAssets,
     asset_prices: assetPrices,
