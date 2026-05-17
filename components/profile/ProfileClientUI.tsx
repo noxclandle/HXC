@@ -35,20 +35,26 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
 
   const handleSaveContact = () => {
     if (!data) return;
-    let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${data.name || "MEMBER"}\nTEL:${data.phone || ""}\nEMAIL:${data.profile.contact_email || data.email || ""}\nORG:${data.profile?.company || ""}`;
-    
+
+    // iPhone向けの高級感のある振動
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      navigator.vibrate([30, 10, 30]);
+    }
+
+    let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${data.name || "MEMBER"}\nN:${data.name || ""};;;;\nTEL;TYPE=CELL:${data.phone || ""}\nEMAIL;TYPE=INTERNET:${data.profile.contact_email || data.email || ""}\nORG:${data.profile?.company || ""}\nTITLE:${data.profile?.title || ""}`;
+
     if (data.photo_url && data.photo_url.startsWith('data:image/')) {
       try {
         const parts = data.photo_url.split(',');
-        const mimeType = parts[0].match(/:(.*?);/)?.[1] || "JPEG";
-        const type = mimeType.split('/')[1].toUpperCase();
         const base64Data = parts[1];
-        vcard += `\nPHOTO;TYPE=${type};ENCODING=b:${base64Data}`;
-      } catch (e) { console.error(e); }
+        // iOSで最も認識率が高いフォーマットに変更
+        vcard += `\nPHOTO;TYPE=JPEG;ENCODING=BASE64:${base64Data}`;
+      } catch (e) { console.error("vCard Photo Error:", e); }
     }
-    
+
     vcard += `\nEND:VCARD`;
-    const blob = new Blob([vcard], { type: "text/vcard" });
+    const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
+
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
