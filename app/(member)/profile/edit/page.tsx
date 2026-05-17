@@ -12,7 +12,57 @@ export default function ProfileEditPage() {
   const { data: session } = useSession();
   const { showToast } = useToast();
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [isUploading, setIsUploading] = useState<string | null>(null); // "face" or "logo"
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // 画像圧縮ユーティリティ
+  const compressImage = (file: File, maxWidth: number = 800): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth) {
+            height = (maxWidth / width) * height;
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/jpeg", 0.7)); // 圧縮率0.7のJPEGに変換
+        };
+      };
+    });
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: "face" | "logo") => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast("File too large / 5MB以下の画像を選択してください", "error");
+      return;
+    }
+
+    setIsUploading(type);
+    try {
+      const compressed = await compressImage(file, type === "logo" ? 400 : 800);
+      updateField(type === "face" ? "faceUrl" : "logoUrl", compressed);
+      showToast("Image Processed / 画像を最適化しました", "success");
+    } catch (err) {
+      showToast("Upload Failed / 処理に失敗しました", "error");
+    } finally {
+      setIsUploading(null);
+    }
+  };
 
   const defaultAlign = {
     company: "center",
@@ -323,6 +373,50 @@ export default function ProfileEditPage() {
                 <div className="space-y-3">
                    <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Free Bio / 自由コメント (裏面表示)</label>
                    <textarea value={formData.bio} onChange={(e) => updateField('bio', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white h-32 resize-none" placeholder="裏面に表示されるメッセージや紹介文" />
+                </div>
+              </section>
+
+              <section className="space-y-10 p-4 lg:p-0 pb-20">
+                <header className="flex items-center gap-4 opacity-40 border-b border-white/5 pb-4">
+                   <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-[10px]">03</div>
+                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">Visual Assets / 画像・ロゴ</h3>
+                </header>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+                   {/* Profile Photo */}
+                   <div className="space-y-4">
+                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Profile Photo / 本人写真</label>
+                      <div className="relative group w-full aspect-square md:w-32 md:h-32 bg-white/[0.03] border border-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-white/[0.05] transition-all overflow-hidden">
+                         {formData.faceUrl ? (
+                            <img src={formData.faceUrl} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+                         ) : (
+                            <User size={32} className="opacity-20" />
+                         )}
+                         <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleImageUpload(e, "face")} />
+                         {isUploading === "face" && <div className="absolute inset-0 bg-void/80 flex items-center justify-center"><Loader2 size={24} className="animate-spin text-azure-400" /></div>}
+                         <div className="absolute bottom-0 w-full py-2 bg-black/40 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform">
+                            <p className="text-[7px] text-center uppercase tracking-widest font-bold">Upload</p>
+                         </div>
+                      </div>
+                      <p className="text-[8px] opacity-20 uppercase tracking-widest">推奨: 正方形 / 自動で軽量化されます</p>
+                   </div>
+
+                   {/* Logo Photo */}
+                   <div className="space-y-4">
+                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Brand Logo / 会社ロゴ</label>
+                      <div className="relative group w-full aspect-video md:w-48 md:h-32 bg-white/[0.03] border border-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-white/[0.05] transition-all overflow-hidden">
+                         {formData.logoUrl ? (
+                            <img src={formData.logoUrl} alt="Preview" className="w-full h-full object-contain p-4 opacity-60 group-hover:opacity-100 transition-opacity" />
+                         ) : (
+                            <Building2 size={32} className="opacity-20" />
+                         )}
+                         <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleImageUpload(e, "logo")} />
+                         {isUploading === "logo" && <div className="absolute inset-0 bg-void/80 flex items-center justify-center"><Loader2 size={24} className="animate-spin text-azure-400" /></div>}
+                         <div className="absolute bottom-0 w-full py-2 bg-black/40 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform">
+                            <p className="text-[7px] text-center uppercase tracking-widest font-bold">Upload</p>
+                         </div>
+                      </div>
+                      <p className="text-[8px] opacity-20 uppercase tracking-widest">推奨: 背景透過PNG / 横長</p>
+                   </div>
                 </div>
               </section>
            </form>
