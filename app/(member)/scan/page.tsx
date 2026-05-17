@@ -59,7 +59,10 @@ export default function ScanPage() {
   };
 
   const triggerCamera = () => {
-    document.getElementById("camera-input")?.click();
+    const input = document.getElementById("camera-input") as HTMLInputElement;
+    if (input) {
+      input.click();
+    }
   };
 
   const handleArchive = async () => {
@@ -141,13 +144,13 @@ export default function ScanPage() {
               </motion.div>
             </div>
 
-            <div className="space-y-6 text-center w-full">
+            <div className="space-y-6 text-center w-full relative">
               <input 
                 id="camera-input"
                 type="file" 
                 accept="image/*" 
                 capture="environment" 
-                className="hidden" 
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-0" 
                 onChange={handleCapture}
               />
               <p className="text-[10px] tracking-widest opacity-40 leading-relaxed uppercase">
@@ -155,12 +158,12 @@ export default function ScanPage() {
                 AIが自動的にデジタル名刺帳へ保存します。
               </p>
               <button 
-                onClick={triggerCamera} 
-                className="w-full py-6 bg-white text-void text-[12px] font-bold tracking-[1em] uppercase shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-105 transition-all active:scale-95"
+                type="button"
+                className="w-full py-6 bg-white text-void text-[12px] font-bold tracking-[1em] uppercase shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-105 transition-all active:scale-95 pointer-events-none relative z-10"
               >
                 Open Camera
               </button>
-              <button onClick={() => router.back()} className="text-[9px] opacity-20 uppercase tracking-[0.4em] hover:opacity-50 transition-opacity">Return to Home</button>
+              <button onClick={() => router.back()} className="text-[9px] opacity-20 uppercase tracking-[0.4em] hover:opacity-50 transition-opacity block w-full">Return to Home</button>
             </div>
           </motion.div>
         )}
