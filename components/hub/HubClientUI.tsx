@@ -200,24 +200,6 @@ export default function HubClientUI({
                 < Book size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
              </Link>
           </div>
-
-          <div className="flex flex-col gap-4 pb-12">
-             <button 
-               onClick={() => alert("Apple/Googleウォレットへの追加機能を準備中です。\n現在は名刺ページ下部のQRコードをスクリーンショットして保存、またはホーム画面に追加してご利用ください。")}
-               className="w-full p-6 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all flex items-center justify-between group relative overflow-hidden"
-             >
-                <div className="flex items-center gap-6">
-                   <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center bg-white/5">
-                      <Smartphone size={20} className="opacity-40 group-hover:opacity-100 group-hover:text-azure-400 transition-all" />
-                   </div>
-                   <div className="text-left">
-                      <h3 className="text-[12px] tracking-[0.4em] uppercase text-white opacity-80 group-hover:opacity-100">Digital Wallet / ウォレット</h3>
-                      <p className="text-[8px] tracking-[0.2em] opacity-30 uppercase font-bold group-hover:opacity-50">カードなしでの名刺交換を可能にします</p>
-                   </div>
-                </div>
-                <ChevronRight size={16} className="opacity-20 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-             </button>
-          </div>
         </div>
 
         <aside className="lg:col-span-4 space-y-12">

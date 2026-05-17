@@ -368,17 +368,24 @@ export default function ProfileEditPage() {
                 <div className="flex flex-col gap-12">
                    {/* Logo Photo (Front Side) */}
                    <div className="space-y-4">
-                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Front Side: Brand Logo / 表面：会社ロゴ</label>
+                      <div className="flex justify-between items-end">
+                        <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Front Side: Brand Logo / 表面：会社ロゴ</label>
+                        {formData.logoUrl && (
+                          <button type="button" onClick={() => updateField('logoUrl', "")} className="text-[7px] uppercase tracking-widest opacity-30 hover:opacity-100 flex items-center gap-1 transition-opacity">
+                            <RotateCcw size={10} /> Remove / 削除
+                          </button>
+                        )}
+                      </div>
                       <div className="relative group w-full aspect-video md:w-48 md:h-32 bg-white/[0.05] border border-azure-500/30 flex flex-col items-center justify-center cursor-pointer hover:bg-azure-500/10 transition-all overflow-hidden shadow-[0_0_20px_rgba(59,130,246,0.1)]">
-                         {formData.logoUrl ? (
-                            <img src={formData.logoUrl} alt="Preview" className="w-full h-full object-contain p-4 opacity-80 group-hover:opacity-100 transition-opacity" />
+                         {(formData.logoUrl || isUploading === "logo") ? (
+                            <img src={formData.logoUrl === "IMAGE_LARGE" ? "/logo.png" : formData.logoUrl} alt="Preview" className="w-full h-full object-contain p-4 opacity-80 group-hover:opacity-100 transition-opacity" />
                          ) : (
                             <Building2 size={32} className="opacity-20" />
                          )}
                          <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleImageUpload(e, "logo")} />
                          {isUploading === "logo" && <div className="absolute inset-0 bg-void/80 flex items-center justify-center"><Loader2 size={24} className="animate-spin text-azure-400" /></div>}
                          <div className="absolute bottom-0 w-full py-2 bg-black/60 backdrop-blur-md">
-                            <p className="text-[8px] text-center uppercase tracking-widest font-bold text-white">Change Logo / 変更する</p>
+                            <p className="text-[7px] text-center uppercase tracking-widest font-bold text-white">Change Logo / 変更する</p>
                          </div>
                       </div>
                       <p className="text-[8px] opacity-20 uppercase tracking-widest">名刺の表面（右下）に配置されます。背景透過PNGを推奨。</p>
@@ -386,17 +393,24 @@ export default function ProfileEditPage() {
 
                    {/* Profile Photo (Back Side) */}
                    <div className="space-y-4 pt-4 border-t border-white/5">
-                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Back Side: Profile Photo / 裏面：本人写真</label>
+                      <div className="flex justify-between items-end">
+                        <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Back Side: Profile Photo / 裏面：本人写真</label>
+                        {formData.faceUrl && (
+                          <button type="button" onClick={() => updateField('faceUrl', "")} className="text-[7px] uppercase tracking-widest opacity-30 hover:opacity-100 flex items-center gap-1 transition-opacity">
+                            <RotateCcw size={10} /> Remove / 削除
+                          </button>
+                        )}
+                      </div>
                       <div className="relative group w-full aspect-square md:w-32 md:h-32 bg-white/[0.05] border border-azure-500/30 flex flex-col items-center justify-center cursor-pointer hover:bg-azure-500/10 transition-all overflow-hidden shadow-[0_0_20px_rgba(59,130,246,0.1)]">
-                         {formData.faceUrl ? (
-                            <img src={formData.faceUrl} alt="Preview" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                         {(formData.faceUrl || isUploading === "face") ? (
+                            <img src={formData.faceUrl === "IMAGE_LARGE" ? "/logo.png" : formData.faceUrl} alt="Preview" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                          ) : (
                             <User size={32} className="opacity-20" />
                          )}
                          <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleImageUpload(e, "face")} />
                          {isUploading === "face" && <div className="absolute inset-0 bg-void/80 flex items-center justify-center"><Loader2 size={24} className="animate-spin text-azure-400" /></div>}
                          <div className="absolute bottom-0 w-full py-2 bg-black/60 backdrop-blur-md">
-                            <p className="text-[8px] text-center uppercase tracking-widest font-bold text-white">Change Photo / 変更する</p>
+                            <p className="text-[7px] text-center uppercase tracking-widest font-bold text-white">Change Photo / 変更する</p>
                          </div>
                       </div>
                       <p className="text-[8px] opacity-20 uppercase tracking-widest">名刺の裏面に大きく表示されます。正方形の写真を推奨。</p>
