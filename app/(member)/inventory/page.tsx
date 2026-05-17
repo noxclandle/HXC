@@ -35,10 +35,11 @@ const CATEGORIES = [
 ];
 
 const RT_PACKS = [
-  { id: "rt_small", price: 1000, rt: 2000, label: "Seed Infusion", description: "少量のRTを注入し、共鳴の端緒を開く。" },
-  { id: "rt_medium", price: 5000, rt: 11000, label: "Orbital Surge", description: "推奨パック。広範なカスタマイズを可能にする。" },
-  { id: "rt_large", price: 10000, rt: 23000, label: "Primordial Pulse", description: "最大限の同調。すべての境界を超える力を得る。" },
+  { id: "rt_small", price: 1000, rt: 2000, label: "2,000 RT Pack", description: "基本的なポイント補充。1回のアセット購入に。" },
+  { id: "rt_medium", price: 5000, rt: 11000, label: "11,000 RT Pack", description: "推奨パック。広範なカスタマイズを可能にします。", popular: true },
+  { id: "rt_large", price: 10000, rt: 23000, label: "23,000 RT Pack", description: "最大限の補充。すべてのアイテムを揃える方に。" },
 ];
+
 
 export default function InventoryPage() {
   const { data: session, status } = useSession();

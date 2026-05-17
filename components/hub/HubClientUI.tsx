@@ -32,7 +32,26 @@ export default function HubClientUI({
         fetch("/api/user/status", { cache: "no-store" }),
         fetch("/api/news", { cache: "no-store" })
       ]);
-      if (statusRes.ok) setRealStatus(await statusRes.json());
+      if (statusRes.ok) {
+        const data = await statusRes.json();
+        
+        // 画像が巨大な場合の非同期取得
+        if (data.photo_url === "IMAGE_LARGE") {
+          fetch("/api/user/resource?type=photo").then(res => res.json()).then(res => {
+            if (res.data) setRealStatus((prev: any) => ({ ...prev, photo_url: res.data }));
+          });
+        }
+        if (data.logo_url === "IMAGE_LARGE") {
+          fetch("/api/user/resource?type=logo").then(res => res.json()).then(res => {
+            if (res.data) setRealStatus((prev: any) => ({ ...prev, logo_url: res.data }));
+          });
+        }
+        
+        setRealStatus((prev: any) => ({ ...prev, ...data, 
+          photo_url: data.photo_url === "IMAGE_LARGE" ? prev?.photo_url : data.photo_url,
+          logo_url: data.logo_url === "IMAGE_LARGE" ? prev?.logo_url : data.logo_url
+        }));
+      }
       if (newsRes.ok) {
         const nData = await newsRes.json();
         if (nData.length > 0) setLatestNews(nData[0]);
@@ -42,6 +61,20 @@ export default function HubClientUI({
       showToast("Sync Failed / 同期エラー", "error");
     }
   }, [showToast]);
+
+  // 初回読み込み時の画像処理
+  useEffect(() => {
+    if (initialStats.photo_url === "IMAGE_LARGE") {
+      fetch("/api/user/resource?type=photo").then(res => res.json()).then(res => {
+        if (res.data) setRealStatus((prev: any) => ({ ...prev, photo_url: res.data }));
+      });
+    }
+    if (initialStats.logo_url === "IMAGE_LARGE") {
+      fetch("/api/user/resource?type=logo").then(res => res.json()).then(res => {
+        if (res.data) setRealStatus((prev: any) => ({ ...prev, logo_url: res.data }));
+      });
+    }
+  }, []);
 
   const handleResonance = async () => {
     setIsResonating(true);
@@ -118,13 +151,15 @@ export default function HubClientUI({
               <p className="text-[9px] uppercase tracking-[0.5em] text-white/30 mb-1">Relation Token</p>
               <div className="flex items-center justify-start md:justify-end gap-4">
                  <p className="text-2xl font-extralight tracking-[0.1em] text-white">{Number(realStats?.rt_balance || 0).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
-                 <Link href="/inventory?purchase=true" className="px-2 py-1 border border-azure-500/30 bg-azure-500/5 text-azure-400 text-[7px] tracking-[0.2em] font-bold uppercase hover:bg-azure-500/10 transition-all">
+                 <Link href="/charge" className="px-2 py-1 border border-azure-500/30 bg-azure-500/5 text-azure-400 text-[7px] tracking-[0.2em] font-bold uppercase hover:bg-azure-500/10 transition-all">
                     Charge / RT購入
                  </Link>
               </div>
               <div className="mt-2 flex justify-start md:justify-end items-center gap-2 opacity-40">
                  <span className="text-[7px] uppercase tracking-widest font-bold">Total EXP</span>
-                 <span className="text-[10px] font-mono tracking-tighter text-white">{Number(realStats?.exp || 0).toLocaleString()}</span>
+                 <span className="text-[10px] font-mono tracking-tighter text-white">
+                   {Number(realStats?.exp || 0).toLocaleString()} / {Number(realStats?.exp_max || 1000).toLocaleString()}
+                 </span>
               </div>
            </div>
         </div>
