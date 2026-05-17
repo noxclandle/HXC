@@ -74,7 +74,7 @@ export default function HubClientUI({
         if (res.data) setRealStatus((prev: any) => ({ ...prev, logo_url: res.data }));
       });
     }
-  }, []);
+  }, [initialStats.logo_url, initialStats.photo_url]);
 
   const handleConnection = async () => {
     setIsResonating(true);
@@ -270,7 +270,7 @@ export default function HubClientUI({
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
-                            onClick={handleResonance}
+                            onClick={handleConnection}
                             disabled={isResonating}
                             className={`mt-4 px-10 py-3 border text-[9px] tracking-[0.4em] uppercase transition-all flex items-center gap-3 mx-auto ${
                               isResonating 

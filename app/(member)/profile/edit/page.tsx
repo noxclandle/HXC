@@ -1,12 +1,21 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Building2, Globe, Shield, Save, ArrowLeft, Languages, Camera, Info, Upload, RotateCcw, Layout, Smartphone, AlignLeft, AlignCenter, AlignRight, Check, Type, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import HexaCardPreview, { Alignment } from "@/components/ui/HexaCardPreview";
 import { useToast } from "@/components/ui/ConnectionToast";
+
+const defaultAlign = {
+  company: "center",
+  title: "center",
+  name: "center",
+  reading: "center",
+  phone: "center",
+  email: "center"
+};
 
 export default function ProfileEditPage() {
   const { data: session } = useSession();
@@ -62,15 +71,6 @@ export default function ProfileEditPage() {
     } finally {
       setIsUploading(null);
     }
-  };
-
-  const defaultAlign = {
-    company: "center",
-    title: "center",
-    name: "center",
-    reading: "center",
-    phone: "center",
-    email: "center"
   };
 
   const [formData, setFormData] = useState({
@@ -178,7 +178,7 @@ export default function ProfileEditPage() {
     setEquipped((prev: any) => ({ ...prev, [key]: scale }));
   };
 
-  const performAutoSave = async (dataToSave: any, equippedToSave: any) => {
+  const performAutoSave = useCallback(async (dataToSave: any, equippedToSave: any) => {
     setSaveStatus("saving");
     try {
       const finalEquipped = {
@@ -218,7 +218,7 @@ export default function ProfileEditPage() {
       setSaveStatus("error");
       showToast("Network Error / 通信エラーが発生しました", "error");
     }
-  };
+  }, [showToast]);
 
   const timerRef = useRef<any>(null);
   useEffect(() => {
@@ -226,7 +226,7 @@ export default function ProfileEditPage() {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => performAutoSave(formData, equipped), 1500);
     return () => clearTimeout(timerRef.current);
-  }, [formData, equipped, isLoaded]);
+  }, [formData, equipped, isLoaded, performAutoSave]);
 
   const currentAligns = formData.orientation === 'horizontal' ? formData.hAlign : formData.vAlign;
 
