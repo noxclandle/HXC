@@ -22,9 +22,9 @@ export async function POST(req: NextRequest) {
     const { packId } = await req.json();
 
     const RT_PACKS: Record<string, { price: number, rt: number, label: string }> = {
-      "rt_small": { price: 1000, rt: 2000, label: "Seed Infusion" },
-      "rt_medium": { price: 5000, rt: 11000, label: "Orbital Surge" },
-      "rt_large": { price: 10000, rt: 23000, label: "Primordial Pulse" },
+      "rt_small": { price: 1000, rt: 2000, label: "2,000 RT Pack" },
+      "rt_medium": { price: 5000, rt: 11000, label: "11,000 RT Pack" },
+      "rt_large": { price: 10000, rt: 23000, label: "23,000 RT Pack" },
     };
 
     const pack = RT_PACKS[packId];

@@ -128,12 +128,12 @@ export default function ResidentAgent() {
                <div className="space-y-2">
                   <div className="flex justify-between text-[7px] tracking-widest uppercase opacity-40">
                     <span>Rank Level {level}</span>
-                    <span>{userExp} EXP</span>
+                    <span>{userExp.toLocaleString()} / 10000 EXP</span>
                   </div>
                   <div className="h-[1px] w-full bg-white/10">
                     <motion.div 
                       initial={{ width: 0 }} 
-                      animate={{ width: `${Math.min(100, (userExp % 100))}%` }} 
+                      animate={{ width: `${Math.min(100, (userExp / 100))}%` }} 
                       className="h-full bg-azure-400 shadow-[0_0_10px_rgba(59,130,246,0.5)]" 
                     />
                   </div>
@@ -143,9 +143,9 @@ export default function ResidentAgent() {
             {/* Navigation Tabs */}
             <div className="flex border-b border-white/5 bg-black/20">
                {[
-                 { id: "portal", label: "Portal", icon: Shield },
-                 { id: "notices", label: "Notice", icon: Bell },
-                 { id: "help", label: "Help", icon: HelpCircle },
+                 { id: "portal", label: "Menu", icon: Shield },
+                 { id: "notices", label: "News", icon: Bell },
+                 { id: "help", label: "Support", icon: HelpCircle },
                ].map((tab) => (
                  <button 
                    key={tab.id}
@@ -208,7 +208,7 @@ export default function ResidentAgent() {
                     </div>
 
                     <div className="space-y-3">
-                      <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">Atmosphere Control</p>
+                      <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">BGM Control</p>
                       <div className="flex gap-2">
                         {[
                           { id: "space", icon: Zap, label: "Space" },
@@ -232,7 +232,7 @@ export default function ResidentAgent() {
 
                 {activeTab === "notices" && (
                   <motion.div key="notices" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="space-y-4">
-                    <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">Archives / お知らせ</p>
+                    <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">News / お知らせ</p>
                     {notices.map((n, i) => (
                       <div key={i} className="p-4 border border-white/5 bg-white/[0.01] space-y-2 group hover:border-white/20 transition-all cursor-default">
                         <div className="flex justify-between items-center">
@@ -247,7 +247,7 @@ export default function ResidentAgent() {
 
                 {activeTab === "help" && (
                   <motion.div key="help" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="space-y-6">
-                    <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">Sacred FAQ / ヘルプ</p>
+                    <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">Support / ヘルプ</p>
                     {helpItems.map((item, i) => (
                       <div key={i} className="space-y-2">
                         <p className="text-[9px] font-bold tracking-widest text-white flex items-center gap-2 uppercase">

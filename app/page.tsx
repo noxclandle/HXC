@@ -46,8 +46,8 @@ export default function LandingPage() {
         transition={{ delay: 0.6, duration: 0.8 }}
         className="text-white/40 max-w-sm mb-16 tracking-[0.2em] text-[10px] md:text-[11px] leading-relaxed uppercase"
       >
-        Permeating the boundaries between physical and virtual.<br />
-        Redefining existence.
+        Connecting physical and digital identities.<br />
+        Redefining business networking.
       </motion.p>
 
       <motion.div
@@ -91,7 +91,7 @@ export default function LandingPage() {
            </div>
            <div className="flex items-center gap-3">
               <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[7px] uppercase tracking-[0.5em] opacity-20 font-bold">Protocol Active / Central Node Online</span>
+              <span className="text-[7px] uppercase tracking-[0.5em] opacity-20 font-bold">System Online / Secure Server Connected</span>
            </div>
         </div>
       </motion.div>

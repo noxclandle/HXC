@@ -71,6 +71,7 @@ export async function getUserStatus(email: string | null | undefined) {
     name: user.name || "ARCHITECT",
     rt_balance: user.rt_balance.toString(),
     exp: isFixer ? "10000" : user.exp.toString(),
+    exp_max: isFixer ? "10000" : "1000", // EXPの上限表示用
     rank: isFixer ? "Fixer" : user.rank,
     role: isFixer ? "fixer" : user.role, // Force role to fixer in UI
     titles: titles,
@@ -79,8 +80,10 @@ export async function getUserStatus(email: string | null | undefined) {
     uid: user.card?.uid || "NO CARD LINKED",
     handle: user.handle_name || "", 
     slug: user.handle_name || user.id,
-    logo_url: user.logo_url || "",
-    photo_url: user.photo_url || "",
+    // 画像がBase64で巨大な場合、初期通信を圧迫するため、
+    // ここではデータの存在有無のみを返し、実際の表示はキャッシュや別ルートで行うよう検討
+    logo_url: user.logo_url && user.logo_url.length > 5000 ? "IMAGE_LARGE" : (user.logo_url || ""),
+    photo_url: user.photo_url && user.photo_url.length > 5000 ? "IMAGE_LARGE" : (user.photo_url || ""),
     equipped: {
       ...equipped,
       frame: equipped.frame || "Obsidian",
