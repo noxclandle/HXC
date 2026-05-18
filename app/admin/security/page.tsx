@@ -114,9 +114,17 @@ export default function AdminSecurityPage() {
               </div>
 
               <div className="pt-6 border-t border-white/5">
-                 <p className="text-[8px] uppercase tracking-widest text-white/20 leading-relaxed italic">
-                    External Monitoring: Sentry Integration Awaiting...
+                 <p className="text-[8px] uppercase tracking-widest text-emerald-400 leading-relaxed italic flex items-center gap-2">
+                    <ShieldCheck size={10} /> External Monitoring: Sentry Active
                  </p>
+                 <a 
+                   href="https://hexarelation.sentry.io/" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   className="mt-2 block text-[7px] text-azure-400 hover:text-white transition-colors tracking-[0.2em] uppercase font-bold"
+                 >
+                    Access Sentry Console →
+                 </a>
               </div>
            </div>
 
