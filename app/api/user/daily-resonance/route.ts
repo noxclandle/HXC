@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { executeRTTransaction } from "@/lib/rt/engine";
+import { rateLimit } from "@/lib/ratelimit";
 
 /**
  * デイリー共鳴（Connection）報酬付与API
@@ -10,8 +11,18 @@ import { executeRTTransaction } from "@/lib/rt/engine";
  */
 export async function POST(req: NextRequest) {
   try {
+    // 門番（レートリミット）のチェック
+    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+    const { success } = await rateLimit.standard.limit(ip);
+
+    if (!success) {
+      return NextResponse.json({ 
+        error: "Syncing too fast. Please wait. / 同期が速すぎます。しばらくお待ちください。" 
+      }, { status: 429 });
+    }
+
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+...
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
