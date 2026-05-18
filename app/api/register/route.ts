@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { executeRTTransaction } from "@/lib/rt/engine";
+import { rateLimit } from "@/lib/ratelimit";
 
 const registerSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -22,6 +23,16 @@ const registerSchema = z.object({
  */
 export async function POST(req: NextRequest) {
   try {
+    // 門番（レートリミット）のチェック
+    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+    const { success } = await rateLimit.strict.limit(ip);
+    
+    if (!success) {
+      return NextResponse.json({ 
+        error: "Too many requests. Please wait a moment. / リクエストが多すぎます。しばらく時間を置いてお試しください。" 
+      }, { status: 429 });
+    }
+
     const body = await req.json();
     const parseResult = registerSchema.safeParse(body);
 

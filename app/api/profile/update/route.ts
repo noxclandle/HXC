@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
+import { rateLimit } from "@/lib/ratelimit";
 
 const profileUpdateSchema = z.object({
   name: z.string().optional(),
@@ -26,6 +27,16 @@ const profileUpdateSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    // 門番（レートリミット）のチェック
+    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+    const { success } = await rateLimit.standard.limit(ip);
+    
+    if (!success) {
+      return NextResponse.json({ 
+        error: "Updating too fast. Please wait. / 更新頻度が高すぎます。少し時間を置いてください。" 
+      }, { status: 429 });
+    }
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
