@@ -2,8 +2,9 @@ import { prisma } from "@/lib/prisma";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 import bcrypt from "bcryptjs";
+import { ADMIN_ROLES } from "./constants";
 
-export const ADMIN_ROLES = ["mastermind", "chief_officer", "architect", "fixer", "manager"];
+export { ADMIN_ROLES };
 
 export const authOptions: NextAuthOptions = {
   providers: [

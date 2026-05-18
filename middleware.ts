@@ -1,6 +1,6 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-import { ADMIN_ROLES } from "@/lib/auth";
+import { ADMIN_ROLES } from "@/lib/constants";
 
 export default withAuth(
   function middleware(req) {
