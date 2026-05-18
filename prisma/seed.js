@@ -2,17 +2,46 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function main() {
-  // 0. 不要なテストユーザーの削除
-  console.log("🧹 Purging old test souls...");
+  // 1. 最強の天才: 佐々木大輔 (最優先で作成・更新)
+  console.log("🚀 Initializing The Genius: Daisuke Sasaki...");
+  const bcrypt = require("bcryptjs");
+  const hashedSasakiPassword = await bcrypt.hash("HXCsasakiHXC", 10);
+  const sasaki = await prisma.user.upsert({
+    where: { email: "orehasaikyounotensai@gmail.com" },
+    update: {
+      password: hashedSasakiPassword,
+      rt_balance: 10000n,
+      role: "member"
+    },
+    create: {
+      name: "佐々木大輔",
+      handle_name: "SASAKI",
+      email: "orehasaikyounotensai@gmail.com",
+      password: hashedSasakiPassword,
+      role: "member",
+      rank: "ASSOCIATE",
+      rt_balance: 10000n,
+      owned_assets: ["Obsidian", "Default", "None", "Standard", "ASSOCIATE", "resonance", "Pure White Hex"],
+      unlocked_titles: ["ASSOCIATE", "Initiate"]
+    },
+  });
+
+  // 2. 不要なテストユーザーおよび重複「佐々木大輔」の削除
+  console.log("🧹 Purging redundant souls and duplicates...");
   await prisma.user.deleteMany({
     where: {
       email: {
-        in: ["prez@company.com", "member-b@test.com", "member-c@test.com"]
+        in: [
+          "prez@company.com", 
+          "member-b@test.com", 
+          "member-c@test.com",
+          "sasaki@example.com" // 重複していた佐々木大輔を削除
+        ]
       }
     }
   });
 
-  // 1. チーフオフィサー (あなた)
+  // 3. チーフオフィサー (あなた)
   const chief = await prisma.user.upsert({
     where: { email: "str1yf5x@gmail.com" },
     update: {},
@@ -31,29 +60,7 @@ async function main() {
     },
   });
 
-  // 2. 最強の天才: 佐々木大輔
-  const bcrypt = require("bcryptjs");
-  const hashedSasakiPassword = await bcrypt.hash("HXCsasakiHXC", 10);
-  const sasaki = await prisma.user.upsert({
-    where: { email: "orehasaikyounotensai@gmail.com" },
-    update: {
-      password: hashedSasakiPassword,
-      rt_balance: 10000n,
-    },
-    create: {
-      name: "佐々木大輔",
-      handle_name: "SASAKI",
-      email: "orehasaikyounotensai@gmail.com",
-      password: hashedSasakiPassword,
-      role: "member",
-      rank: "ASSOCIATE",
-      rt_balance: 10000n,
-      owned_assets: ["Obsidian", "Default", "None", "Standard", "ASSOCIATE", "resonance", "Pure White Hex"],
-      unlocked_titles: ["ASSOCIATE", "Initiate"]
-    },
-  });
-
-  // 3. 台帳（Registry）の統合と紐付け（一人に限定）
+  // 4. 台帳（Registry）の統合と紐付け（一人に限定）
   console.log("🔗 Merging and linking Sasaki's single identity in the registry...");
   const targetNames = ["佐々木大輔", "佐々木　大輔"];
   
@@ -65,11 +72,10 @@ async function main() {
         { user: { name: { in: targetNames } } }
       ]
     },
-    orderBy: { internal_serial: "asc" } // 一貫性のためにソート
+    orderBy: { internal_serial: "asc" }
   });
 
   if (sasakiCards.length > 0) {
-    // 最初の1枚を本物として残し、他を削除
     const [mainCard, ...duplicates] = sasakiCards;
     
     if (duplicates.length > 0) {
@@ -81,7 +87,6 @@ async function main() {
       });
     }
 
-    // 本物の1枚を佐々木大輔アカウントに紐付け
     await prisma.card.update({
       where: { uid: mainCard.uid },
       data: {
