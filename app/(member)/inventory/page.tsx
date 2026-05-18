@@ -95,6 +95,7 @@ function InventoryContent() {
   }, [session, fetchData]);
 
   const handleCommit = async (customEquipped?: any) => {
+    // 楽観的更新: 既にstateは更新済みである前提で、保存中フラグのみ管理
     setIsSaving(true);
     try {
       const res = await fetch("/api/user/equip", {
@@ -103,13 +104,20 @@ function InventoryContent() {
         body: JSON.stringify({ equipped: customEquipped || equipped })
       });
       if (res.ok) {
-        showToast("Saved / 装備を更新しました", "success");
+        // 保存成功時はトーストのみ表示（微かな振動は既に実行済み）
+        showToast("Synchronized / 宝物庫と同期しました", "success");
         window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
       } else {
-        showToast("Error / 保存に失敗しました", "error");
+        throw new Error("Failed to sync");
       }
-    } catch (e) { console.error(e); }
-    finally { setIsSaving(false); }
+    } catch (e) {
+      console.error(e);
+      showToast("Sync Error / 同期に失敗しました。再試行してください。", "error");
+      // 必要に応じてfetchDataを再度呼び出して最新状態に戻す
+      fetchData();
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleUnlock = async (asset: Asset) => {
@@ -141,8 +149,15 @@ function InventoryContent() {
     const isTitleUnlocked = unlockedTitles.includes(asset.id) || profile?.role === "fixer";
 
     if (asset.type === "title" ? isTitleUnlocked : isUnlocked) {
+      // 楽観的更新: APIの返答を待たずにUIを切り替える
       const newEquipped = { ...equipped, [activeCategory as keyof typeof equipped]: asset.id };
       setEquipped(newEquipped);
+      
+      // 指先に伝わるフィードバック（Haptic）
+      if (typeof navigator !== "undefined" && navigator.vibrate) {
+        navigator.vibrate(10);
+      }
+
       handleCommit(newEquipped);
       if (asset.type === "sound") playConnectionSound(asset.id);
     } else {
