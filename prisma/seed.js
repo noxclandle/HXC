@@ -53,22 +53,44 @@ async function main() {
     },
   });
 
-  // 3. 台帳（Registry）の統合と紐付け
-  console.log("🔗 Merging and linking Sasaki's identities in the registry...");
+  // 3. 台帳（Registry）の統合と紐付け（一人に限定）
+  console.log("🔗 Merging and linking Sasaki's single identity in the registry...");
   const targetNames = ["佐々木大輔", "佐々木　大輔"];
   
-  await prisma.card.updateMany({
+  // 対象の名前を持つカードをすべて取得
+  const sasakiCards = await prisma.card.findMany({
     where: {
       OR: [
         { internal_serial: { in: targetNames } },
         { user: { name: { in: targetNames } } }
       ]
     },
-    data: {
-      user_id: sasaki.id,
-      status: "active"
-    }
+    orderBy: { internal_serial: "asc" } // 一貫性のためにソート
   });
+
+  if (sasakiCards.length > 0) {
+    // 最初の1枚を本物として残し、他を削除
+    const [mainCard, ...duplicates] = sasakiCards;
+    
+    if (duplicates.length > 0) {
+      console.log(`🗑️ Deleting ${duplicates.length} duplicate card(s)...`);
+      await prisma.card.deleteMany({
+        where: {
+          uid: { in: duplicates.map(c => c.uid) }
+        }
+      });
+    }
+
+    // 本物の1枚を佐々木大輔アカウントに紐付け
+    await prisma.card.update({
+      where: { uid: mainCard.uid },
+      data: {
+        user_id: sasaki.id,
+        status: "active"
+      }
+    });
+    console.log(`✅ Linked card (UID: ${mainCard.uid}) to Sasaki.`);
+  }
 
   console.log("Seed completed: The Architect and The Genius are now synchronized.");
 }
