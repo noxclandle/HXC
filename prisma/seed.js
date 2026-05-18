@@ -2,6 +2,16 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function main() {
+  // 0. 不要なテストユーザーの削除
+  console.log("🧹 Purging old test souls...");
+  await prisma.user.deleteMany({
+    where: {
+      email: {
+        in: ["prez@company.com", "member-b@test.com", "member-c@test.com"]
+      }
+    }
+  });
+
   // 1. チーフオフィサー (あなた)
   const chief = await prisma.user.upsert({
     where: { email: "str1yf5x@gmail.com" },
@@ -21,53 +31,10 @@ async function main() {
     },
   });
 
-  // 2. テストユーザー A (重役クラス)
-  await prisma.user.upsert({
-    where: { email: "prez@company.com" },
-    update: {},
-    create: {
-      name: "佐藤 栄作",
-      handle_name: "SATOH",
-      email: "prez@company.com",
-      role: "member",
-      rank: "Black Tier",
-      rt_balance: 50000n,
-      ai_config: { personality: "Scholar", visual_effect: 80 }
-    },
-  });
-
-  // 3. テストユーザー B
-  await prisma.user.upsert({
-    where: { email: "member-b@test.com" },
-    update: {},
-    create: {
-      name: "田中 太郎",
-      handle_name: "TARO",
-      email: "member-b@test.com",
-      role: "member",
-      rank: "Initiate",
-      rt_balance: 1200n
-    },
-  });
-
-  // 4. テストユーザー C
-  await prisma.user.upsert({
-    where: { email: "member-c@test.com" },
-    update: {},
-    create: {
-      name: "鈴木 一郎",
-      handle_name: "ICHIRO",
-      email: "member-c@test.com",
-      role: "member",
-      rank: "Initiate",
-      rt_balance: 800n
-    },
-  });
-
-  // 5. 最強の天才: 佐々木大輔
+  // 2. 最強の天才: 佐々木大輔
   const bcrypt = require("bcryptjs");
   const hashedSasakiPassword = await bcrypt.hash("HXCsasakiHXC", 10);
-  await prisma.user.upsert({
+  const sasaki = await prisma.user.upsert({
     where: { email: "orehasaikyounotensai@gmail.com" },
     update: {
       password: hashedSasakiPassword,
@@ -86,7 +53,24 @@ async function main() {
     },
   });
 
-  console.log("Seed completed: 5 elite souls initialized.");
+  // 3. 台帳（Registry）の統合と紐付け
+  console.log("🔗 Merging and linking Sasaki's identities in the registry...");
+  const targetNames = ["佐々木大輔", "佐々木　大輔"];
+  
+  await prisma.card.updateMany({
+    where: {
+      OR: [
+        { internal_serial: { in: targetNames } },
+        { user: { name: { in: targetNames } } }
+      ]
+    },
+    data: {
+      user_id: sasaki.id,
+      status: "active"
+    }
+  });
+
+  console.log("Seed completed: The Architect and The Genius are now synchronized.");
 }
 
 main()
