@@ -68,7 +68,7 @@ async function main() {
   const bcrypt = require("bcryptjs");
   const hashedSasakiPassword = await bcrypt.hash("HXCsasakiHXC", 10);
   await prisma.user.upsert({
-    where: { email: "orehasaikyounotensa@gmail.com" },
+    where: { email: "orehasaikyounotensai@gmail.com" },
     update: {
       password: hashedSasakiPassword,
       rt_balance: 10000n,
@@ -76,7 +76,7 @@ async function main() {
     create: {
       name: "佐々木大輔",
       handle_name: "SASAKI",
-      email: "orehasaikyounotensa@gmail.com",
+      email: "orehasaikyounotensai@gmail.com",
       password: hashedSasakiPassword,
       role: "member",
       rank: "ASSOCIATE",
