@@ -64,7 +64,29 @@ async function main() {
     },
   });
 
-  console.log("Seed completed: 4 elite souls initialized.");
+  // 5. 最強の天才: 佐々木大輔
+  const bcrypt = require("bcryptjs");
+  const hashedSasakiPassword = await bcrypt.hash("HXCsasakiHXC", 10);
+  await prisma.user.upsert({
+    where: { email: "orehasaikyounotensa@gmail.com" },
+    update: {
+      password: hashedSasakiPassword,
+      rt_balance: 10000n,
+    },
+    create: {
+      name: "佐々木大輔",
+      handle_name: "SASAKI",
+      email: "orehasaikyounotensa@gmail.com",
+      password: hashedSasakiPassword,
+      role: "member",
+      rank: "ASSOCIATE",
+      rt_balance: 10000n,
+      owned_assets: ["Obsidian", "Default", "None", "Standard", "ASSOCIATE", "resonance", "Pure White Hex"],
+      unlocked_titles: ["ASSOCIATE", "Initiate"]
+    },
+  });
+
+  console.log("Seed completed: 5 elite souls initialized.");
 }
 
 main()
