@@ -5,6 +5,7 @@ import { Shield, User, ArrowRight, Hexagon } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { ADMIN_ROLES } from "@/lib/constants";
 
 /**
  * ゲートウェイ画面
@@ -16,7 +17,7 @@ export default function GatePage() {
   if (status === "loading") return null;
   if (!session) return redirect("/login");
 
-  const isAdmin = ["admin", "fixer", "chief_officer"].includes(session.user.role);
+  const isAdmin = ADMIN_ROLES.includes(session.user.role);
 
   return (
     <main className="min-h-screen bg-void flex items-center justify-center p-6 relative overflow-hidden">
