@@ -34,7 +34,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
     trySoulLink();
   }, [isOwner]);
 
-  const handleSaveContact = () => {
+  const handleSaveContact = async () => {
     if (!data) return;
 
     // iPhone向けの高級感のある振動
@@ -42,15 +42,34 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
       navigator.vibrate([30, 10, 30]);
     }
 
+    let photoBase64 = "";
+    if (data.photo_url) {
+      if (data.photo_url.startsWith("data:image/")) {
+        photoBase64 = data.photo_url.split(",")[1];
+      } else if (data.photo_url.startsWith("http")) {
+        try {
+          // R2等の外部URLから画像を取得してBase64に変換
+          const response = await fetch(data.photo_url);
+          const blob = await response.blob();
+          photoBase64 = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const base64 = (reader.result as string).split(",")[1];
+              resolve(base64);
+            };
+            reader.readAsDataURL(blob);
+          });
+        } catch (e) {
+          console.error("Failed to fetch photo for vCard:", e);
+        }
+      }
+    }
+
     let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${data.name || "MEMBER"}\nN:${data.name || ""};;;;\nTEL;TYPE=CELL:${data.phone || ""}\nEMAIL;TYPE=INTERNET:${data.profile.contact_email || data.email || ""}\nORG:${data.profile?.company || ""}\nTITLE:${data.profile?.title || ""}`;
 
-    if (data.photo_url && data.photo_url.startsWith('data:image/')) {
-      try {
-        const parts = data.photo_url.split(',');
-        const base64Data = parts[1];
-        // iOSで最も認識率が高いフォーマットに変更
-        vcard += `\nPHOTO;TYPE=JPEG;ENCODING=BASE64:${base64Data}`;
-      } catch (e) { console.error("vCard Photo Error:", e); }
+    if (photoBase64) {
+      // iOSで最も認識率が高いフォーマットに変更
+      vcard += `\nPHOTO;TYPE=JPEG;ENCODING=BASE64:${photoBase64}`;
     }
 
     vcard += `\nEND:VCARD`;
@@ -59,7 +78,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${data.handle_name || data.name || 'contact'}.vcf`;
+    a.download = `${data.handle_name || data.name || "contact"}.vcf`;
     a.click();
   };
 

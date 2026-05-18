@@ -218,9 +218,19 @@ export default function ScanPage() {
         )}
 
         {status === "processing" && (
-          <motion.div key="processing" className="flex flex-col items-center">
-            <Loader2 className="animate-spin mb-8 opacity-20" size={32} />
-            <h2 className="text-[10px] tracking-[0.5em] uppercase opacity-40">Extracting Metadata</h2>
+          <motion.div key="processing" className="flex flex-col items-center space-y-12 relative">
+            <div className="relative w-64 h-40 border border-white/10 bg-white/[0.02] flex items-center justify-center overflow-hidden">
+               <motion.div 
+                 animate={{ top: ["0%", "100%", "0%"] }}
+                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                 className="absolute left-0 right-0 h-[1px] bg-azure-400 shadow-[0_0_15px_rgba(59,130,246,0.5)] z-20"
+               />
+               <Loader2 className="animate-spin opacity-20 text-white" size={32} />
+            </div>
+            <div className="text-center space-y-4">
+              <h2 className="text-[10px] tracking-[0.5em] uppercase text-azure-400 font-bold">Extracting Identity</h2>
+              <p className="text-[8px] tracking-[0.3em] uppercase opacity-30 italic">Permeating the boundary of the physical card...</p>
+            </div>
           </motion.div>
         )}
 

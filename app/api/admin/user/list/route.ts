@@ -35,14 +35,17 @@ export async function GET(req: NextRequest) {
       orderBy: { created_at: "desc" },
     });
 
-    // BigInt のシリアライズ問題を回避するため、文字列に変換
-    const safeUsers = users.map((u) => ({
-      ...u,
-      rt: u.rt_balance.toString(),
-      exp: u.exp.toString(),
-      card_uid: u.card?.uid || null,
-      card_serial: u.card?.internal_serial || null
-    }));
+    // BigInt のシリアライズ問題を回避するため、文字列に変換し、元のBigIntフィールドを除去
+    const safeUsers = users.map((u) => {
+      const { rt_balance, exp, ...rest } = u;
+      return {
+        ...rest,
+        rt: rt_balance.toString(),
+        exp: exp.toString(),
+        card_uid: u.card?.uid || null,
+        card_serial: u.card?.internal_serial || null
+      };
+    });
 
     return NextResponse.json(safeUsers);
   } catch (error: any) {

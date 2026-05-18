@@ -1,5 +1,4 @@
-const CACHE_NAME = 'hxc-cache-v1';
-const OFFLINE_URL = '/offline.html';
+const CACHE_NAME = 'hxc-cache-v2';
 
 const ASSETS_TO_CACHE = [
   '/',
@@ -10,16 +9,16 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
-  (event as any).waitUntil(
+  event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
-  (self as any).skipWaiting();
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-  (event as any).waitUntil(
+  event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
@@ -32,18 +31,23 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-self.addEventListener('fetch', (event: any) => {
+self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Profile API caching: Cache first, then fallback to network but update cache
-  if (url.pathname.startsWith('/api/profile/')) {
+  // API Caching Strategy: Stale-While-Revalidate
+  // Cache /api/profile/ (Public Profiles) and /api/user/status (Owner Data)
+  if (url.pathname.startsWith('/api/profile/') || url.pathname === '/api/user/status') {
     event.respondWith(
       caches.open(CACHE_NAME).then((cache) => {
         return cache.match(request).then((response) => {
           const fetchPromise = fetch(request).then((networkResponse) => {
-            cache.put(request, networkResponse.clone());
+            if (networkResponse.ok) {
+              cache.put(request, networkResponse.clone());
+            }
             return networkResponse;
+          }).catch(() => {
+            // If network fails, the matched response will be returned
           });
           return response || fetchPromise;
         });
@@ -52,7 +56,7 @@ self.addEventListener('fetch', (event: any) => {
     return;
   }
 
-  // Default strategy: Network first, then cache
+  // Page and Asset Strategy: Network First, Fallback to Cache
   event.respondWith(
     fetch(request).catch(() => {
       return caches.match(request);
