@@ -23,11 +23,18 @@ export async function GET() {
       prisma.report.findMany(),
     ]);
 
+    // BigIntのシリアライズ問題を解決
+    const safeUsers = users.map(u => ({
+      ...u,
+      rt_balance: u.rt_balance.toString(),
+      exp: u.exp.toString()
+    }));
+
     const backupData = {
       timestamp: new Date().toISOString(),
       version: "1.0.0",
       data: {
-        users,
+        users: safeUsers,
         orders,
         inquiries,
         reports

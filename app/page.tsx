@@ -23,7 +23,8 @@ export default function LandingPage() {
            <Image 
              src="/logo.png" 
              alt="Hexa Relation Logo" 
-             fill
+             width={240}
+             height={240}
              priority
              className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]" 
            />

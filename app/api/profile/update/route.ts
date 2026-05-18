@@ -9,14 +9,14 @@ const profileUpdateSchema = z.object({
   name: z.string().optional(),
   reading: z.string().optional(),
   title: z.string().optional(),
-  website: z.string().url().or(z.literal("")).optional(),
+  website: z.string().optional().or(z.literal("")),
   bio: z.string().optional(),
   company: z.string().optional(),
-  photo_url: z.string().optional(),
-  logo_url: z.string().optional(),
+  photo_url: z.string().optional().or(z.literal("")),
+  logo_url: z.string().optional().or(z.literal("")),
   orientation: z.string().optional(),
   phone: z.string().optional(),
-  email: z.string().email().or(z.literal("")).optional(),
+  email: z.string().optional().or(z.literal("")),
   hAlign: z.string().optional(),
   vAlign: z.string().optional(),
   link_x: z.string().optional(),
@@ -28,9 +28,10 @@ const profileUpdateSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     // 門番（レートリミット）のチェック
-    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+    const forwarded = req.headers.get("x-forwarded-for");
+    const ip = forwarded ? forwarded.split(/, /)[0] : "127.0.0.1";
     const { success } = await rateLimit.standard.limit(ip);
-    
+
     if (!success) {
       return NextResponse.json({ 
         error: "Updating too fast. Please wait. / 更新頻度が高すぎます。少し時間を置いてください。" 

@@ -57,6 +57,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // BigIntのシリアライズ問題を解決
+    const safeUser = {
+      ...updatedUser,
+      rt_balance: updatedUser.rt_balance.toString(),
+      exp: updatedUser.exp.toString()
+    };
+
     // 監査ログに記録（誰が誰を書き換えたか）
     await prisma.auditLog.create({
       data: {
@@ -66,7 +73,7 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    return NextResponse.json({ success: true, user: updatedUser });
+    return NextResponse.json({ success: true, user: safeUser });
   } catch (error: any) {
     console.error("Master override error:", error);
     return NextResponse.json({ error: "Failed to override soul record." }, { status: 500 });
