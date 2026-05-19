@@ -73,23 +73,28 @@ export default function HubClientUI({
           navigator.vibrate([15]);
         }
         
-        // Success: Button will vanish due to fetchData updating isBonusAvailable
         setMood('stable');
         setIsResonating(false);
       } else {
         if (data.error === "Already resonated today.") {
-          await fetchData(); // To hide the button
+          await fetchData();
           setMood('stable');
         } else {
-          showToast("Sync Failed / 境界との同期に失敗しました", "error");
+          // 詳細なエラーを表示するように変更
+          const errorMsg = data.error || "Sync Failed / 境界との同期に失敗しました";
+          const errorDetail = data.details ? ` / ${data.details}` : "";
+          showToast(errorMsg + errorDetail, "error");
           setMood('unstable');
+          // 一応データを再取得してみる
+          await fetchData();
         }
         setIsResonating(false);
       }
-    } catch (e) {
+    } catch (e: any) {
       setMood('unstable');
       setIsResonating(false);
-      showToast("Sync Failed / 境界との同期に失敗しました", "error");
+      showToast(e.message || "Sync Failed / 境界との同期に失敗しました", "error");
+      await fetchData();
     }
   };
 
