@@ -172,29 +172,6 @@ export default function RegistryPage() {
     alert(`書き込み用URLをコピーしました:\n${url}\n\nこれをNFC Tools等のアプリでカードに書き込んでください。`);
   };
 
-  const startProvisioning = async () => {
-    if (!("NDEFReader" in window)) {
-      alert("WebNFCはこのブラウザ/デバイスではサポートされていません。Android Chrome等でお試しください。");
-      return;
-    }
-
-    try {
-      const ndef = new (window as any).NDEFReader();
-      await ndef.scan();
-      alert("プロビジョニングモード開始：カードをかざしてください...");
-
-      ndef.addEventListener("reading", ({ message, serialNumber }: any) => {
-        const uid = serialNumber.toUpperCase().replace(/:/g, "");
-        const serial = generateRandomSerial(cards);
-        setNewCard({ uid, serial });
-        alert(`カードを検知しました:\nUID: ${uid}\nシリアルを自動生成しました。`);
-      });
-    } catch (error) {
-      console.error("WebNFC Error:", error);
-      alert("NFCの読み取りに失敗しました。権限を確認してください。");
-    }
-  };
-
   return (
     <div className="max-w-7xl mx-auto p-12 bg-void text-moonlight min-h-screen">
       <header className="mb-12 border-b border-moonlight/10 pb-8 flex justify-between items-end">
@@ -323,13 +300,6 @@ export default function RegistryPage() {
             <p className="text-[8px] tracking-widest opacity-30">物理UIDとシリアル番号を紐付けてシステムに登録します。</p>
           </div>
           <div className="flex gap-4">
-            <button 
-              onClick={startProvisioning}
-              className="px-6 py-2 border border-amber-500/30 text-amber-500 text-[8px] uppercase tracking-widest hover:bg-amber-500/10 transition-all flex items-center gap-2"
-            >
-              <RotateCcw size={12} className="animate-spin-slow" />
-              NFC Provisioning Mode
-            </button>
             {newCard.uid && (
               <button 
                 onClick={copyWriteUrl}

@@ -30,3 +30,4 @@ The brand identity is a blend of High-end/Luxury, Cyber/Tech, and Minimal/Chic, 
 ## Workspace Integrity
 *   **Professional Cleanliness:** Do not leave temporary files, logs, or "junk" files (e.g., `.txt`, `.html`) in the root directory. Use `.gitignore` for local-only files.
 *   **Brand Consistency:** Use `grep` or similar tools to ensure forbidden words (聖域, 深淵, etc.) are not introduced in copy or mock data.
+*   **Absolute iOS Compatibility:** NEVER implement features that only work on Android (e.g., WebNFC). The primary user and target audience use iPhones. Any feature that cannot be executed on iOS/Safari must be discarded or replaced with a cross-platform solution.
