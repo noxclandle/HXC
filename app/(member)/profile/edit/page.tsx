@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Building2, Globe, Shield, Save, ArrowLeft, Languages, Camera, Info, Upload, RotateCcw, Layout, Smartphone, AlignLeft, AlignCenter, AlignRight, Check, Type, Loader2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 import HexaCardPreview, { Alignment } from "@/components/ui/HexaCardPreview";
 import { useToast } from "@/components/ui/ConnectionToast";
@@ -30,7 +31,7 @@ export default function ProfileEditPage() {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = (event) => {
-        const img = new Image();
+        const img = new window.Image();
         img.src = event.target?.result as string;
         img.onload = () => {
           const canvas = document.createElement("canvas");
@@ -404,7 +405,7 @@ export default function ProfileEditPage() {
                       </div>
                       <div className="relative group w-full aspect-video md:w-48 md:h-32 bg-white/[0.05] border border-azure-500/30 flex flex-col items-center justify-center cursor-pointer hover:bg-azure-500/10 transition-all overflow-hidden shadow-[0_0_20px_rgba(59,130,246,0.1)]">
                          {(formData.logoUrl || isUploading === "logo") ? (
-                            <img src={formData.logoUrl === "IMAGE_LARGE" ? "/logo.png" : formData.logoUrl} alt="Preview" className="w-full h-full object-contain p-4 opacity-80 group-hover:opacity-100 transition-opacity" />
+                            <Image src={formData.logoUrl === "IMAGE_LARGE" ? "/logo.png" : formData.logoUrl} alt="Preview" fill className="object-contain p-4 opacity-80 group-hover:opacity-100 transition-opacity" />
                          ) : (
                             <Building2 size={32} className="opacity-20" />
                          )}
@@ -465,7 +466,7 @@ export default function ProfileEditPage() {
                       </div>
                       <div className="relative group w-full aspect-square md:w-32 md:h-32 bg-white/[0.05] border border-azure-500/30 flex flex-col items-center justify-center cursor-pointer hover:bg-azure-500/10 transition-all overflow-hidden shadow-[0_0_20px_rgba(59,130,246,0.1)]">
                          {(formData.faceUrl || isUploading === "face") ? (
-                            <img src={formData.faceUrl === "IMAGE_LARGE" ? "/logo.png" : formData.faceUrl} alt="Preview" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                            <Image src={formData.faceUrl === "IMAGE_LARGE" ? "/logo.png" : formData.faceUrl} alt="Preview" fill className="object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                          ) : (
                             <User size={32} className="opacity-20" />
                          )}
