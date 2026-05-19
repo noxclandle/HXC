@@ -343,7 +343,7 @@ export default function HubClientUI({
                      onClick={() => setSelectedNews(null)}
                      className="px-8 py-3 border border-white/10 text-[9px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all text-white/40 hover:text-white"
                    >
-                      Acknowledge
+                      Observation / 観測
                    </button>
                 </div>
               </motion.div>

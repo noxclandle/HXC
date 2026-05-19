@@ -20,7 +20,24 @@ import { redirect } from "next/navigation";
 export const dynamic = "force-dynamic";
 
 interface Asset {
-...
+  id: string;
+  name: string;
+  type: "frame" | "sound" | "effect" | "angel" | "title" | "pointer" | "background" | "fontFamily" | "aura";
+  rarity: "common" | "rare" | "epic" | "legendary" | "mythic";
+  description: string;
+  unlocked: boolean;
+  cost?: number;
+}
+const CATEGORIES = [
+  { id: "frame", name: "Frames", icon: Shield, sub: "外枠" },
+  { id: "aura", name: "Auras", icon: Zap, sub: "オーラ" },
+  { id: "background", name: "Backgrounds", icon: Palette, sub: "背景" },
+  { id: "effect", name: "Effects", icon: Sparkles, sub: "エフェクト" },
+  { id: "title", name: "Titles / 称号", icon: Trophy, sub: "称号" },
+  { id: "pointer", name: "Pointers", icon: MousePointer2, sub: "軌跡" },
+  { id: "sound", name: "Sounds", icon: Music, sub: "音響" },
+];
+
 const RT_PACKS = [
   { id: "rt_small", price: 1000, rt: 2000, label: "2,000 RT Pack", description: "基本的なポイント補充。1回のアセット購入に。" },
   { id: "rt_medium", price: 5000, rt: 11000, label: "11,000 RT Pack", description: "推奨パック。広範なカスタマイズを可能にします。", popular: true },
