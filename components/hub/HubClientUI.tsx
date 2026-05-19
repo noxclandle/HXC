@@ -25,6 +25,7 @@ export default function HubClientUI({
   const [isResonating, setIsResonating] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [greeting, setGreeting] = useState("");
+  const [selectedNews, setSelectedNews] = useState<any>(null);
 
   const isBonusAvailable = !realStats?.last_daily_at || new Date(realStats.last_daily_at).toDateString() !== new Date().toDateString();
 
@@ -216,21 +217,24 @@ export default function HubClientUI({
                          <span className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
                        )}
                     </div>
-                    <div className="relative z-10 py-4">
-                      <GeometricAngel level={Math.floor(Math.sqrt(Number(realStats?.exp || 0) / 10)) + 1} mood={mood} size={180} />
-                      
-                      {/* Speech Bubble for News/Alerts */}
-                      <motion.div 
-                        initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        className="absolute -top-4 -right-12 bg-white/10 backdrop-blur-md border border-white/10 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl pointer-events-none"
-                      >
-                         <p className="text-[7px] uppercase tracking-widest text-azure-400 font-bold mb-1 italic">Notice</p>
-                         <p className="text-[9px] leading-tight text-white/80 line-clamp-2">
-                           {latestNews ? latestNews.title : greeting}
-                         </p>
-                      </motion.div>
-                    </div>
+                      <div className="relative z-10 py-4">
+                        <GeometricAngel level={Math.floor(Math.sqrt(Number(realStats?.exp || 0) / 10)) + 1} mood={mood} size={180} />
+                        
+                        {/* Speech Bubble for News/Alerts */}
+                        <motion.button 
+                          onClick={() => latestNews && setSelectedNews(latestNews)}
+                          initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          className={`absolute -top-4 -right-12 bg-white/10 backdrop-blur-md border border-white/10 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl text-left transition-all ${latestNews ? 'cursor-pointer hover:bg-white/20 active:scale-95' : 'pointer-events-none'}`}
+                        >
+                           <p className="text-[7px] uppercase tracking-widest text-azure-400 font-bold mb-1 italic">
+                             {latestNews?.category || "Notice"}
+                           </p>
+                           <p className="text-[9px] leading-tight text-white/80 line-clamp-2 font-medium">
+                             {latestNews ? latestNews.title : greeting}
+                           </p>
+                        </motion.button>
+                      </div>
                     
                     <div className="space-y-2 relative z-10 w-full min-h-[80px] flex flex-col justify-center">
                       <AnimatePresence mode="wait">
@@ -291,6 +295,61 @@ export default function HubClientUI({
            </div>
           </aside>
         </div>
+
+        {/* Announcement Detail Modal */}
+        <AnimatePresence>
+          {selectedNews && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+                onClick={() => setSelectedNews(null)}
+                className="absolute inset-0 bg-void/90 backdrop-blur-md" 
+              />
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="relative w-full max-w-lg bg-gothic-dark border border-white/10 p-8 shadow-2xl overflow-hidden"
+              >
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent" />
+                
+                <header className="mb-8">
+                   <div className="flex justify-between items-start mb-4">
+                      <span className="text-[8px] tracking-[0.4em] uppercase font-bold text-azure-400 bg-azure-500/10 px-2 py-1 border border-azure-500/20">
+                         {selectedNews.category || "Notice"}
+                      </span>
+                      <button onClick={() => setSelectedNews(null)} className="opacity-40 hover:opacity-100 transition-opacity">
+                         <ChevronRight size={20} className="rotate-90" />
+                      </button>
+                   </div>
+                   <h2 className="text-xl tracking-widest uppercase font-light text-white leading-relaxed">
+                      {selectedNews.title}
+                   </h2>
+                   <div className="mt-2 text-[8px] tracking-widest opacity-20 uppercase font-mono">
+                      Published: {new Date(selectedNews.created_at).toLocaleDateString()}
+                   </div>
+                </header>
+
+                <div className="space-y-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                   <p className="text-xs leading-relaxed tracking-widest text-white/70 whitespace-pre-wrap">
+                      {selectedNews.content}
+                   </p>
+                </div>
+
+                <div className="mt-12 flex justify-end">
+                   <button 
+                     onClick={() => setSelectedNews(null)}
+                     className="px-8 py-3 border border-white/10 text-[9px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all text-white/40 hover:text-white"
+                   >
+                      Acknowledge
+                   </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
     </div>
   );
 }

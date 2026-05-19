@@ -113,14 +113,14 @@ export default function RegistryPage() {
     const currentYear = new Date().getFullYear().toString();
     let version = 1; // 01からスタートするように変更
     
-    const usedSerials = new Set(existingCards.map(c => c.internal_serial));
+    const usedSerials = new Set(existingCards.map(c => c.serial).filter(Boolean));
 
     while (version < 100) {
       const vStr = version.toString().padStart(2, '0');
       const prefix = `${vStr}${currentYear}`;
       
       // このバージョンの使用数をチェック
-      const countInVersion = existingCards.filter(c => c.internal_serial.startsWith(prefix)).length;
+      const countInVersion = existingCards.filter(c => c.serial && c.serial.startsWith(prefix)).length;
 
       if (countInVersion < 100000) {
         let attempts = 0;
