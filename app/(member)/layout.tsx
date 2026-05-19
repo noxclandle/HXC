@@ -1,4 +1,5 @@
 import ResidentAgent from "@/components/agent/ResidentAgent";
+import HiddenRTMonitor from "@/components/ui/HiddenRTMonitor";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -22,6 +23,7 @@ export default function MemberLayout({
       </nav>
       <main className="pb-24">{children}</main>
       <ResidentAgent />
+      <HiddenRTMonitor />
     </div>
   );
 }
