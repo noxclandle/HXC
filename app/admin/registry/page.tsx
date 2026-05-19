@@ -110,21 +110,19 @@ export default function RegistryPage() {
   };
 
   const generateRandomSerial = (existingCards: Card[]) => {
-    const year = "2026";
-    let version = 0;
+    const currentYear = new Date().getFullYear().toString();
+    let version = 1; // 01からスタートするように変更
     
-    // 現在の台帳から使用済みのシリアルを抽出
     const usedSerials = new Set(existingCards.map(c => c.internal_serial));
 
     while (version < 100) {
       const vStr = version.toString().padStart(2, '0');
-      const prefix = `${vStr}${year}`;
+      const prefix = `${vStr}${currentYear}`;
       
-      // このバージョンの使用数をカウント
+      // このバージョンの使用数をチェック
       const countInVersion = existingCards.filter(c => c.internal_serial.startsWith(prefix)).length;
 
       if (countInVersion < 100000) {
-        // 5桁の乱数を生成（重複があればリトライ）
         let attempts = 0;
         while (attempts < 1000) {
           const randomSuffix = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
@@ -138,7 +136,7 @@ export default function RegistryPage() {
       }
       version++;
     }
-    return "OVERFLOW"; // 1000万枚を超えた場合
+    return "OVERFLOW";
   };
 
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : "https://hxc.hexa-relation.com";
