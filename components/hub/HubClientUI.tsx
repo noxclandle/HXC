@@ -25,6 +25,8 @@ export default function HubClientUI({
   const [isResonating, setIsResonating] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [bubbleDismissed, setBubbleDismissed] = useState(false);
+  const [greeting, setGreeting] = useState("");
+  const [selectedNews, setSelectedNews] = useState<any>(null);
 
   const isBonusAvailable = !realStats?.last_daily_at || new Date(realStats.last_daily_at).toDateString() !== new Date().toDateString();
 
@@ -109,6 +111,11 @@ export default function HubClientUI({
       else setGreeting("こんばんは。");
     }
   }, [isBonusAvailable]);
+
+  const closeGuide = () => {
+    setShowGuide(false);
+    localStorage.setItem("hxc-guide-seen", "true");
+  };
 
   const markAsRead = async () => {
     if (!latestNews) return;
