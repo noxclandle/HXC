@@ -127,9 +127,10 @@ export default function HubClientUI({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newsId: latestNews.id })
       });
-      // ステータスを更新して赤い点を消す
       await fetchData();
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -251,7 +252,6 @@ export default function HubClientUI({
                                 markAsRead();
                               }}
                               initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                        ...
                               animate={{ opacity: 1, scale: 1, y: 0 }}
                               exit={{ opacity: 0, scale: 0.8, y: 10 }}
                               className="absolute -top-4 -right-12 bg-white/10 backdrop-blur-md border border-white/10 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl text-left transition-all cursor-pointer hover:bg-white/20 active:scale-95"
