@@ -29,6 +29,7 @@ export default function HubClientUI({
   const isBonusAvailable = !realStats?.last_daily_at || new Date(realStats.last_daily_at).toDateString() !== new Date().toDateString();
 
   const fetchData = useCallback(async () => {
+    // 初回読み込み時はサーバーからのデータを既に使用しているためスキップ
     try {
       const [statusRes, newsRes] = await Promise.all([
         fetch("/api/user/status", { cache: "no-store" }),
@@ -36,23 +37,7 @@ export default function HubClientUI({
       ]);
       if (statusRes.ok) {
         const data = await statusRes.json();
-        
-        // 画像が巨大な場合の非同期取得
-        if (data.photo_url === "IMAGE_LARGE") {
-          fetch("/api/user/resource?type=photo").then(res => res.json()).then(res => {
-            if (res.data) setRealStatus((prev: any) => ({ ...prev, photo_url: res.data }));
-          });
-        }
-        if (data.logo_url === "IMAGE_LARGE") {
-          fetch("/api/user/resource?type=logo").then(res => res.json()).then(res => {
-            if (res.data) setRealStatus((prev: any) => ({ ...prev, logo_url: res.data }));
-          });
-        }
-        
-        setRealStatus((prev: any) => ({ ...prev, ...data, 
-          photo_url: data.photo_url === "IMAGE_LARGE" ? prev?.photo_url : data.photo_url,
-          logo_url: data.logo_url === "IMAGE_LARGE" ? prev?.logo_url : data.logo_url
-        }));
+        setRealStatus((prev: any) => ({ ...prev, ...data }));
       }
       if (newsRes.ok) {
         const nData = await newsRes.json();
@@ -60,23 +45,14 @@ export default function HubClientUI({
       }
     } catch (err) { 
       console.error(err);
-      showToast("Sync Failed / 同期エラー", "error");
     }
-  }, [showToast]);
+  }, []);
 
-  // 初回読み込み時の画像処理
   useEffect(() => {
-    if (initialStats.photo_url === "IMAGE_LARGE") {
-      fetch("/api/user/resource?type=photo").then(res => res.json()).then(res => {
-        if (res.data) setRealStatus((prev: any) => ({ ...prev, photo_url: res.data }));
-      });
-    }
-    if (initialStats.logo_url === "IMAGE_LARGE") {
-      fetch("/api/user/resource?type=logo").then(res => res.json()).then(res => {
-        if (res.data) setRealStatus((prev: any) => ({ ...prev, logo_url: res.data }));
-      });
-    }
-  }, [initialStats.logo_url, initialStats.photo_url]);
+    const handleUpdate = () => fetchData();
+    window.addEventListener("hxc-assets-updated", handleUpdate);
+    return () => window.removeEventListener("hxc-assets-updated", handleUpdate);
+  }, [fetchData]);
 
   const handleConnection = async () => {
     setIsResonating(true);
@@ -114,17 +90,6 @@ export default function HubClientUI({
       showToast("Bonus Failed / 受取失敗", "error");
     }
   };
-
-  useEffect(() => {
-    const hasSeenGuide = localStorage.getItem("hxc-guide-seen");
-    if (!hasSeenGuide) {
-      setShowGuide(true);
-    }
-
-    const handleUpdate = () => fetchData();
-    window.addEventListener("hxc-assets-updated", handleUpdate);
-    return () => window.removeEventListener("hxc-assets-updated", handleUpdate);
-  }, [fetchData]);
 
   useEffect(() => {
     if (isBonusAvailable) {

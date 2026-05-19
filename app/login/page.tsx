@@ -76,7 +76,14 @@ export default function LoginPage() {
         className="w-full max-w-sm relative z-10"
       >
         <div className="flex flex-col items-center mb-16 text-center">
-          <img src="/logo.png" alt="Logo" className="w-20 h-20 opacity-40 mb-10 hover:opacity-100 transition-opacity duration-1000" />
+          <Image 
+            src="/logo.png" 
+            alt="Logo" 
+            width={80} 
+            height={80} 
+            priority
+            className="opacity-40 mb-10 hover:opacity-100 transition-opacity duration-1000 object-contain" 
+          />
           <h1 className="text-2xl tracking-[0.8em] uppercase font-extralight mb-2">Sign In</h1>
           <p className="text-[8px] tracking-[0.4em] opacity-20 uppercase font-bold">認証プロセス</p>
         </div>

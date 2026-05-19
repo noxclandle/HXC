@@ -26,6 +26,7 @@ export default function LandingPage() {
              width={240}
              height={240}
              priority
+             fetchPriority="high"
              className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]" 
            />
         </div>
