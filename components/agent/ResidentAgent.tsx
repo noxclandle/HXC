@@ -130,11 +130,12 @@ export default function ResidentAgent() {
         window.dispatchEvent(new CustomEvent("rt-grace-received"));
         window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
       } else {
-        const errMsg = data.error === "Already resonated today." 
-          ? "Already Received / 本日は既に受信済みです" 
-          : "Sync Failed / 境界との同期に失敗しました";
-        showToast(errMsg, "error");
-        if (data.error === "Already resonated today.") setHasDaily(true);
+        if (data.error === "Already resonated today.") {
+          setHasDaily(true);
+          // Silent update, no toast
+        } else {
+          showToast("Sync Failed / 境界との同期に失敗しました", "error");
+        }
       }
     } catch (e) { 
       console.error(e);
@@ -233,7 +234,7 @@ export default function ResidentAgent() {
                       <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">Menu</p>
                       
                       <AnimatePresence mode="wait">
-                        {!hasDaily ? (
+                        {!hasDaily && (
                           <motion.button 
                             key="bonus-btn"
                             initial={{ opacity: 0, height: 0 }}
@@ -248,16 +249,6 @@ export default function ResidentAgent() {
                              </div>
                              <ChevronRight size={14}/>
                           </motion.button>
-                        ) : (
-                          <motion.div 
-                            key="bonus-claimed"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="w-full p-3 border border-white/5 bg-white/[0.01] flex items-center justify-center gap-2"
-                          >
-                             <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
-                             <span className="text-[8px] tracking-[0.3em] uppercase opacity-30 font-bold">Resonance Synchronized / 同期完了</span>
-                          </motion.div>
                         )}
                       </AnimatePresence>
 

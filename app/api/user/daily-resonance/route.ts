@@ -55,27 +55,67 @@ export async function POST(req: NextRequest) {
     // 報酬額の設定
     const RT_REWARD = 100;
 
-    // executeRTTransactionを使用してRTとEXPを更新（earnタイプは自動的にEXPも付与する）
-    const { user: updatedUser } = await executeRTTransaction(
-      userId,
-      RT_REWARD,
-      "earn",
-      "Daily Bonus Reward"
-    );
+    // トランザクションでRT付与と日付更新を同時に行う
+    const result = await prisma.$transaction(async (tx) => {
+      // 再度チェック（レースコンディション防止）
+      const checkUser = await tx.user.findUnique({
+        where: { id: userId },
+        select: { last_daily_at: true }
+      });
 
-    // last_daily_atの更新
-    await prisma.user.update({
-      where: { id: userId },
-      data: { last_daily_at: now }
+      const checkLastDaily = checkUser?.last_daily_at ? new Date(checkUser.last_daily_at) : null;
+      const checkIsSameDay = checkLastDaily && 
+        checkLastDaily.getFullYear() === now.getFullYear() &&
+        checkLastDaily.getMonth() === now.getMonth() &&
+        checkLastDaily.getDate() === now.getDate();
+
+      if (checkIsSameDay) {
+        throw new Error("ALREADY_RESONATED");
+      }
+
+      // executeRTTransactionは内部で$transactionを使っているが、
+      // Prismaはネストされたトランザクションをサポートしている（またはこのロジックをここに展開する）
+      // ここではロジックを安全に統合する
+      const currentUser = await tx.user.findUnique({
+        where: { id: userId },
+        select: { rt_balance: true }
+      });
+
+      if (!currentUser) throw new Error("USER_NOT_FOUND");
+
+      const newBalance = currentUser.rt_balance + BigInt(RT_REWARD);
+
+      const updatedUser = await tx.user.update({
+        where: { id: userId },
+        data: {
+          rt_balance: newBalance,
+          exp: { increment: BigInt(RT_REWARD) },
+          last_daily_at: now
+        },
+      });
+
+      await tx.rTTransaction.create({
+        data: {
+          user_id: userId,
+          amount: RT_REWARD,
+          type: "earn",
+          description: "Daily Resonance Bonus / デイリー共鳴報酬",
+        },
+      });
+
+      return updatedUser;
     });
 
     return NextResponse.json({ 
       success: true, 
       added_rt: RT_REWARD, 
-      new_balance: Number(updatedUser.rt_balance)
+      new_balance: Number(result.rt_balance)
     });
 
   } catch (error: any) {
+    if (error.message === "ALREADY_RESONATED") {
+      return NextResponse.json({ error: "Already resonated today." }, { status: 400 });
+    }
     console.error("Connection Error:", error);
     return NextResponse.json({ error: "Failed to connect with the core." }, { status: 500 });
   }
