@@ -16,11 +16,33 @@ export default function ResidentAgent() {
   const [rtBalance, setRtBalance] = useState("0");
   const [isSoulLinked, setIsSoulLinked] = useState(false);
   const { showToast } = useToast();
+
+  const [allNews, setAllNews] = useState<any[]>([]);
+  const [selectedNews, setSelectedNews] = useState<any>(null);
+  const [isNewsLoading, setIsNewsLoading] = useState(false);
+
+  const fetchNews = async () => {
+    setIsNewsLoading(true);
+    try {
+      const res = await fetch("/api/news");
+      if (res.ok) {
+        const data = await res.json();
+        setAllNews(data);
+      }
+    } catch (e) { console.error(e); }
+    finally { setIsNewsLoading(false); }
+  };
+
+  useEffect(() => {
+    if (activeTab === "notices") fetchNews();
+  }, [activeTab]);
   
   const level = Math.min(30, Math.floor(Math.sqrt(userExp / 10)) + 1);
 
   const checkSoulLink = () => {
-    setIsSoulLinked(!!localStorage.getItem("hxc_soul_fragment"));
+    if (typeof window !== "undefined") {
+      setIsSoulLinked(!!localStorage.getItem("hxc_soul_fragment"));
+    }
   };
 
   const bindDevice = async () => {
@@ -99,11 +121,6 @@ export default function ResidentAgent() {
     { q: "公式サポート", a: "不具合やご要望は、公式サポート（support@hexa-relation.com）までご連絡ください。" },
   ];
 
-  const notices = [
-    { date: "2024.05.07", title: "User Sync Logic Updated", tag: "System" },
-    { date: "2024.05.01", title: "New Asset: Imperial Gold Frame Released", tag: "Asset" },
-  ];
-
   return (
     <div className="fixed bottom-8 right-8 z-[500]">
       <AnimatePresence>
@@ -112,9 +129,8 @@ export default function ResidentAgent() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }} 
             animate={{ opacity: 1, y: 0, scale: 1 }} 
             exit={{ opacity: 0, y: 20, scale: 0.95 }} 
-            className="mb-6 w-[360px] bg-void/90 border border-white/10 shadow-2xl backdrop-blur-2xl overflow-hidden flex flex-col h-[520px] rounded-sm"
+            className="mb-6 w-[360px] bg-void/90 border border-white/10 shadow-2xl backdrop-blur-2xl overflow-hidden flex flex-col h-[520px] rounded-sm text-left"
           >
-            {/* Header: Concierge Profile */}
             <div className="p-6 bg-gradient-to-b from-white/5 to-transparent border-b border-white/5">
                <div className="flex justify-between items-start mb-4">
                   <div>
@@ -124,7 +140,6 @@ export default function ResidentAgent() {
                   <button onClick={() => setIsOpen(false)} className="opacity-20 hover:opacity-100 transition-opacity"><X size={18}/></button>
                </div>
                
-               {/* Evolution Bar */}
                <div className="space-y-2">
                   <div className="flex justify-between text-[7px] tracking-widest uppercase opacity-40">
                     <span>Rank Level {level}</span>
@@ -140,7 +155,6 @@ export default function ResidentAgent() {
                </div>
             </div>
 
-            {/* Navigation Tabs */}
             <div className="flex border-b border-white/5 bg-black/20">
                {[
                  { id: "portal", label: "Menu", icon: Shield },
@@ -158,7 +172,6 @@ export default function ResidentAgent() {
                ))}
             </div>
 
-            {/* Content Area */}
             <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
               <AnimatePresence mode="wait">
                 {activeTab === "portal" && (
@@ -232,16 +245,27 @@ export default function ResidentAgent() {
 
                 {activeTab === "notices" && (
                   <motion.div key="notices" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="space-y-4">
-                    <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">News / お知らせ</p>
-                    {notices.map((n, i) => (
-                      <div key={i} className="p-4 border border-white/5 bg-white/[0.01] space-y-2 group hover:border-white/20 transition-all cursor-default">
-                        <div className="flex justify-between items-center">
-                          <span className="text-[7px] font-mono opacity-30">{n.date}</span>
-                          <span className="text-[6px] px-1.5 py-0.5 border border-azure-500/30 text-azure-400 uppercase tracking-widest">{n.tag}</span>
-                        </div>
-                        <p className="text-[10px] tracking-widest text-white leading-relaxed group-hover:text-azure-400 transition-colors">{n.title}</p>
-                      </div>
-                    ))}
+                    <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2 text-center">News Log / 更新記録</p>
+                    
+                    {isNewsLoading ? (
+                      <div className="py-12 text-center text-[8px] uppercase tracking-widest opacity-20 animate-pulse">Synchronizing Records...</div>
+                    ) : allNews.length > 0 ? (
+                      allNews.map((n) => (
+                        <button 
+                          key={n.id} 
+                          onClick={() => setSelectedNews(n)}
+                          className="w-full p-4 border border-white/5 bg-white/[0.01] space-y-2 group hover:border-white/20 transition-all text-left block"
+                        >
+                          <div className="flex justify-between items-center">
+                            <span className="text-[7px] font-mono opacity-30">{new Date(n.created_at).toLocaleDateString()}</span>
+                            <span className="text-[6px] px-1.5 py-0.5 border border-azure-500/30 text-azure-400 uppercase tracking-widest">{n.type || "System"}</span>
+                          </div>
+                          <p className="text-[10px] tracking-widest text-white leading-relaxed group-hover:text-azure-400 transition-colors truncate">{n.title}</p>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="py-12 text-center text-[8px] uppercase tracking-widest opacity-20">No archives found.</div>
+                    )}
                   </motion.div>
                 )}
 
@@ -272,11 +296,8 @@ export default function ResidentAgent() {
         )}
       </AnimatePresence>
       
-      {/* Floating Trigger Button (The Angel) */}
       <button onClick={() => setIsOpen(!isOpen)} className="relative group w-16 h-16 flex items-center justify-center">
         <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="relative">
-          
-          {/* 1. Base Glow: Scaled back for Minimal/Chic */}
           <motion.div 
             animate={{ 
               scale: [1, 1.2, 1], 
@@ -285,9 +306,6 @@ export default function ResidentAgent() {
             transition={{ duration: 5, repeat: Infinity }} 
             className={`absolute -inset-8 rounded-full blur-2xl pointer-events-none ${level >= 20 ? 'bg-orange-400' : level >= 10 ? 'bg-azure-400' : 'bg-white'}`} 
           />
-
-          {/* 2. Visual Evolution: Orbital Rings */}
-          {/* Stage 1+ (Guardian): Single Thin Ring */}
           {level >= 10 && (
             <motion.div 
               animate={{ rotate: 360 }} 
@@ -295,8 +313,6 @@ export default function ResidentAgent() {
               className="absolute -inset-4 border border-white/10 rounded-full border-dashed" 
             />
           )}
-
-          {/* Stage 2+ (Archangel): Double Ring & Subtle Pulse */}
           {level >= 20 && (
             <motion.div 
               animate={{ rotate: -360 }} 
@@ -304,8 +320,6 @@ export default function ResidentAgent() {
               className="absolute -inset-6 border border-white/5 rounded-full" 
             />
           )}
-
-          {/* Stage 3 (Seraph): Official Geometry Fragment */}
           {level >= 30 && (
             <motion.div 
               animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.3, 0.1] }} 
@@ -313,13 +327,9 @@ export default function ResidentAgent() {
               className="absolute -inset-10 border-[0.5px] border-azure-400/20 rounded-full"
             />
           )}
-          
-          {/* The Core Orb: More solid, less blurry */}
           <div className={`w-6 h-6 bg-gradient-to-b ${level >= 30 ? 'from-rose-100 to-rose-500' : level >= 20 ? 'from-orange-100 to-orange-500' : level >= 10 ? 'from-azure-100 to-azure-500' : 'from-white to-zinc-400'} rounded-full border border-white/40 flex items-center justify-center backdrop-blur-md relative z-10 shadow-sm`}>
              <div className="w-2 h-2 bg-white rounded-full shadow-[0_0_10px_white]" />
           </div>
-          
-          {/* Halo part: Subtle and sharp */}
           <motion.div 
             animate={{ 
               opacity: level >= 10 ? [0.4, 0.8, 0.4] : 0, 
@@ -330,6 +340,37 @@ export default function ResidentAgent() {
           />
         </motion.div>
       </button>
+
+      {/* News Detail Modal */}
+      <AnimatePresence>
+        {selectedNews && (
+          <div className="fixed inset-0 z-[600] flex items-center justify-center p-6 text-left">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedNews(null)} className="absolute inset-0 bg-void/90 backdrop-blur-md" />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-sm bg-[#0a0a0a] border border-white/10 p-8 shadow-2xl overflow-hidden rounded-sm"
+            >
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent" />
+              <header className="mb-6">
+                 <div className="flex justify-between items-start mb-4">
+                    <span className="text-[7px] tracking-[0.4em] uppercase font-bold text-azure-400 bg-azure-500/10 px-2 py-1 border border-azure-500/20">{selectedNews.type || "Update"}</span>
+                    <button onClick={() => setSelectedNews(null)} className="opacity-20 hover:opacity-100 transition-opacity"><X size={16}/></button>
+                 </div>
+                 <h2 className="text-sm tracking-widest uppercase font-light text-white leading-relaxed">{selectedNews.title}</h2>
+                 <div className="mt-2 text-[7px] tracking-widest opacity-20 uppercase font-mono">{new Date(selectedNews.created_at).toLocaleDateString()}</div>
+              </header>
+              <div className="max-h-[200px] overflow-y-auto custom-scrollbar pr-2 mb-8">
+                 <p className="text-[10px] leading-relaxed tracking-widest text-white/70 whitespace-pre-wrap">{selectedNews.content}</p>
+              </div>
+              <div className="flex justify-end">
+                 <button onClick={() => setSelectedNews(null)} className="px-6 py-2 border border-white/10 text-[8px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all text-white/40 hover:text-white">Observation / 閉じる</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
