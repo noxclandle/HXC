@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 /**
  * ログイン画面
