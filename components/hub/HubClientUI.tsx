@@ -120,7 +120,6 @@ export default function HubClientUI({
   const markAsRead = async () => {
     if (!latestNews) return;
     setBubbleDismissed(true);
-    setSelectedNews(latestNews);
     
     try {
       await fetch("/api/user/read-news", { 
@@ -129,7 +128,7 @@ export default function HubClientUI({
         body: JSON.stringify({ newsId: latestNews.id })
       });
       // ステータスを更新して赤い点を消す
-      fetchData();
+      await fetchData();
     } catch (e) { console.error(e); }
   };
 
@@ -243,13 +242,16 @@ export default function HubClientUI({
                     </div>
                       <div className="relative z-10 py-4">
                         <GeometricAngel level={Math.floor(Math.sqrt(Number(realStats?.exp || 0) / 10)) + 1} mood={mood} size={180} />
-                        
                         {/* News Bubble */}
                         <AnimatePresence>
                           {isNewMessage && !bubbleDismissed && (
                             <motion.button 
-                              onClick={markAsRead}
+                              onClick={() => {
+                                setSelectedNews(latestNews);
+                                markAsRead();
+                              }}
                               initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                        ...
                               animate={{ opacity: 1, scale: 1, y: 0 }}
                               exit={{ opacity: 0, scale: 0.8, y: 10 }}
                               className="absolute -top-4 -right-12 bg-white/10 backdrop-blur-md border border-white/10 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl text-left transition-all cursor-pointer hover:bg-white/20 active:scale-95"
