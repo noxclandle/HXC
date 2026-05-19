@@ -12,22 +12,28 @@ import { rateLimit } from "@/lib/ratelimit";
 export async function POST(req: NextRequest) {
   try {
     // 門番（レートリミット）のチェック
-    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
-    const { success } = await rateLimit.standard.limit(ip);
+    try {
+      const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+      const { success } = await rateLimit.standard.limit(ip);
 
-    if (!success) {
-      return NextResponse.json({ 
-        error: "Syncing too fast. Please wait. / 同期が速すぎます。しばらくお待ちください。" 
-      }, { status: 429 });
+      if (!success) {
+        return NextResponse.json({ 
+          error: "Resonance too frequent. / 同期が速すぎます。しばらくお待ちください。" 
+        }, { status: 429 });
+      }
+    } catch (rlError) {
+      console.warn("Rate limit check failed (possibly KV not configured):", rlError);
+      // レートリミット自体のエラー（KV未設定など）でボーナス受取をブロックしない
     }
 
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized (Session invalid)" }, { status: 401 });
     }
 
     const userId = session.user.id;
+    console.log("Processing Daily Resonance for User ID:", userId);
 
     // 現在のユーザー情報を取得
     const user = await prisma.user.findUnique({
