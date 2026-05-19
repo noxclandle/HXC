@@ -163,13 +163,36 @@ export default function RegistryPage() {
   };
 
   const copyWriteUrl = () => {
-    if (!newCard.uid) {
-      alert("先に物理UIDを入力してください。");
+    if (!newCard.uid || !newCard.serial) {
+      alert("先に物理UIDとシリアルを取得してください。");
       return;
     }
-    const url = `${baseUrl}/api/card/${newCard.uid.toUpperCase().replace(/:/g, "")}`;
+    const url = `${baseUrl}/api/card/${newCard.uid.toUpperCase().replace(/:/g, "")}?s=${newCard.serial}`;
     navigator.clipboard.writeText(url);
     alert(`書き込み用URLをコピーしました:\n${url}\n\nこれをNFC Tools等のアプリでカードに書き込んでください。`);
+  };
+
+  const startProvisioning = async () => {
+    if (!("NDEFReader" in window)) {
+      alert("WebNFCはこのブラウザ/デバイスではサポートされていません。Android Chrome等でお試しください。");
+      return;
+    }
+
+    try {
+      const ndef = new (window as any).NDEFReader();
+      await ndef.scan();
+      alert("プロビジョニングモード開始：カードをかざしてください...");
+
+      ndef.addEventListener("reading", ({ message, serialNumber }: any) => {
+        const uid = serialNumber.toUpperCase().replace(/:/g, "");
+        const serial = generateRandomSerial(cards);
+        setNewCard({ uid, serial });
+        alert(`カードを検知しました:\nUID: ${uid}\nシリアルを自動生成しました。`);
+      });
+    } catch (error) {
+      console.error("WebNFC Error:", error);
+      alert("NFCの読み取りに失敗しました。権限を確認してください。");
+    }
   };
 
   return (
@@ -299,14 +322,23 @@ export default function RegistryPage() {
             <h2 className="text-[10px] tracking-[0.4em] uppercase opacity-40 font-bold">Create New Card Slot (新規カード枠の作成)</h2>
             <p className="text-[8px] tracking-widest opacity-30">物理UIDとシリアル番号を紐付けてシステムに登録します。</p>
           </div>
-          {newCard.uid && (
+          <div className="flex gap-4">
             <button 
-              onClick={copyWriteUrl}
-              className="px-6 py-2 border border-azure-500/30 text-azure-400 text-[8px] uppercase tracking-widest hover:bg-azure-500/10 transition-all"
+              onClick={startProvisioning}
+              className="px-6 py-2 border border-amber-500/30 text-amber-500 text-[8px] uppercase tracking-widest hover:bg-amber-500/10 transition-all flex items-center gap-2"
             >
-              書き込み用URLをコピー
+              <RotateCcw size={12} className="animate-spin-slow" />
+              NFC Provisioning Mode
             </button>
-          )}
+            {newCard.uid && (
+              <button 
+                onClick={copyWriteUrl}
+                className="px-6 py-2 border border-azure-500/30 text-azure-400 text-[8px] uppercase tracking-widest hover:bg-azure-500/10 transition-all"
+              >
+                書き込み用URLをコピー
+              </button>
+            )}
+          </div>
         </div>
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-1 space-y-1">

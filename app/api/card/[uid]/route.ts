@@ -30,13 +30,21 @@ export async function GET(req: NextRequest, { params }: { params: { uid: string 
     });
   }
 
+  const { searchParams } = new URL(req.url);
+  const secretParam = searchParams.get("s");
+
   // 台帳に存在しないUID = 不正または未登録のチップ
   if (!card) {
     return NextResponse.redirect(new URL(`/invalid-card?uid=${uid}`, req.url));
   }
 
-  // 2. 未アクティブの場合 -> 新規登録ページへ
+  // 2. 未アクティブの場合 -> セキュリティ照合
   if (card.status === "unissued") {
+    if (!secretParam || secretParam !== card.internal_serial) {
+      // シリアルが一致しない場合は不正アクセス
+      return NextResponse.redirect(new URL(`/invalid-card?uid=${uid}`, req.url));
+    }
+    // 一致した場合は新規登録ページへ
     return NextResponse.redirect(new URL(`/activate?uid=${uid}&serial=${card.internal_serial}`, req.url));
   }
 
