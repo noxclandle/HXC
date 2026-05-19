@@ -6,6 +6,7 @@ import { X, Book, Sparkles, Trophy, Music2, Volume2, VolumeX, Shield, Bell, Help
 import Link from "next/link";
 import { ambientManager } from "@/lib/audio/ambient";
 import { useToast } from "@/components/ui/ConnectionToast";
+import GeometricAngel from "@/components/ui/GeometricAngel";
 
 export default function ResidentAgent() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +17,9 @@ export default function ResidentAgent() {
   const [rtBalance, setRtBalance] = useState("0");
   const [userRank, setUserRank] = useState("Initiate");
   const [userRole, setUserRole] = useState("member");
+  const [lastReadAt, setLastReadAt] = useState<string | null>(null);
   const [isSoulLinked, setIsSoulLinked] = useState(false);
+  const [bubbleDismissed, setBubbleDismissed] = useState(false);
   const { showToast } = useToast();
 
   const [allNews, setAllNews] = useState<any[]>([]);
@@ -36,9 +39,21 @@ export default function ResidentAgent() {
   };
 
   useEffect(() => {
-    if (activeTab === "notices") fetchNews();
-  }, [activeTab]);
+    fetchNews();
+  }, []);
   
+  const latestNews = allNews[0];
+  const isNewMessage = latestNews && (!lastReadAt || new Date(latestNews.created_at) > new Date(lastReadAt));
+
+  const markAsRead = async () => {
+    if (!latestNews) return;
+    setBubbleDismissed(true);
+    try {
+      await fetch("/api/user/read-news", { method: "POST" });
+      fetchStatus();
+    } catch (e) { console.error(e); }
+  };
+
   const level = Math.min(30, Math.floor(Math.sqrt(userExp / 10)) + 1);
 
   const checkSoulLink = () => {
@@ -76,6 +91,7 @@ export default function ResidentAgent() {
         setUserRank(data.rank || "Initiate");
         setUserRole(data.role || "member");
         setHasDaily(checkDailyStatus(data.last_daily_at));
+        setLastReadAt(data.last_read_news_at);
       }
     } catch (e) { console.error(e); }
   }, []);
@@ -123,6 +139,7 @@ export default function ResidentAgent() {
       
       if (res.ok) {
         setHasDaily(true);
+        setRtBalance(data.new_balance);
         showToast(`Resonance Success / 共鳴に成功 (+${data.added_rt} RT)`, "success");
         if (typeof navigator !== "undefined" && navigator.vibrate) {
           navigator.vibrate([20, 10, 20]);
@@ -132,7 +149,6 @@ export default function ResidentAgent() {
       } else {
         if (data.error === "Already resonated today.") {
           setHasDaily(true);
-          // Silent update, no toast
         } else {
           showToast("Sync Failed / 境界との同期に失敗しました", "error");
         }
@@ -159,10 +175,10 @@ export default function ResidentAgent() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }} 
             animate={{ opacity: 1, y: 0, scale: 1 }} 
             exit={{ opacity: 0, y: 20, scale: 0.95 }} 
-            className="mb-6 w-[360px] bg-void/90 border border-white/10 shadow-2xl backdrop-blur-2xl overflow-hidden flex flex-col h-[520px] rounded-sm text-left"
+            className="mb-6 w-[360px] bg-void/90 border border-white/10 shadow-2xl backdrop-blur-2xl overflow-hidden flex flex-col h-[600px] rounded-sm text-left"
           >
-            <div className="p-6 bg-gradient-to-b from-white/5 to-transparent border-b border-white/5">
-               <div className="flex justify-between items-start mb-4">
+            <div className="p-6 bg-gradient-to-b from-white/5 to-transparent border-b border-white/5 relative flex flex-col items-center">
+               <div className="flex justify-between items-start w-full mb-4">
                   <div>
                     <h3 className="text-[11px] tracking-[0.5em] uppercase text-white mb-1">Concierge</h3>
                     <p className="text-[8px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400">常駐コンシェルジュ</p>
@@ -170,15 +186,19 @@ export default function ResidentAgent() {
                   <button onClick={() => setIsOpen(false)} className="opacity-20 hover:opacity-100 transition-opacity"><X size={18}/></button>
                </div>
                
-               <div className="space-y-2">
+               <div className="py-4">
+                  <GeometricAngel level={level} size={160} mood={activeTab === 'portal' ? 'stable' : 'excited'} />
+               </div>
+
+               <div className="space-y-2 w-full">
                   <div className="flex justify-between text-[7px] tracking-widest uppercase opacity-40">
                     <span>Rank Level {level}</span>
-                    <span>{userExp.toLocaleString()} / 10000 EXP</span>
+                    <span>{userExp.toLocaleString()} / {Math.max(1000, level * 200)} EXP</span>
                   </div>
                   <div className="h-[1px] w-full bg-white/10">
                     <motion.div 
                       initial={{ width: 0 }} 
-                      animate={{ width: `${Math.min(100, (userExp / 100))}%` }} 
+                      animate={{ width: `${Math.min(100, (userExp / (level * 2)))}%` }} 
                       className="h-full bg-azure-400 shadow-[0_0_10px_rgba(59,130,246,0.5)]" 
                     />
                   </div>
@@ -196,7 +216,12 @@ export default function ResidentAgent() {
                    onClick={() => setActiveTab(tab.id as any)}
                    className={`flex-1 py-4 flex flex-col items-center gap-1 transition-all border-b ${activeTab === tab.id ? "border-azure-500 bg-azure-500/5 opacity-100" : "border-transparent opacity-20 hover:opacity-50"}`}
                  >
-                   <tab.icon size={14} className={activeTab === tab.id ? "text-azure-400" : ""} />
+                   <div className="relative">
+                     <tab.icon size={14} className={activeTab === tab.id ? "text-azure-400" : ""} />
+                     {tab.id === 'notices' && isNewMessage && (
+                       <span className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-rose-500 rounded-full" />
+                     )}
+                   </div>
                    <span className="text-[7px] tracking-[0.3em] uppercase font-bold">{tab.label}</span>
                  </button>
                ))}
@@ -294,7 +319,10 @@ export default function ResidentAgent() {
                       allNews.map((n) => (
                         <button 
                           key={n.id} 
-                          onClick={() => setSelectedNews(n)}
+                          onClick={() => {
+                            setSelectedNews(n);
+                            if (n === latestNews) markAsRead();
+                          }}
                           className="w-full p-4 border border-white/5 bg-white/[0.01] space-y-2 group hover:border-white/20 transition-all text-left block"
                         >
                           <div className="flex justify-between items-center">
@@ -323,22 +351,6 @@ export default function ResidentAgent() {
                         </p>
                       </div>
                     ))}
-                    <div className="space-y-4 pt-4 border-t border-white/5">
-                       <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold text-center">Quick Navigation</p>
-                       <div className="grid grid-cols-2 gap-2">
-                          <Link href="/library" onClick={() => setIsOpen(false)} className="p-3 border border-white/10 bg-white/[0.02] text-[8px] tracking-widest uppercase hover:bg-white/5 transition-all text-center">My Library</Link>
-                          <Link href="/profile/edit" onClick={() => setIsOpen(false)} className="p-3 border border-white/10 bg-white/[0.02] text-[8px] tracking-widest uppercase hover:bg-white/5 transition-all text-center">Edit Profile</Link>
-                          <Link href="/inventory" onClick={() => setIsOpen(false)} className="p-3 border border-white/10 bg-white/[0.02] text-[8px] tracking-widest uppercase hover:bg-white/5 transition-all text-center">Treasury</Link>
-                          <Link href="/contact" onClick={() => setIsOpen(false)} className="p-3 border border-white/10 bg-white/[0.02] text-[8px] tracking-widest uppercase hover:bg-white/5 transition-all text-center">Contact Support</Link>
-                       </div>
-                    </div>
-
-                    <div className="pt-4 mt-4 border-t border-white/5">
-                       <p className="text-[7px] tracking-[0.2em] opacity-30 uppercase text-center leading-relaxed">
-                          Further questions? Reach out to the architects.<br/>
-                          (support@hexa-relation.com)
-                       </p>
-                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -348,6 +360,19 @@ export default function ResidentAgent() {
       </AnimatePresence>
       
       <button onClick={() => setIsOpen(!isOpen)} className="relative group w-16 h-16 flex items-center justify-center">
+        {isNewMessage && !bubbleDismissed && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8, x: 20 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            className="absolute bottom-full right-0 mb-4 bg-void/90 backdrop-blur-md border border-white/10 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl text-left pointer-events-none"
+          >
+             <p className="text-[7px] uppercase tracking-[0.2em] text-azure-400 font-bold mb-1 italic">Message Received</p>
+             <p className="text-[9px] leading-tight text-white/80 line-clamp-2 font-medium">
+               {latestNews.title}
+             </p>
+          </motion.div>
+        )}
+
         <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="relative">
           <motion.div 
             animate={{ 
@@ -357,38 +382,13 @@ export default function ResidentAgent() {
             transition={{ duration: 5, repeat: Infinity }} 
             className={`absolute -inset-8 rounded-full blur-2xl pointer-events-none ${level >= 20 ? 'bg-orange-400' : level >= 10 ? 'bg-azure-400' : 'bg-white'}`} 
           />
-          {level >= 10 && (
-            <motion.div 
-              animate={{ rotate: 360 }} 
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }} 
-              className="absolute -inset-4 border border-white/10 rounded-full border-dashed" 
-            />
-          )}
-          {level >= 20 && (
-            <motion.div 
-              animate={{ rotate: -360 }} 
-              transition={{ duration: 15, repeat: Infinity, ease: "linear" }} 
-              className="absolute -inset-6 border border-white/5 rounded-full" 
-            />
-          )}
-          {level >= 30 && (
-            <motion.div 
-              animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.3, 0.1] }} 
-              transition={{ duration: 3, repeat: Infinity }} 
-              className="absolute -inset-10 border-[0.5px] border-azure-400/20 rounded-full"
-            />
-          )}
+          
           <div className={`w-6 h-6 bg-gradient-to-b ${level >= 30 ? 'from-rose-100 to-rose-500' : level >= 20 ? 'from-orange-100 to-orange-500' : level >= 10 ? 'from-azure-100 to-azure-500' : 'from-white to-zinc-400'} rounded-full border border-white/40 flex items-center justify-center backdrop-blur-md relative z-10 shadow-sm`}>
              <div className="w-2 h-2 bg-white rounded-full shadow-[0_0_10px_white]" />
+             {isNewMessage && (
+               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border border-void" />
+             )}
           </div>
-          <motion.div 
-            animate={{ 
-              opacity: level >= 10 ? [0.4, 0.8, 0.4] : 0, 
-              y: level >= 20 ? [-18, -20, -18] : -16 
-            }} 
-            transition={{ duration: 2, repeat: Infinity }} 
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-[0.5px] bg-white shadow-[0_0_5px_white]" 
-          />
         </motion.div>
       </button>
 
