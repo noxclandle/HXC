@@ -12,35 +12,22 @@ import { playConnectionSound } from "@/lib/audio/resonance";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { useSearchParams } from "next/navigation";
 
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { getUserStatus } from "@/lib/user";
+import { redirect } from "next/navigation";
+
 export const dynamic = "force-dynamic";
 
 interface Asset {
-  id: string;
-  name: string;
-  type: "frame" | "sound" | "effect" | "angel" | "title" | "pointer" | "background" | "fontFamily" | "aura";
-  rarity: "common" | "rare" | "epic" | "legendary" | "mythic";
-  description: string;
-  unlocked: boolean;
-  cost?: number;
-}
-
-const CATEGORIES = [
-  { id: "frame", name: "Frames", icon: Shield, sub: "外枠" },
-  { id: "aura", name: "Auras", icon: Zap, sub: "オーラ" },
-  { id: "background", name: "Backgrounds", icon: Palette, sub: "背景" },
-  { id: "effect", name: "Effects", icon: Sparkles, sub: "エフェクト" },
-  { id: "title", name: "Titles / 称号", icon: Trophy, sub: "称号" },
-  { id: "pointer", name: "Pointers", icon: MousePointer2, sub: "軌跡" },
-  { id: "sound", name: "Sounds", icon: Music, sub: "音響" },
-];
-
+...
 const RT_PACKS = [
   { id: "rt_small", price: 1000, rt: 2000, label: "2,000 RT Pack", description: "基本的なポイント補充。1回のアセット購入に。" },
   { id: "rt_medium", price: 5000, rt: 11000, label: "11,000 RT Pack", description: "推奨パック。広範なカスタマイズを可能にします。", popular: true },
   { id: "rt_large", price: 10000, rt: 23000, label: "23,000 RT Pack", description: "最大限の補充。すべてのアイテムを揃える方に。" },
 ];
 
-function InventoryContent() {
+function InventoryContent({ initialStats }: { initialStats: any }) {
   const { data: session, status } = useSession();
   const { showToast } = useToast();
   const searchParams = useSearchParams();
@@ -48,18 +35,18 @@ function InventoryContent() {
   const showPurchaseFromUrl = searchParams.get("purchase") === "true";
 
   const [activeCategory, setActiveCategory] = useState(activeCategoryFromUrl || "frame");
-  const [rtBalance, setRTBalance] = useState("0");
+  const [rtBalance, setRTBalance] = useState(initialStats.rt_balance);
   const [isSaving, setIsSaving] = useState(false);
   const [unlockingAsset, setUnlockingAsset] = useState<string | null>(null);
-  const [ownedAssets, setOwnedAssets] = useState<string[]>([]);
-  const [unlockedTitles, setUnlockedTitles] = useState<string[]>(["ASSOCIATE"]);
-  const [assetPrices, setAssetPrices] = useState<Record<string, number>>({});
+  const [ownedAssets, setOwnedAssets] = useState<string[]>(initialStats.owned_assets || []);
+  const [unlockedTitles, setUnlockedTitles] = useState<string[]>(initialStats.titles || ["ASSOCIATE"]);
+  const [assetPrices, setAssetPrices] = useState<Record<string, number>>(initialStats.asset_prices || {});
   const [previewAsset, setPreviewAsset] = useState<Asset | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(true); // サーバーサイドデータがあるため、最初はtrue
   const [showRTPurchase, setShowRTPurchase] = useState(showPurchaseFromUrl);
   const [confirmingAsset, setConfirmingAsset] = useState<Asset | null>(null);
   
-  const [equipped, setEquipped] = useState<any>({
+  const [equipped, setEquipped] = useState<any>(initialStats.equipped || {
     frame: "Obsidian",
     background: "Default",
     effect: "None",
@@ -72,9 +59,10 @@ function InventoryContent() {
     orientation: "horizontal"
   });
 
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(initialStats);
 
   const fetchData = useCallback(async () => {
+    // 初回はサーバーサイドデータを使用するため、即時取得は不要
     try {
       const res = await fetch("/api/user/status", { cache: 'no-store' });
       if (res.ok) {
@@ -87,12 +75,15 @@ function InventoryContent() {
         if (data.equipped) setEquipped((prev: any) => ({ ...prev, ...data.equipped }));
       }
     } catch (e) { console.error(e); }
-    finally { setIsLoaded(true); }
   }, []);
 
   useEffect(() => {
-    if (session) fetchData();
-  }, [session, fetchData]);
+    // 最初のマウント時はfetchDataをスキップし、何らかの更新があった際のみ実行する
+    // ただし、もし強制リロードが必要な場合のために登録はしておく
+    const handleUpdate = () => fetchData();
+    window.addEventListener("hxc-assets-updated", handleUpdate);
+    return () => window.removeEventListener("hxc-assets-updated", handleUpdate);
+  }, [fetchData]);
 
   const handleCommit = async (customEquipped?: any) => {
     // 楽観的更新: 既にstateは更新済みである前提で、保存中フラグのみ管理
@@ -519,10 +510,26 @@ function InventoryContent() {
   );
 }
 
+async function InventoryLoader() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) redirect("/login");
+
+  const stats = await getUserStatus(session.user.email);
+  if (!stats) redirect("/activate");
+
+  return (
+    <InventoryContent 
+      initialStats={stats} 
+    />
+  );
+}
+
 export default function InventoryPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-void flex items-center justify-center text-[10px] tracking-widest opacity-20 uppercase">Loading...</div>}>
-      <InventoryContent />
-    </Suspense>
+    <main className="min-h-screen bg-void">
+      <Suspense fallback={<div className="min-h-screen bg-void flex items-center justify-center text-[10px] tracking-widest opacity-20 uppercase">Loading Treasury...</div>}>
+        <InventoryLoader />
+      </Suspense>
+    </main>
   );
 }

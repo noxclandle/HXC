@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Camera, Shield, Zap, Hexagon } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function InvitationPage() {
   const features = [
@@ -30,7 +31,13 @@ export default function InvitationPage() {
         animate={{ opacity: 1, scale: 1 }}
         className="mb-24 flex flex-col items-center text-center max-w-2xl"
       >
-        <img src="/logo.png" className="w-24 h-24 mb-16 opacity-40 animate-pulse" />
+        <Image 
+          src="/logo.png" 
+          alt="Hexa Relation Logo"
+          width={96} 
+          height={96} 
+          className="mb-16 opacity-40 animate-pulse object-contain" 
+        />
         <h1 className="text-4xl md:text-5xl tracking-[0.2em] uppercase font-extralight mb-8 italic">Hexa Relation</h1>
         <p className="text-sm tracking-[0.3em] opacity-40 leading-relaxed uppercase">
           物理的な制約を超え、<br />
