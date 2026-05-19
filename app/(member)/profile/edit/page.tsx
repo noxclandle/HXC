@@ -56,19 +56,25 @@ export default function ProfileEditPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      showToast("File too large / 5MB以下の画像を選択してください", "error");
+    // 5MB以上の生ファイルは、ブラウザ側での処理自体に負荷がかかるため一旦ガード
+    if (file.size > 10 * 1024 * 1024) {
+      showToast("File too large / 10MB以下の画像を選択してください", "error");
       return;
     }
 
     setIsUploading(type);
     try {
-      // 1. 画像を圧縮して軽量化
-      const compressedBase64 = await compressImage(file, type === "logo" ? 400 : 800);
+      // 1. 画像を圧縮して軽量化（世界的エンジニア基準：見た目を維持しつつ容量を1/10以下にする）
+      const maxWidth = type === "face" ? 1000 : 600;
+      const compressedBase64 = await compressImage(file, maxWidth);
       
-      // 2. Base64をBlobに変換してFormDataを作成
+      // 2. 圧縮後のBase64をBlobに変換してFormDataを作成
       const resBlob = await fetch(compressedBase64);
       const blob = await resBlob.blob();
+      
+      // 圧縮後のファイルサイズをチェック（デバッグ・確実性のため）
+      console.log(`Optimized ${type} size: ${(blob.size / 1024).toFixed(2)} KB`);
+
       const formData = new FormData();
       formData.append("file", blob, `upload.${type === "face" ? "jpg" : "png"}`);
       formData.append("type", type === "face" ? "photo" : "logo");
@@ -85,10 +91,10 @@ export default function ProfileEditPage() {
       
       // 4. DB保存用のフィールドをR2のURLで更新
       updateField(type === "face" ? "faceUrl" : "logoUrl", uploadData.url);
-      showToast("Image Optimized / 画像を最適化して保存しました", "success");
+      showToast("Identity Refined / 画像を最適化して反映しました", "success");
     } catch (err) {
       console.error(err);
-      showToast("Upload Failed / 処理に失敗しました", "error");
+      showToast("Refinement Failed / 処理に失敗しました", "error");
     } finally {
       setIsUploading(null);
     }
