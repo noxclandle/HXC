@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Book, Sparkles, Trophy, Music2, Volume2, VolumeX, Shield, Bell, HelpCircle, ChevronRight, Zap, Smartphone } from "lucide-react";
 import Link from "next/link";
@@ -14,6 +14,8 @@ export default function ResidentAgent() {
   const [ambientMode, setAmbientMode] = useState<"off" | "space" | "rain">("off");
   const [userExp, setUserExp] = useState(0);
   const [rtBalance, setRtBalance] = useState("0");
+  const [userRank, setUserRank] = useState("Initiate");
+  const [userRole, setUserRole] = useState("member");
   const [isSoulLinked, setIsSoulLinked] = useState(false);
   const { showToast } = useToast();
 
@@ -57,28 +59,40 @@ export default function ResidentAgent() {
     } catch (e) { console.error(e); }
   };
 
-  const fetchStatus = async () => {
+  const checkDailyStatus = (lastDailyAt: string | null) => {
+    if (!lastDailyAt) return false;
+    const now = new Date();
+    const lastDaily = new Date(lastDailyAt);
+    return lastDaily.toDateString() === now.toDateString();
+  };
+
+  const fetchStatus = useCallback(async () => {
     try {
-      const res = await fetch("/api/user/status");
+      const res = await fetch("/api/user/status", { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         setUserExp(Number(data.exp));
         setRtBalance(data.rt_balance);
+        setUserRank(data.rank || "Initiate");
+        setUserRole(data.role || "member");
+        setHasDaily(checkDailyStatus(data.last_daily_at));
       }
     } catch (e) { console.error(e); }
-  };
+  }, []);
 
   useEffect(() => {
     ambientManager.init();
     fetchStatus();
     checkSoulLink();
-    window.addEventListener("rt-grace-received", fetchStatus);
-    window.addEventListener("hxc-assets-updated", fetchStatus);
+    
+    const handleStatusSync = () => fetchStatus();
+    window.addEventListener("rt-grace-received", handleStatusSync);
+    window.addEventListener("hxc-assets-updated", handleStatusSync);
     return () => {
-      window.removeEventListener("rt-grace-received", fetchStatus);
-      window.removeEventListener("hxc-assets-updated", fetchStatus);
+      window.removeEventListener("rt-grace-received", handleStatusSync);
+      window.removeEventListener("hxc-assets-updated", handleStatusSync);
     };
-  }, []);
+  }, [fetchStatus]);
 
   const getEvolutionStage = (lv: number) => {
     if (lv >= 30) return { name: "Seraph", color: "text-rose-400", glow: "shadow-[0_0_50px_rgba(255,255,255,0.8)]" };
@@ -104,21 +118,36 @@ export default function ResidentAgent() {
 
   const collectDaily = async () => {
     try {
-      const res = await fetch("/api/user/daily-bonus", { method: "POST" });
+      const res = await fetch("/api/user/daily-resonance", { method: "POST" });
       const data = await res.json();
-      if (data.success) {
+      
+      if (res.ok) {
         setHasDaily(true);
-        showToast(`Grace Received / 境界の恩寵を受信 (+${data.amount} RT)`, "success");
+        showToast(`Resonance Success / 共鳴に成功 (+${data.added_rt} RT)`, "success");
+        if (typeof navigator !== "undefined" && navigator.vibrate) {
+          navigator.vibrate([20, 10, 20]);
+        }
         window.dispatchEvent(new CustomEvent("rt-grace-received"));
+        window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
+      } else {
+        const errMsg = data.error === "Already resonated today." 
+          ? "Already Received / 本日は既に受信済みです" 
+          : "Sync Failed / 境界との同期に失敗しました";
+        showToast(errMsg, "error");
+        if (data.error === "Already resonated today.") setHasDaily(true);
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+      console.error(e);
+      showToast("Network Error / 通信が不安定です", "error");
+    }
   };
 
   const helpItems = [
-    { q: "名刺の作り方は？", a: "左上のメニューから「Profile Edit」を選んでください。名前、ロゴ、顔写真などを設定して「Commit」を押せば完成です。" },
-    { q: "RTを貯めるには？", a: "毎日天使に話しかけて「Daily Light」を受け取るか、新しい名刺交換（スキャン）を行うことで貯めることができます。" },
-    { q: "縦型と横型はどう変える？", a: "編集画面や宝物庫のプレビュー右上にあるアイコンで、いつでも切り替えが可能です。" },
-    { q: "公式サポート", a: "不具合やご要望は、公式サポート（support@hexa-relation.com）までご連絡ください。" },
+    { q: "RT（Relation Token）とは？", a: "あなたの活動エネルギーであり、通貨です。アイテムの解禁や、高度な機能（AI分析等）の維持に使用されます。毎日ログインするか、名刺交換（スキャン）を成功させることで増加します。" },
+    { q: "EXPとランクの関係は？", a: "RTを獲得するたびにEXP（経験値）が蓄積され、あなたの天使が進化します。ランクが上がると、解禁できるアイテムや権限が増えていきます。" },
+    { q: "名刺の保存が反映されない", a: "編集画面で「Commit」を押さなくても自動保存されますが、確実に保存したい場合は、右上のSyncing表示が完了するまでお待ちください。電波が悪い場合はオフラインキャッシュ機能をご利用ください。" },
+    { q: "物理カードの再発行・紛失", a: "管理者に問い合わせを行うか、設定画面からSoul-Linkを一時停止してください。" },
+    { q: "管理パネルに入れない", a: "管理者権限が必要です。権限をお持ちの場合は、一度サインアウトしてから再度サインインし、Gate（入口）からアクセスしてください。" },
   ];
 
   return (
@@ -190,27 +219,48 @@ export default function ResidentAgent() {
 
                       <div className="grid grid-cols-2 gap-3">
                          <div className="p-4 bg-white/[0.02] border border-white/5 rounded-sm">
-                            <p className="text-[7px] opacity-40 uppercase tracking-widest mb-1">RT Balance</p>
+                            <p className="text-[7px] opacity-40 uppercase tracking-widest mb-1">Holding RT / 所持RT</p>
                             <p className="text-sm font-light tracking-widest text-white">{Number(rtBalance).toLocaleString()} <span className="text-[8px] opacity-20">RT</span></p>
                          </div>
                          <div className="p-4 bg-white/[0.02] border border-white/5 rounded-sm">
                             <p className="text-[7px] opacity-40 uppercase tracking-widest mb-1">Rank</p>
-                            <p className="text-sm font-light tracking-widest text-azure-400 uppercase italic">Initiate</p>
+                            <p className="text-sm font-light tracking-widest text-azure-400 uppercase italic">{userRank}</p>
                          </div>
                       </div>
                     </div>
 
                     <div className="space-y-3">
                       <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">Menu</p>
-                      {!hasDaily && (
-                        <button onClick={collectDaily} className="w-full p-4 bg-white text-void flex items-center justify-between group transition-all hover:bg-azure-50">
-                           <div className="flex items-center gap-3">
-                              <Sparkles size={14}/>
-                              <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Daily Bonus / 報酬を受け取る</span>
-                           </div>
-                           <ChevronRight size={14}/>
-                        </button>
-                      )}
+                      
+                      <AnimatePresence mode="wait">
+                        {!hasDaily ? (
+                          <motion.button 
+                            key="bonus-btn"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            onClick={collectDaily} 
+                            className="w-full p-4 bg-white text-void flex items-center justify-between group transition-all hover:bg-azure-50 overflow-hidden"
+                          >
+                             <div className="flex items-center gap-3">
+                                <Sparkles size={14}/>
+                                <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Daily Bonus / 報酬を受け取る</span>
+                             </div>
+                             <ChevronRight size={14}/>
+                          </motion.button>
+                        ) : (
+                          <motion.div 
+                            key="bonus-claimed"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="w-full p-3 border border-white/5 bg-white/[0.01] flex items-center justify-center gap-2"
+                          >
+                             <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+                             <span className="text-[8px] tracking-[0.3em] uppercase opacity-30 font-bold">Resonance Synchronized / 同期完了</span>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
                       <Link href="/inventory" onClick={() => setIsOpen(false)} className="w-full p-4 bg-white/5 border border-white/10 flex items-center justify-between group transition-all hover:border-white/30">
                          <div className="flex items-center gap-3">
                             <Trophy size={14} className="opacity-40 group-hover:opacity-100 transition-opacity" />
@@ -271,9 +321,9 @@ export default function ResidentAgent() {
 
                 {activeTab === "help" && (
                   <motion.div key="help" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="space-y-6">
-                    <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">Support / ヘルプ</p>
+                    <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2 text-center">Support / ヘルプ</p>
                     {helpItems.map((item, i) => (
-                      <div key={i} className="space-y-2">
+                      <div key={i} className="space-y-2 text-left">
                         <p className="text-[9px] font-bold tracking-widest text-white flex items-center gap-2 uppercase">
                           <span className="w-1 h-1 bg-azure-500 rounded-full" /> {item.q}
                         </p>
@@ -282,8 +332,18 @@ export default function ResidentAgent() {
                         </p>
                       </div>
                     ))}
-                    <div className="pt-4 mt-8 border-t border-white/5">
-                       <p className="text-[7px] tracking-[0.2em] opacity-30 uppercase text-center">
+                    <div className="space-y-4 pt-4 border-t border-white/5">
+                       <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold text-center">Quick Navigation</p>
+                       <div className="grid grid-cols-2 gap-2">
+                          <Link href="/library" onClick={() => setIsOpen(false)} className="p-3 border border-white/10 bg-white/[0.02] text-[8px] tracking-widest uppercase hover:bg-white/5 transition-all text-center">My Library</Link>
+                          <Link href="/profile/edit" onClick={() => setIsOpen(false)} className="p-3 border border-white/10 bg-white/[0.02] text-[8px] tracking-widest uppercase hover:bg-white/5 transition-all text-center">Edit Profile</Link>
+                          <Link href="/inventory" onClick={() => setIsOpen(false)} className="p-3 border border-white/10 bg-white/[0.02] text-[8px] tracking-widest uppercase hover:bg-white/5 transition-all text-center">Treasury</Link>
+                          <Link href="/contact" onClick={() => setIsOpen(false)} className="p-3 border border-white/10 bg-white/[0.02] text-[8px] tracking-widest uppercase hover:bg-white/5 transition-all text-center">Contact Support</Link>
+                       </div>
+                    </div>
+
+                    <div className="pt-4 mt-4 border-t border-white/5">
+                       <p className="text-[7px] tracking-[0.2em] opacity-30 uppercase text-center leading-relaxed">
                           Further questions? Reach out to the architects.<br/>
                           (support@hexa-relation.com)
                        </p>

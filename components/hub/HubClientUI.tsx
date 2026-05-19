@@ -122,7 +122,7 @@ export default function HubClientUI({
                  <ShieldCheck size={10} /> {realStats?.equipped?.title || "ASSOCIATE"}
               </div>
               
-              <p className="text-[9px] uppercase tracking-[0.5em] text-white/30 mb-1">Relation Token</p>
+              <p className="text-[9px] uppercase tracking-[0.5em] text-white/30 mb-1">Holding RT / 現在の所持RT</p>
               <div className="flex items-center justify-start md:justify-end gap-4">
                  <p className="text-2xl font-extralight tracking-[0.1em] text-white">{Number(realStats?.rt_balance || 0).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
                  <Link href="/charge" className="px-2 py-1 border border-azure-500/30 bg-azure-500/5 text-azure-400 text-[7px] tracking-[0.2em] font-bold uppercase hover:bg-azure-500/10 transition-all">
