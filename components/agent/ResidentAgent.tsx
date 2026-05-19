@@ -416,7 +416,7 @@ export default function ResidentAgent() {
                  <p className="text-[10px] leading-relaxed tracking-widest text-white/70 whitespace-pre-wrap">{selectedNews.content}</p>
               </div>
               <div className="flex justify-end">
-                 <button onClick={() => setSelectedNews(null)} className="px-6 py-2 border border-white/10 text-[8px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all text-white/40 hover:text-white">Observation / 閉じる</button>
+                 <button onClick={() => setSelectedNews(null)} className="px-6 py-2 border border-white/10 text-[8px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all text-white/40 hover:text-white">Close / 閉じる</button>
               </div>
             </motion.div>
           </div>

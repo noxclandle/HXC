@@ -65,30 +65,30 @@ export default function HubClientUI({
       
       if (res.ok) {
         await fetchData();
-        showToast("Bonus Received / 報酬受取完了", "success");
+        window.dispatchEvent(new CustomEvent("rt-grace-received"));
+        window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
+        
         if (typeof navigator !== "undefined" && navigator.vibrate) {
-          navigator.vibrate([15]); // 高級感のある短い振動
+          navigator.vibrate([15]);
         }
-        setTimeout(() => {
-          setMood('stable');
-          setIsResonating(false);
-        }, 3000);
+        
+        // Success: Button will vanish due to fetchData updating isBonusAvailable
+        setMood('stable');
+        setIsResonating(false);
       } else {
         if (data.error === "Already resonated today.") {
-          showToast("Already Received / 本日は受取済みです", "info");
-        } else {
-          showToast("Bonus Failed / 受取失敗", "error");
-        }
-        setMood('unstable');
-        setTimeout(() => {
+          await fetchData(); // To hide the button
           setMood('stable');
-          setIsResonating(false);
-        }, 3000);
+        } else {
+          showToast("Sync Failed / 境界との同期に失敗しました", "error");
+          setMood('unstable');
+        }
+        setIsResonating(false);
       }
     } catch (e) {
       setMood('unstable');
       setIsResonating(false);
-      showToast("Bonus Failed / 受取失敗", "error");
+      showToast("Sync Failed / 境界との同期に失敗しました", "error");
     }
   };
 
@@ -213,32 +213,14 @@ export default function HubClientUI({
                   >
                     <div className="opacity-30 text-[8px] tracking-[0.5em] uppercase font-bold mb-2 relative z-10 flex items-center gap-2">
                        Concierge
-                       {latestNews && (
-                         <span className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
-                       )}
                     </div>
                       <div className="relative z-10 py-4">
                         <GeometricAngel level={Math.floor(Math.sqrt(Number(realStats?.exp || 0) / 10)) + 1} mood={mood} size={180} />
-                        
-                        {/* Speech Bubble for News/Alerts */}
-                        <motion.button 
-                          onClick={() => latestNews && setSelectedNews(latestNews)}
-                          initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          className={`absolute -top-4 -right-12 bg-white/10 backdrop-blur-md border border-white/10 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl text-left transition-all ${latestNews ? 'cursor-pointer hover:bg-white/20 active:scale-95' : 'pointer-events-none'}`}
-                        >
-                           <p className="text-[7px] uppercase tracking-widest text-azure-400 font-bold mb-1 italic">
-                             {latestNews?.category || "Notice"}
-                           </p>
-                           <p className="text-[9px] leading-tight text-white/80 line-clamp-2 font-medium">
-                             {latestNews ? latestNews.title : greeting}
-                           </p>
-                        </motion.button>
                       </div>
                     
                     <div className="space-y-2 relative z-10 w-full min-h-[80px] flex flex-col justify-center">
                       <AnimatePresence mode="wait">
-                        {isBonusAvailable ? (
+                        {isBonusAvailable && (
                           <motion.div
                             key="bonus-active"
                             initial={{ opacity: 0, y: 10 }}
@@ -247,7 +229,7 @@ export default function HubClientUI({
                             className="space-y-2"
                           >
                             <p className="text-[10px] tracking-widest opacity-40 uppercase">
-                              {mood === 'excited' ? 'Bonus active' : mood === 'unstable' ? 'Connection weak' : 'Awaiting daily bonus'}
+                              {mood === 'excited' ? 'Resonating...' : mood === 'unstable' ? 'Connection weak' : 'Awaiting daily bonus'}
                             </p>
 
                             <motion.button 
@@ -260,23 +242,9 @@ export default function HubClientUI({
                               }`}
                             >
                               <Sparkles size={12} className={isResonating ? 'animate-spin' : ''} />
-                              {isResonating ? 'Loading...' : 'Daily Bonus'}
+                              {isResonating ? 'Connecting...' : 'Daily Bonus'}
                             </motion.button>
                           </motion.div>
-                        ) : (
-                           <motion.div
-                             key="bonus-claimed"
-                             initial={{ opacity: 0 }}
-                             animate={{ opacity: 1 }}
-                             className="space-y-1"
-                           >
-                             <p className="text-[8px] tracking-[0.5em] uppercase font-bold opacity-20">
-                               Connection Stable
-                             </p>
-                             <p className="text-[7px] tracking-[0.3em] uppercase opacity-10 font-medium">
-                               Bonus already claimed
-                             </p>
-                           </motion.div>
                         )}
                       </AnimatePresence>
                     </div>
@@ -343,7 +311,7 @@ export default function HubClientUI({
                      onClick={() => setSelectedNews(null)}
                      className="px-8 py-3 border border-white/10 text-[9px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all text-white/40 hover:text-white"
                    >
-                      Observation / 観測
+                      Close / 閉じる
                    </button>
                 </div>
               </motion.div>
