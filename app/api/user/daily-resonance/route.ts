@@ -60,10 +60,12 @@ export async function POST(req: NextRequest) {
       // 再度チェック（レースコンディション防止）
       const checkUser = await tx.user.findUnique({
         where: { id: userId },
-        select: { last_daily_at: true }
+        select: { last_daily_at: true, rt_balance: true }
       });
 
-      const checkLastDaily = checkUser?.last_daily_at ? new Date(checkUser.last_daily_at) : null;
+      if (!checkUser) throw new Error("USER_NOT_FOUND");
+
+      const checkLastDaily = checkUser.last_daily_at ? new Date(checkUser.last_daily_at) : null;
       const checkIsSameDay = checkLastDaily && 
         checkLastDaily.getFullYear() === now.getFullYear() &&
         checkLastDaily.getMonth() === now.getMonth() &&
@@ -73,17 +75,7 @@ export async function POST(req: NextRequest) {
         throw new Error("ALREADY_RESONATED");
       }
 
-      // executeRTTransactionは内部で$transactionを使っているが、
-      // Prismaはネストされたトランザクションをサポートしている（またはこのロジックをここに展開する）
-      // ここではロジックを安全に統合する
-      const currentUser = await tx.user.findUnique({
-        where: { id: userId },
-        select: { rt_balance: true }
-      });
-
-      if (!currentUser) throw new Error("USER_NOT_FOUND");
-
-      const newBalance = currentUser.rt_balance + BigInt(RT_REWARD);
+      const newBalance = checkUser.rt_balance + BigInt(RT_REWARD);
 
       const updatedUser = await tx.user.update({
         where: { id: userId },
@@ -116,7 +108,13 @@ export async function POST(req: NextRequest) {
     if (error.message === "ALREADY_RESONATED") {
       return NextResponse.json({ error: "Already resonated today." }, { status: 400 });
     }
-    console.error("Connection Error:", error);
-    return NextResponse.json({ error: "Failed to connect with the core." }, { status: 500 });
+    if (error.message === "USER_NOT_FOUND") {
+      return NextResponse.json({ error: "User not found." }, { status: 404 });
+    }
+    console.error("Connection Error (Daily Resonance):", error);
+    return NextResponse.json({ 
+      error: "Failed to connect with the core. / 境界との同期に失敗しました",
+      details: error.message
+    }, { status: 500 });
   }
 }

@@ -24,10 +24,11 @@ export default function HubClientUI({
   const [mood, setMood] = useState<'stable' | 'excited' | 'unstable'>('stable');
   const [isResonating, setIsResonating] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
-  const [greeting, setGreeting] = useState("");
-  const [selectedNews, setSelectedNews] = useState<any>(null);
+  const [bubbleDismissed, setBubbleDismissed] = useState(false);
 
   const isBonusAvailable = !realStats?.last_daily_at || new Date(realStats.last_daily_at).toDateString() !== new Date().toDateString();
+
+  const isNewMessage = latestNews && (!realStats?.last_read_news_at || new Date(latestNews.created_at) > new Date(realStats.last_read_news_at));
 
   const fetchData = useCallback(async () => {
     // 初回読み込み時はサーバーからのデータを既に使用しているためスキップ
@@ -104,9 +105,20 @@ export default function HubClientUI({
     }
   }, [isBonusAvailable]);
 
-  const closeGuide = () => {
-    setShowGuide(false);
-    localStorage.setItem("hxc-guide-seen", "true");
+  const markAsRead = async () => {
+    if (!latestNews) return;
+    setBubbleDismissed(true);
+    setSelectedNews(latestNews);
+    
+    try {
+      await fetch("/api/user/read-news", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newsId: latestNews.id })
+      });
+      // ステータスを更新して赤い点を消す
+      fetchData();
+    } catch (e) { console.error(e); }
   };
 
   return (
@@ -213,9 +225,32 @@ export default function HubClientUI({
                   >
                     <div className="opacity-30 text-[8px] tracking-[0.5em] uppercase font-bold mb-2 relative z-10 flex items-center gap-2">
                        Concierge
+                       {isNewMessage && (
+                         <span className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+                       )}
                     </div>
                       <div className="relative z-10 py-4">
                         <GeometricAngel level={Math.floor(Math.sqrt(Number(realStats?.exp || 0) / 10)) + 1} mood={mood} size={180} />
+                        
+                        {/* News Bubble */}
+                        <AnimatePresence>
+                          {isNewMessage && !bubbleDismissed && (
+                            <motion.button 
+                              onClick={markAsRead}
+                              initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                              className="absolute -top-4 -right-12 bg-white/10 backdrop-blur-md border border-white/10 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl text-left transition-all cursor-pointer hover:bg-white/20 active:scale-95"
+                            >
+                               <p className="text-[7px] uppercase tracking-widest text-azure-400 font-bold mb-1 italic">
+                                 New Message
+                               </p>
+                               <p className="text-[9px] leading-tight text-white/80 line-clamp-2 font-medium">
+                                 {latestNews.title}
+                               </p>
+                            </motion.button>
+                          )}
+                        </AnimatePresence>
                       </div>
                     
                     <div className="space-y-2 relative z-10 w-full min-h-[80px] flex flex-col justify-center">
