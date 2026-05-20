@@ -54,7 +54,7 @@ export default function ResidentAgent() {
     } catch (e) { console.error(e); }
   };
 
-  const level = Math.floor(Math.sqrt(userExp / 10)) + 1;
+  const level = Math.min(30, Math.floor(Math.sqrt(userExp / 10)) + 1);
 
   const checkSoulLink = () => {
     if (typeof window !== "undefined") {
