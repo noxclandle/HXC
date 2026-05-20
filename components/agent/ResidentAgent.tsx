@@ -42,8 +42,8 @@ export default function ResidentAgent() {
     fetchNews();
   }, []);
   
-  const latestNews = allNews[0];
-  const isNewMessage = latestNews && (!lastReadAt || new Date(latestNews.created_at) > new Date(lastReadAt));
+  const latestNews = allNews && allNews.length > 0 ? allNews[0] : null;
+  const isNewMessage = latestNews && (!lastReadAt || new Date(latestNews.created_at || 0) > new Date(lastReadAt));
 
   const markAsRead = async () => {
     if (!latestNews) return;
@@ -315,8 +315,8 @@ export default function ResidentAgent() {
                     
                     {isNewsLoading ? (
                       <div className="py-12 text-center text-[8px] uppercase tracking-widest opacity-20 animate-pulse">Synchronizing Records...</div>
-                    ) : allNews.length > 0 ? (
-                      allNews.map((n) => (
+                    ) : (allNews || []).length > 0 ? (
+                      (allNews || []).map((n) => (
                         <button 
                           key={n.id} 
                           onClick={() => {
@@ -326,7 +326,7 @@ export default function ResidentAgent() {
                           className="w-full p-4 border border-white/5 bg-white/[0.01] space-y-2 group hover:border-white/20 transition-all text-left block"
                         >
                           <div className="flex justify-between items-center">
-                            <span className="text-[7px] font-mono opacity-30">{new Date(n.created_at).toLocaleDateString()}</span>
+                            <span className="text-[7px] font-mono opacity-30">{new Date(n.created_at || 0).toLocaleDateString()}</span>
                             <span className="text-[6px] px-1.5 py-0.5 border border-azure-500/30 text-azure-400 uppercase tracking-widest">{n.type || "System"}</span>
                           </div>
                           <p className="text-[10px] tracking-widest text-white leading-relaxed group-hover:text-azure-400 transition-colors truncate">{n.title}</p>
