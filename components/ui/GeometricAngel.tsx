@@ -18,8 +18,8 @@ interface GeometricAngelProps {
  */
 export default function GeometricAngel({ level, mood, size = 200 }: GeometricAngelProps) {
   const stage = useMemo(() => {
-    if (level >= 50) return 4;
-    if (level >= 25) return 3;
+    if (level >= 30) return 4;
+    if (level >= 20) return 3;
     if (level >= 10) return 2;
     return 1;
   }, [level]);

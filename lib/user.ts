@@ -28,6 +28,7 @@ export async function getUserStatus(email: string | null | undefined) {
       link_line: true,
       link_facebook: true,
       last_daily_at: true,
+      last_read_news_at: true,
       card: {
         select: { uid: true }
       }
@@ -80,6 +81,7 @@ export async function getUserStatus(email: string | null | undefined) {
     rank: isFixer ? "Fixer" : user.rank,
     role: isFixer ? "fixer" : user.role, // Force role to fixer in UI
     last_daily_at: user.last_daily_at,
+    last_read_news_at: user.last_read_news_at,
     titles: titles,
     owned_assets: ownedAssets,
     asset_prices: assetPrices,
