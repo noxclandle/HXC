@@ -1,145 +1,87 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { z } from "zod";
-import { executeRTTransaction } from "@/lib/rt/engine";
-import { rateLimit } from "@/lib/ratelimit";
-
-const registerSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  handle: z.string().min(1, "Handle is required"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  uid: z.string().min(1, "UID is required"),
-  role: z.string().optional(),
-  phone: z.string().optional(),
-  address: z.string().optional(),
-  title: z.string().optional(),
-});
+import { v4 as uuidv4 } from "uuid";
 
 /**
- * 新規ユーザー登録と物理カードの有効化を行うAPI
+ * ユーザー登録とカードの最終紐付け (Atomic Finalization)
  * POST /api/register
  */
 export async function POST(req: NextRequest) {
   try {
-    // 門番（レートリミット）のチェック
-    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
-    const { success } = await rateLimit.strict.limit(ip);
-    
-    if (!success) {
-      return NextResponse.json({ 
-        error: "Too many requests. Please wait a moment. / リクエストが多すぎます。しばらく時間を置いてお試しください。" 
-      }, { status: 429 });
+    const { token, email, password, name } = await req.json();
+
+    if (!token || !email || !password) {
+      return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
     }
 
-    const body = await req.json();
-    const parseResult = registerSchema.safeParse(body);
-
-    if (!parseResult.success) {
-      return NextResponse.json({ error: "Invalid request", details: parseResult.error.format() }, { status: 400 });
-    }
-
-    const { name, handle, email: rawEmail, password, phone, address, uid, title } = parseResult.data;
-    const email = rawEmail.toLowerCase();
-
-    const normalizedUid = uid.replace(/:/g, "").toUpperCase();
-
-    // 1. 台帳にそのUIDが存在し、かつ未発行であることを確認
-    let card = await prisma.card.findUnique({
-      where: { uid: normalizedUid }
-    });
-
-    if (!card) {
-      // コロン付きでも探す
-      const colonUid = normalizedUid.match(/.{1,2}/g)?.join(":") || normalizedUid;
-      card = await prisma.card.findUnique({
-        where: { uid: colonUid }
-      });
-    }
-
-    if (!card || card.status !== "unissued") {
-      return NextResponse.json({ error: "Invalid or already issued card." }, { status: 403 });
-    }
-
-    // 2. パスワードのハッシュ化
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // 3. ユーザーの作成とカードの有効化（トランザクション）
-    const newUser = await prisma.$transaction(async (tx) => {
-      const user = await tx.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          name,
-          handle_name: handle,
-          role: "member",
-          rank: "Initiate",
-          address,
-          phone,
-          rt_balance: 0n, // 最初は0で作成し、後でexecuteRTTransactionで付与
-          ai_config: {
-            profile: {
-              title: title || "",
-            }
-          },
-          equipped_assets: {
-            frame: "Obsidian",
-            background: "Default",
-            effect: "None",
-            fontFamily: "Standard",
-            title: "ASSOCIATE",
-            sound: "resonance",
-            pointer: "Pure White Hex",
-            orientation: "horizontal"
-          },
-          unlocked_titles: ["ASSOCIATE", "Initiate", "Observer"]
+    // 1. トークンの有効性をトランザクション内で厳密に確認
+    const result = await prisma.$transaction(async (tx) => {
+      const card = await tx.card.findFirst({
+        where: {
+          activation_token: token,
+          status: "activating",
+          token_expires_at: { gt: new Date() }
         }
       });
 
+      if (!card) {
+        throw new Error("Invalid or expired activation token.");
+      }
+
+      // 2. ユーザー作成
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await tx.user.create({
+        data: {
+          email: email.toLowerCase(),
+          password: hashedPassword,
+          name: name || "New Member",
+          role: "member",
+          rank: "Initiate"
+        }
+      });
+
+      // 3. デバイスバインド (自動ログイン体験のため)
+      const deviceToken = uuidv4();
+      await tx.deviceBinding.create({
+        data: {
+          user_id: user.id,
+          device_token: deviceToken,
+          user_agent: req.headers.get("user-agent") || "unknown"
+        }
+      });
+
+      // 4. カードの最終紐付けと秘密情報の完全破壊
       await tx.card.update({
-        where: { uid: card!.uid },
+        where: { uid: card.uid },
         data: {
           user_id: user.id,
           status: "active",
           activated_at: new Date(),
-          issued_at: new Date()
+          internal_serial: "DESTROYED_" + Date.now(),
+          activation_token: null,
+          token_expires_at: null
         }
       });
 
-      return user;
+      return { userId: user.id, deviceToken };
     });
 
-    // 初期ポイント付与とデバイス紐付け
-    let deviceToken = "";
-    try {
-      await executeRTTransaction(
-        newUser.id,
-        100,
-        "earn",
-        "Initial Registration Bonus"
-      );
+    const response = NextResponse.json({ success: true, userId: result.userId });
 
-      // デバイス紐付け用のトークン生成
-      const crypto = require("crypto");
-      deviceToken = crypto.randomBytes(32).toString("hex");
-      await prisma.deviceBinding.create({
-        data: {
-          user_id: newUser.id,
-          device_token: deviceToken,
-          user_agent: req.headers.get("user-agent") || "Unknown Device"
-        }
-      });
-    } catch (err) {
-      console.error("Post-registration steps failed:", err);
-    }
+    // Identity Cookie をセット (1年有効)
+    response.cookies.set("hxc_soul_fragment", result.deviceToken, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax"
+    });
 
-    return NextResponse.json({ success: true, userId: newUser.id, slug: newUser.handle_name, deviceToken });
+    return response;
+
   } catch (error: any) {
     console.error("Registration error:", error);
-    if (error.code === "P2002") {
-      return NextResponse.json({ error: "Email already registered." }, { status: 409 });
-    }
-    return NextResponse.json({ error: "Failed to sync identity record." }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Failed to register." }, { status: 500 });
   }
 }
