@@ -94,7 +94,10 @@ model Card {
   user_id         String?   @unique @db.Uuid
   issued_at       DateTime?
   activated_at    DateTime?
+  activation_token String?   @unique
+  token_expires_at DateTime?
   user            User?     @relation(fields: [user_id], references: [id])
+  order           Order?
 
   @@map("cards")
 }
@@ -191,6 +194,9 @@ model Order {
   customer_name     String
   shipping_address  Json?
   status            String   @default("paid")
+  card_uid          String?  @unique
+  card              Card?    @relation(fields: [card_uid], references: [uid])
+  shipped_at        DateTime?
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
 
