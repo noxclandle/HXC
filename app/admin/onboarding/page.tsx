@@ -1,6 +1,6 @@
 "use client";
 
-import { Layers, ShieldCheck, Mail, Smartphone, Fingerprint, Lock, CheckCircle2, CreditCard, ExternalLink, Zap } from "lucide-react";
+import { Layers, ShieldCheck, Mail, Smartphone, Fingerprint, Lock, CheckCircle2, CreditCard, ExternalLink, Zap, Package } from "lucide-react";
 import Link from "next/link";
 
 export default function OnboardingGuidePage() {

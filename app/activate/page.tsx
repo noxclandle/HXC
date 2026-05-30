@@ -15,7 +15,7 @@ function ActivateContent() {
     if (token) {
       const timer = setTimeout(() => {
         // トークンを維持したまま登録画面へ
-        router.push(\`/activate/register?token=\${token}\`);
+        router.push(`/activate/register?token=${token}`);
       }, 2000);
       return () => clearTimeout(timer);
     }
