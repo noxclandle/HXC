@@ -124,7 +124,7 @@ export default function RegistryPage() {
 
   const copyUrl = (uid: string, serial: string) => {
     const cleanUid = uid.replace(/[:\s]/g, "").toUpperCase();
-    const url = \`\${window.location.origin}/api/card/\${cleanUid}?s=\${serial}\`;
+    const url = `${window.location.origin}/api/card/${cleanUid}?s=${serial}`;
     navigator.clipboard.writeText(url);
     alert("Provisioning URL copied to clipboard.");
   };
@@ -317,7 +317,7 @@ export default function RegistryPage() {
             >
               <h2 className="text-xl tracking-[0.3em] uppercase mb-2 text-white font-light">Assign Physical Card</h2>
               <p className="text-[9px] tracking-widest text-azure-400 opacity-60 uppercase mb-8 italic">
-                Select an unissued card for {selectedOrder.customer_name}'s {selectedOrder.tier} order
+                Select an unissued card for {selectedOrder.customer_name}&apos;s {selectedOrder.tier} order
               </p>
 
               <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2 pr-2">

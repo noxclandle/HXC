@@ -22,13 +22,13 @@ export async function GET(req: NextRequest, { params }: { params: { uid: string 
   });
 
   if (!card) {
-    return NextResponse.redirect(new URL(\`/invalid-card?uid=\${uid}\`, req.url));
+    return NextResponse.redirect(new URL(`/invalid-card?uid=${uid}`, req.url));
   }
 
   // 2. 未アクティブの場合 -> セキュリティ照合と「すり替え(The Swap)」
   if (card.status === "unissued" || card.status === "shipped") {
     if (!secretParam || secretParam !== card.internal_serial) {
-      return NextResponse.redirect(new URL(\`/invalid-card?uid=\${uid}\`, req.url));
+      return NextResponse.redirect(new URL(`/invalid-card?uid=${uid}`, req.url));
     }
 
     // ★重要: シリアルを隠蔽し、15分間有効な一時トークンを生成
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest, { params }: { params: { uid: string 
     });
 
     // シリアルコードを含まない「安全なURL」へリダイレクト
-    return NextResponse.redirect(new URL(\`/activate?token=\${activationToken}\`, req.url));
+    return NextResponse.redirect(new URL(`/activate?token=${activationToken}`, req.url));
   }
 
   // 3. アクティブな場合（既存のロジック）
@@ -66,14 +66,14 @@ export async function GET(req: NextRequest, { params }: { params: { uid: string 
     }
     
     const slug = card.user?.handle_name || card.user_id;
-    return NextResponse.redirect(new URL(\`/p/\${slug}\`, req.url));
+    return NextResponse.redirect(new URL(`/p/${slug}`, req.url));
   }
 
   // 登録中(activating)のカードを再度タップした場合
   if (card.status === "activating") {
     // 既存のトークンがあれば再利用
     if (card.activation_token && card.token_expires_at && card.token_expires_at > new Date()) {
-        return NextResponse.redirect(new URL(\`/activate?token=\${card.activation_token}\`, req.url));
+        return NextResponse.redirect(new URL(`/activate?token=${card.activation_token}`, req.url));
     }
     
     // 期限切れの場合、シリアル(s)があれば再発行（unissuedと同じロジックへ流す）
@@ -88,7 +88,7 @@ export async function GET(req: NextRequest, { params }: { params: { uid: string 
           token_expires_at: expiresAt
         }
       });
-      return NextResponse.redirect(new URL(\`/activate?token=\${activationToken}\`, req.url));
+      return NextResponse.redirect(new URL(`/activate?token=${activationToken}`, req.url));
     }
   }
 
