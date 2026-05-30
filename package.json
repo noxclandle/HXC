@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "prisma generate && next build",
+    "dev": "prisma db push && next dev",
+    "build": "prisma generate && prisma db push && next build",
+    "backup": "node scripts/daily-backup.js",
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint"
