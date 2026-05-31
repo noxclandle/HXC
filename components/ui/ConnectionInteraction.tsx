@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { motion, AnimatePresence } from "framer-motion";
 
 /**
- * 軌跡 (Pointer) アセットの色彩と形状をリアルタイムに同期させる
- * パフォーマンス向上のため、Framer Motionを使わずCanvasで描画する
+ * 軌跡 (Pointer) システムの構造改革:
+ * Safariでのフリーズ（焼き付き）を防ぐため、常時稼働するCanvasを完全に廃止。
+ * 代わりに、タップ/クリック時のみ軽量なDOMアニメーションを生成する方式へ移行。
  */
 export default function ConnectionInteraction() {
   const { data: session } = useSession();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const pointerConfig = useRef({ color: "#FFFFFF", size: 8, shape: "hex" });
-  const trail = useRef<{ x: number; y: number; life: number }[]>([]);
-  const pulses = useRef<{ x: number; y: number; life: number }[]>([]);
+  const [pulses, setPulses] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [color, setColor] = useState("#FFFFFF");
 
   const fetchPointerStyle = async () => {
     try {
@@ -22,16 +22,16 @@ export default function ConnectionInteraction() {
         const equippedPointer = data.equipped?.pointer || "Pure White Hex";
         
         switch (equippedPointer) {
-          case "Azure Trace": pointerConfig.current = { color: "#3B82F6", size: 10, shape: "hex" }; break;
-          case "Emerald Pulse": pointerConfig.current = { color: "#10B981", size: 10, shape: "hex" }; break;
-          case "Ruby Flare": pointerConfig.current = { color: "#F43F5E", size: 12, shape: "star" }; break;
-          case "Gold Trace": pointerConfig.current = { color: "#F59E0B", size: 10, shape: "hex" }; break;
-          case "Violet Connection": pointerConfig.current = { color: "#8B5CF6", size: 10, shape: "hex" }; break;
-          case "Crimson Ember": pointerConfig.current = { color: "#EF4444", size: 14, shape: "flare" }; break;
-          case "Shadow Trace": pointerConfig.current = { color: "#111111", size: 18, shape: "ink" }; break;
-          case "Prism Trace": pointerConfig.current = { color: "rgba(255,255,255,0.8)", size: 12, shape: "prism" }; break;
-          case "Void Trace": pointerConfig.current = { color: "#000000", size: 20, shape: "tear" }; break;
-          default: pointerConfig.current = { color: "#FFFFFF", size: 8, shape: "hex" };
+          case "Azure Trace": setColor("#3B82F6"); break;
+          case "Emerald Pulse": setColor("#10B981"); break;
+          case "Ruby Flare": setColor("#F43F5E"); break;
+          case "Gold Trace": setColor("#F59E0B"); break;
+          case "Violet Connection": setColor("#8B5CF6"); break;
+          case "Crimson Ember": setColor("#EF4444"); break;
+          case "Shadow Trace": setColor("#111111"); break;
+          case "Prism Trace": setColor("rgba(255,255,255,0.8)"); break;
+          case "Void Trace": setColor("#000000"); break;
+          default: setColor("#FFFFFF");
         }
       }
     } catch (e) { console.error(e); }
@@ -42,116 +42,50 @@ export default function ConnectionInteraction() {
     const handleAssetsUpdated = () => fetchPointerStyle();
     window.addEventListener("hxc-assets-updated", handleAssetsUpdated);
 
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: true });
-    if (!ctx) return;
-
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
-
-    const handleResize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    };
-    window.addEventListener("resize", handleResize, { passive: true });
-
-    const handleMove = (x: number, y: number) => {
-      // 新しい点のみを追加し、古い点はrender内で管理
-      trail.current.push({ x, y, life: 1.0 });
-    };
-
-    const handleAction = (x: number, y: number) => {
-      pulses.current.push({ x, y, life: 1.0 });
-    };
-
-    const mouseMove = (e: MouseEvent) => handleMove(e.clientX, e.clientY);
-    const mouseDown = (e: MouseEvent) => handleAction(e.clientX, e.clientY);
-    const touchMove = (e: TouchEvent) => {
-      if (e.touches[0]) handleMove(e.touches[0].clientX, e.touches[0].clientY);
-    };
-    const touchStart = (e: TouchEvent) => {
-      if (e.touches[0]) handleAction(e.touches[0].clientX, e.touches[0].clientY);
-    };
-
-    window.addEventListener("mousemove", mouseMove, { passive: true });
-    window.addEventListener("mousedown", mouseDown, { passive: true });
-    window.addEventListener("touchmove", touchMove, { passive: true });
-    window.addEventListener("touchstart", touchStart, { passive: true });
-
-    let animationFrameId: number;
-
-    const drawHex = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number) => {
-      if (size <= 0) return;
-      ctx.beginPath();
-      for (let i = 0; i < 6; i++) {
-        const angle = i * Math.PI / 3;
-        ctx.lineTo(x + size * Math.cos(angle), y + size * Math.sin(angle));
+    const handleAction = (e: MouseEvent | TouchEvent) => {
+      let x, y;
+      if (e instanceof MouseEvent) {
+        x = e.clientX;
+        y = e.clientY;
+      } else {
+        x = e.touches[0].clientX;
+        y = e.touches[0].clientY;
       }
-      ctx.closePath();
-    };
 
-    const render = () => {
-      // 画面を完全にクリア
-      ctx.clearRect(0, 0, width, height);
-
-      // Pulsesの処理
-      const nextPulses: any[] = [];
-      for (const p of pulses.current) {
-        p.life -= 0.04;
-        if (p.life > 0) {
-          const size = (1 - p.life) * 100;
-          ctx.globalAlpha = p.life;
-          ctx.strokeStyle = pointerConfig.current.color;
-          ctx.lineWidth = 1;
-          drawHex(ctx, p.x, p.y, size);
-          ctx.stroke();
-          nextPulses.push(p);
-        }
-      }
-      pulses.current = nextPulses;
-
-      // Trailの処理
-      const nextTrail: any[] = [];
-      // パフォーマンスのため、表示する点数を厳密に制限
-      const activeTrail = trail.current.slice(-20);
+      const id = Date.now();
+      setPulses((prev) => [...prev.slice(-5), { id, x, y }]);
       
-      activeTrail.forEach((t, i) => {
-        t.life -= 0.025;
-        if (t.life > 0) {
-          const opacity = t.life * (i / activeTrail.length);
-          const size = pointerConfig.current.size * t.life;
-          
-          ctx.globalAlpha = opacity;
-          ctx.fillStyle = pointerConfig.current.color;
-          
-          drawHex(ctx, t.x, t.y, size);
-          ctx.fill();
-          nextTrail.push(t);
-        }
-      });
-      trail.current = nextTrail;
-
-      ctx.globalAlpha = 1.0;
-      animationFrameId = requestAnimationFrame(render);
+      // 自動削除
+      setTimeout(() => {
+        setPulses((prev) => prev.filter((p) => p.id !== id));
+      }, 1000);
     };
 
-    render();
+    window.addEventListener("mousedown", handleAction, { passive: true });
+    window.addEventListener("touchstart", handleAction, { passive: true });
 
     return () => {
       window.removeEventListener("hxc-assets-updated", handleAssetsUpdated);
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", mouseMove);
-      window.removeEventListener("mousedown", mouseDown);
-      window.removeEventListener("touchmove", touchMove);
-      window.removeEventListener("touchstart", touchStart);
-      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("mousedown", handleAction);
+      window.removeEventListener("touchstart", handleAction);
     };
   }, [session]);
 
-  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[9999]" />;
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
+      <AnimatePresence>
+        {pulses.map((p) => (
+          <motion.div
+            key={p.id}
+            initial={{ opacity: 0.8, scale: 0, x: p.x, y: p.y }}
+            animate={{ opacity: 0, scale: 2.5 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="absolute w-12 h-12 -ml-6 -mt-6 border-2 rotate-45"
+            style={{ borderColor: color }}
+          />
+        ))}
+      </AnimatePresence>
+    </div>
+  );
 }

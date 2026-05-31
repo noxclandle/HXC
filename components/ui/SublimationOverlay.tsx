@@ -36,7 +36,7 @@ export default function SublimationOverlay({ isVisible, onComplete, rankName }: 
             transition={{ duration: 2, ease: "circOut" }}
             className="relative"
           >
-            <img src="/logo.png" alt="Sublimation Logo" className="w-[160px] h-[160px] object-contain drop-shadow-[0_0_50px_rgba(224,224,224,0.5)]" />
+            <img src="/logo.png" alt="Sublimation Logo" className="w-[160px] h-[160px] object-contain" />
             <motion.div
               animate={{ opacity: [0, 1, 0] }}
               transition={{ repeat: Infinity, duration: 2 }}
