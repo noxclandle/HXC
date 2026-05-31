@@ -9,8 +9,8 @@ import { signIn } from "next-auth/react";
 function RegisterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const token = searchParams.get("token") || "";
   const uid = searchParams.get("uid") || "";
-  const serial = searchParams.get("serial") || "";
 
   const [formData, setFormData] = useState({
     name: "",
@@ -28,6 +28,10 @@ function RegisterContent() {
       setError("必須項目をすべて入力してください。");
       return;
     }
+    if (!token) {
+      setError("有効なセッショントークンが見つかりません。もう一度カードをタップしてください。");
+      return;
+    }
     setError("");
     setLoading(true);
 
@@ -37,8 +41,7 @@ function RegisterContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          uid,
-          role: "member"
+          token
         })
       });
 

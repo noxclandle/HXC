@@ -10,16 +10,16 @@ function ActivateContent() {
   const router = useRouter();
   
   const token = searchParams.get("token");
+  const uid = searchParams.get("uid");
 
   useEffect(() => {
     if (token) {
       const timer = setTimeout(() => {
-        // トークンを維持したまま登録画面へ
-        router.push(`/activate/register?token=${token}`);
+        router.push(`/activate/register?token=${token}${uid ? `&uid=${uid}` : ""}`);
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [token, router]);
+  }, [token, uid, router]);
 
   return (
     <AnimatePresence mode="wait">

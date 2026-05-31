@@ -50,12 +50,6 @@ export default function GeometricBackground() {
         ctx.fill();
       });
 
-      // Subtle scanline overlay
-      ctx.fillStyle = "rgba(255, 255, 255, 0.005)";
-      for(let i = 0; i < height; i += 4) {
-        ctx.fillRect(0, i, width, 1);
-      }
-
       animationFrameId = requestAnimationFrame(render);
     };
 
@@ -76,5 +70,12 @@ export default function GeometricBackground() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="fixed inset-0 -z-10 bg-[#020202]" />;
+  return (
+    <div className="fixed inset-0 -z-10 bg-[#020202]">
+      <canvas ref={canvasRef} />
+      {/* CSS-based scanlines for better performance */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" 
+           style={{ backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.5) 50%)', backgroundSize: '100% 4px' }} />
+    </div>
+  );
 }

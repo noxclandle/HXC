@@ -9,14 +9,17 @@ import { Suspense } from "react";
 function InvalidCardContent() {
   const searchParams = useSearchParams();
   const uid = searchParams.get("uid");
+  const error = searchParams.get("error");
 
   return (
     <div className="flex flex-col items-center">
       <ShieldAlert size={80} className="text-rose-500 mb-8" />
       <h1 className="text-2xl tracking-[0.4em] uppercase mb-4 text-white">Invalid Card</h1>
-      <p className="text-[10px] tracking-widest text-rose-500/60 uppercase font-bold mb-12">未登録または無効なデバイスです</p>
+      <p className="text-[10px] tracking-widest text-rose-500/60 uppercase font-bold mb-12">
+        {error === "invalid_secret" ? "認証情報の不一致、または書き換えが検知されました" : "未登録または無効なデバイスです"}
+      </p>
       
-      <div className="p-8 border border-white/5 bg-white/[0.02] mb-12 max-w-sm">
+      <div className="p-8 border border-white/5 bg-white/[0.04] mb-12 max-w-sm">
          <p className="text-[10px] tracking-widest opacity-40 leading-relaxed">
             読み取られた物理識別子 (UID):<br />
             <span className="font-mono text-white mt-2 block select-all">{uid || "UNKNOWN"}</span>

@@ -8,9 +8,9 @@ import Image from "next/image";
 export default function LandingPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center relative overflow-hidden bg-void">
-      {/* Background Glow */}
+      {/* Background Ambience */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-azure-500/5 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-azure-500/[0.03] rounded-full" />
       </div>
 
       <motion.div

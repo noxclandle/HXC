@@ -44,7 +44,7 @@ export default function ConfirmationModal({ isOpen, onClose, onConfirm, title, d
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[600] flex items-center justify-center p-6 bg-void/90 backdrop-blur-md">
+        <div className="fixed inset-0 z-[600] flex items-center justify-center p-6 bg-void/95">
           <motion.div 
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
