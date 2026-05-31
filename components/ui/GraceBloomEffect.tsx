@@ -41,7 +41,7 @@ export default function GraceBloomEffect({ isActive, onComplete }: { isActive: b
                 ease: "linear",
                 repeat: Infinity 
               }}
-              className="absolute w-1 h-1 bg-moonlight shadow-[0_0_8px_white] rounded-full"
+              className="absolute w-1 h-1 bg-moonlight rounded-full"
             />
           ))}
           {/* Subtle Flash */}

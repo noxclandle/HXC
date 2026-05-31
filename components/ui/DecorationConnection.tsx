@@ -65,7 +65,7 @@ export default function DecorationConnection({ title, isVisible, onComplete }: {
             className="space-y-6"
           >
             <h2 className="text-sm tracking-[0.8em] uppercase opacity-40">Authorized Enhancement</h2>
-            <h1 className="text-4xl tracking-[0.4em] uppercase font-extralight italic text-white drop-shadow-[0_0_10px_white]">
+            <h1 className="text-4xl tracking-[0.4em] uppercase font-extralight italic text-white">
                {title}
             </h1>
             <p className="text-[10px] tracking-[0.3em] uppercase opacity-40 mt-8">

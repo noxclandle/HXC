@@ -40,11 +40,8 @@ export default function GeometricBackground() {
         if (orb.x < -orb.size || orb.x > width + orb.size) orb.vx *= -1;
         if (orb.y < -orb.size || orb.y > height + orb.size) orb.vy *= -1;
 
-        const gradient = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.size);
-        gradient.addColorStop(0, orb.color);
-        gradient.addColorStop(1, "transparent");
-
-        ctx.fillStyle = gradient;
+        // Simple subtle orbs
+        ctx.fillStyle = orb.color;
         ctx.beginPath();
         ctx.arc(orb.x, orb.y, orb.size, 0, Math.PI * 2);
         ctx.fill();

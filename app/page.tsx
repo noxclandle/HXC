@@ -28,7 +28,7 @@ export default function LandingPage() {
              height={240}
              priority
              fetchPriority="high"
-             className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]" 
+             className="object-contain" 
            />
         </div>
       </motion.div>
