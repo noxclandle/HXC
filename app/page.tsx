@@ -5,6 +5,7 @@ import { ShieldCheck, Zap, ArrowRight, CreditCard, Sparkles } from "lucide-react
 import Link from "next/link";
 import Image from "next/image";
 
+// Vercel Build Trigger: 2026-05-31-01
 export default function LandingPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center relative overflow-hidden bg-void">
