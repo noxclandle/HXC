@@ -38,6 +38,10 @@ export default function ConnectionInteraction() {
   };
 
   useEffect(() => {
+    if (session) fetchPointerStyle();
+    const handleAssetsUpdated = () => fetchPointerStyle();
+    window.addEventListener("hxc-assets-updated", handleAssetsUpdated);
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d", { alpha: true });
