@@ -280,7 +280,7 @@ export default function PurchasePage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 30 }}
-              className="fixed bottom-12 left-1/2 -translate-x-1/2 w-[90%] max-w-3xl bg-zinc-950/80 backdrop-blur-2xl border border-white/10 p-8 z-50 flex flex-col md:flex-row items-center justify-between gap-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+              className="fixed bottom-12 left-1/2 -translate-x-1/2 w-[90%] max-w-3xl bg-zinc-950/95 border border-white/10 p-8 z-50 flex flex-col md:flex-row items-center justify-between gap-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
             >
               <div className="text-center md:text-left space-y-1">
                 <span className="text-[9px] uppercase tracking-[0.4em] text-white/30 block">

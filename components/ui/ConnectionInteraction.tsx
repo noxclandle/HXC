@@ -38,13 +38,9 @@ export default function ConnectionInteraction() {
   };
 
   useEffect(() => {
-    if (session) fetchPointerStyle();
-    const handleAssetsUpdated = () => fetchPointerStyle();
-    window.addEventListener("hxc-assets-updated", handleAssetsUpdated);
-    
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
     let width = window.innerWidth;
@@ -58,105 +54,85 @@ export default function ConnectionInteraction() {
       canvas.width = width;
       canvas.height = height;
     };
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize, { passive: true });
 
-    const handleMouseMove = (e: MouseEvent) => {
-      trail.current.push({ x: e.clientX, y: e.clientY, life: 1.0 });
+    const handleMove = (x: number, y: number) => {
+      // 新しい点のみを追加し、古い点はrender内で管理
+      trail.current.push({ x, y, life: 1.0 });
     };
 
-    const handleMouseDown = (e: MouseEvent) => {
-      pulses.current.push({ x: e.clientX, y: e.clientY, life: 1.0 });
+    const handleAction = (x: number, y: number) => {
+      pulses.current.push({ x, y, life: 1.0 });
     };
 
-    const handleTouchMove = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      trail.current.push({ x: touch.clientX, y: touch.clientY, life: 1.0 });
+    const mouseMove = (e: MouseEvent) => handleMove(e.clientX, e.clientY);
+    const mouseDown = (e: MouseEvent) => handleAction(e.clientX, e.clientY);
+    const touchMove = (e: TouchEvent) => {
+      if (e.touches[0]) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+    };
+    const touchStart = (e: TouchEvent) => {
+      if (e.touches[0]) handleAction(e.touches[0].clientX, e.touches[0].clientY);
     };
 
-    const handleTouchStart = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      pulses.current.push({ x: touch.clientX, y: touch.clientY, life: 1.0 });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("touchmove", handleTouchMove, { passive: true });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("mousemove", mouseMove, { passive: true });
+    window.addEventListener("mousedown", mouseDown, { passive: true });
+    window.addEventListener("touchmove", touchMove, { passive: true });
+    window.addEventListener("touchstart", touchStart, { passive: true });
 
     let animationFrameId: number;
 
     const drawHex = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number) => {
+      if (size <= 0) return;
       ctx.beginPath();
       for (let i = 0; i < 6; i++) {
-        ctx.lineTo(x + size * Math.cos(i * Math.PI / 3), y + size * Math.sin(i * Math.PI / 3));
-      }
-      ctx.closePath();
-    };
-
-    const drawStar = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number) => {
-      ctx.beginPath();
-      for (let i = 0; i < 10; i++) {
-        const radius = i % 2 === 0 ? size : size / 2;
-        ctx.lineTo(x + radius * Math.cos(i * Math.PI / 5 - Math.PI / 2), y + radius * Math.sin(i * Math.PI / 5 - Math.PI / 2));
+        const angle = i * Math.PI / 3;
+        ctx.lineTo(x + size * Math.cos(angle), y + size * Math.sin(angle));
       }
       ctx.closePath();
     };
 
     const render = () => {
+      // 画面を完全にクリア
       ctx.clearRect(0, 0, width, height);
 
-      // Draw pulses
-      pulses.current = pulses.current.filter(p => p.life > 0);
-      pulses.current.forEach(p => {
-        p.life -= 0.05;
-        const opacity = p.life;
-        const currentSize = (1 - p.life) * 80;
-        ctx.strokeStyle = pointerConfig.current.color;
-        ctx.globalAlpha = opacity;
-        ctx.lineWidth = 1;
-        
-        if (pointerConfig.current.shape === "hex") {
-          drawHex(ctx, p.x, p.y, currentSize);
-        } else {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, currentSize, 0, Math.PI * 2);
+      // Pulsesの処理
+      const nextPulses: any[] = [];
+      for (const p of pulses.current) {
+        p.life -= 0.04;
+        if (p.life > 0) {
+          const size = (1 - p.life) * 100;
+          ctx.globalAlpha = p.life;
+          ctx.strokeStyle = pointerConfig.current.color;
+          ctx.lineWidth = 1;
+          drawHex(ctx, p.x, p.y, size);
+          ctx.stroke();
+          nextPulses.push(p);
         }
-        ctx.stroke();
-      });
-
-      // Draw trail
-      trail.current = trail.current.filter(t => t.life > 0);
-      if (trail.current.length > 25) {
-        trail.current = trail.current.slice(-25);
       }
+      pulses.current = nextPulses;
 
-      trail.current.forEach((t, i) => {
-        t.life -= 0.02;
-        const opacity = t.life * (i / trail.current.length);
-        const currentSize = pointerConfig.current.size * t.life;
-        
-        ctx.globalAlpha = opacity;
-        ctx.fillStyle = pointerConfig.current.color;
-        
-        // Shadow / Glow effect
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = pointerConfig.current.color;
-
-        if (pointerConfig.current.shape === "hex") {
-          drawHex(ctx, t.x, t.y, currentSize);
+      // Trailの処理
+      const nextTrail: any[] = [];
+      // パフォーマンスのため、表示する点数を厳密に制限
+      const activeTrail = trail.current.slice(-20);
+      
+      activeTrail.forEach((t, i) => {
+        t.life -= 0.025;
+        if (t.life > 0) {
+          const opacity = t.life * (i / activeTrail.length);
+          const size = pointerConfig.current.size * t.life;
+          
+          ctx.globalAlpha = opacity;
+          ctx.fillStyle = pointerConfig.current.color;
+          
+          drawHex(ctx, t.x, t.y, size);
           ctx.fill();
-        } else if (pointerConfig.current.shape === "star") {
-          drawStar(ctx, t.x, t.y, currentSize);
-          ctx.fill();
-        } else {
-          ctx.beginPath();
-          ctx.arc(t.x, t.y, currentSize, 0, Math.PI * 2);
-          ctx.fill();
+          nextTrail.push(t);
         }
       });
+      trail.current = nextTrail;
 
       ctx.globalAlpha = 1.0;
-      ctx.shadowBlur = 0;
       animationFrameId = requestAnimationFrame(render);
     };
 
@@ -165,10 +141,10 @@ export default function ConnectionInteraction() {
     return () => {
       window.removeEventListener("hxc-assets-updated", handleAssetsUpdated);
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mousedown", handleMouseDown);
-      window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("mousemove", mouseMove);
+      window.removeEventListener("mousedown", mouseDown);
+      window.removeEventListener("touchmove", touchMove);
+      window.removeEventListener("touchstart", touchStart);
       cancelAnimationFrame(animationFrameId);
     };
   }, [session]);

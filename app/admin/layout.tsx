@@ -17,7 +17,7 @@ export default function AdminLayout({
 }) {
   return (
     <div className="min-h-screen bg-void text-moonlight">
-      <nav className="border-b border-white/10 p-4 bg-void/90 backdrop-blur-md sticky top-0 z-50">
+      <nav className="border-b border-white/10 p-4 bg-void/95 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <Link href="/admin" className="flex items-center gap-4 hover:opacity-80 transition-opacity">
             <Image 
