@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "prisma db push && next dev",
-    "build": "prisma generate && prisma db push && next build",
+    "build": "prisma generate && next build",
     "backup": "node scripts/daily-backup.js",
     "postinstall": "prisma generate",
     "start": "next start",
@@ -33,7 +33,7 @@
     "tailwind-merge": "^2.3.0",
     "tesseract.js": "^7.0.0",
     "ts-node": "^10.9.2",
-    "uuid": "^14.0.0",
+    "uuid": "^10.0.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
