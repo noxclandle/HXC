@@ -391,7 +391,7 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
         {/* Card Preview (Sticky) */}
-        <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/95 backdrop-blur-lg pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[38vh] lg:h-auto flex items-center justify-center">
+        <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/98 pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[38vh] lg:h-auto flex items-center justify-center">
            <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-visible group flex flex-col items-center w-full">
               {previewAsset && (
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-azure-500 animate-pulse z-50" />
@@ -445,7 +445,7 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
            <div className="lg:hidden h-[38vh]" />
            
            <div className="flex flex-col gap-4">
-              <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar scroll-smooth sticky top-[38vh] lg:top-0 bg-void/95 lg:bg-transparent z-40 backdrop-blur-md lg:backdrop-blur-none -mx-4 px-4 lg:mx-0 lg:px-0">
+              <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar scroll-smooth sticky top-[38vh] lg:top-0 bg-void/98 lg:bg-transparent z-40 -mx-4 px-4 lg:mx-0 lg:px-0">
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat.id}
