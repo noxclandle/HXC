@@ -80,9 +80,7 @@ export default function RootLayout({
         />
         <NextAuthProvider>
           <ConnectionToastProvider>
-            <GeometricBackground />
             <div className="relative z-10 flex-grow flex flex-col">
-              <ConnectionInteraction />
               <main className="flex-grow">
                 {children}
               </main>
