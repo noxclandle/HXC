@@ -8,6 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       disallow: [
         '/admin/',
         '/hub/',
+        '/dashboard/',
         '/api/',
         '/inventory/',
         '/shop/',
