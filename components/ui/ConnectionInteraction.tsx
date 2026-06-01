@@ -39,29 +39,36 @@ export default function ConnectionInteraction() {
   };
 
   useEffect(() => {
-    if (session) fetchPointerStyle();
+    // セッションがない場合は何もしない
+    if (!session?.user) return;
+    
+    fetchPointerStyle();
     const handleAssetsUpdated = () => fetchPointerStyle();
     window.addEventListener("hxc-assets-updated", handleAssetsUpdated);
 
     const handleAction = (e: MouseEvent | TouchEvent) => {
       let x, y;
-      if (e instanceof MouseEvent) {
-        x = e.clientX;
-        y = e.clientY;
-      } else if (e instanceof TouchEvent && e.touches[0]) {
-        x = e.touches[0].clientX;
-        y = e.touches[0].clientY;
-      } else {
-        return;
-      }
+      try {
+        if (e instanceof MouseEvent) {
+          x = e.clientX;
+          y = e.clientY;
+        } else if (e instanceof TouchEvent && e.touches && e.touches[0]) {
+          x = e.touches[0].clientX;
+          y = e.touches[0].clientY;
+        } else {
+          return;
+        }
 
-      const id = Date.now();
-      // 装備中のスタイルを固定してパルスを生成
-      setPulses((prev) => [...prev.slice(-8), { id, x, y, ...currentStyle }]);
-      
-      setTimeout(() => {
-        setPulses((prev) => prev.filter((p) => p.id !== id));
-      }, 800);
+        const id = Date.now() + Math.random(); // ユニーク性を保証
+        setPulses((prev) => [...prev.slice(-8), { id, x, y, ...currentStyle }]);
+        
+        const timer = setTimeout(() => {
+          setPulses((prev) => prev.filter((p) => p.id !== id));
+        }, 800);
+        return () => clearTimeout(timer);
+      } catch (err) {
+        console.error("Interaction error:", err);
+      }
     };
 
     window.addEventListener("mousedown", handleAction, { passive: true });
