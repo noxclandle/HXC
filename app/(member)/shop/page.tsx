@@ -33,10 +33,9 @@ export default function ShopPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {categories.map((cat) => (
-          <Link key={cat.id} href={cat.link}>
-            <motion.div
-              whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.05)" }}
-              className={`p-12 border ${cat.color} bg-void/90 relative overflow-hidden group transition-all`}
+          <Link key={cat.id} href={cat.link} className="block group">
+            <div
+              className={`p-12 border ${cat.color} bg-void/90 relative overflow-hidden transition-all duration-300 group-hover:bg-white/[0.03] group-hover:scale-[1.02]`}
             >
               <div className="relative z-10 space-y-6">
                 <div className="opacity-40 group-hover:opacity-100 transition-opacity">
@@ -63,7 +62,7 @@ export default function ShopPage() {
                     </div>
                  </div>
               </div>
-            </motion.div>
+            </div>
           </Link>
         ))}
       </div>
