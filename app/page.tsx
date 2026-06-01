@@ -6,8 +6,7 @@ import Image from "next/image";
 
 /**
  * 究極の Safari 最適化 (Pure Static Edition):
- * Framer Motion によるアニメーション、および複雑な CSS フィルタをすべて排除。
- * Safari iOS のメインスレッドを 100% 解放し、ボタン操作の遅延をゼロにする。
+ * Vercel Build Trigger: 2026-05-31-02
  */
 export default function LandingPage() {
   return (
