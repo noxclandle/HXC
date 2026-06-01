@@ -62,7 +62,7 @@ export default function LandingPage() {
         <div className="flex flex-col md:flex-row gap-6 items-center">
           <Link
             href="/purchase"
-            className="group relative px-16 py-5 overflow-hidden transition-all duration-500 bg-white text-void hover:bg-azure-50 transition-colors shadow-2xl"
+            className="group relative px-16 py-5 overflow-hidden transition-all duration-500 bg-white text-void hover:bg-azure-50 transition-colors"
           >
             <span className="relative z-10 tracking-[0.6em] uppercase text-[10px] font-bold flex items-center gap-2">
               <CreditCard size={12} /> Order Card

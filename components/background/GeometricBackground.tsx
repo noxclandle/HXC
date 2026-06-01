@@ -1,78 +1,40 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
+/**
+ * 構造改革: Safari iOS の Canvas フリーズ問題を根絶するため、
+ * Canvas 描画を完全に廃止し、100% CSS (GPU 最適化) による背景へ移行。
+ */
 export default function GeometricBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
-
-    // Very subtle, slow moving minimalist orbs
-    const orbs = [
-      { x: width * 0.2, y: height * 0.3, vx: 0.1, vy: -0.05, size: width * 0.4, color: "rgba(255, 255, 255, 0.015)" },
-      { x: width * 0.8, y: height * 0.7, vx: -0.08, vy: 0.08, size: width * 0.5, color: "rgba(255, 255, 255, 0.02)" },
-      { x: width * 0.5, y: height * 0.8, vx: 0.05, vy: -0.1, size: width * 0.3, color: "rgba(255, 255, 255, 0.01)" }
-    ];
-
-    let animationFrameId: number;
-
-    const render = () => {
-      ctx.clearRect(0, 0, width, height);
-      
-      // Draw a very faint static noise/grid overlay
-      ctx.fillStyle = "#020202"; // base void
-      ctx.fillRect(0, 0, width, height);
-
-      orbs.forEach(orb => {
-        orb.x += orb.vx;
-        orb.y += orb.vy;
-
-        // Bounce off edges gently
-        if (orb.x < -orb.size || orb.x > width + orb.size) orb.vx *= -1;
-        if (orb.y < -orb.size || orb.y > height + orb.size) orb.vy *= -1;
-
-        // Simple subtle orbs
-        ctx.fillStyle = orb.color;
-        ctx.beginPath();
-        ctx.arc(orb.x, orb.y, orb.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      animationFrameId = requestAnimationFrame(render);
-    };
-
-    render();
-
-    const handleResize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
-
   return (
-    <div className="fixed inset-0 -z-10 bg-[#020202]">
-      <canvas ref={canvasRef} />
-      {/* CSS-based scanlines for better performance */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" 
-           style={{ backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.5) 50%)', backgroundSize: '100% 4px' }} />
+    <div className="fixed inset-0 -z-10 bg-[#020202] overflow-hidden pointer-events-none">
+      {/* CSS-based subtle ambient orbs - Zero CPU Load */}
+      <div 
+        className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full opacity-20"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(255, 255, 255, 0.03) 0%, transparent 70%)'
+        }}
+      />
+      <div 
+        className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] rounded-full opacity-20"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(255, 255, 255, 0.02) 0%, transparent 70%)'
+        }}
+      />
+      <div 
+        className="absolute top-[20%] right-[10%] w-[40%] h-[40%] rounded-full opacity-10"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(255, 255, 255, 0.01) 0%, transparent 70%)'
+        }}
+      />
+
+      {/* Static CSS Scanlines for high performance */}
+      <div 
+        className="absolute inset-0 opacity-[0.02] pointer-events-none" 
+        style={{ 
+          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.5) 50%)', 
+          backgroundSize: '100% 4px' 
+        }} 
+      />
     </div>
   );
 }
