@@ -63,21 +63,6 @@ export default function RootLayout({
         <link rel="preload" href="/logo.png" as="image" />
       </head>
       <body className="bg-void text-moonlight min-h-screen flex flex-col antialiased">
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                  }, function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                  });
-                });
-              }
-            `,
-          }}
-        />
         <NextAuthProvider>
           <ConnectionToastProvider>
             <div className="relative z-10 flex-grow flex flex-col">
