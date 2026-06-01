@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { executeRTTransaction } from "@/lib/rt/engine";
 
+export const dynamic = "force-dynamic";
+
+
 /**
  * 全ユーザーのEntropy Drain（日々の維持費）を計算し実行する
  * セキュリティのため、実際にはCronジョブなどからの認証済みリクエストのみ許可する

@@ -5,6 +5,9 @@ import { authOptions } from "@/lib/auth";
 import { z } from "zod";
 import { executeRTTransaction } from "@/lib/rt/engine";
 
+export const dynamic = "force-dynamic";
+
+
 const unlockSchema = z.object({
   assetId: z.string().min(1),
   rarity: z.string().min(1),

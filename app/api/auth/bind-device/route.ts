@@ -4,6 +4,9 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import crypto from "crypto";
 
+export const dynamic = "force-dynamic";
+
+
 /**
  * 端末をユーザーに紐付ける（Soul-Linkの断片を発行）
  */

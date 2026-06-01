@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { sendDiscordNotification } from "@/lib/discord";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+
+
 const inquirySchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),

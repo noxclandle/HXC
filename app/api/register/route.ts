@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 
+export const dynamic = "force-dynamic";
+
+
 /**
  * ユーザー登録とカードの最終紐付け (Atomic Finalization)
  * POST /api/register

@@ -4,6 +4,9 @@ import { prisma } from "@/lib/prisma";
 import { sendAdminOrderNotification } from "@/lib/mail";
 import { sendDiscordNotification } from "@/lib/discord";
 
+export const dynamic = "force-dynamic";
+
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_mock", {
   apiVersion: "2026-04-22.dahlia" as any,
 });

@@ -4,6 +4,9 @@ import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+
+
 const userUpdateSchema = z.object({
   userId: z.string(),
   name: z.string().min(1).max(100).optional(),

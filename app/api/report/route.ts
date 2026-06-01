@@ -4,6 +4,9 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+
+
 const reportSchema = z.object({
   targetUserId: z.string().min(1, "Target User ID is required"),
   reason: z.string().min(1, "Reason is required"),

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 
+export const dynamic = "force-dynamic";
+
+
 /**
  * 端末移行用のハンドシェイクを開始する
  * 1回限りの移行トークンを発行

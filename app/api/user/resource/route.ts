@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
+
 /**
  * 巨大な画像データ（Base64）を非同期で取得するための専用API
  * これによりトップページの初期読み込み（JSON）を爆速化する。

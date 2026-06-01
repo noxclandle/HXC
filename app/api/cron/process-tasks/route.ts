@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { executeRTTransaction } from "@/lib/rt/engine";
 
+export const dynamic = "force-dynamic";
+
+
 /**
  * 予約されたタスクを処理する定期実行API
  */
