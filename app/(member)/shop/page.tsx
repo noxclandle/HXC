@@ -35,8 +35,8 @@ export default function ShopPage() {
         {categories.map((cat) => (
           <Link key={cat.id} href={cat.link}>
             <motion.div
-              whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.03)" }}
-              className={`p-12 border ${cat.color} bg-void/50 backdrop-blur-sm relative overflow-hidden group transition-all`}
+              whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.05)" }}
+              className={`p-12 border ${cat.color} bg-void/90 relative overflow-hidden group transition-all`}
             >
               <div className="relative z-10 space-y-6">
                 <div className="opacity-40 group-hover:opacity-100 transition-opacity">

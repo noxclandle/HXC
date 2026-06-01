@@ -43,4 +43,16 @@
 - 全ての構成要素を再コンパイルし、プロダクトとしての実体（Production Build）を確立。
 - ブラウザ環境における実行不全を解消し、再び「観測」可能な状態へ。
 
+## 第10章: 物理と電子の再共鳴 (Safari Stabilization & Security Hardening)
+- **Safari iOS における致命的フリーズの根絶**:
+  - 原因究明: `fixed` 配置の Canvas 重ね合わせと CSS Filter (`blur`, `drop-shadow`) の競合による WebKit レンダリングバッファのクラッシュを特定。
+  - 対策: サイト全域から `<canvas>` 要素を完全撤去。全ての視覚演出を CSS Animation (GPU加速) と DOM ベースの波紋エフェクトに置換。
+- **デプロイ不整合の解消とキャッシュ破壊**:
+  - 原因究明: Service Worker による古い JS/HTML の強制保持、および `legacy_v0` と `main` ブランチの参照不一致により、修正が本番サイトに反映されない「幽霊バグ」状態が発生。
+  - 対策: `main` ブランチへの強制マージ、Service Worker の登録解除、および Safari キャッシュ消去の徹底により、最新の「Canvas ゼロ」環境を確立。
+- **物理カード登録フローの盤石化 (Absolute Defense)**:
+  - 台帳（Registry）にない UID、または秘密鍵（Secret）の不一致を一切許容しない完全ホワイトリスト制へ回帰。
+  - 管理者向け「Shipment Protocol（出荷手順書）」を刷新し、個別 URL の書き込みと「Lock tag（物理封印）」を義務化。
+  - これにより、物理的コピーへの論理的耐性と、iOS での 100% の動作安定性を両立。
+
 

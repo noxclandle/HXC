@@ -56,7 +56,7 @@ export default function CardShopPage() {
             className={`aspect-[1.58/1] w-full rounded-xl border-2 ${activeCard.borderColor} bg-gradient-to-br ${activeCard.color} shadow-2xl relative overflow-hidden flex flex-col justify-between p-8`}
           >
             <div className="flex justify-between items-start">
-              <div className="w-12 h-12 border border-white/20 rounded-full flex items-center justify-center backdrop-blur-md">
+              <div className="w-12 h-12 border border-white/20 rounded-full flex items-center justify-center bg-white/5">
                 <div className="w-4 h-4 bg-white/80 rounded-sm rotate-45" />
               </div>
               <span className="text-[10px] tracking-[0.5em] uppercase opacity-40 font-bold italic">Hexa Relation</span>
