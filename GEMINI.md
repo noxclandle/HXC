@@ -31,3 +31,10 @@ The brand identity is a blend of High-end/Luxury, Cyber/Tech, and Minimal/Chic, 
 *   **Professional Cleanliness:** Do not leave temporary files, logs, or "junk" files (e.g., `.txt`, `.html`) in the root directory. Use `.gitignore` for local-only files.
 *   **Brand Consistency:** Use `grep` or similar tools to ensure forbidden words (聖域, 深淵, etc.) are not introduced in copy or mock data.
 *   **Absolute iOS Compatibility:** NEVER implement features that only work on Android (e.g., WebNFC). The primary user and target audience use iPhones. Any feature that cannot be executed on iOS/Safari must be discarded or replaced with a cross-platform solution.
+
+## Rendering Stability & Safari Enforcement
+*   **Zero-Canvas Layout Policy:** NEVER use full-screen `<canvas>` elements for background or layout-level interactions. They cause GPU stalls and "ghosting" artifacts on Safari iOS.
+*   **CSS-First Aesthetics:** Use pure CSS (`radial-gradient`, `linear-gradient`) and DOM-based animations (Framer Motion) for layout visuals. These are GPU-optimized and stable on WebKit.
+*   **Filter Restriction:** Avoid `backdrop-filter: blur()` and `drop-shadow` on high-frequency moving parts or fixed layout layers. They are the primary causes of rendering crashes on iPhone.
+*   **Cache Hygiene:** Do not implement Service Workers (PWA) unless explicitly requested. They create a "cache trap" that prevents security patches and Safari bug fixes from reaching the user.
+
