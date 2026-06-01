@@ -47,7 +47,7 @@ export default function ConnectionInteraction() {
     window.addEventListener("hxc-assets-updated", handleAssetsUpdated);
 
     const handleAction = (e: MouseEvent | TouchEvent) => {
-      let x, y;
+      let x: number, y: number;
       try {
         if (e instanceof MouseEvent) {
           x = e.clientX;
