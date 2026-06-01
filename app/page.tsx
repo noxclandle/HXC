@@ -1,25 +1,18 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ShieldCheck, Zap, ArrowRight, CreditCard, Sparkles } from "lucide-react";
+import { ShieldCheck, Zap, CreditCard } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
-// Vercel Build Trigger: 2026-05-31-01
+/**
+ * 究極の Safari 最適化 (Pure Static Edition):
+ * Framer Motion によるアニメーション、および複雑な CSS フィルタをすべて排除。
+ * Safari iOS のメインスレッドを 100% 解放し、ボタン操作の遅延をゼロにする。
+ */
 export default function LandingPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center relative overflow-hidden bg-void">
-      {/* Background Ambience */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-azure-500/[0.03] rounded-full" />
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="relative mb-12"
-      >
+    <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center relative bg-void">
+      <div className="relative mb-12">
         <div className="relative z-10 w-[180px] h-[180px] md:w-[240px] md:h-[240px]">
            <Image 
              src="/logo.png" 
@@ -27,62 +20,41 @@ export default function LandingPage() {
              width={240}
              height={240}
              priority
-             fetchPriority="high"
              className="object-contain" 
            />
         </div>
-      </motion.div>
+      </div>
 
-      <motion.h1
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.8 }}
-        className="text-4xl md:text-6xl font-extralight tracking-[0.25em] uppercase mb-4 text-white"
-      >
+      <h1 className="text-4xl md:text-6xl font-extralight tracking-[0.25em] uppercase mb-4 text-white">
         Hexa Card
         <span className="block text-[9px] md:text-[10px] tracking-[0.8em] opacity-30 mt-6 ml-[0.8em]">アイデンティティの透過</span>
-      </motion.h1>
+      </h1>
 
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6, duration: 0.8 }}
-        className="text-white/40 max-w-sm mb-16 tracking-[0.2em] text-[10px] md:text-[11px] leading-relaxed uppercase"
-      >
+      <p className="text-white/40 max-w-sm mb-16 tracking-[0.2em] text-[10px] md:text-[11px] leading-relaxed uppercase">
         Connecting physical and digital identities.<br />
         Redefining business networking.
-      </motion.p>
+      </p>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.9, duration: 0.8 }}
-        className="flex flex-col gap-10 items-center z-10"
-      >
+      <div className="flex flex-col gap-10 items-center z-10">
         <div className="flex flex-col md:flex-row gap-6 items-center">
           <Link
             href="/purchase"
-            className="group relative px-16 py-5 overflow-hidden transition-all duration-500 bg-white text-void hover:bg-azure-50 transition-colors"
+            className="px-16 py-5 bg-white text-void tracking-[0.6em] uppercase text-[10px] font-bold flex items-center gap-2"
           >
-            <span className="relative z-10 tracking-[0.6em] uppercase text-[10px] font-bold flex items-center gap-2">
-              <CreditCard size={12} /> Order Card
-            </span>
+            <CreditCard size={12} /> Order Card
           </Link>
 
           <Link
             href="/activate"
-            className="group relative px-12 py-5 overflow-hidden transition-all duration-500"
+            className="px-12 py-5 border border-white/10 tracking-[0.5em] uppercase text-[9px] font-bold text-white/40"
           >
-            <div className="absolute inset-0 border border-white/10 group-hover:border-white/30 transition-all" />
-            <span className="relative z-10 tracking-[0.5em] uppercase text-[9px] font-bold text-white/40 group-hover:text-white transition-colors">
-              Activate
-            </span>
+            Activate
           </Link>
         </div>
 
         <Link 
           href="/login" 
-          className="mt-4 text-[8px] tracking-[0.4em] uppercase text-white/20 hover:text-azure-400 transition-colors font-bold"
+          className="mt-4 text-[8px] tracking-[0.4em] uppercase text-white/20 hover:text-azure-400 font-bold"
         >
           — Identity Access (Sign In) —
         </Link>
@@ -93,11 +65,11 @@ export default function LandingPage() {
               <ShieldCheck size={12} className="text-white" />
            </div>
            <div className="flex items-center gap-3">
-              <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="w-1 h-1 rounded-full bg-emerald-500" />
               <span className="text-[7px] uppercase tracking-[0.5em] opacity-20 font-bold">System Online / Secure Server Connected</span>
            </div>
         </div>
-      </motion.div>
+      </div>
     </main>
   );
 }
