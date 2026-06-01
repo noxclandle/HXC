@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 /**
  * 境界の覚醒 (Heartbeat)
  * データベースが休止（スリープ）するのを防ぐための定期アクセス用
