@@ -4,6 +4,9 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { executeRTTransaction } from "@/lib/rt/engine";
 
+export const dynamic = "force-dynamic";
+
+
 /**
  * 1日1回の境界の光（デイリーボーナス）を付与する
  */

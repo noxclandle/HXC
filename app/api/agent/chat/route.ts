@@ -5,6 +5,9 @@ import { authOptions } from "@/lib/auth";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+
+
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
 
 const chatSchema = z.object({

@@ -4,6 +4,9 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+
+
 const chatQuerySchema = z.object({
   q: z.string().max(100).optional(),
 });

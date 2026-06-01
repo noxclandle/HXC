@@ -4,6 +4,9 @@ import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 import { executeRTTransaction } from "@/lib/rt/engine";
 
+export const dynamic = "force-dynamic";
+
+
 /**
  * 【チーフオフィサー限定】恩寵としてRTを授与するAPI
  */

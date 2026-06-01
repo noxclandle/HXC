@@ -5,6 +5,9 @@ import { authOptions } from "@/lib/auth";
 import { z } from "zod";
 import { rateLimit } from "@/lib/ratelimit";
 
+export const dynamic = "force-dynamic";
+
+
 const profileUpdateSchema = z.object({
   name: z.string().optional(),
   reading: z.string().optional(),

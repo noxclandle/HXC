@@ -5,6 +5,9 @@ import { authOptions } from "@/lib/auth";
 import { executeRTTransaction } from "@/lib/rt/engine";
 import { rateLimit } from "@/lib/ratelimit";
 
+export const dynamic = "force-dynamic";
+
+
 /**
  * デイリー共鳴（Connection）報酬付与API
  * POST /api/user/daily-resonance

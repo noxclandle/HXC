@@ -4,6 +4,9 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { TITLES } from "@/lib/game/titles";
 
+export const dynamic = "force-dynamic";
+
+
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

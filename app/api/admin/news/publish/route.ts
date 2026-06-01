@@ -4,6 +4,9 @@ import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+
+
 const newsSchema = z.object({
   title: z.string().min(1).max(200),
   content: z.string().min(1),

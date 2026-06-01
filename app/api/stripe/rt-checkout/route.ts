@@ -5,6 +5,9 @@ import { getBaseUrl } from "@/lib/utils";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
+
 const stripeKey = process.env.STRIPE_SECRET_KEY || "sk_test_mock";
 const isMock = stripeKey === "sk_test_mock";
 

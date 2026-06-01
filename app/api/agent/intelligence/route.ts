@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
+
 /**
  * コンシェルジュがユーザーの全背景（メモ・履歴）を学習・取得するAPI
  */
