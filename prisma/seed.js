@@ -2,42 +2,19 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function main() {
-  const targetEmails = ["prez@company.com", "member-b@test.com", "member-c@test.com", "sasaki@example.com"];
-  const targetNames = ["佐々木大輔", "佐々木　大輔"];
+  // 【安全装置】本番環境に近い状態での不用意なデータ削除を禁止
+  // const targetEmails = ["prez@company.com", "member-b@test.com", "member-c@test.com", "sasaki@example.com"];
+  // const targetNames = ["佐々木大輔", "佐々木　大輔"];
 
-  // 0. 削除対象ユーザーの特定
-  const usersToPurge = await prisma.user.findMany({
-    where: {
-      OR: [
-        { email: { in: targetEmails } },
-        { name: { in: targetNames }, NOT: { email: "orehasaikyounotensai@gmail.com" } }
-      ]
-    },
-    select: { id: true }
-  });
+  console.log("⚠️ Seed sequence initiated. Destructive purge is disabled for safety.");
+  
+  /* 
+  // 以下の削除ロジックは開発初期のみ使用し、運用開始後は原則使用禁止
+  const usersToPurge = await prisma.user.findMany({ ... });
+  ...
+  */
 
-  const purgeIds = usersToPurge.map(u => u.id);
-
-  if (purgeIds.length > 0) {
-    console.log(`🧹 Purging ${purgeIds.length} redundant souls and their memories...`);
-    
-    // 関連データを先に削除（制約エラー回避）
-    await prisma.rTTransaction.deleteMany({ where: { user_id: { in: purgeIds } } });
-    await prisma.deviceBinding.deleteMany({ where: { user_id: { in: purgeIds } } });
-    await prisma.chatMessage.deleteMany({ where: { user_id: { in: purgeIds } } });
-    await prisma.auditLog.deleteMany({ where: { user_id: { in: purgeIds } } });
-    
-    // カードの紐付けを解除してからユーザーを消す
-    await prisma.card.updateMany({
-      where: { user_id: { in: purgeIds } },
-      data: { user_id: null, status: "unissued" }
-    });
-
-    // ユーザー本体を削除
-    await prisma.user.deleteMany({ where: { id: { in: purgeIds } } });
-  }
-
-  // 1. 最強の天才: 佐々木大輔 (作成・更新)
+  // 1. 最強の天才: 佐々木大輔 (作成・更新 - upsertを使用し、既存データを破壊しない)
   console.log("🚀 Initializing The Genius: Daisuke Sasaki...");
   const bcrypt = require("bcryptjs");
   const hashedSasakiPassword = await bcrypt.hash("***REMOVED-SECRET***", 10);

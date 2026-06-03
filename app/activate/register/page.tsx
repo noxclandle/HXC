@@ -9,8 +9,8 @@ import { signIn } from "next-auth/react";
 function RegisterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token") || "";
   const uid = searchParams.get("uid") || "";
+  const s = searchParams.get("s") || "";
 
   const [formData, setFormData] = useState({
     name: "",
@@ -20,19 +20,25 @@ function RegisterContent() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(0); // 0: Form, 1: Confirm 1, 2: Confirm 2, 3: Confirm 3, 4: Success
+  const [confirmStep, setConfirmStep] = useState(0); // 0: None, 1: Identity, 2: Authorization, 3: Finality
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const startConfirmation = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.email || !formData.password || !formData.name || !formData.handle) {
       setError("必須項目をすべて入力してください。");
       return;
     }
-    if (!token) {
-      setError("有効なセッショントークンが見つかりません。もう一度カードをタップしてください。");
+    setError("");
+    setConfirmStep(1);
+  };
+
+  const handleFinalSubmit = async () => {
+    if (!uid || !s) {
+      setError("物理カードの認証情報が見つかりません。もう一度かざしてください。");
+      setConfirmStep(0);
       return;
     }
-    setError("");
     setLoading(true);
 
     try {
@@ -41,15 +47,16 @@ function RegisterContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          token
+          uid,
+          s
         })
       });
 
       const data = await res.json();
       if (res.ok) {
-        setStep(1);
+        setStep(4);
         
-        // デバイス紐付け用トークンを即座に保存
+        // デバイス紐付け用トークンを保存
         if (data.deviceToken) {
           localStorage.setItem("hxc_soul_fragment", data.deviceToken);
         }
@@ -64,15 +71,17 @@ function RegisterContent() {
         if (signInRes?.ok) {
           setTimeout(() => {
             router.push("/hub");
-          }, 2000);
+          }, 3000);
         } else {
           router.push("/login");
         }
       } else {
         setError(data.error || "登録に失敗しました。");
+        setConfirmStep(0);
       }
     } catch (err) {
       setError("通信エラーが発生しました。");
+      setConfirmStep(0);
     } finally {
       setLoading(false);
     }
@@ -93,8 +102,25 @@ function RegisterContent() {
                  <Hexagon size={20} className="text-azure-400 -rotate-45" />
               </div>
               <h2 className="text-2xl tracking-[0.4em] uppercase font-light text-white">Create Profile</h2>
-              <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase font-bold text-azure-400">アイデンティティの新規確立</p>
+              <p className="text-[12px] tracking-[0.2em] font-bold text-azure-400">
+                カードの認証に成功しました。<br />
+                あなたの情報を入力して、利用を開始してください。
+              </p>
             </header>
+
+            {/* Step Indicator */}
+            <div className="flex justify-between items-center px-4 py-2 bg-white/[0.03] border border-white/5 rounded-sm">
+               {[1, 2, 3].map((i) => (
+                 <div key={i} className="flex items-center gap-2">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${i === 1 ? 'bg-azure-500 text-white' : 'bg-white/10 text-white/40'}`}>
+                       {i}
+                    </div>
+                    <span className={`text-[9px] uppercase tracking-widest ${i === 1 ? 'text-white' : 'text-white/20'}`}>
+                       {i === 1 ? "入力" : i === 2 ? "確認" : "完了"}
+                    </span>
+                 </div>
+               ))}
+            </div>
 
             <div className="p-5 border border-white/5 bg-white/[0.02] text-left space-y-3">
                <div className="flex justify-between items-center text-[8px] uppercase tracking-widest opacity-30">
@@ -113,34 +139,34 @@ function RegisterContent() {
               </div>
             )}
             
-            <form onSubmit={handleSubmit} className="space-y-6 text-left">
+            <form onSubmit={startConfirmation} className="space-y-6 text-left">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[9px] uppercase tracking-[0.3em] opacity-30 flex items-center gap-2 font-bold"><UserCheck size={14}/> Name / 氏名</label>
+                  <label className="text-[10px] uppercase tracking-[0.2em] text-white/50 flex items-center gap-2 font-bold"><UserCheck size={14}/> 氏名 (必須)</label>
                   <input
                     type="text" required value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="福井 豪"
+                    placeholder="例：佐々木 大輔"
                     className="w-full bg-white/[0.03] border border-white/10 p-4 tracking-widest focus:border-azure-500 outline-none transition-all text-white text-xs"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] uppercase tracking-[0.3em] opacity-30 flex items-center gap-2 font-bold"><Fingerprint size={14}/> Reading / フリガナ</label>
+                  <label className="text-[10px] uppercase tracking-[0.2em] text-white/50 flex items-center gap-2 font-bold"><Fingerprint size={14}/> フリガナ (必須)</label>
                   <input
                     type="text" required value={formData.handle}
                     onChange={(e) => setFormData({ ...formData, handle: e.target.value })}
-                    placeholder="フクイ ゴウ"
+                    placeholder="例：ササキ ダイスケ"
                     className="w-full bg-white/[0.03] border border-white/10 p-4 tracking-widest focus:border-azure-500 outline-none transition-all text-white text-xs"
                   />
                 </div>
               </div>
 
               {[
-                { label: "Login Email", key: "email", icon: <Mail size={14}/>, placeholder: "your@email.com", type: "email" },
-                { label: "Password", key: "password", icon: <Lock size={14}/>, placeholder: "••••••••", type: "password" },
+                { label: "メールアドレス (ログイン用)", key: "email", icon: <Mail size={14}/>, placeholder: "your@email.com", type: "email" },
+                { label: "パスワード (8文字以上)", key: "password", icon: <Lock size={14}/>, placeholder: "••••••••", type: "password" },
               ].map((f) => (
                 <div key={f.key} className="space-y-2">
-                  <label className="text-[9px] uppercase tracking-[0.3em] opacity-30 flex items-center gap-2 font-bold">{f.icon} {f.label}</label>
+                  <label className="text-[10px] uppercase tracking-[0.2em] text-white/50 flex items-center gap-2 font-bold">{f.icon} {f.label}</label>
                   <input
                     type={f.type || "text"} required
                     value={(formData as any)[f.key]}
@@ -153,11 +179,61 @@ function RegisterContent() {
 
               <button
                 type="submit" disabled={loading}
-                className="w-full py-6 bg-white text-void font-bold text-[11px] tracking-[0.8em] uppercase shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:bg-azure-50 transition-all mt-8 active:scale-[0.98] disabled:opacity-50"
+                className="w-full py-6 bg-white text-void font-bold text-[12px] tracking-[0.6em] uppercase shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:bg-azure-50 transition-all mt-8 active:scale-[0.98] disabled:opacity-50"
               >
-                {loading ? "Synchronizing..." : "Complete Profile"}
+                次へ進む / Confirm
               </button>
             </form>
+
+            {/* Triple Confirmation Overlays */}
+            <AnimatePresence>
+              {confirmStep > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-50 bg-void/90 backdrop-blur-md flex items-center justify-center p-6"
+                >
+                  <div className="max-w-xs w-full text-center space-y-12">
+                    <div className="space-y-4">
+                      <div className="text-azure-400 opacity-50 text-[10px] tracking-[0.4em] uppercase font-bold">Step {confirmStep} / 3</div>
+                      <h3 className="text-xl tracking-[0.3em] uppercase font-light">
+                        {confirmStep === 1 && "Confirm Identity"}
+                        {confirmStep === 2 && "Authorize Resonance"}
+                        {confirmStep === 3 && "Deepen Connection"}
+                      </h3>
+                      <p className="text-[9px] tracking-[0.1em] opacity-40 leading-relaxed uppercase">
+                        {confirmStep === 1 && "入力された情報は永続的に刻印されます。間違いはありませんか？"}
+                        {confirmStep === 2 && "この物理カードをあなたの魂の一部として登録することを許可します。"}
+                        {confirmStep === 3 && "最終的な同期プロセスを開始します。この操作は取り消せません。"}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-4">
+                      <button 
+                        onClick={() => {
+                          if (confirmStep < 3) setConfirmStep(confirmStep + 1);
+                          else handleFinalSubmit();
+                        }}
+                        disabled={loading}
+                        className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.6em] uppercase hover:bg-azure-50 transition-all"
+                      >
+                        {loading ? "Processing..." : (
+                          confirmStep === 1 ? "Confirm Resonance" :
+                          confirmStep === 2 ? "Authorize Finality" :
+                          "Synchronize Now"
+                        )}
+                      </button>
+                      <button 
+                        onClick={() => setConfirmStep(0)}
+                        disabled={loading}
+                        className="w-full py-5 border border-white/10 text-white/40 font-bold text-[10px] tracking-[0.6em] uppercase hover:bg-white/5 transition-all"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         ) : (
           <motion.div 
@@ -170,7 +246,7 @@ function RegisterContent() {
                <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.1, 0.4, 0.1] }} transition={{ duration: 1.5, repeat: Infinity }} className="absolute inset-0 bg-white blur-[100px] rounded-full" />
                <CheckCircle2 size={120} className="text-white relative z-10" />
             </div>
-            <h2 className="text-3xl tracking-[0.6em] uppercase font-extralight text-white">Order Complete</h2>
+            <h2 className="text-3xl tracking-[0.6em] uppercase font-extralight text-white">Identity Synced</h2>
             <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase mt-4">
                情報の刻印が完了しました。境界へ遷移します。
             </p>

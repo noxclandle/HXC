@@ -85,10 +85,11 @@ export async function POST(req: NextRequest) {
           tier,
           variant,
           price: price / 1,
+          shippingAddress: shippingAddress,
         });
         
         // Discord Notification
-        await sendDiscordNotification(`【HXC監視局】新規注文を検知。プラン: ${tier}, バリアント: ${variant}, 顧客: ${customerName}`);
+        await sendDiscordNotification(`【HXC監視局】新規注文を検知。プラン: ${tier}, バリアント: ${variant}, 顧客: ${customerName}\n配送先: ${shippingAddress.postal_code || ""} ${shippingAddress.state || ""}${shippingAddress.city || ""}${shippingAddress.line1 || ""}`);
       } catch (mailError) {
         console.error("Failed to send admin mail:", mailError);
       }
