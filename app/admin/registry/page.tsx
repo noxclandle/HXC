@@ -261,13 +261,13 @@ export default function RegistryPage() {
             />
           </div>
           <div className="flex-1 space-y-2">
-            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">Secret Serial (Auto-Generated)</label>
+            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">Secret Serial (Generated)</label>
             <div className="flex gap-4">
               <input 
-                placeholder="Auto-Generated" 
+                placeholder="Serial will appear here" 
                 value={newCard.serial} 
                 readOnly
-                className="flex-1 bg-void/50 border border-white/5 p-4 text-azure-400/50 tracking-widest outline-none font-mono text-lg"
+                className="flex-1 bg-white/[0.03] border border-white/10 p-4 text-azure-400 tracking-widest outline-none font-mono text-lg"
               />
               <button 
                 onClick={createSlot}
