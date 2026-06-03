@@ -2,8 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
+import { z } from "zod";
 
 export const dynamic = "force-dynamic";
+
+const orderUpdateSchema = z.object({
+  id: z.string().uuid(),
+  status: z.enum(["paid", "shipped", "cancelled", "completed"]),
+  card_uid: z.string().optional().nullable(),
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +19,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id, status, card_uid } = await req.json();
+    const json = await req.json();
+    const body = orderUpdateSchema.safeParse(json);
+
+    if (!body.success) {
+      return NextResponse.json({ error: "Invalid order data.", details: body.error.format() }, { status: 400 });
+    }
+
+    const { id, status, card_uid } = body.data;
 
     const updateData: any = { status };
     if (status === "shipped") {

@@ -2,9 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
+import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 
+// Input Validation Schema (Mandated by GEMINI.md)
+const registerSchema = z.object({
+  uid: z.string().min(8),
+  s: z.string().min(1),
+  email: z.string().email(),
+  password: z.string().min(8),
+  name: z.string().min(1),
+  handle: z.string().optional(),
+});
 
 /**
  * ユーザー登録とカードの最終紐付け (Atomic Finalization)
@@ -12,24 +22,34 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(req: NextRequest) {
   try {
-    const { token, email, password, name } = await req.json();
+    const json = await req.json();
+    const body = registerSchema.safeParse(json);
 
-    if (!token || !email || !password) {
-      return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
+    if (!body.success) {
+      return NextResponse.json({ 
+        error: "Invalid input schema.", 
+        details: body.error.format() 
+      }, { status: 400 });
     }
 
-    // 1. トークンの有効性をトランザクション内で厳密に確認
+    const { uid, s: secret, email, password, name, handle } = body.data;
+
+    // 1. シークレットの有効性をトランザクション内で厳密に確認
     const result = await prisma.$transaction(async (tx) => {
-      const card = await tx.card.findFirst({
-        where: {
-          activation_token: token,
-          status: "activating",
-          token_expires_at: { gt: new Date() }
-        }
+      // メールアドレスの重複チェック
+      const existingUser = await tx.user.findUnique({
+        where: { email: email.toLowerCase() }
+      });
+      if (existingUser) {
+        throw new Error("Email already established.");
+      }
+
+      const card = await tx.card.findUnique({
+        where: { uid }
       });
 
-      if (!card) {
-        throw new Error("Invalid or expired activation token.");
+      if (!card || card.internal_serial !== secret || card.status === "active") {
+        throw new Error("Invalid or already activated card.");
       }
 
       // 2. ユーザー作成
@@ -39,6 +59,7 @@ export async function POST(req: NextRequest) {
           email: email.toLowerCase(),
           password: hashedPassword,
           name: name || "New Member",
+          handle_name: handle || name, // フリガナ/ハンドル名をセット
           role: "member",
           rank: "Initiate"
         }
@@ -55,13 +76,14 @@ export async function POST(req: NextRequest) {
       });
 
       // 4. カードの最終紐付けと秘密情報の完全破壊
+      // internal_serialは@uniqueなので、衝突を避けるためにUUIDなどを使用
       await tx.card.update({
         where: { uid: card.uid },
         data: {
           user_id: user.id,
           status: "active",
           activated_at: new Date(),
-          internal_serial: "DESTROYED_" + Date.now(),
+          internal_serial: `VOID_${uuidv4().split("-")[0].toUpperCase()}_${Date.now()}`,
           activation_token: null,
           token_expires_at: null
         }
@@ -70,7 +92,11 @@ export async function POST(req: NextRequest) {
       return { userId: user.id, deviceToken };
     });
 
-    const response = NextResponse.json({ success: true, userId: result.userId });
+    const response = NextResponse.json({ 
+      success: true, 
+      userId: result.userId,
+      deviceToken: result.deviceToken // フロントエンドにトークンを返却
+    });
 
     // Identity Cookie をセット (1年有効)
     response.cookies.set("hxc_soul_fragment", result.deviceToken, {

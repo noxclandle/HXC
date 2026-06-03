@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldCheck, Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { ShieldCheck, Mail, Lock, AlertCircle, Loader2, Sparkles } from "lucide-react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 
 /**
@@ -17,7 +17,44 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAutoLoggingIn, setIsAutoLoggingIn] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { status } = useSession();
+
+  // 魂の同調 (Soul-Link) 自動ログイン試行
+  useEffect(() => {
+    const tryAutoLogin = async () => {
+      const soulToken = localStorage.getItem("hxc_soul_fragment");
+      if (soulToken && status === "unauthenticated") {
+        setIsAutoLoggingIn(true);
+        try {
+          const result = await signIn("soul-link", {
+            deviceToken: soulToken,
+            redirect: false,
+          });
+
+          if (result?.ok) {
+            // 成功した場合はゲートへ
+            router.push("/gate");
+          } else {
+            // 失敗した場合は通常のログインを促す（トークンが無効などの場合）
+            console.warn("Soul-Link auto-login failed.");
+          }
+        } catch (e) {
+          console.error("Auto-login error:", e);
+        } finally {
+          setIsAutoLoggingIn(false);
+        }
+      }
+    };
+
+    // クエリパラメータで強制同期が指定されている場合や、初回マウント時に実行
+    if (searchParams.get("sync") === "1" || status === "unauthenticated") {
+      tryAutoLogin();
+    }
+  }, [status, searchParams, router]);
+
 
   const handleCredentialsLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,6 +104,28 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-void text-moonlight flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      <AnimatePresence>
+        {isAutoLoggingIn && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-void flex flex-col items-center justify-center space-y-8"
+          >
+            <div className="relative">
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.5, 0.2] }} 
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-[-20px] bg-azure-500 blur-3xl rounded-full" 
+              />
+              <Sparkles className="text-white relative z-10 animate-pulse" size={40} strokeWidth={1} />
+            </div>
+            <div className="text-center space-y-2">
+              <h2 className="text-sm tracking-[0.8em] uppercase font-light">Soul Synchronizing</h2>
+              <p className="text-[8px] tracking-[0.4em] opacity-30 uppercase font-bold">魂の同調プロセスを実行中</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="absolute inset-0 opacity-10 pointer-events-none">
          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-moonlight/10 rounded-full animate-pulse" />
       </div>

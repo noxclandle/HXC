@@ -46,27 +46,6 @@ export default function RegistryPage() {
   const [search, setSearch] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const [cardRes, orderRes] = await Promise.all([
-        fetch("/api/admin/card/list"),
-        fetch("/api/admin/order/list")
-      ]);
-      
-      if (cardRes.ok) setCards(await cardRes.json());
-      if (orderRes.ok) setOrders(await orderRes.json());
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const generateRandomSerial = () => {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     let s = "";
@@ -75,6 +54,11 @@ export default function RegistryPage() {
     }
     return s;
   };
+
+  useEffect(() => {
+    setNewCard(prev => ({ ...prev, serial: generateRandomSerial() }));
+    fetchData();
+  }, []);
 
   const createSlot = async () => {
     // UIDの正規化 (大文字化、コロン削除、スペース削除)
@@ -116,6 +100,46 @@ export default function RegistryPage() {
         fetchData();
       } else {
         alert("Assignment failed");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const unlinkCard = async (uid: string) => {
+    if (!confirm("Are you sure? This card will be returned to 'unissued' and its secret will be reset. The previous user bond will be severed.")) return;
+    
+    try {
+      const res = await fetch("/api/admin/card/unlink", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid })
+      });
+      if (res.ok) {
+        alert("Card unlinked and reset successfully.");
+        fetchData();
+      } else {
+        alert("Unlink failed.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const voidCard = async (uid: string) => {
+    if (!confirm("CRITICAL: Permanent disability. This card will never be usable again. Continue?")) return;
+    
+    try {
+      const res = await fetch("/api/admin/card/void", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid })
+      });
+      if (res.ok) {
+        alert("Card voided successfully.");
+        fetchData();
+      } else {
+        alert("Void failed.");
       }
     } catch (err) {
       console.error(err);
@@ -219,7 +243,7 @@ export default function RegistryPage() {
             />
           </div>
           <div className="flex-1 space-y-2">
-            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">Secret Serial (Generated)</label>
+            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">Secret Serial (Auto-Generated)</label>
             <div className="flex gap-4">
               <input 
                 placeholder="Auto-Generated" 
@@ -288,14 +312,32 @@ export default function RegistryPage() {
                     <UserIcon size={10} /> {card.user || "-"}
                   </td>
                   <td className="p-4 text-right">
-                    {(card.status === "unissued" || card.status === "shipped") && card.serial && (
-                      <button 
-                        onClick={() => copyUrl(card.uid, card.serial)}
-                        className="text-[8px] text-azure-400 border border-azure-400/20 px-3 py-1.5 hover:bg-azure-400/10 transition-all flex items-center gap-2 ml-auto"
-                      >
-                        <Copy size={10} /> Copy Provisioning URL
-                      </button>
-                    )}
+                    <div className="flex justify-end gap-2">
+                      {(card.status === "unissued" || card.status === "shipped") && card.serial && (
+                        <button 
+                          onClick={() => copyUrl(card.uid, card.serial)}
+                          className="text-[8px] text-azure-400 border border-azure-400/20 px-3 py-1.5 hover:bg-azure-400/10 transition-all flex items-center gap-2"
+                        >
+                          <Copy size={10} /> Copy URL
+                        </button>
+                      )}
+                      {(card.status === "active" || card.status === "shipped") && (
+                        <button 
+                          onClick={() => unlinkCard(card.uid)}
+                          className="text-[8px] text-amber-500 border border-amber-500/20 px-3 py-1.5 hover:bg-amber-500/10 transition-all flex items-center gap-2"
+                        >
+                          <RefreshCcw size={10} /> Unlink
+                        </button>
+                      )}
+                      {card.status !== "void" && (
+                        <button 
+                          onClick={() => voidCard(card.uid)}
+                          className="text-[8px] text-rose-500 border border-rose-500/20 px-3 py-1.5 hover:bg-rose-500/10 transition-all flex items-center gap-2"
+                        >
+                          <Shield size={10} /> Void
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

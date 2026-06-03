@@ -7,8 +7,9 @@ import { prisma } from "@/lib/prisma";
  * @returns 検証結果と関連データ
  */
 export async function verifyHexaCard(uid: string, serial: string) {
+  const normalizedUid = uid.replace(/:/g, "").toUpperCase();
   const card = await prisma.card.findUnique({
-    where: { uid },
+    where: { uid: normalizedUid },
   });
 
   if (!card) {
