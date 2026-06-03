@@ -17,14 +17,14 @@ The brand identity is a blend of High-end/Luxury, Cyber/Tech, and Minimal/Chic, 
 
 ## Operational Security & Cost Management
 *   **Triple Confirmation Policy:** Any operation that triggers the Gemini API or involves financial costs (e.g., actual credit card charges, not just RT) MUST be confirmed by the user **three times** via distinct UI steps/modals.
-    *   This applies even in development to prevent accidental token consumption.
-    *   The wording should remain within the "Minimal/Chic" aesthetic (e.g., "Confirm Resonance", "Deepen Connection", "Authorize Finality").
+*   **Zero-Destruction Mandate:** NEVER include or execute logic that deletes existing operational data (Users, Cards, Orders) in `seed.js` or any maintenance script. All initialization must use `upsert` and preserve historical records.
+*   **Operational Rhythm Preservation:** Do NOT modify established administrative workflows. The Admin Registry MUST allow high-speed entry (UID input only) with **instant visibility** of the system-generated secret serial. Never hide or gate this information behind extra steps.
+*   **Direct Registration Protocol:** Hardware activation must lead directly from tap to the registration form. Do NOT implement intermediate "authenticating" screens, timers, or provisional tokens that create a risk of user lockout.
+
+## Input Validation & Integrity
 *   **Input Validation:** ALL API endpoints MUST use `zod` for schema validation. Never trust raw input from `req.json()` or `searchParams`.
+*   **Full-Fidelity Notifications:** Purchase and RT notifications to Discord/Mail MUST include all actionable data (Shipping Address, Contact Info, Amount) required for human fulfillment.
 *   **Transaction Integrity:** Financial or RT-related operations must use Prisma transactions (`$transaction`) with explicit balance checks to prevent negative values.
-*   **NFC Smart Routing:** The entry point `/api/card/[uid]` must intelligently route users:
-    *   `Owner` -> `/hub` (Dashboard)
-    *   `Others` -> `/p/[slug]` (Public Profile)
-    *   `Unregistered` -> `/activate` (Registration)
 *   **UID Normalization:** All NFC UIDs must be normalized to "Uppercase, No Colons" (e.g., `04A23B...`) before database storage or lookup.
 
 ## Workspace Integrity
