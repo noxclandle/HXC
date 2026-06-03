@@ -1,18 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, Mail, Lock, AlertCircle, Loader2, Sparkles } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 
-/**
- * ログイン画面
- * 物理カードでの直接スキャン（Web NFC）はiPhone非対応のため、
- * 基本はアカウント情報でのログインに統一し、ログイン成功時に端末を紐付ける。
- */
-export default function LoginPage() {
+function LoginContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -223,5 +218,18 @@ export default function LoginPage() {
         <p className="text-[8px] tracking-[0.8em] uppercase">Hexa Relation System v1.1</p>
       </footer>
     </main>
+  );
+}
+
+/**
+ * ログイン画面
+ * 物理カードでの直接スキャン（Web NFC）はiPhone非対応のため、
+ * 基本はアカウント情報でのログインに統一し、ログイン成功時に端末を紐付ける。
+ */
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
   );
 }

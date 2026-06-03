@@ -15,7 +15,8 @@ import {
   ArrowRight,
   Plus,
   Zap,
-  User as UserIcon
+  User as UserIcon,
+  RefreshCcw
 } from "lucide-react";
 import Link from "next/link";
 
@@ -45,6 +46,23 @@ export default function RegistryPage() {
   const [newCard, setNewCard] = useState({ uid: "", serial: "" });
   const [search, setSearch] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [cardRes, orderRes] = await Promise.all([
+        fetch("/api/admin/card/list"),
+        fetch("/api/admin/order/list")
+      ]);
+      
+      if (cardRes.ok) setCards(await cardRes.json());
+      if (orderRes.ok) setOrders(await orderRes.json());
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const generateRandomSerial = () => {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
