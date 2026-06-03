@@ -39,11 +39,20 @@ interface Order {
   card_uid?: string | null;
 }
 
+const generateRandomSerial = () => {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s = "";
+  for (let i = 0; i < 12; i++) {
+    s += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return s;
+};
+
 export default function RegistryPage() {
   const [cards, setCards] = useState<Card[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newCard, setNewCard] = useState({ uid: "", serial: "" });
+  const [newCard, setNewCard] = useState({ uid: "", serial: generateRandomSerial() });
   const [search, setSearch] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
@@ -64,17 +73,7 @@ export default function RegistryPage() {
     }
   };
 
-  const generateRandomSerial = () => {
-    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    let s = "";
-    for (let i = 0; i < 12; i++) {
-      s += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return s;
-  };
-
   useEffect(() => {
-    setNewCard(prev => ({ ...prev, serial: generateRandomSerial() }));
     fetchData();
   }, []);
 
