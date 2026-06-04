@@ -25,8 +25,10 @@ export async function GET(req: NextRequest) {
       uid: c.uid,
       serial: c.internal_serial,
       status: c.status,
-      userId: c.user_id, // 追加
+      userId: c.user_id,
       user: c.user?.name || "-",
+      email: c.user?.email || "-", // 追加
+      phone: c.user?.phone || "-", // 追加
       role: c.user?.role || "",
       rank: c.user?.rank || ""
     }));

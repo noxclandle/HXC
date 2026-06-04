@@ -17,7 +17,10 @@ import {
   Zap,
   User as UserIcon,
   RefreshCcw,
-  Trash2
+  Trash2,
+  Mail,
+  Phone,
+  Eye
 } from "lucide-react";
 import Link from "next/link";
 
@@ -25,8 +28,10 @@ interface Card {
   uid: string;
   serial: string;
   status: string;
-  userId?: string; // 追加
+  userId?: string;
   user: string;
+  email?: string; // 追加
+  phone?: string; // 追加
   role?: string;
   rank?: string;
 }
@@ -60,6 +65,7 @@ export default function RegistryPage() {
   const [search, setSearch] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [currentUserRole, setCurrentUserRole] = useState<string>("");
+  const [inspectUser, setInspectUser] = useState<Card | null>(null); // 追加
 
   const fetchData = async () => {
     setLoading(true);
@@ -405,16 +411,16 @@ export default function RegistryPage() {
                   </td>
                   <td className="p-4">
                     <div className="flex flex-col gap-1">
-                      <Link 
-                        href={card.userId ? `/admin/users?search=${card.user}` : '#'}
+                      <div 
+                        onClick={() => card.userId && setInspectUser(card)}
                         className={`flex items-center gap-2 group/user ${card.userId ? 'cursor-pointer' : 'cursor-default'}`}
                       >
                         <UserIcon size={10} className="opacity-40 group-hover/user:text-azure-400 transition-colors" /> 
                         <span className="text-white/80 group-hover/user:text-white transition-colors border-b border-transparent group-hover/user:border-white/20">
                           {card.user || "-"}
                         </span>
-                        {card.userId && <ExternalLink size={8} className="opacity-0 group-hover/user:opacity-40 transition-opacity" />}
-                      </Link>
+                        {card.userId && <Eye size={10} className="opacity-0 group-hover/user:opacity-40 transition-opacity" />}
+                      </div>
                       {card.rank && (
                         <div className="flex">
                           <span className={`text-[7px] px-2 py-0.5 border uppercase font-bold tracking-widest ${
@@ -519,6 +525,65 @@ export default function RegistryPage() {
                 >
                   Cancel
                 </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* User Details Inspector Modal */}
+      <AnimatePresence>
+        {inspectUser && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-void/95 backdrop-blur-sm z-[100] flex items-center justify-center p-6"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="max-w-md w-full bg-[#0a0a0a] border border-white/10 p-12 shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-azure-500 via-purple-500 to-rose-500" />
+              
+              <div className="flex flex-col items-center text-center space-y-6">
+                <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mb-4">
+                  <UserIcon size={32} className="text-white/20" />
+                </div>
+                
+                <div>
+                  <h3 className="text-2xl tracking-[0.2em] font-light text-white mb-2">{inspectUser.user}</h3>
+                  <span className={`text-[8px] px-3 py-1 border uppercase font-bold tracking-[0.4em] ${
+                    inspectUser.role === 'fixer' ? 'border-rose-500 text-rose-500 bg-rose-500/5' :
+                    inspectUser.role === 'mastermind' ? 'border-amber-500 text-amber-500 bg-amber-500/5' :
+                    'border-azure-400 text-azure-400 bg-azure-400/5'
+                  }`}>
+                    {inspectUser.rank || "Member"}
+                  </span>
+                </div>
+
+                <div className="w-full space-y-4 pt-8 border-t border-white/5">
+                  <div className="flex flex-col items-start space-y-1">
+                    <span className="text-[8px] uppercase tracking-widest opacity-20 flex items-center gap-2"><Mail size={10}/> Email Address</span>
+                    <p className="text-xs font-mono text-white/80">{inspectUser.email || "Not registered"}</p>
+                  </div>
+                  <div className="flex flex-col items-start space-y-1">
+                    <span className="text-[8px] uppercase tracking-widest opacity-20 flex items-center gap-2"><Phone size={10}/> Contact Number</span>
+                    <p className="text-xs font-mono text-white/80">{inspectUser.phone || "Not registered"}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 w-full pt-10">
+                  <Link 
+                    href={`/admin/users?search=${inspectUser.user}`}
+                    className="py-4 bg-white/[0.05] border border-white/10 text-[9px] uppercase tracking-widest font-bold text-azure-400 hover:bg-azure-400/10 transition-all text-center flex items-center justify-center gap-2"
+                  >
+                    Manage Identity <ExternalLink size={12} />
+                  </Link>
+                  <button 
+                    onClick={() => setInspectUser(null)}
+                    className="py-4 border border-white/10 text-[9px] uppercase tracking-widest font-bold hover:bg-white/5 transition-all"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
