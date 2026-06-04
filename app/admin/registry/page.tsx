@@ -16,7 +16,8 @@ import {
   Plus,
   Zap,
   User as UserIcon,
-  RefreshCcw
+  RefreshCcw,
+  Trash2
 } from "lucide-react";
 import Link from "next/link";
 
@@ -57,17 +58,23 @@ export default function RegistryPage() {
   const [newCard, setNewCard] = useState({ uid: "", serial: "" });
   const [search, setSearch] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [currentUserRole, setCurrentUserRole] = useState<string>("");
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [cardRes, orderRes] = await Promise.all([
+      const [cardRes, orderRes, sessionRes] = await Promise.all([
         fetch("/api/admin/card/list"),
-        fetch("/api/admin/order/list")
+        fetch("/api/admin/order/list"),
+        fetch("/api/auth/session")
       ]);
       
       if (cardRes.ok) setCards(await cardRes.json());
       if (orderRes.ok) setOrders(await orderRes.json());
+      if (sessionRes.ok) {
+        const session = await sessionRes.json();
+        setCurrentUserRole(session?.user?.role || "");
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -182,6 +189,35 @@ export default function RegistryPage() {
         fetchData();
       } else {
         alert("無効化処理に失敗しました。");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const deleteCard = async (uid: string) => {
+    // 三重確認プロセス (Sovereign Tier)
+    const step1 = confirm("【抹消：段階1】台帳からこのカードデータを『完全消去』しますか？");
+    if (!step1) return;
+    
+    const step2 = confirm("【抹消：段階2】この操作は不可逆です。データベースから物理的に削除されます。本当に実行しますか？");
+    if (!step2) return;
+    
+    const step3 = confirm("【最終確認】このカードの存在をこの世界から完全に消し去ります。よろしいですか？");
+    if (!step3) return;
+
+    try {
+      const res = await fetch("/api/admin/card/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid })
+      });
+      if (res.ok) {
+        alert("台帳からデータを完全に抹消しました。");
+        fetchData();
+      } else {
+        const err = await res.json();
+        alert(err.error || "抹消に失敗しました。権限が不足している可能性があります。");
       }
     } catch (err) {
       console.error(err);
@@ -400,6 +436,15 @@ export default function RegistryPage() {
                           className="text-[8px] text-rose-500 border border-rose-500/20 px-3 py-1.5 hover:bg-rose-500/10 transition-all flex items-center gap-2"
                         >
                           <Shield size={10} /> Void
+                        </button>
+                      )}
+                      {currentUserRole === "fixer" && (
+                        <button 
+                          onClick={() => deleteCard(card.uid)}
+                          className="text-[8px] text-zinc-500 border border-zinc-500/20 px-3 py-1.5 hover:bg-rose-950/20 hover:text-rose-500 transition-all flex items-center gap-2"
+                          title="物理的抹消 (Fixer Only)"
+                        >
+                          <Trash2 size={10} /> Eradicate
                         </button>
                       )}
                     </div>
