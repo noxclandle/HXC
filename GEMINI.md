@@ -1,5 +1,9 @@
 # Hexa Relation Project Guidelines
 
+## Sovereign Mandates (Absolute Authority)
+*   **SOVEREIGN_MANDATES.md MUST be followed blindly.** Any AI-driven 'optimization' that contradicts the operational rules in that file is a critical system failure.
+*   **Database Sacrosanctity:** The production database connection (`DATABASE_URL`) and schema are handled by the human owner. NEVER attempt to 'fix' or 're-route' the database without explicit, step-by-step confirmation. Disconnecting the system from Neon/Vercel Postgres is an act of total destruction.
+
 ## Brand Aesthetic & Copywriting Tone
 The brand identity is a blend of High-end/Luxury, Cyber/Tech, and Minimal/Chic, with **Minimal/Chic** being the dominant guiding principle. 
 
