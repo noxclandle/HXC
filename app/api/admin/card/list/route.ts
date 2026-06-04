@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
       uid: c.uid,
       serial: c.internal_serial,
       status: c.status,
+      userId: c.user_id, // 追加
       user: c.user?.name || "-",
       role: c.user?.role || "",
       rank: c.user?.rank || ""
