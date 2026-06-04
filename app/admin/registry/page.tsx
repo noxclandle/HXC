@@ -25,6 +25,7 @@ interface Card {
   uid: string;
   serial: string;
   status: string;
+  userId?: string; // 追加
   user: string;
   role?: string;
   rank?: string;
@@ -404,10 +405,16 @@ export default function RegistryPage() {
                   </td>
                   <td className="p-4">
                     <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-2">
-                        <UserIcon size={10} className="opacity-40" /> 
-                        <span className="text-white/80">{card.user || "-"}</span>
-                      </div>
+                      <Link 
+                        href={card.userId ? `/admin/users?search=${card.user}` : '#'}
+                        className={`flex items-center gap-2 group/user ${card.userId ? 'cursor-pointer' : 'cursor-default'}`}
+                      >
+                        <UserIcon size={10} className="opacity-40 group-hover/user:text-azure-400 transition-colors" /> 
+                        <span className="text-white/80 group-hover/user:text-white transition-colors border-b border-transparent group-hover/user:border-white/20">
+                          {card.user || "-"}
+                        </span>
+                        {card.userId && <ExternalLink size={8} className="opacity-0 group-hover/user:opacity-40 transition-opacity" />}
+                      </Link>
                       {card.rank && (
                         <div className="flex">
                           <span className={`text-[7px] px-2 py-0.5 border uppercase font-bold tracking-widest ${
