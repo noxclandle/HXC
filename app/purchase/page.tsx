@@ -71,9 +71,24 @@ export default function PurchasePage() {
   };
 
   const [loading, setLoading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    handle: "",
+    email: "",
+    phone: ""
+  });
 
-  const handleCheckout = async () => {
+  const handleStartCheckout = () => {
     if (!selection.tier) return;
+    setShowForm(true);
+  };
+
+  const handleFinalCheckout = async () => {
+    if (!formData.name || !formData.email || !formData.phone) {
+      alert("必須項目をすべて入力してください。");
+      return;
+    }
 
     setLoading(true);
 
@@ -86,6 +101,7 @@ export default function PurchasePage() {
           tier: selectedTierData?.name,
           variant: selection.variant,
           price: selectedTierData?.price,
+          customerDetails: formData // ここに独自情報を載せてAPIへ
         }),
       });
 
@@ -297,7 +313,7 @@ export default function PurchasePage() {
               
               <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
                 <button 
-                  onClick={handleCheckout}
+                  onClick={handleStartCheckout}
                   disabled={loading}
                   className="w-full md:w-auto px-10 py-4 bg-white text-black hover:bg-[#d0d0d0] transition-all duration-500 font-bold tracking-[0.3em] text-[10px] uppercase flex items-center justify-center gap-4 group disabled:opacity-50 disabled:cursor-wait"
                 >
@@ -305,6 +321,87 @@ export default function PurchasePage() {
                   {!loading && <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />}
                 </button>
               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* 申し込みフォームモーダル (Stripe前段階) */}
+        <AnimatePresence>
+          {showForm && (
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/95 backdrop-blur-md z-[100] flex items-center justify-center p-6"
+            >
+              <motion.div 
+                initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }}
+                className="max-w-md w-full bg-zinc-950 border border-white/10 p-10 shadow-2xl relative overflow-hidden"
+              >
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-azure-500 to-rose-500" />
+                
+                <header className="mb-10 text-center space-y-2">
+                  <h2 className="text-xl tracking-[0.4em] uppercase font-light text-white">Application</h2>
+                  <p className="text-[10px] tracking-widest text-azure-400 font-bold">申し込み者情報の入力</p>
+                  <p className="text-[9px] text-white/30 pt-4 leading-relaxed">
+                    物理カードに刻印される基本的な情報を入力してください。<br/>
+                    この後の決済画面でも、再度情報の確認が行われます。
+                  </p>
+                </header>
+
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[8px] uppercase tracking-widest text-white/40">氏名 / Name</label>
+                      <input 
+                        placeholder="例：佐々木 大輔" value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs outline-none focus:border-azure-500 transition-all text-white"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[8px] uppercase tracking-widest text-white/40">フリガナ / Reading</label>
+                      <input 
+                        placeholder="ササキ ダイスケ" value={formData.handle}
+                        onChange={(e) => setFormData({ ...formData, handle: e.target.value })}
+                        className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs outline-none focus:border-azure-500 transition-all text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[8px] uppercase tracking-widest text-white/40">電話番号 / Phone</label>
+                    <input 
+                      placeholder="09012345678" value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs outline-none focus:border-azure-500 transition-all text-white"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[8px] uppercase tracking-widest text-white/40">メールアドレス / Email</label>
+                    <input 
+                      type="email" placeholder="your@email.com" value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs outline-none focus:border-azure-500 transition-all text-white"
+                    />
+                  </div>
+
+                  <div className="pt-8 space-y-4">
+                    <button 
+                      onClick={handleFinalCheckout}
+                      disabled={loading}
+                      className="w-full py-5 bg-white text-black font-bold text-[10px] tracking-[0.6em] uppercase hover:bg-azure-50 transition-all"
+                    >
+                      {loading ? "Redirecting..." : "Go to Payment"}
+                    </button>
+                    <button 
+                      onClick={() => setShowForm(false)}
+                      className="w-full py-4 border border-white/10 text-[8px] tracking-[0.4em] uppercase text-white/30 hover:text-white transition-all"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
