@@ -213,14 +213,22 @@ export default function RegistryPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uid })
       });
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = { error: "サーバーからの応答が不正です（ビルドエラーの可能性があります）" };
+      }
+
       if (res.ok) {
-        alert("台帳からデータを完全に抹消しました。");
+        alert("抹消完了：このカードの存在は世界から完全に消し去られました。");
         fetchData();
       } else {
-        const err = await res.json();
-        alert(err.error || "抹消に失敗しました。権限が不足している可能性があります。");
+        alert(data.error || "抹消に失敗しました。権限が不足しているか、システムエラーです。");
       }
     } catch (err) {
+      alert("通信エラー：抹消プロセスを完遂できませんでした。ネットワークを確認してください。");
       console.error(err);
     }
   };
