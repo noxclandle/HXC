@@ -52,10 +52,11 @@ export async function POST(req: NextRequest) {
       }
 
       // 既存の物理カード注文ロジック
-      const customNameField = session.custom_fields?.find((f) => f.key === "customer_name");
-      const customerName = customNameField?.text?.value || session.customer_details?.name || "Unknown";
+      const customerEmail = session.metadata?.custom_email || session.customer_details?.email || "";
+      const customerName = session.metadata?.custom_name || session.customer_details?.name || "Unknown";
+      const customerPhone = session.metadata?.custom_phone || session.customer_details?.phone || "-";
+      const customerHandle = session.metadata?.custom_handle || "";
       
-      const customerEmail = session.customer_details?.email || "";
       const shippingAddress = (session as any).shipping_details?.address || {};
 
       const tier = session.metadata?.tier || "unknown";
@@ -71,7 +72,12 @@ export async function POST(req: NextRequest) {
           price,
           customer_email: customerEmail,
           customer_name: customerName,
-          shipping_address: shippingAddress as any,
+          shipping_address: {
+            ...shippingAddress,
+            custom_phone: customerPhone,
+            custom_handle: customerHandle,
+            stripe_name: session.customer_details?.name // Stripe側の名義も念のため保存
+          } as any,
           status: "paid",
         },
       });

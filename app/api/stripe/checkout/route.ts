@@ -15,7 +15,7 @@ const stripe = new Stripe(stripeKey, {
 
 export async function POST(req: NextRequest) {
   try {
-    const { tier, variant } = await req.json();
+    const { tier, variant, customerDetails } = await req.json();
 
     if (!tier) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
+      customer_email: customerDetails?.email, // フォームからの入力を優先
       line_items: [
         {
           price_data: {
@@ -82,23 +83,17 @@ export async function POST(req: NextRequest) {
       ],
       mode: "payment",
       shipping_address_collection: {
-        allowed_countries: ["JP"], // Restrict shipping to Japan for now
+        allowed_countries: ["JP"],
       },
-      custom_fields: [
-        {
-          key: "customer_name",
-          label: {
-            type: "custom",
-            custom: "フルネーム（配送用）",
-          },
-          type: "text",
-        },
-      ],
       success_url: `${baseUrl}/purchase/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/purchase`,
       metadata: {
         tier,
         variant,
+        custom_name: customerDetails?.name,
+        custom_handle: customerDetails?.handle,
+        custom_phone: customerDetails?.phone,
+        custom_email: customerDetails?.email
       },
     });
 
