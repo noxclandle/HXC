@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
           name: name || "New Member",
           handle_name: handle || name, // フリガナ/ハンドル名をセット
           role: "member",
-          rank: "Initiate"
+          rank: "Member" // Initiateを廃止し、最初から対等な会員として登録
         }
       });
 
