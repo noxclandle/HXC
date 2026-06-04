@@ -438,10 +438,10 @@ export default function RegistryPage() {
                           <Shield size={10} /> Void
                         </button>
                       )}
-                      {currentUserRole === "fixer" && (
+                      {currentUserRole === "fixer" && card.status === "void" && (
                         <button 
                           onClick={() => deleteCard(card.uid)}
-                          className="text-[8px] text-zinc-500 border border-zinc-500/20 px-3 py-1.5 hover:bg-rose-950/20 hover:text-rose-500 transition-all flex items-center gap-2"
+                          className="text-[8px] text-rose-500 border border-rose-500/40 bg-rose-500/5 px-3 py-1.5 hover:bg-rose-500 hover:text-white transition-all flex items-center gap-2"
                           title="物理的抹消 (Fixer Only)"
                         >
                           <Trash2 size={10} /> Eradicate
