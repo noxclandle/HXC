@@ -27,8 +27,9 @@ export async function GET(req: NextRequest) {
       status: c.status,
       userId: c.user_id,
       user: c.user?.name || "-",
-      email: c.user?.email || "-", // 追加
-      phone: c.user?.phone || "-", // 追加
+      email: c.user?.email || "-",
+      phone: c.user?.phone || "-",
+      purchaseName: c.order?.customer_name || "-", // 追加
       role: c.user?.role || "",
       rank: c.user?.rank || ""
     }));

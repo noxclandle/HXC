@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Crown, User as UserIcon, Lock, Search, Sparkles, AlertCircle, Eye, Wallet, Package, Trophy } from "lucide-react";
+import { Shield, Crown, User as UserIcon, Lock, Search, Sparkles, AlertCircle, Eye, Wallet, Package, Trophy, Mail, Phone, ExternalLink } from "lucide-react";
 
 interface UserData {
   id: string;
   name: string;
   email: string;
+  phone?: string | null; // 追加
+  purchase_name?: string | null; // 追加
   rank: string;
   role: string;
   rt: string;
@@ -232,29 +234,77 @@ export default function UsersAdminPage() {
                <header className="mb-10">
                   <p className="text-[8px] tracking-[0.5em] uppercase text-azure-400 font-bold mb-2">ユーザー詳細検査</p>
                   <h2 className="text-3xl tracking-[0.2em] uppercase font-extralight">{inspectUser.name}</h2>
-                  <div className="flex items-center gap-4 mt-2">
+                  <div className="flex flex-wrap items-center gap-4 mt-2">
                     <p className="text-[10px] opacity-40 font-mono">ID: {inspectUser.id}</p>
                     <p className="text-[10px] text-azure-400 font-mono">UID: {inspectUser.card_uid || "NONE"}</p>
-                    <p className="text-[10px] text-azure-400 font-mono">SERIAL: {inspectUser.card_serial || "NONE"}</p>
+                    <span className={`text-[8px] px-2 py-0.5 border uppercase font-bold tracking-widest ${
+                       inspectUser.role === 'fixer' || inspectUser.role === 'chief_officer' ? 'border-rose-500 text-rose-500 bg-rose-500/5' :
+                       inspectUser.role === 'mastermind' ? 'border-amber-500 text-amber-500 bg-amber-500/5' :
+                       'border-azure-400 text-azure-400 bg-azure-400/5'
+                    }`}>
+                       {inspectUser.rank || "Member"}
+                    </span>
                   </div>
                </header>
 
                <div className="grid grid-cols-2 gap-12">
+                  {/* Contact & Identity Section */}
                   <section className="space-y-6">
-                     <h3 className="text-[10px] tracking-[0.3em] uppercase opacity-40 border-b border-white/5 pb-2 flex items-center gap-2"><Trophy size={12}/> 獲得済み称号</h3>
-                     <div className="flex flex-wrap gap-2">
-                        {inspectUser.unlocked_titles?.length > 0 ? inspectUser.unlocked_titles.map(t => (
-                           <span key={t} className="px-3 py-1 bg-white/5 border border-white/10 text-[9px] tracking-widest uppercase text-white/60">{t}</span>
-                        )) : <span className="text-[9px] opacity-20 uppercase italic">獲得称号なし</span>}
+                     <div>
+                        <h3 className="text-[10px] tracking-[0.3em] uppercase opacity-40 border-b border-white/5 pb-2 flex items-center gap-2 mb-4">
+                           <UserIcon size={12}/> Identity / 身元
+                        </h3>
+                        <div className="space-y-3">
+                           <div className="flex flex-col">
+                              <span className="text-[8px] uppercase tracking-widest opacity-20">Current Name / 現在の氏名</span>
+                              <p className="text-xs text-white">{inspectUser.name}</p>
+                           </div>
+                           <div className="flex flex-col">
+                              <span className="text-[8px] uppercase tracking-widest opacity-20">Purchase Name / 申し込み時の氏名</span>
+                              <p className="text-xs text-azure-400/80">{inspectUser.purchase_name || "不明"}</p>
+                           </div>
+                        </div>
+                     </div>
+
+                     <div>
+                        <h3 className="text-[10px] tracking-[0.3em] uppercase opacity-40 border-b border-white/5 pb-2 flex items-center gap-2 mb-4">
+                           <Mail size={12}/> Contact / 連絡先
+                        </h3>
+                        <div className="space-y-3">
+                           <div className="flex flex-col">
+                              <span className="text-[8px] uppercase tracking-widest opacity-20">Email Address</span>
+                              <p className="text-xs font-mono text-white/80">{inspectUser.email}</p>
+                           </div>
+                           <div className="flex flex-col">
+                              <span className="text-[8px] uppercase tracking-widest opacity-20">Phone Number</span>
+                              <p className="text-xs font-mono text-white/80">{inspectUser.phone || "未登録"}</p>
+                           </div>
+                        </div>
                      </div>
                   </section>
 
+                  {/* Assets & Titles Section */}
                   <section className="space-y-6">
-                     <h3 className="text-[10px] tracking-[0.3em] uppercase opacity-40 border-b border-white/5 pb-2 flex items-center gap-2"><Package size={12}/> 保有アセット</h3>
-                     <div className="flex flex-wrap gap-2">
-                        {inspectUser.owned_assets?.length > 0 ? inspectUser.owned_assets.map(a => (
-                           <span key={a} className="px-3 py-1 bg-azure-500/5 border border-azure-500/20 text-[9px] tracking-widest uppercase text-azure-400">{a}</span>
-                        )) : <span className="text-[9px] opacity-20 uppercase italic">保有アセットなし</span>}
+                     <div>
+                        <h3 className="text-[10px] tracking-[0.3em] uppercase opacity-40 border-b border-white/5 pb-2 flex items-center gap-2 mb-4">
+                           <Trophy size={12}/> 獲得済み称号
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                           {inspectUser.unlocked_titles?.length > 0 ? inspectUser.unlocked_titles.map(t => (
+                              <span key={t} className="px-3 py-1 bg-white/5 border border-white/10 text-[9px] tracking-widest uppercase text-white/60">{t}</span>
+                           )) : <span className="text-[9px] opacity-20 uppercase italic">獲得称号なし</span>}
+                        </div>
+                     </div>
+
+                     <div>
+                        <h3 className="text-[10px] tracking-[0.3em] uppercase opacity-40 border-b border-white/5 pb-2 flex items-center gap-2 mb-4">
+                           <Package size={12}/> 保有アセット
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                           {inspectUser.owned_assets?.length > 0 ? inspectUser.owned_assets.map(a => (
+                              <span key={a} className="px-3 py-1 bg-azure-500/5 border border-azure-500/20 text-[9px] tracking-widest uppercase text-azure-400">{a}</span>
+                           )) : <span className="text-[9px] opacity-20 uppercase italic">保有アセットなし</span>}
+                        </div>
                      </div>
                   </section>
                </div>

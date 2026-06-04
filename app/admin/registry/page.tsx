@@ -30,8 +30,9 @@ interface Card {
   status: string;
   userId?: string;
   user: string;
-  email?: string; // 追加
-  phone?: string; // 追加
+  email?: string;
+  phone?: string;
+  purchaseName?: string; // 追加
   role?: string;
   rank?: string;
 }
@@ -560,6 +561,10 @@ export default function RegistryPage() {
                 </div>
 
                 <div className="w-full space-y-4 pt-8 border-t border-white/5">
+                  <div className="flex flex-col items-start space-y-1">
+                    <span className="text-[8px] uppercase tracking-widest opacity-20 flex items-center gap-2"><UserIcon size={10}/> Purchase Name / 申し込み時の氏名</span>
+                    <p className="text-xs text-azure-400/80">{inspectUser.purchaseName || "Unknown"}</p>
+                  </div>
                   <div className="flex flex-col items-start space-y-1">
                     <span className="text-[8px] uppercase tracking-widest opacity-20 flex items-center gap-2"><Mail size={10}/> Email Address</span>
                     <p className="text-xs font-mono text-white/80">{inspectUser.email || "Not registered"}</p>

@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
         id: true,
         name: true,
         email: true,
+        phone: true, // 追加
         rank: true,
         role: true,
         rt_balance: true,
@@ -28,7 +29,12 @@ export async function GET(req: NextRequest) {
         card: {
           select: {
             uid: true,
-            internal_serial: true
+            internal_serial: true,
+            order: {
+              select: {
+                customer_name: true // 申し込み時の名前
+              }
+            }
           }
         }
       },
@@ -43,7 +49,8 @@ export async function GET(req: NextRequest) {
         rt: rt_balance.toString(),
         exp: exp.toString(),
         card_uid: u.card?.uid || null,
-        card_serial: u.card?.internal_serial || null
+        card_serial: u.card?.internal_serial || null,
+        purchase_name: u.card?.order?.customer_name || null // 追加
       };
     });
 
