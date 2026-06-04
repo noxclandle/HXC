@@ -17,8 +17,9 @@ const unlinkSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !ADMIN_ROLES.includes(session.user.role)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const supremeRoles = ["fixer", "mastermind"];
+    if (!session || !supremeRoles.includes(session.user.role)) {
+      return NextResponse.json({ error: "Unauthorized. Supreme authority required." }, { status: 401 });
     }
 
     const json = await req.json();
