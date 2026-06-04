@@ -91,7 +91,7 @@ export default function RegistryPage() {
   const generateRandomSerial = (existingCards: Card[]) => {
     const prefix = "HXRL";
     const year = "2026";
-    let version = 0;
+    let version = 1; // 0から1（バージョン01）へ更新
     const usedSerials = new Set(existingCards.map(c => c.serial));
 
     while (version < 100) {
