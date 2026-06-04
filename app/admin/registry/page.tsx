@@ -52,7 +52,7 @@ export default function RegistryPage() {
   const [cards, setCards] = useState<Card[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newCard, setNewCard] = useState({ uid: "", serial: generateRandomSerial() });
+  const [newCard, setNewCard] = useState({ uid: "", serial: "" });
   const [search, setSearch] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
@@ -85,7 +85,8 @@ export default function RegistryPage() {
       return;
     }
 
-    const serial = newCard.serial || generateRandomSerial();
+    // シリアルは登録の瞬間に初めて生成される
+    const serial = generateRandomSerial();
     try {
       const res = await fetch("/api/admin/card/create", {
         method: "POST",
