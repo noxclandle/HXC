@@ -82,9 +82,7 @@ function LoginContent() {
         const sessionRes = await fetch("/api/auth/session");
         const session = await sessionRes.json();
         
-        const adminRoles = ["admin", "fixer", "chief_officer", "mastermind", "architect", "manager"];
-        
-        if (session?.user?.role && adminRoles.includes(session.user.role)) {
+        if (session?.user?.role === "fixer") {
           router.push("/gate");
         } else {
           router.push("/hub");
