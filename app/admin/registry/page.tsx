@@ -78,20 +78,21 @@ export default function RegistryPage() {
   }, []);
 
   const generateRandomSerial = (existingCards: Card[]) => {
+    const prefix = "HXRL";
     const year = "2026";
     let version = 0;
     const usedSerials = new Set(existingCards.map(c => c.serial));
 
     while (version < 100) {
       const vStr = version.toString().padStart(2, '0');
-      const prefix = `${vStr}${year}`;
-      const countInVersion = existingCards.filter(c => c.serial.startsWith(prefix)).length;
+      const base = `${prefix}${vStr}${year}`;
+      const countInVersion = existingCards.filter(c => c.serial.startsWith(base)).length;
 
       if (countInVersion < 100000) {
         let attempts = 0;
         while (attempts < 1000) {
           const randomSuffix = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
-          const candidate = `${prefix}${randomSuffix}`;
+          const candidate = `${base}${randomSuffix}`;
           if (!usedSerials.has(candidate)) return candidate;
           attempts++;
         }
