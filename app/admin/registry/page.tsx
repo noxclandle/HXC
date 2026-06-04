@@ -62,11 +62,12 @@ export default function RegistryPage() {
 
   const fetchData = async () => {
     setLoading(true);
+    const ts = Date.now();
     try {
       const [cardRes, orderRes, sessionRes] = await Promise.all([
-        fetch("/api/admin/card/list"),
-        fetch("/api/admin/order/list"),
-        fetch("/api/auth/session")
+        fetch(`/api/admin/card/list?t=${ts}`),
+        fetch(`/api/admin/order/list?t=${ts}`),
+        fetch(`/api/auth/session?t=${ts}`)
       ]);
       
       if (cardRes.ok) setCards(await cardRes.json());
