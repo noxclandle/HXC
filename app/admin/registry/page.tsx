@@ -77,21 +77,42 @@ export default function RegistryPage() {
     fetchData();
   }, []);
 
+  const generateRandomSerial = (existingCards: Card[]) => {
+    const year = "2026";
+    let version = 0;
+    const usedSerials = new Set(existingCards.map(c => c.serial));
+
+    while (version < 100) {
+      const vStr = version.toString().padStart(2, '0');
+      const prefix = `${vStr}${year}`;
+      const countInVersion = existingCards.filter(c => c.serial.startsWith(prefix)).length;
+
+      if (countInVersion < 100000) {
+        let attempts = 0;
+        while (attempts < 1000) {
+          const randomSuffix = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+          const candidate = `${prefix}${randomSuffix}`;
+          if (!usedSerials.has(candidate)) return candidate;
+          attempts++;
+        }
+      }
+      version++;
+    }
+    return "OVERFLOW";
+  };
+
   const createSlot = async () => {
-    // UIDの正規化 (大文字化、コロン削除、スペース削除)
     const normalizedUid = newCard.uid.replace(/[:\s]/g, "").toUpperCase();
-    if (!normalizedUid || normalizedUid.length < 8) {
-      alert("Invalid UID format.");
+    if (!normalizedUid || normalizedUid.length < 8 || !newCard.serial) {
+      alert("Invalid UID or Serial.");
       return;
     }
 
-    // シリアルは登録の瞬間に初めて生成される
-    const serial = generateRandomSerial();
     try {
       const res = await fetch("/api/admin/card/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: normalizedUid, serial })
+        body: JSON.stringify({ uid: normalizedUid, serial: newCard.serial })
       });
       if (res.ok) {
         fetchData();
@@ -256,7 +277,14 @@ export default function RegistryPage() {
             <input 
               placeholder="e.g. 04A23B..." 
               value={newCard.uid} 
-              onChange={(e) => setNewCard({ ...newCard, uid: e.target.value.toUpperCase() })}
+              onChange={(e) => {
+                const val = e.target.value.toUpperCase().replace(/[:\s]/g, "");
+                setNewCard(prev => ({ 
+                   ...prev, 
+                   uid: val, 
+                   serial: prev.serial || generateRandomSerial(cards) 
+                }));
+              }}
               className="w-full bg-void border border-white/10 p-4 text-azure-400 tracking-widest outline-none focus:border-azure-400 font-mono text-lg"
             />
           </div>
@@ -266,6 +294,7 @@ export default function RegistryPage() {
               <input 
                 value={newCard.serial} 
                 readOnly
+                placeholder="UID entry required"
                 className="flex-1 bg-white/[0.03] border border-white/10 p-4 text-azure-400 tracking-widest outline-none font-mono text-lg"
               />
               <button 
