@@ -25,6 +25,8 @@ interface Card {
   serial: string;
   status: string;
   user: string;
+  role?: string;
+  rank?: string;
 }
 
 interface Order {
@@ -355,8 +357,24 @@ export default function RegistryPage() {
                       {card.status}
                     </span>
                   </td>
-                  <td className="p-4 opacity-60 flex items-center gap-2">
-                    <UserIcon size={10} /> {card.user || "-"}
+                  <td className="p-4">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <UserIcon size={10} className="opacity-40" /> 
+                        <span className="text-white/80">{card.user || "-"}</span>
+                      </div>
+                      {card.rank && (
+                        <div className="flex">
+                          <span className={`text-[7px] px-2 py-0.5 border uppercase font-bold tracking-widest ${
+                            card.role === 'chief_officer' || card.role === 'fixer' ? 'border-rose-500/40 text-rose-500 bg-rose-500/5' :
+                            card.role === 'mastermind' ? 'border-amber-500/40 text-amber-500 bg-amber-500/5' :
+                            'border-azure-400/40 text-azure-400 bg-azure-400/5'
+                          }`}>
+                            {card.rank}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </td>
                   <td className="p-4 text-right">
                     <div className="flex justify-end gap-2">

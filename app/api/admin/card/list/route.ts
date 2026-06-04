@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     }
 
     const cards = await prisma.card.findMany({
-      include: { user: { select: { name: true } } },
+      include: { user: { select: { name: true, role: true, rank: true } } },
       orderBy: { activated_at: "desc" }
     });
 
@@ -25,7 +25,9 @@ export async function GET(req: NextRequest) {
       uid: c.uid,
       serial: c.internal_serial,
       status: c.status,
-      user: c.user?.name || "-"
+      user: c.user?.name || "-",
+      role: c.user?.role || "",
+      rank: c.user?.rank || ""
     }));
 
     return NextResponse.json(formatted);
