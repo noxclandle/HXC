@@ -149,7 +149,7 @@ export default function RegistryPage() {
   };
 
   const unlinkCard = async (uid: string) => {
-    if (!confirm("Are you sure? This card will be returned to 'unissued' and its secret will be reset. The previous user bond will be severed.")) return;
+    if (!confirm("実行しますか？ このカードは『未発行』状態に戻り、シリアル番号もリセットされます。既存のユーザーとの紐付けは完全に解除されます。")) return;
     
     try {
       const res = await fetch("/api/admin/card/unlink", {
@@ -158,10 +158,10 @@ export default function RegistryPage() {
         body: JSON.stringify({ uid })
       });
       if (res.ok) {
-        alert("Card unlinked and reset successfully.");
+        alert("カードの紐付けを解除し、初期化しました。");
         fetchData();
       } else {
-        alert("Unlink failed.");
+        alert("紐付け解除に失敗しました。");
       }
     } catch (err) {
       console.error(err);
@@ -169,7 +169,7 @@ export default function RegistryPage() {
   };
 
   const voidCard = async (uid: string) => {
-    if (!confirm("CRITICAL: Permanent disability. This card will never be usable again. Continue?")) return;
+    if (!confirm("【警告】永久無効化を実行しますか？ このカードは二度と使用できなくなります。この操作は取り消せません。")) return;
     
     try {
       const res = await fetch("/api/admin/card/void", {
@@ -178,10 +178,10 @@ export default function RegistryPage() {
         body: JSON.stringify({ uid })
       });
       if (res.ok) {
-        alert("Card voided successfully.");
+        alert("カードを永久無効化しました。");
         fetchData();
       } else {
-        alert("Void failed.");
+        alert("無効化処理に失敗しました。");
       }
     } catch (err) {
       console.error(err);
@@ -192,7 +192,7 @@ export default function RegistryPage() {
     const cleanUid = uid.replace(/[:\s]/g, "").toUpperCase();
     const url = `${window.location.origin}/api/card/${cleanUid}?s=${serial}`;
     navigator.clipboard.writeText(url);
-    alert("Provisioning URL copied to clipboard.");
+    alert("プロビジョニングURLをクリップボードにコピーしました。");
   };
 
   const unissuedCards = cards.filter(c => c.status === "unissued");
