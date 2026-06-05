@@ -415,14 +415,14 @@ export default function RegistryPage() {
                   <td className="p-4">
                     <div className="flex flex-col gap-1">
                       <div 
-                        onClick={() => card.userId && setInspectUser(card)}
-                        className={`flex items-center gap-2 group/user ${card.userId ? 'cursor-pointer' : 'cursor-default'}`}
+                        onClick={() => (card.userId || card.purchaseName !== "-") && setInspectUser(card)}
+                        className={`flex items-center gap-2 group/user ${(card.userId || card.purchaseName !== "-") ? 'cursor-pointer' : 'cursor-default'}`}
                       >
                         <UserIcon size={10} className="opacity-40 group-hover/user:text-azure-400 transition-colors" /> 
                         <span className="text-white/80 group-hover/user:text-white transition-colors border-b border-transparent group-hover/user:border-white/20">
-                          {card.user || "-"}
+                          {card.user !== "-" ? card.user : (card.purchaseName !== "-" ? card.purchaseName : "-")}
                         </span>
-                        {card.userId && <Eye size={10} className="opacity-0 group-hover/user:opacity-40 transition-opacity" />}
+                        {(card.userId || card.purchaseName !== "-") && <Eye size={10} className="opacity-0 group-hover/user:opacity-40 transition-opacity" />}
                       </div>
                       {card.rank && (
                         <div className="flex">
