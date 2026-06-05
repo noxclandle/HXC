@@ -92,7 +92,7 @@ export default function ProfileEditPage() {
       
       // 4. DB保存用のフィールドをR2のURLで更新
       updateField(type === "face" ? "faceUrl" : "logoUrl", uploadData.url);
-      showToast("Identity Refined / 画像を最適化して反映しました", "success");
+      showToast("Profile Refined / 画像を最適化して反映しました", "success");
     } catch (err) {
       console.error(err);
       showToast("Refinement Failed / 処理に失敗しました", "error");
@@ -216,12 +216,7 @@ export default function ProfileEditPage() {
         vAlign: dataToSave.vAlign
       };
 
-      await fetch("/api/user/equip", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ equipped: finalEquipped })
-      });
-
+      // 統合された単一の保存エンドポイント（または順次実行の確実化）
       const res = await fetch("/api/profile/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -235,11 +230,11 @@ export default function ProfileEditPage() {
 
       if (res.ok) {
         setSaveStatus("saved");
-        showToast("Synchronized / 情報を同期しました", "success");
+        showToast("Profile Updated / プロフィールを保存しました", "success");
         setTimeout(() => setSaveStatus("idle"), 2000);
       } else {
         setSaveStatus("error");
-        showToast("Synchronization Failed / 同期に失敗しました", "error");
+        showToast("Save Failed / 保存に失敗しました", "error");
       }
     } catch (err) { 
       console.error(err);
@@ -252,7 +247,7 @@ export default function ProfileEditPage() {
   useEffect(() => {
     if (!isLoaded) return;
     if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => performAutoSave(formData, equipped), 1000);
+    timerRef.current = setTimeout(() => performAutoSave(formData, equipped), 1500); // 1.5秒へ間隔を広げて安定化
     return () => clearTimeout(timerRef.current);
   }, [formData, equipped, isLoaded, performAutoSave]);
 
@@ -291,7 +286,7 @@ export default function ProfileEditPage() {
             <AnimatePresence mode="wait">
                {saveStatus === "saving" && (
                   <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-azure-400 text-[8px] lg:text-[9px] tracking-[0.3em] uppercase font-bold px-2 lg:px-3 py-1 bg-azure-500/10 border border-azure-500/20">
-                    <Save size={10} className="animate-pulse" /> Syncing
+                    <Save size={10} className="animate-pulse" /> Saving
                   </motion.div>
                )}
                {saveStatus === "saved" && (
@@ -342,7 +337,7 @@ export default function ProfileEditPage() {
               <section className="space-y-10 p-4 lg:p-0">
                 <header className="flex items-center gap-4 opacity-40 border-b border-white/5 pb-4">
                    <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-[10px]">01</div>
-                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">Base Identity / 基本情報</h3>
+                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">Profile Info / 基本情報</h3>
                 </header>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
@@ -423,7 +418,7 @@ export default function ProfileEditPage() {
               <section className="space-y-10 p-4 lg:p-0">
                 <header className="flex items-center gap-4 opacity-40 border-b border-white/5 pb-4">
                    <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-[10px]">03</div>
-                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">Social & Links / 接続設定</h3>
+                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">Social & Links / SNS設定</h3>
                 </header>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                    <div className="space-y-3">
@@ -452,7 +447,7 @@ export default function ProfileEditPage() {
               <section className="space-y-10 p-4 lg:p-0 pb-20">
                 <header className="flex items-center gap-4 opacity-40 border-b border-white/5 pb-4">
                    <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-[10px]">04</div>
-                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">Profile Photo Settings / 本人写真設定</h3>
+                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">Profile Photo / 本人写真設定</h3>
                 </header>
                 <div className="flex flex-col gap-12">
                    <div className="space-y-4">
@@ -486,3 +481,4 @@ export default function ProfileEditPage() {
     </div>
   );
 }
+

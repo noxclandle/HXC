@@ -31,7 +31,7 @@ async function main() {
       rank: "ASSOCIATE",
       exp: BigInt(0),
       owned_assets: ["Obsidian", "Default", "None", "Standard", "ASSOCIATE", "resonance", "Pure White Hex"],
-      unlocked_titles: ["ASSOCIATE", "Initiate"]
+      unlocked_titles: ["ASSOCIATE", "Member"]
     }
   });
 

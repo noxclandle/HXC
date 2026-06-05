@@ -126,7 +126,7 @@ export default function UsersAdminPage() {
               { id: "fixer", label: "Fixer" },
               { id: "manager", label: "Manager" },
               { id: "black_member", label: "Black Member" },
-              { id: "member", label: "Initiate" }
+              { id: "member", label: "Member" }
             ].map((r) => (
               <button 
                 key={r.id}
@@ -144,11 +144,12 @@ export default function UsersAdminPage() {
         <div className="py-32 text-center text-[10px] uppercase tracking-widest opacity-20 animate-pulse">アーカイブにアクセス中...</div>
       ) : (
         <>
-          <div className="grid grid-cols-6 p-4 border-b border-white/10 text-[10px] uppercase tracking-[0.3em] opacity-40 mb-2 font-bold">
+          <div className="grid grid-cols-7 p-4 border-b border-white/10 text-[10px] uppercase tracking-[0.3em] opacity-40 mb-2 font-bold">
              <div className="col-span-2">ユーザー</div>
              <div>権限</div>
-             <div>保有トークン (RT) / EXP</div>
+             <div>保有トークン / EXP</div>
              <div>アセット / 称号</div>
+             <div>公開リンク</div>
              <div className="text-right">操作</div>
           </div>
 
@@ -160,16 +161,23 @@ export default function UsersAdminPage() {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="grid grid-cols-6 p-5 bg-white/[0.02] border border-transparent hover:border-white/10 transition-all items-center"
+                  className="grid grid-cols-7 p-5 bg-white/[0.02] border border-transparent hover:border-white/10 transition-all items-center"
                 >
                   <div className="flex flex-col col-span-2">
-                    <span className="text-xs tracking-widest uppercase font-bold">{u.name || "Unknown"}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs tracking-widest uppercase font-bold">{u.name || "Unknown"}</span>
+                      {u.purchase_name && u.purchase_name !== u.name && (
+                        <span className="text-[7px] px-1.5 py-0.5 border border-azure-500/20 text-azure-400 opacity-60 font-normal" title={`申し込み時: ${u.purchase_name}`}>
+                          {u.purchase_name}
+                        </span>
+                      )}
+                    </div>
                     <span className="text-[9px] opacity-20 lowercase">{u.email}</span>
                   </div>
                   <div className="flex items-center gap-3 text-[10px] tracking-[0.2em] uppercase">
                      {roleIcon(u.role)}
                      <span className={u.role === "mastermind" ? "text-purple-400 font-bold" : u.role === "fixer" ? "text-azure-400 font-bold" : u.role === "manager" ? "text-emerald-400" : ""}>
-                        {u.role === 'member' ? 'Initiate' : u.role.replace('_', ' ')}
+                        {u.role === 'member' ? 'Member' : u.role.replace('_', ' ')}
                      </span>
                   </div>
                   <div className="flex flex-col gap-1">
@@ -185,6 +193,15 @@ export default function UsersAdminPage() {
                         <Trophy size={10} />
                         <span className="text-[9px] font-mono">{u.unlocked_titles?.length || 0}</span>
                      </div>
+                  </div>
+                  <div>
+                    {u.card_uid ? (
+                      <a href={`/p/${u.id}`} target="_blank" rel="noopener noreferrer" className="text-azure-400 hover:text-white transition-colors flex items-center gap-1.5">
+                        <ExternalLink size={12} /> <span className="text-[8px] uppercase tracking-widest font-bold">Profile</span>
+                      </a>
+                    ) : (
+                      <span className="text-[8px] opacity-10 uppercase tracking-widest">No Card</span>
+                    )}
                   </div>
                   <div className="flex justify-end gap-3">
                      <button onClick={() => setInspectUser(u)} className="p-2 border border-white/5 hover:bg-white/5 transition-all text-white/40 hover:text-white" title="詳細表示">
@@ -256,7 +273,7 @@ export default function UsersAdminPage() {
                         </h3>
                         <div className="space-y-3">
                            <div className="flex flex-col">
-                              <span className="text-[8px] uppercase tracking-widest opacity-20">Current Name / 現在の氏名</span>
+                              <span className="text-[8px] uppercase tracking-widest opacity-20">Current Name / 登録名</span>
                               <p className="text-xs text-white">{inspectUser.name}</p>
                            </div>
                            <div className="flex flex-col">
@@ -306,6 +323,17 @@ export default function UsersAdminPage() {
                            )) : <span className="text-[9px] opacity-20 uppercase italic">保有アセットなし</span>}
                         </div>
                      </div>
+
+                     <div className="pt-4">
+                        <a 
+                          href={`/p/${inspectUser.id}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="w-full py-4 bg-white/5 border border-white/10 flex items-center justify-center gap-3 text-[10px] uppercase tracking-[0.4em] font-bold hover:bg-white/10 transition-all text-azure-400"
+                        >
+                           <ExternalLink size={14} /> View Public Profile
+                        </a>
+                     </div>
                   </section>
                </div>
 
@@ -350,7 +378,7 @@ export default function UsersAdminPage() {
                            onClick={() => handleUpdateRole(inspectUser.id, 'member')}
                            className="px-6 py-3 border border-white/10 text-white/40 text-[9px] uppercase tracking-widest font-bold hover:bg-white/5 transition-all"
                         >
-                           Initiate に設定
+                           Member に設定
                         </button>
                      )}
                   </div>

@@ -14,6 +14,7 @@ const registerSchema = z.object({
   password: z.string().min(8),
   name: z.string().min(1),
   handle: z.string().optional(),
+  phone: z.string().min(10), // 必須（最低10桁）に変更
 });
 
 /**
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
-    const { uid, s: secret, email, password, name, handle } = body.data;
+    const { uid, s: secret, email, password, name, handle, phone } = body.data;
 
     // 1. シークレットの有効性をトランザクション内で厳密に確認
     const result = await prisma.$transaction(async (tx) => {
@@ -59,6 +60,7 @@ export async function POST(req: NextRequest) {
           email: email.toLowerCase(),
           password: hashedPassword,
           name: name || "New Member",
+          phone: phone, // 電話番号を追加
           handle_name: handle || name, // フリガナ/ハンドル名をセット
           role: "member",
           rank: "Member" // Initiateを廃止し、最初から対等な会員として登録

@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 
 export const TITLES = {
   ASSOCIATE: "ASSOCIATE",     // 初期
-  INITIATE: "Initiate",       // アカウント作成
+  INITIATE: "Member",       // アカウント作成
   OBSERVER: "Observer",       // 閲覧
   COLLECTOR: "Collector",     // 10 connections
   MESSENGER: "Messenger",     // 20 connections

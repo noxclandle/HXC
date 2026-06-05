@@ -1,25 +1,29 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 /**
- * 境界の覚醒 (Heartbeat)
- * データベースが休止（スリープ）するのを防ぐための定期アクセス用
+ * システムを「起こし続ける」ためのエンドポイント
+ * Vercel Cron Jobs 等から定期的に叩くことで、Serverless Function と DB のスリープを防ぐ
  */
-export async function GET(req: NextRequest) {
+export async function GET() {
+  const start = Date.now();
+  
   try {
-    // 最小限のクエリでDBを叩く
-    const userCount = await prisma.user.count();
+    // 1. DBに極めて軽量なクエリを投げて、DB接続を維持する
+    await prisma.$queryRaw`SELECT 1`;
     
-    return NextResponse.json({
-      status: "Awakened",
-      resonance: true,
+    // 2. システムログ（オプション）
+    // console.log(`[HEARTBEAT] System is awake. Latency: ${Date.now() - start}ms`);
+
+    return NextResponse.json({ 
+      status: "alive", 
       timestamp: new Date().toISOString(),
-      entities: userCount
+      latency: `${Date.now() - start}ms`
     });
   } catch (error) {
-    console.error("Heartbeat sync failed:", error);
-    return NextResponse.json({ status: "Silenced", resonance: false }, { status: 500 });
+    console.error("[HEARTBEAT] Wakeup failed:", error);
+    return NextResponse.json({ status: "error", message: "Failed to wake up DB" }, { status: 500 });
   }
 }

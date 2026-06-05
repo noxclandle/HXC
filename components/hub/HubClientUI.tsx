@@ -83,7 +83,7 @@ export default function HubClientUI({
           setMood('stable');
         } else {
           // 詳細なエラーを表示するように変更
-          const errorMsg = data.error || "Sync Failed / 境界との同期に失敗しました";
+          const errorMsg = data.error || "Communication Failed / 通信に失敗しました";
           const errorDetail = data.details ? ` / ${data.details}` : "";
           showToast(errorMsg + errorDetail, "error");
           setMood('unstable');
@@ -95,7 +95,7 @@ export default function HubClientUI({
     } catch (e: any) {
       setMood('unstable');
       setIsResonating(false);
-      showToast(e.message || "Sync Failed / 境界との同期に失敗しました", "error");
+      showToast(e.message || "Communication Failed / 通信に失敗しました", "error");
       await fetchData();
     }
   };
@@ -138,7 +138,7 @@ export default function HubClientUI({
       <header className="mb-12 flex flex-col md:flex-row justify-between items-start gap-8">
         <div className="space-y-4">
           <h1 className="text-2xl md:text-3xl tracking-[0.2em] md:tracking-[0.4em] uppercase font-extralight mb-2 text-white">Atelier</h1>
-          <p className="text-[9px] md:text-[10px] tracking-[0.2em] md:tracking-[0.4em] uppercase opacity-40">Identity Workshop</p>
+          <p className="text-[9px] md:text-[10px] tracking-[0.2em] md:tracking-[0.4em] uppercase opacity-40">Profile Overview</p>
         </div>
         <div className="flex items-start gap-8 w-full md:w-auto justify-between md:justify-end">
            <div className="text-left md:text-right flex flex-col items-start md:items-end w-full">

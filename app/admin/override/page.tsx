@@ -8,7 +8,7 @@ export default function MasterOverridePage() {
     id: "UUID-001",
     name: "Nox",
     handle: "NOX_VOID",
-    rank: "Initiate",
+    rank: "Member",
     role: "member",
     rt_balance: 5000
   });
@@ -128,12 +128,12 @@ export default function MasterOverridePage() {
               </div>
 
               <div className="grid grid-cols-2 gap-2">
-                {["Initiate", "Black Tier", "Sentinel", "All"].map((target) => (
+                {["Member", "Black Tier", "Sentinel", "All"].map((target) => (
                   <button 
                     key={target}
                     onClick={() => {
                       if(confirm(`本当に ${target} 全員に恩寵を授けますか？`)) {
-                        console.log("Mass Bestowal Initiated.");
+                        console.log("Mass Bestowal Memberd.");
                       }
                     }}
                     className="py-3 border border-moonlight/10 text-[8px] uppercase tracking-widest hover:bg-rose-500/10 hover:border-rose-500/40 transition-all"

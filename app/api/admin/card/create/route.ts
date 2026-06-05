@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { uid: rawUid, serial } = await req.json();
+    const { uid: rawUid, serial, recipientName, memo } = await req.json();
 
     if (!rawUid || !serial) {
       return NextResponse.json({ error: "UID and Serial are required." }, { status: 400 });
@@ -24,12 +24,33 @@ export async function POST(req: NextRequest) {
 
     const uid = rawUid.replace(/:/g, "").toUpperCase();
 
-    const card = await prisma.card.create({
-      data: {
-        uid,
-        internal_serial: serial,
-        status: "unissued"
+    // トランザクションでカードと（必要であれば）ダミー注文を作成
+    const card = await prisma.$transaction(async (tx) => {
+      const newCard = await tx.card.create({
+        data: {
+          uid,
+          internal_serial: serial,
+          status: recipientName ? "shipped" : "unissued" // 名前があれば即「発送済み」扱い
+        }
+      });
+
+      if (recipientName) {
+        await tx.order.create({
+          data: {
+            stripe_session_id: `GIFT-${uid}-${Date.now()}`,
+            tier: "Gift",
+            variant: memo || "Direct Handover",
+            price: 0,
+            customer_name: recipientName,
+            customer_email: `gift-${uid.toLowerCase()}@hexa-relation.com`,
+            status: "shipped",
+            card_uid: uid,
+            shipped_at: new Date()
+          }
+        });
       }
+
+      return newCard;
     });
 
     return NextResponse.json({ success: true, card });
