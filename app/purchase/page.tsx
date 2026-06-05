@@ -39,7 +39,7 @@ export default function PurchasePage() {
     {
       id: "executive" as TierId,
       name: "Executive",
-      price: "¥10,000",
+      price: "¥20,000",
       type: "Metallic Series",
       desc: "卓越した存在感を示すメタリック加工。伝統的な価値観と最新技術が融合した、エグゼクティブのための洗練された選択。",
       options: [
