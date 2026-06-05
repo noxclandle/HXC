@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     const cards = await prisma.card.findMany({
       include: { 
         user: { select: { name: true, role: true, rank: true, email: true, phone: true } },
-        order: { select: { customer_name: true } } 
+        order: { select: { customer_name: true, shipping_address: true } } 
       },
       orderBy: { activated_at: "desc" }
     });
