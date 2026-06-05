@@ -253,7 +253,8 @@ export default function RegistryPage() {
   const unissuedCards = cards.filter(c => c.status === "unissued");
   const filteredCards = cards.filter(c => 
     c.uid.toLowerCase().includes(search.toLowerCase()) || 
-    c.user.toLowerCase().includes(search.toLowerCase())
+    c.user.toLowerCase().includes(search.toLowerCase()) ||
+    (c.purchaseName && c.purchaseName.toLowerCase().includes(search.toLowerCase()))
   );
   const pendingOrders = orders.filter(o => o.status === "paid");
 
@@ -302,7 +303,7 @@ export default function RegistryPage() {
                   </div>
                   <div className="text-[9px] opacity-40 uppercase tracking-widest space-y-1">
                     <p>{order.customer_email}</p>
-                    <p>{order.shipping_address?.postal_code} {order.shipping_address?.city} {order.shipping_address?.line1}</p>
+                    <p>{order.shipping_address?.postal_code} {order.shipping_address?.state}{order.shipping_address?.city}{order.shipping_address?.line1} {order.shipping_address?.line2}</p>
                   </div>
                 </div>
 
@@ -392,6 +393,7 @@ export default function RegistryPage() {
                 <th className="p-4 font-normal">UID</th>
                 <th className="p-4 font-normal">Secret Serial</th>
                 <th className="p-4 font-normal">Status</th>
+                <th className="p-4 font-normal">Fulfillment / Shipping</th>
                 <th className="p-4 font-normal">Owner / Linked User</th>
                 <th className="p-4 text-right font-normal">Action</th>
               </tr>
@@ -411,6 +413,22 @@ export default function RegistryPage() {
                     }`}>
                       {card.status}
                     </span>
+                  </td>
+                  <td className="p-4">
+                    {card.purchaseName !== "-" ? (
+                      <div className="flex flex-col gap-1 max-w-[200px]">
+                        <span className="text-white/90 text-[10px] font-bold flex items-center gap-2">
+                          <Package size={10} className="text-azure-400" /> {card.purchaseName}
+                        </span>
+                        {card.shippingAddress && (
+                          <span className="text-[8px] opacity-40 lowercase tracking-normal truncate">
+                            〒{card.shippingAddress.postal_code} {card.shippingAddress.state}{card.shippingAddress.city}...
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="opacity-10">-</span>
+                    )}
                   </td>
                   <td className="p-4">
                     <div className="flex flex-col gap-1">
