@@ -32,7 +32,8 @@ export async function GET(req: NextRequest) {
       user: c.user?.name || "-",
       email: c.user?.email || "-",
       phone: c.user?.phone || "-",
-      purchaseName: c.order?.customer_name || "-", // 追加
+      purchaseName: c.order?.customer_name || "-",
+      shippingAddress: c.order?.shipping_address || null, // 追加
       role: c.user?.role || "",
       rank: c.user?.rank || ""
     }));

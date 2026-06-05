@@ -20,7 +20,8 @@ import {
   Trash2,
   Mail,
   Phone,
-  Eye
+  Eye,
+  MapPin
 } from "lucide-react";
 import Link from "next/link";
 
@@ -32,7 +33,8 @@ interface Card {
   user: string;
   email?: string;
   phone?: string;
-  purchaseName?: string; // 追加
+  purchaseName?: string;
+  shippingAddress?: any; // 追加
   role?: string;
   rank?: string;
 }
@@ -573,6 +575,18 @@ export default function RegistryPage() {
                     <span className="text-[8px] uppercase tracking-widest opacity-20 flex items-center gap-2"><Phone size={10}/> Contact Number</span>
                     <p className="text-xs font-mono text-white/80">{inspectUser.phone || "Not registered"}</p>
                   </div>
+                  
+                  {/* 配送先情報の表示 */}
+                  {inspectUser.shippingAddress && (
+                    <div className="flex flex-col items-start space-y-1 pt-4 border-t border-white/5 w-full">
+                      <span className="text-[8px] uppercase tracking-widest text-azure-400 flex items-center gap-2 font-bold"><MapPin size={10}/> Shipping Address / 配送先</span>
+                      <div className="text-[11px] text-white/90 leading-relaxed bg-white/5 p-4 rounded-sm w-full font-sans">
+                        <p>〒{inspectUser.shippingAddress.postal_code}</p>
+                        <p>{inspectUser.shippingAddress.state}{inspectUser.shippingAddress.city}{inspectUser.shippingAddress.line1}</p>
+                        <p>{inspectUser.shippingAddress.line2}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 w-full pt-10">
