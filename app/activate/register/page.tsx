@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Hexagon, UserCheck, Mail, Lock, CheckCircle2, Fingerprint } from "lucide-react";
+import { Hexagon, UserCheck, Mail, Lock, CheckCircle2, Fingerprint, Phone, ArrowRight, Loader2, User } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 function RegisterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const uid = searchParams.get("uid") || "";
+  const rawUid = searchParams.get("uid") || "";
+  const uid = rawUid.replace(/:/g, "").toUpperCase();
   const s = searchParams.get("s") || "";
 
   const [formData, setFormData] = useState({
@@ -17,16 +18,29 @@ function RegisterContent() {
     handle: "",
     email: "",
     password: "",
+    phone: "",
+    purchase_name: ""
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [step, setStep] = useState(0); // 0: Form, 1: Confirm 1, 2: Confirm 2, 3: Confirm 3, 4: Success
-  const [confirmStep, setConfirmStep] = useState(0); // 0: None, 1: Identity, 2: Authorization, 3: Finality
+  const [confirmStep, setConfirmStep] = useState(0); // 0: None, 1: Profile, 2: Authorization, 3: Finalize
+
+  // Admin APIへの不適切なフェッチを削除し、セキュリティと安定性を向上
+  useEffect(() => {
+    // 将来的に公開用のカード情報取得APIが必要な場合はここに実装する
+  }, [uid]);
 
   const startConfirmation = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.email || !formData.password || !formData.name || !formData.handle) {
+    if (!formData.email || !formData.password || !formData.name || !formData.handle || !formData.phone) {
       setError("必須項目をすべて入力してください。");
+      return;
+    }
+    // 電話番号の簡易バリデーション（数字以外を除去して10桁以上）
+    const phoneDigits = formData.phone.replace(/\D/g, "");
+    if (phoneDigits.length < 10) {
+      setError("電話番号は10桁以上で入力してください。");
       return;
     }
     setError("");
@@ -162,7 +176,7 @@ function RegisterContent() {
               </div>
 
               {[
-                { label: "メールアドレス (ログイン用)", key: "email", icon: <Mail size={14}/>, placeholder: "your@email.com", type: "email" },
+                { label: "電話番号 (必須)", key: "phone", icon: <Phone size={14}/>, placeholder: "090-0000-0000", type: "tel" }, { label: "メールアドレス (ログイン用)", key: "email", icon: <Mail size={14}/>, placeholder: "your@email.com", type: "email" },
                 { label: "パスワード (8文字以上)", key: "password", icon: <Lock size={14}/>, placeholder: "••••••••", type: "password" },
               ].map((f) => (
                 <div key={f.key} className="space-y-2">
@@ -196,14 +210,14 @@ function RegisterContent() {
                     <div className="space-y-4">
                       <div className="text-azure-400 opacity-50 text-[10px] tracking-[0.4em] uppercase font-bold">Step {confirmStep} / 3</div>
                       <h3 className="text-xl tracking-[0.3em] uppercase font-light">
-                        {confirmStep === 1 && "Confirm Identity"}
-                        {confirmStep === 2 && "Authorize Resonance"}
-                        {confirmStep === 3 && "Deepen Connection"}
+                        {confirmStep === 1 && "Confirm Profile"}
+                        {confirmStep === 2 && "Register Card"}
+                        {confirmStep === 3 && "Finalize Setup"}
                       </h3>
                       <p className="text-[9px] tracking-[0.1em] opacity-40 leading-relaxed uppercase">
-                        {confirmStep === 1 && "入力された情報は永続的に刻印されます。間違いはありませんか？"}
-                        {confirmStep === 2 && "この物理カードをあなたの魂の一部として登録することを許可します。"}
-                        {confirmStep === 3 && "最終的な同期プロセスを開始します。この操作は取り消せません。"}
+                        {confirmStep === 1 && "入力された情報は永続的に保存されます。間違いはありませんか？"}
+                        {confirmStep === 2 && "この物理カードをあなたのアカウントに紐付けます。よろしいですか？"}
+                        {confirmStep === 3 && "最終的な保存プロセスを開始します。この操作は取り消せません。"}
                       </p>
                     </div>
 
@@ -217,9 +231,9 @@ function RegisterContent() {
                         className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.6em] uppercase hover:bg-azure-50 transition-all"
                       >
                         {loading ? "Processing..." : (
-                          confirmStep === 1 ? "Confirm Resonance" :
-                          confirmStep === 2 ? "Authorize Finality" :
-                          "Synchronize Now"
+                          confirmStep === 1 ? "Confirm Profile" :
+                          confirmStep === 2 ? "Register Card" :
+                          "Save Now"
                         )}
                       </button>
                       <button 
@@ -246,9 +260,9 @@ function RegisterContent() {
                <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.1, 0.4, 0.1] }} transition={{ duration: 1.5, repeat: Infinity }} className="absolute inset-0 bg-white blur-[100px] rounded-full" />
                <CheckCircle2 size={120} className="text-white relative z-10" />
             </div>
-            <h2 className="text-3xl tracking-[0.6em] uppercase font-extralight text-white">Identity Synced</h2>
+            <h2 className="text-3xl tracking-[0.6em] uppercase font-extralight text-white">Setup Complete</h2>
             <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase mt-4">
-               情報の刻印が完了しました。境界へ遷移します。
+               プロフィールの保存が完了しました。まもなくホームへ遷移します。
             </p>
           </motion.div>
         )}
