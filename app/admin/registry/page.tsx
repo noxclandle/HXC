@@ -608,6 +608,15 @@ export default function RegistryPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 w-full pt-10">
+                  {inspectUser.status === 'active' && (
+                    <Link 
+                      href={`/p/${inspectUser.handle || inspectUser.userId}`}
+                      target="_blank"
+                      className="py-4 bg-azure-600 text-[9px] uppercase tracking-widest font-bold text-white hover:bg-azure-500 transition-all text-center flex items-center justify-center gap-2 col-span-2 shadow-lg mb-2"
+                    >
+                      View Public Profile <ExternalLink size={12} />
+                    </Link>
+                  )}
                   <Link 
                     href={`/admin/users?search=${inspectUser.user}`}
                     className="py-4 bg-white/[0.05] border border-white/10 text-[9px] uppercase tracking-widest font-bold text-azure-400 hover:bg-azure-400/10 transition-all text-center flex items-center justify-center gap-2"
