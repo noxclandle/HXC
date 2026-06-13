@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 
     const cards = await prisma.card.findMany({
       include: { 
-        user: { select: { name: true, role: true, rank: true, email: true, phone: true } },
+        user: { select: { name: true, role: true, rank: true, email: true, phone: true, handle_name: true } },
         order: { select: { customer_name: true, shipping_address: true } } 
       },
       orderBy: { activated_at: "desc" }
@@ -30,6 +30,7 @@ export async function GET(req: NextRequest) {
       status: c.status,
       userId: c.user_id,
       user: c.user?.name || "-",
+      handle: c.user?.handle_name || null,
       email: c.user?.email || "-",
       phone: c.user?.phone || "-",
       purchaseName: c.order?.customer_name || "-",
