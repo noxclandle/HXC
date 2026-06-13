@@ -46,7 +46,7 @@ export async function getUserStatus(email: string | null | undefined) {
                    userEmail.includes("str1yf5x");
   
   // All available titles in the system
-  const allTitles = ["ASSOCIATE", "Initiate", "Observer", "Collector", "Messenger", "Connector", "Strategist", "Tech Lead", "Void Voyager", "Headhunter", "Gilded Soul", "The Sovereign", "Mastermind", "Architect", "Chief Officer", "APEX", "Fixer"];
+  const allTitles = ["ASSOCIATE", "Observer", "Collector", "Messenger", "Connector", "Strategist", "Tech Lead", "Void Voyager", "Headhunter", "Gilded Soul", "The Sovereign", "Mastermind", "Architect", "Chief Officer", "APEX", "Fixer"];
   
   const titles = isFixer ? allTitles : (Array.isArray(user.unlocked_titles) ? user.unlocked_titles : ["ASSOCIATE"]);
 

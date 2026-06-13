@@ -88,7 +88,7 @@ export default function ResidentAgent() {
         const data = await res.json();
         setUserExp(Number(data.exp));
         setRtBalance(data.rt_balance);
-        setUserRank(data.rank || "Initiate");
+        setUserRank(data.rank || "Member");
         setUserRole(data.role || "member");
         setHasDaily(checkDailyStatus(data.last_daily_at));
         setLastReadAt(data.last_read_news_at);

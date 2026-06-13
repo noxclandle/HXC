@@ -20,7 +20,7 @@ model User {
   address           String?
   phone             String?
   role              String          @default("member")
-  rank              String          @default("Initiate")
+  rank              String          @default("Member")
   link_x            String?
   link_instagram    String?
   link_website      String?
