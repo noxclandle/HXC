@@ -268,7 +268,7 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
 
     // --- Titles ---
     { id: "ASSOCIATE", name: "ASSOCIATE", type: "title", rarity: "common", description: "初期称号。", unlocked: true },
-    { id: "Initiate", name: "Initiate", type: "title", rarity: "common", description: "アカウント作成の証。", unlocked: true },
+    { id: "Member", name: "Member", type: "title", rarity: "common", description: "アカウント作成の証。", unlocked: true },
     { id: "Observer", name: "Observer", type: "title", rarity: "common", description: "世界の観測者。", unlocked: true },
     { id: "Collector", name: "Collector", type: "title", rarity: "rare", description: "10人との共鳴。", cost: 3000, unlocked: false },
     { id: "Messenger", name: "Messenger", type: "title", rarity: "rare", description: "20人との共鳴。", cost: 3000, unlocked: false },
