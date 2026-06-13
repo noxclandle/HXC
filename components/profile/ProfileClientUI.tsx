@@ -8,14 +8,32 @@ import GeometricBackground from "@/components/background/GeometricBackground";
 import ConnectionInteraction from "@/components/ui/ConnectionInteraction";
 import Link from "next/link";
 import ResidentAgent from "@/components/agent/ResidentAgent";
-import { signIn } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 
 export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?: boolean }) {
+  const { status } = useSession();
   const [showReport, setShowReport] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [reporting, setReporting] = useState(false);
+
+  useEffect(() => {
+    // 魂の同調チェック（未ログインかつ、この端末の持ち主である場合のみ試行）
+    const trySoulLink = async () => {
+      const token = localStorage.getItem("hxc_soul_fragment");
+      if (token && !isOwner && status === "unauthenticated") {
+        const res = await signIn("soul-link", {
+          deviceToken: token,
+          redirect: false
+        });
+        if (res?.ok) {
+           window.location.reload(); // 成功時のみ1度だけリロードし、主として認識させる
+        }
+      }
+    };
+    trySoulLink();
+  }, [isOwner, status]);
 
   const handleSaveContact = async () => {
     if (!data) return;
