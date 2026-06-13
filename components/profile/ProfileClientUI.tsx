@@ -69,8 +69,9 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
     let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${data.name || "MEMBER"}\nN:${data.name || ""};;;;\nTEL;TYPE=CELL:${data.phone || ""}\nEMAIL;TYPE=INTERNET:${data.profile.contact_email || data.email || ""}\nORG:${data.profile?.company || ""}\nTITLE:${data.profile?.title || ""}`;
 
     if (photoBase64) {
-      // iOSで最も認識率が高いフォーマットに変更
-      vcard += `\nPHOTO;TYPE=JPEG;ENCODING=BASE64:${photoBase64}`;
+      // iOS互換のため、Base64文字列を74文字ごとに改行し、次の行頭にスペースを入れる (Line Folding)
+      const foldedBase64 = photoBase64.match(/.{1,74}/g)?.join("\n ") || photoBase64;
+      vcard += `\nPHOTO;ENCODING=b;TYPE=JPEG:${foldedBase64}`;
     }
 
     vcard += `\nEND:VCARD`;

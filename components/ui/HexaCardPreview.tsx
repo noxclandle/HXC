@@ -391,10 +391,11 @@ export default function HexaCardPreview({
                   {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={40} className="text-white/5" />}
                </div>
                <div className="flex flex-col justify-center text-left flex-1 min-w-0">
-                  <p className="text-[9px] md:text-[11px] tracking-[0.5em] uppercase text-white/30 mb-2">Official Profile</p>
-                  <p className="text-[10px] md:text-[13px] tracking-[0.05em] uppercase text-white/90 leading-relaxed italic line-clamp-4 whitespace-pre-wrap mb-4 border-l border-white/10 pl-4">
-                    {bio || "Hexa Relation Protocol"}
-                  </p>
+                  {bio && (
+                    <p className="text-[10px] md:text-[13px] tracking-[0.05em] uppercase text-white/90 leading-relaxed italic line-clamp-4 whitespace-pre-wrap mb-4 border-l border-white/10 pl-4">
+                      {bio}
+                    </p>
+                  )}
                   <div className="flex flex-wrap gap-4 md:gap-6">
                     {link_x && <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-1.5 text-white/40 hover:text-white transition-colors"><Twitter size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span></a>}
                     {link_instagram && <a href={link_instagram.startsWith('http') ? link_instagram : `https://instagram.com/${link_instagram}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-1.5 text-white/40 hover:text-white transition-colors"><Instagram size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Insta</span></a>}
