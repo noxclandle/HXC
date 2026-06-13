@@ -370,13 +370,13 @@ export default function HexaCardPreview({
                 <div className="w-28 h-28 md:w-36 md:h-36 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl relative">
                    {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={48} className="text-white/5" />}
                 </div>
-                <div className="space-y-4 w-full">
-                   <p className="text-[11px] md:text-[13px] tracking-[0.6em] uppercase text-white/30">Official Profile</p>
-                   <div className="h-px w-12 bg-white/10 mx-auto" />
-                   <p className="text-[12px] md:text-[15px] tracking-[0.1em] uppercase text-white/90 leading-relaxed italic max-w-sm mx-auto line-clamp-5 px-4 whitespace-pre-wrap">
-                     {bio || "Hexa Relation Protocol"}
-                   </p>
-                </div>
+                {bio && (
+                  <div className="space-y-4 w-full">
+                     <p className="text-[12px] md:text-[15px] tracking-[0.1em] uppercase text-white/90 leading-relaxed italic max-w-sm mx-auto line-clamp-5 px-4 whitespace-pre-wrap">
+                       {bio}
+                     </p>
+                  </div>
+                )}
               </div>
               <div className="flex flex-wrap justify-center gap-8 md:gap-12 pb-8">
                  {link_x && <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors"><Twitter size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span></a>}
