@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, Crown, User as UserIcon, Lock, Search, Sparkles, AlertCircle, Eye, Wallet, Package, Trophy, Mail, Phone, ExternalLink } from "lucide-react";
+import Link from "next/link";
 
 interface UserData {
   id: string;

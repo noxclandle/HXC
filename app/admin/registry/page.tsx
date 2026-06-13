@@ -31,6 +31,7 @@ interface Card {
   status: string;
   userId?: string;
   user: string;
+  handle?: string | null;
   email?: string;
   phone?: string;
   purchaseName?: string;
