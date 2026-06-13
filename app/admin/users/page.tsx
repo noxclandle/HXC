@@ -126,7 +126,7 @@ export default function UsersAdminPage() {
               { id: "fixer", label: "Fixer" },
               { id: "manager", label: "Manager" },
               { id: "black_member", label: "Black Member" },
-              { id: "member", label: "Initiate" }
+              { id: "member", label: "Member" }
             ].map((r) => (
               <button 
                 key={r.id}
@@ -169,7 +169,7 @@ export default function UsersAdminPage() {
                   <div className="flex items-center gap-3 text-[10px] tracking-[0.2em] uppercase">
                      {roleIcon(u.role)}
                      <span className={u.role === "mastermind" ? "text-purple-400 font-bold" : u.role === "fixer" ? "text-azure-400 font-bold" : u.role === "manager" ? "text-emerald-400" : ""}>
-                        {u.role === 'member' ? 'Initiate' : u.role.replace('_', ' ')}
+                        {u.role === 'member' ? 'Member' : u.role.replace('_', ' ')}
                      </span>
                   </div>
                   <div className="flex flex-col gap-1">
@@ -233,7 +233,16 @@ export default function UsersAdminPage() {
                
                <header className="mb-10">
                   <p className="text-[8px] tracking-[0.5em] uppercase text-azure-400 font-bold mb-2">ユーザー詳細検査</p>
-                  <h2 className="text-3xl tracking-[0.2em] uppercase font-extralight">{inspectUser.name}</h2>
+                  <div className="flex justify-between items-start">
+                    <h2 className="text-3xl tracking-[0.2em] uppercase font-extralight">{inspectUser.name}</h2>
+                    <Link 
+                      href={`/p/${inspectUser.id}`}
+                      target="_blank"
+                      className="px-4 py-2 bg-azure-600 text-[8px] uppercase tracking-widest font-bold text-white hover:bg-azure-500 transition-all flex items-center gap-2 shadow-lg"
+                    >
+                      View Profile <ExternalLink size={10} />
+                    </Link>
+                  </div>
                   <div className="flex flex-wrap items-center gap-4 mt-2">
                     <p className="text-[10px] opacity-40 font-mono">ID: {inspectUser.id}</p>
                     <p className="text-[10px] text-azure-400 font-mono">UID: {inspectUser.card_uid || "NONE"}</p>
@@ -350,7 +359,7 @@ export default function UsersAdminPage() {
                            onClick={() => handleUpdateRole(inspectUser.id, 'member')}
                            className="px-6 py-3 border border-white/10 text-white/40 text-[9px] uppercase tracking-widest font-bold hover:bg-white/5 transition-all"
                         >
-                           Initiate に設定
+                           Member に設定
                         </button>
                      )}
                   </div>
