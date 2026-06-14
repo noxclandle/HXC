@@ -4,11 +4,13 @@ import { useState, Suspense, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Hexagon, UserCheck, Mail, Lock, CheckCircle2, Fingerprint, Phone, ArrowRight, Loader2, User } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 function RegisterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === "fixer" || (session?.user as any)?.role === "admin";
   const rawUid = searchParams.get("uid") || "";
   const uid = rawUid.replace(/:/g, "").toUpperCase();
   const s = searchParams.get("s") || "";
@@ -25,11 +27,36 @@ function RegisterContent() {
   const [error, setError] = useState("");
   const [step, setStep] = useState(0); // 0: Form, 1: Confirm 1, 2: Confirm 2, 3: Confirm 3, 4: Success
   const [confirmStep, setConfirmStep] = useState(0); // 0: None, 1: Profile, 2: Authorization, 3: Finalize
+  const [cardInfo, setCardInfo] = useState<any>(null);
 
-  // Admin APIへの不適切なフェッチを削除し、セキュリティと安定性を向上
+  // Admin用のカード情報取得と出荷処理
   useEffect(() => {
-    // 将来的に公開用のカード情報取得APIが必要な場合はここに実装する
-  }, [uid]);
+    if (isAdmin && uid) {
+      fetch(`/api/admin/items?uid=${uid}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => setCardInfo(data));
+    }
+  }, [isAdmin, uid]);
+
+  const handleShipCard = async () => {
+    if (!confirm("このカードを出荷済みにしますか？\n注文者情報と一致しているか確認してください。")) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/items", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid, status: "shipped" })
+      });
+      if (res.ok) {
+        alert("出荷処理が完了しました。");
+        router.push("/admin/registry");
+      }
+    } catch (e) {
+      alert("エラーが発生しました。");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const startConfirmation = (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,6 +138,32 @@ function RegisterContent() {
             exit={{ opacity: 0, scale: 0.9 }}
             className="max-w-md w-full space-y-10 py-12"
           >
+            {/* Admin Shipping Intercept */}
+            {isAdmin && (
+              <div className="bg-azure-500/10 border border-azure-500/30 p-6 space-y-4 text-left">
+                <div className="flex items-center gap-2 text-azure-400 font-bold text-[10px] tracking-widest uppercase">
+                  <User size={14} /> Admin Shipping Control
+                </div>
+                <p className="text-[9px] tracking-widest opacity-60 leading-relaxed uppercase">
+                  管理権限を検知しました。このカードを出荷検品しますか？
+                </p>
+                {cardInfo && (
+                  <div className="py-3 border-y border-white/5 space-y-1">
+                    <p className="text-[8px] opacity-40 uppercase">Target Order:</p>
+                    <p className="text-[10px] text-white uppercase font-bold">{cardInfo.order?.customer_name || "Unknown Order"}</p>
+                    <p className="text-[8px] opacity-40 uppercase">Status: {cardInfo.status}</p>
+                  </div>
+                )}
+                <button 
+                  onClick={handleShipCard}
+                  disabled={loading}
+                  className="w-full py-3 bg-azure-500 text-white text-[10px] font-bold tracking-[0.4em] uppercase hover:bg-azure-400 transition-all"
+                >
+                  {loading ? "Processing..." : "Confirm Shipment"}
+                </button>
+              </div>
+            )}
+
             <header className="space-y-4">
               <div className="w-12 h-12 border border-azure-500/30 bg-azure-500/5 flex items-center justify-center mx-auto rotate-45 mb-6">
                  <Hexagon size={20} className="text-azure-400 -rotate-45" />

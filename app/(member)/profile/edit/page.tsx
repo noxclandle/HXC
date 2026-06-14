@@ -24,6 +24,7 @@ export default function ProfileEditPage() {
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [isUploading, setIsUploading] = useState<string | null>(null); // "face" or "logo"
   const [isLoaded, setIsLoaded] = useState(false);
+  const originalDataRef = useRef<any>(null);
 
   // 画像圧縮ユーティリティ
   const compressImage = (file: File, maxWidth: number = 800): Promise<string> => {
@@ -139,19 +140,7 @@ export default function ProfileEditPage() {
         if (res.ok) {
           const data = await res.json();
           
-          // 画像が巨大な場合の非同期取得
-          if (data.photo_url === "IMAGE_LARGE") {
-            fetch("/api/user/resource?type=photo").then(res => res.json()).then(res => {
-              if (res.data) setFormData(prev => ({ ...prev, faceUrl: res.data }));
-            });
-          }
-          if (data.logo_url === "IMAGE_LARGE") {
-            fetch("/api/user/resource?type=logo").then(res => res.json()).then(res => {
-              if (res.data) setFormData(prev => ({ ...prev, logoUrl: res.data }));
-            });
-          }
-
-          setFormData({
+          const initialFormData = {
             name: data.name || session?.user?.name || "",
             reading: data.handle || "", 
             title: data.profile?.title || "",
@@ -169,7 +158,23 @@ export default function ProfileEditPage() {
             orientation: data.equipped?.orientation || "horizontal",
             hAlign: data.equipped?.hAlign || { ...defaultAlign },
             vAlign: data.equipped?.vAlign || { ...defaultAlign }
-          });
+          };
+
+          setFormData(initialFormData);
+          originalDataRef.current = initialFormData;
+
+          // 画像が巨大な場合の非同期取得（プレビュー表示用）
+          if (data.photo_url === "IMAGE_LARGE") {
+            fetch("/api/user/resource?type=photo").then(res => res.json()).then(res => {
+              if (res.data) setFormData(prev => ({ ...prev, faceUrl: res.data }));
+            });
+          }
+          if (data.logo_url === "IMAGE_LARGE") {
+            fetch("/api/user/resource?type=logo").then(res => res.json()).then(res => {
+              if (res.data) setFormData(prev => ({ ...prev, logoUrl: res.data }));
+            });
+          }
+
           if (data.equipped) setEquipped((prev: any) => ({ 
             ...prev, 
             ...data.equipped,
@@ -216,6 +221,16 @@ export default function ProfileEditPage() {
         vAlign: dataToSave.vAlign
       };
 
+      // 画像データが巨大なBase64かつ、初期取得時から変更されていない場合は "IMAGE_LARGE" を送る
+      // これにより Payload Too Large (413) エラーを回避する
+      const photoToSend = (dataToSave.faceUrl?.length > 10000 && dataToSave.faceUrl === formData.faceUrl && originalDataRef.current?.faceUrl === "IMAGE_LARGE") 
+        ? "IMAGE_LARGE" 
+        : dataToSave.faceUrl;
+      
+      const logoToSend = (dataToSave.logoUrl?.length > 10000 && dataToSave.logoUrl === formData.logoUrl && originalDataRef.current?.logoUrl === "IMAGE_LARGE")
+        ? "IMAGE_LARGE"
+        : dataToSave.logoUrl;
+
       await fetch("/api/user/equip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -227,22 +242,24 @@ export default function ProfileEditPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...dataToSave,
-          photo_url: dataToSave.faceUrl,
-          logo_url: dataToSave.logoUrl,
+          photo_url: photoToSend,
+          logo_url: logoToSend,
           equipped_assets: finalEquipped
         })
       });
 
       if (res.ok) {
         setSaveStatus("saved");
-        showToast("Saved / 保存しました", "success");
+        showToast("Synchronized / 情報を同期しました", "success");
         setTimeout(() => setSaveStatus("idle"), 2000);
       } else {
+        const errData = await res.json();
         setSaveStatus("error");
-        showToast("Save Failed / 保存に失敗しました", "error");
+        showToast(errData.error || "Synchronization Failed / 同期に失敗しました", "error");
+        console.error("Auto-save sync error:", errData);
       }
       } catch (err) {
-      console.error(err);
+      console.error("Auto-save network error:", err);
       setSaveStatus("error");
       showToast("Network Error / 通信エラーが発生しました", "error");
       }
@@ -252,7 +269,8 @@ export default function ProfileEditPage() {
   useEffect(() => {
     if (!isLoaded) return;
     if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => performAutoSave(formData, equipped), 1000);
+    // 保存間隔を2秒に広げて安定性を向上
+    timerRef.current = setTimeout(() => performAutoSave(formData, equipped), 2000);
     return () => clearTimeout(timerRef.current);
   }, [formData, equipped, isLoaded, performAutoSave]);
 

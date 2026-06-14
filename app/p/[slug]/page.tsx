@@ -93,6 +93,7 @@ function ProfileSkeleton() {
 export default function PublicProfilePage({ params }: { params: { slug: string } }) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isOpened, setIsOpened] = useState(false);
   const [showUI, setShowUI] = useState(false);
 
   useEffect(() => {
@@ -105,18 +106,12 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
             setData(null);
           } else {
             setData(d);
-            // 名刺検知時に高級感のある振動を発生
             if (typeof navigator !== "undefined" && navigator.vibrate) {
               navigator.vibrate([20, 30, 20]);
             }
           }
-          // データ取得後、少し間を置いて演出を開始
           setTimeout(() => {
             setLoading(false);
-            // アンヴェイル演出（2秒程度）の後にUIを完全表示
-            if (d && !d.error) {
-              setTimeout(() => setShowUI(true), 2500);
-            }
           }, 800);
         }
       })
@@ -130,6 +125,12 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
       mounted = false;
     };
   }, [params.slug]);
+
+  const handleOpen = () => {
+    setIsOpened(true);
+    // アンヴェイル演出（2.5秒）の後にUIを表示
+    setTimeout(() => setShowUI(true), 2500);
+  };
 
   return (
     <main className="min-h-screen bg-void relative overflow-hidden">
@@ -147,6 +148,56 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
           >
             Profile Not Found
           </motion.div>
+        ) : !isOpened ? (
+          <motion.div
+            key="envelope"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-void cursor-pointer"
+            onClick={handleOpen}
+          >
+            <motion.div
+              animate={{ 
+                y: [0, -10, 0],
+                rotate: [0, 1, -1, 0]
+              }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="relative group"
+            >
+              {/* Aura Background */}
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="absolute inset-[-40px] bg-white/5 blur-3xl rounded-full"
+              />
+              
+              {/* The "Envelope" / Core */}
+              <div className="relative z-10 w-48 h-48 border border-white/20 flex items-center justify-center group-hover:border-white/60 transition-colors duration-1000">
+                <div className="absolute inset-2 border border-white/5" />
+                <motion.div
+                  animate={{ opacity: [0.4, 1, 0.4] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <GeometricAngel level={20} mood="stable" size={120} />
+                </motion.div>
+              </div>
+
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="mt-12 text-center"
+              >
+                <p className="text-[10px] tracking-[1em] uppercase text-white/40 font-light group-hover:text-white transition-colors duration-1000">
+                  Tap to Reveal
+                </p>
+                <p className="text-[8px] tracking-[0.4em] uppercase text-white/10 mt-4 group-hover:opacity-100">
+                  Identity Transmission Received
+                </p>
+              </motion.div>
+            </motion.div>
+          </motion.div>
         ) : (
           <div key="content" className="relative">
             {/* アンヴェイル演出レイヤー */}
@@ -159,20 +210,20 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
               >
                 <motion.div
                   initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 1.5, ease: "easeOut" }}
+                  animate={{ scale: 10, opacity: 0 }}
+                  transition={{ duration: 2, ease: "easeIn" }}
                 >
-                  <GeometricAngel level={5} mood="excited" size={240} />
+                  <GeometricAngel level={50} mood="excited" size={240} />
                 </motion.div>
                 
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1, duration: 1 }}
+                  transition={{ delay: 0.5, duration: 1 }}
                   className="mt-8 text-center"
                 >
                   <p className="text-[10px] tracking-[0.6em] uppercase text-white/60 font-light">
-                    Profile Found
+                    Unveiling
                   </p>
                   <p className="text-[12px] tracking-[0.4em] uppercase text-white mt-2 font-bold">
                     {data.name}
@@ -191,12 +242,13 @@ export default function PublicProfilePage({ params }: { params: { slug: string }
 
             {/* 本体のUI */}
             <motion.div
-              initial={{ opacity: 0, filter: "blur(10px)" }}
+              initial={{ opacity: 0, filter: "blur(20px)", scale: 0.95 }}
               animate={{ 
                 opacity: showUI ? 1 : 0, 
-                filter: showUI ? "blur(0px)" : "blur(10px)" 
+                filter: showUI ? "blur(0px)" : "blur(20px)",
+                scale: showUI ? 1 : 0.95
               }}
-              transition={{ duration: 1.5 }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
             >
               <ProfileClientUI data={data} isOwner={false} />
             </motion.div>

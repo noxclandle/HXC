@@ -37,8 +37,17 @@ export async function sendAdminOrderNotification(order: {
     Please access the Central Asset Registry to process:
     ${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/admin/registry
     `);
+}
 
-  // To implement Resend:
-  // const resend = new Resend(process.env.RESEND_API_KEY);
-  // await resend.emails.send({ ... });
+/**
+ * Send Password Reset Email
+ */
+export async function sendPasswordResetEmail(email: string, token: string) {
+  const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
+  
+  console.log(`[MAILER] Sending password reset to ${email}`);
+  console.log(`[MAILER] Reset Link: ${resetUrl}`);
+
+  // In production, use Resend or SendGrid here.
+  // For now, logging to console as per current pattern.
 }

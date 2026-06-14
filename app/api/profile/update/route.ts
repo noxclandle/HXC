@@ -9,23 +9,23 @@ export const dynamic = "force-dynamic";
 
 
 const profileUpdateSchema = z.object({
-  name: z.string().optional(),
-  reading: z.string().optional(),
-  title: z.string().optional(),
+  name: z.string().optional().or(z.literal("")),
+  reading: z.string().optional().or(z.literal("")),
+  title: z.string().optional().or(z.literal("")),
   website: z.string().optional().or(z.literal("")),
-  bio: z.string().optional(),
-  company: z.string().optional(),
+  bio: z.string().optional().or(z.literal("")),
+  company: z.string().optional().or(z.literal("")),
   photo_url: z.string().optional().or(z.literal("")),
   logo_url: z.string().optional().or(z.literal("")),
-  orientation: z.string().optional(),
-  phone: z.string().optional(),
+  orientation: z.string().optional().or(z.literal("")),
+  phone: z.string().optional().or(z.literal("")),
   email: z.string().optional().or(z.literal("")),
   hAlign: z.any().optional(),
   vAlign: z.any().optional(),
-  link_x: z.string().optional(),
-  link_instagram: z.string().optional(),
-  link_line: z.string().optional(),
-  link_facebook: z.string().optional(),
+  link_x: z.string().optional().or(z.literal("")),
+  link_instagram: z.string().optional().or(z.literal("")),
+  link_line: z.string().optional().or(z.literal("")),
+  link_facebook: z.string().optional().or(z.literal("")),
 });
 
 export async function POST(req: NextRequest) {

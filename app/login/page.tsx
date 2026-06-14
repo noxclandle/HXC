@@ -186,6 +186,16 @@ function LoginContent() {
               />
             </div>
           </div>
+
+          <div className="flex justify-end px-1">
+            <button 
+              type="button"
+              onClick={() => router.push("/login/forgot")}
+              className="text-[8px] tracking-[0.2em] opacity-30 hover:opacity-100 transition-opacity uppercase font-bold"
+            >
+              Forgot Password? / パスワードを忘れた場合
+            </button>
+          </div>
           
           <div className="pt-4">
             <button 
