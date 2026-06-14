@@ -36,6 +36,8 @@ model User {
   link_line         String?
   exp               BigInt          @default(0)
   last_read_news_at DateTime?
+  reset_token       String?   @unique
+  reset_token_at    DateTime?
   audit_logs        AuditLog[]
   card              Card?
   chat_messages     ChatMessage[]
@@ -50,7 +52,7 @@ model DeviceBinding {
   id           String   @id @default(uuid()) @db.Uuid
   user_id      String   @db.Uuid
   device_token String   @unique // ブラウザに保存される秘密の鍵
-  user_agent   String?  // 端末識別用
+  user_agent   String? // 端末識別用
   created_at   DateTime @default(now())
   last_used_at DateTime @default(now())
   user         User     @relation(fields: [user_id], references: [id])
@@ -88,16 +90,16 @@ model Contact {
 }
 
 model Card {
-  uid             String    @id
-  internal_serial String    @unique
-  status          String    @default("unissued")
-  user_id         String?   @unique @db.Uuid
-  issued_at       DateTime?
-  activated_at    DateTime?
+  uid              String    @id
+  internal_serial  String    @unique
+  status           String    @default("unissued")
+  user_id          String?   @unique @db.Uuid
+  issued_at        DateTime?
+  activated_at     DateTime?
   activation_token String?   @unique
   token_expires_at DateTime?
-  user            User?     @relation(fields: [user_id], references: [id])
-  order           Order?
+  user             User?     @relation(fields: [user_id], references: [id])
+  order            Order?
 
   @@map("cards")
 }
@@ -177,7 +179,7 @@ model Inquiry {
   subject    String?
   message    String
   status     String   @default("pending") // pending, replied, closed
-  replies    Json?    // Array of { text: string, sender: string, created_at: string }
+  replies    Json? // Array of { text: string, sender: string, created_at: string }
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -185,20 +187,20 @@ model Inquiry {
 }
 
 model Order {
-  id                String   @id @default(uuid()) @db.Uuid
-  stripe_session_id String?  @unique
+  id                String    @id @default(uuid()) @db.Uuid
+  stripe_session_id String?   @unique
   tier              String
   variant           String?
   price             Int
   customer_email    String
   customer_name     String
   shipping_address  Json?
-  status            String   @default("paid")
-  card_uid          String?  @unique
-  card              Card?    @relation(fields: [card_uid], references: [uid])
+  status            String    @default("paid")
+  card_uid          String?   @unique
+  card              Card?     @relation(fields: [card_uid], references: [uid])
   shipped_at        DateTime?
-  created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
 
   @@map("orders")
 }

@@ -43,38 +43,86 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
       navigator.vibrate([30, 10, 30]);
     }
 
+    // 画像リサイズ用ユーティリティ
+    const resizeImageForVCard = (base64: string): Promise<string> => {
+      return new Promise((resolve) => {
+        const img = new window.Image();
+        img.src = base64.startsWith("data:") ? base64 : `data:image/jpeg;base64,${base64}`;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX_SIZE = 300; // vCard画像として最適なサイズ
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+          // 圧縮率を下げて確実にiOSが受け付ける容量（10-20KB程度）にする
+          resolve(canvas.toDataURL("image/jpeg", 0.6).split(",")[1]);
+        };
+        img.onerror = () => resolve("");
+      });
+    };
+
     let photoBase64 = "";
-    if (data.photo_url) {
-      if (data.photo_url.startsWith("data:image/")) {
-        photoBase64 = data.photo_url.split(",")[1];
-      } else if (data.photo_url.startsWith("http")) {
+    let actualPhotoUrl = data.photo_url;
+
+    // "IMAGE_LARGE" の場合は専用APIから取得を試みる
+    if (actualPhotoUrl === "IMAGE_LARGE") {
+      try {
+        const res = await fetch("/api/user/resource?type=photo");
+        if (res.ok) {
+          const resData = await res.json();
+          actualPhotoUrl = resData.data;
+        }
+      } catch (e) {
+        console.error("Failed to fetch full resource for vCard:", e);
+      }
+    }
+
+    if (actualPhotoUrl) {
+      if (actualPhotoUrl.startsWith("data:image/")) {
+        photoBase64 = await resizeImageForVCard(actualPhotoUrl);
+      } else if (actualPhotoUrl.startsWith("http")) {
         try {
-          // R2等の外部URLから画像を取得してBase64に変換
-          const response = await fetch(data.photo_url);
+          const response = await fetch(actualPhotoUrl);
           const blob = await response.blob();
-          photoBase64 = await new Promise((resolve) => {
+          const base64 = await new Promise<string>((resolve) => {
             const reader = new FileReader();
-            reader.onloadend = () => {
-              const base64 = (reader.result as string).split(",")[1];
-              resolve(base64);
-            };
+            reader.onloadend = () => resolve(reader.result as string);
             reader.readAsDataURL(blob);
           });
+          photoBase64 = await resizeImageForVCard(base64);
         } catch (e) {
           console.error("Failed to fetch photo for vCard:", e);
         }
       }
     }
 
-    let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${data.name || "MEMBER"}\nN:${data.name || ""};;;;\nTEL;TYPE=CELL:${data.phone || ""}\nEMAIL;TYPE=INTERNET:${data.profile.contact_email || data.email || ""}\nORG:${data.profile?.company || ""}\nTITLE:${data.profile?.title || ""}`;
+    // iOS互換性を極限まで高めたvCard 3.0形式 (CRLF + 適切なヘッダー)
+    const CRLF = "\r\n";
+    let vcard = `BEGIN:VCARD${CRLF}VERSION:3.0${CRLF}FN:${data.name || "MEMBER"}${CRLF}N:${data.name || ""};;;;${CRLF}TEL;TYPE=CELL:${data.phone || ""}${CRLF}EMAIL;TYPE=INTERNET:${data.profile.contact_email || data.email || ""}${CRLF}ORG:${data.profile?.company || ""}${CRLF}TITLE:${data.profile?.title || ""}`;
 
     if (photoBase64) {
-      // iOS互換のため、Base64文字列を74文字ごとに改行し、次の行頭にスペースを入れる (Line Folding)
-      const foldedBase64 = photoBase64.match(/.{1,74}/g)?.join("\n ") || photoBase64;
-      vcard += `\nPHOTO;ENCODING=b;TYPE=JPEG:${foldedBase64}`;
+      // 74文字ごとに改行し、次の行頭にスペースを入れる (Line Folding)
+      const foldedBase64 = photoBase64.match(/.{1,74}/g)?.join(`${CRLF} `) || photoBase64;
+      vcard += `${CRLF}PHOTO;TYPE=JPEG;ENCODING=b:${foldedBase64}`;
     }
 
-    vcard += `\nEND:VCARD`;
+    vcard += `${CRLF}END:VCARD`;
     const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
 
     const url = window.URL.createObjectURL(blob);

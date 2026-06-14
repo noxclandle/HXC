@@ -34,7 +34,7 @@ const CATEGORIES = [
   { id: "background", name: "Backgrounds", icon: Palette, sub: "背景" },
   { id: "effect", name: "Effects", icon: Sparkles, sub: "エフェクト" },
   { id: "title", name: "Titles / 称号", icon: Trophy, sub: "称号" },
-  { id: "pointer", name: "Pointers", icon: MousePointer2, sub: "軌跡" },
+  { id: "pointer", name: "Interactions", icon: MousePointer2, sub: "クリック演出" },
   { id: "sound", name: "Sounds", icon: Music, sub: "音響" },
 ];
 
@@ -242,17 +242,17 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
     { id: "PrismGlow", name: "Prism Glow", type: "aura", rarity: "mythic", description: "全波長を網羅する究極の輝き。", cost: 50000, unlocked: false },
     { id: "CyberGrid", name: "Cyber Grid", type: "aura", rarity: "epic", description: "電子の格子が漂う。技術の極致。", cost: 8000, unlocked: false },
 
-    // --- Pointers ---
-    { id: "Pure White Hex", name: "Standard White", type: "pointer", rarity: "common", description: "標準的な白い軌跡。", unlocked: true },
-    { id: "Azure Trace", name: "Azure Trace", type: "pointer", rarity: "rare", description: "知的な蒼い軌跡。", cost: 3000, unlocked: false },
-    { id: "Emerald Trace", name: "Emerald Pulse", type: "pointer", rarity: "rare", description: "生命力ある緑の軌跡。", cost: 3000, unlocked: false },
-    { id: "Ruby Trace", name: "Ruby Flare", type: "pointer", rarity: "rare", description: "情熱的な紅の軌跡。", cost: 3000, unlocked: false },
-    { id: "Gold Trace", name: "Golden Aura", type: "pointer", rarity: "epic", description: "格式高い黄金の軌跡。", cost: 8000, unlocked: false },
-    { id: "Violet Trace", name: "Violet Resonance", type: "pointer", rarity: "epic", description: "神秘的な紫の軌跡。", cost: 8000, unlocked: false },
-    { id: "Crimson Trace", name: "Crimson Ember", type: "pointer", rarity: "epic", description: "消えない残り火の軌跡。", cost: 8000, unlocked: false },
-    { id: "Shadow Trace", name: "Ink Shadow", type: "pointer", rarity: "epic", description: "空間を塗りつぶす墨の軌跡。", cost: 8000, unlocked: false },
-    { id: "Prism Trace", name: "Light Refraction", type: "pointer", rarity: "mythic", description: "虹色に輝く光の軌跡。", cost: 50000, unlocked: false },
-    { id: "Void Trace", name: "Reality Tear", type: "pointer", rarity: "mythic", description: "空間を切り裂くボイドの軌跡。", cost: 50000, unlocked: false },
+    // --- Interactions (Formerly Pointers) ---
+    { id: "Pure White Hex", name: "Standard Hex", type: "pointer", rarity: "common", description: "標準的な白い六角形の残響。クリック時に発生。", unlocked: true },
+    { id: "Azure Trace", name: "Azure Hex", type: "pointer", rarity: "rare", description: "知的な蒼い六角形。クリック時に鋭く拡散。", cost: 3000, unlocked: false },
+    { id: "Emerald Trace", name: "Emerald Hex", type: "pointer", rarity: "rare", description: "生命力ある緑の六角形。クリック時に優しく拍動。", cost: 3000, unlocked: false },
+    { id: "Ruby Trace", name: "Ruby Square", type: "pointer", rarity: "rare", description: "情熱的な紅い四角形。クリック時に力強く出現。", cost: 3000, unlocked: false },
+    { id: "Gold Trace", name: "Golden Hex", type: "pointer", rarity: "epic", description: "格式高い黄金の六角形。クリック時に高貴な輝き。", cost: 8000, unlocked: false },
+    { id: "Violet Trace", name: "Violet Hex", type: "pointer", rarity: "epic", description: "神秘的な紫の六角形。クリック時に空間が共鳴。", cost: 8000, unlocked: false },
+    { id: "Crimson Trace", name: "Crimson Square", type: "pointer", rarity: "epic", description: "消えない残り火の四角形。クリック時に激しく燃焼。", cost: 8000, unlocked: false },
+    { id: "Shadow Trace", name: "Void Square", type: "pointer", rarity: "epic", description: "空間を塗りつぶす漆黒の四角形。クリック時に光を吸収。", cost: 8000, unlocked: false },
+    { id: "Prism Trace", name: "Prism Hex", type: "pointer", rarity: "mythic", description: "七色に屈折する究極の六角形。クリック時に全波長が共鳴。", cost: 50000, unlocked: false },
+    { id: "Void Trace", name: "Reality Tear", type: "pointer", rarity: "mythic", description: "空間を切り裂く特異点。クリック時に現実を歪める。", cost: 50000, unlocked: false },
 
     // --- Sounds ---
     { id: "resonance", name: "Resonance", type: "sound", rarity: "common", description: "標準的な共鳴音。", unlocked: true },

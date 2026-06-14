@@ -19,11 +19,11 @@ export const rateLimit = {
 
   /**
    * 標準的な制限 (ボーナス受取、プロフィール更新など)
-   * 1分間に 15リクエストまで
+   * 1分間に 60リクエストまで (Autosave対応)
    */
   standard: new Ratelimit({
     redis: kv,
-    limiter: Ratelimit.slidingWindow(15, "60 s"),
+    limiter: Ratelimit.slidingWindow(60, "60 s"),
     analytics: true,
     prefix: "hxc_rl_standard",
   }),

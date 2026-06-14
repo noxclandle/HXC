@@ -43,6 +43,11 @@ export async function GET(req: NextRequest, { params }: { params: { uid: string 
     return NextResponse.redirect(new URL(`/invalid-card?uid=${uid}`, req.url));
   }
 
+  // 1.5 永久無効化（Dead）の確認
+  if (card.status === "dead") {
+    return NextResponse.redirect(new URL(`/invalid-card?uid=${uid}&error=voided`, req.url));
+  }
+
   // 2. 未アクティブの場合 -> 直接登録画面へリダイレクト
   if (card.status === "unissued" || card.status === "shipped" || card.status === "activating") {
     if (!secretParam || secretParam !== card.internal_serial) {

@@ -176,6 +176,46 @@ export default function SettingsPage() {
               </AnimatePresence>
             </form>
           </div>
+
+          {/* Danger Zone */}
+          <div className="pt-24 border-t border-rose-500/10">
+            <h2 className="text-[10px] tracking-[0.3em] uppercase text-rose-500/50 mb-8 flex items-center gap-2">
+              <Lock size={14} className="text-rose-500" /> Identity Erasure / アカウントの削除
+            </h2>
+            
+            <div className="bg-rose-500/5 border border-rose-500/10 p-8 space-y-6 max-w-xl">
+               <div className="space-y-2">
+                 <p className="text-[10px] tracking-[0.2em] text-rose-400 uppercase font-bold">Warning / 警告</p>
+                 <p className="text-[9px] tracking-[0.1em] opacity-40 leading-relaxed">
+                   アカウントを削除すると、あなたの全てのデータ（プロフィール、連絡先、RT残高）が永久に消去されます。<br/>
+                   また、紐付いている物理カードは「永久無効化（Dead）」され、二度と使用できなくなります。
+                 </p>
+               </div>
+               
+               <button 
+                 onClick={async () => {
+                   if (confirm("本当にアカウントを削除しますか？\nこの操作は取り消せません。\n物理カードも無効化されます。")) {
+                     if (confirm("最終確認です。全てのデータが消去されます。よろしいですか？")) {
+                       try {
+                         const res = await fetch("/api/user/delete", { method: "POST" });
+                         if (res.ok) {
+                           alert("Identity erased. Farewell.");
+                           window.location.href = "/";
+                         } else {
+                           alert("Deletion failed. Connection error.");
+                         }
+                       } catch (e) {
+                         alert("Deletion failed.");
+                       }
+                     }
+                   }
+                 }}
+                 className="px-8 py-3 border border-rose-500/30 text-rose-500 text-[9px] tracking-[0.4em] uppercase font-bold hover:bg-rose-500 hover:text-white transition-all"
+               >
+                 Erase My Identity
+               </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

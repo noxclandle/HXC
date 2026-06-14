@@ -42,7 +42,7 @@ export interface HexaCardProps {
 }
 
 export default function HexaCardPreview({ 
-  name, reading, company, title, phone, email, bio, logoUrl, faceUrl,
+  name, reading, company, title, phone, email, bio, logoUrl: initialLogoUrl, faceUrl: initialFaceUrl,
   orientation = "horizontal", 
   alignName = "center", alignReading = "center", alignCompany = "center",
   alignTitle = "center", alignPhone = "center", alignEmail = "center",
@@ -54,6 +54,22 @@ export default function HexaCardPreview({
 }: HexaCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isRotating, setIsRotating] = useState(false);
+  const [logoUrl, setLogoUrl] = useState(initialLogoUrl);
+  const [faceUrl, setFaceUrl] = useState(initialFaceUrl);
+
+  // 画像データが巨大で省略されている場合の自動復元
+  useEffect(() => {
+    if (initialLogoUrl === "IMAGE_LARGE") {
+      fetch("/api/user/resource?type=logo").then(res => res.json()).then(d => setLogoUrl(d.data));
+    } else {
+      setLogoUrl(initialLogoUrl);
+    }
+    if (initialFaceUrl === "IMAGE_LARGE") {
+      fetch("/api/user/resource?type=photo").then(res => res.json()).then(d => setFaceUrl(d.data));
+    } else {
+      setFaceUrl(initialFaceUrl);
+    }
+  }, [initialLogoUrl, initialFaceUrl]);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
