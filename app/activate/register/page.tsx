@@ -273,7 +273,7 @@ function RegisterContent() {
 export default function IdentityRegisterPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6 text-center bg-void text-moonlight overflow-x-hidden">
-      <Suspense fallback={<div className="text-white opacity-10 uppercase tracking-[1em] text-[10px]">Accessing Vault...</div>}>
+      <Suspense fallback={<div className="text-white opacity-10 uppercase tracking-[1em] text-[10px]">Loading...</div>}>
         <RegisterContent />
       </Suspense>
     </main>

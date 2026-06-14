@@ -92,10 +92,10 @@ export default function ProfileEditPage() {
       
       // 4. DB保存用のフィールドをR2のURLで更新
       updateField(type === "face" ? "faceUrl" : "logoUrl", uploadData.url);
-      showToast("Identity Refined / 画像を最適化して反映しました", "success");
+      showToast("Image Uploaded / 画像をアップロードしました", "success");
     } catch (err) {
       console.error(err);
-      showToast("Refinement Failed / 処理に失敗しました", "error");
+      showToast("Upload Failed / アップロードに失敗しました", "error");
     } finally {
       setIsUploading(null);
     }
@@ -235,18 +235,18 @@ export default function ProfileEditPage() {
 
       if (res.ok) {
         setSaveStatus("saved");
-        showToast("Synchronized / 情報を同期しました", "success");
+        showToast("Saved / 保存しました", "success");
         setTimeout(() => setSaveStatus("idle"), 2000);
       } else {
         setSaveStatus("error");
-        showToast("Synchronization Failed / 同期に失敗しました", "error");
+        showToast("Save Failed / 保存に失敗しました", "error");
       }
-    } catch (err) { 
+      } catch (err) {
       console.error(err);
       setSaveStatus("error");
       showToast("Network Error / 通信エラーが発生しました", "error");
-    }
-  }, [showToast]);
+      }
+      }, [showToast]);
 
   const timerRef = useRef<any>(null);
   useEffect(() => {
