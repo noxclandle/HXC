@@ -223,20 +223,15 @@ export default function ProfileEditPage() {
 
       // 画像データが巨大なBase64かつ、初期取得時から変更されていない場合は "IMAGE_LARGE" を送る
       // これにより Payload Too Large (413) エラーを回避する
-      const photoToSend = (dataToSave.faceUrl?.length > 10000 && dataToSave.faceUrl === formData.faceUrl && originalDataRef.current?.faceUrl === "IMAGE_LARGE") 
+      const photoToSend = (dataToSave.faceUrl?.length > 10000 && originalDataRef.current?.faceUrl === "IMAGE_LARGE") 
         ? "IMAGE_LARGE" 
         : dataToSave.faceUrl;
       
-      const logoToSend = (dataToSave.logoUrl?.length > 10000 && dataToSave.logoUrl === formData.logoUrl && originalDataRef.current?.logoUrl === "IMAGE_LARGE")
+      const logoToSend = (dataToSave.logoUrl?.length > 10000 && originalDataRef.current?.logoUrl === "IMAGE_LARGE")
         ? "IMAGE_LARGE"
         : dataToSave.logoUrl;
 
-      await fetch("/api/user/equip", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ equipped: finalEquipped })
-      });
-
+      // 単一のAPI呼び出しに統合（原子性を確保し、レースコンディションを防止）
       const res = await fetch("/api/profile/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -255,6 +250,7 @@ export default function ProfileEditPage() {
       } else {
         const errData = await res.json();
         setSaveStatus("error");
+        // サーバーからの具体的なエラーメッセージを表示
         showToast(errData.error || "Synchronization Failed / 同期に失敗しました", "error");
         console.error("Auto-save sync error:", errData);
       }
@@ -263,7 +259,7 @@ export default function ProfileEditPage() {
       setSaveStatus("error");
       showToast("Network Error / 通信エラーが発生しました", "error");
       }
-      }, [showToast, formData.faceUrl, formData.logoUrl]);
+      }, [showToast]);
 
   const timerRef = useRef<any>(null);
   useEffect(() => {

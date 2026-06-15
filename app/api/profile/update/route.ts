@@ -17,19 +17,23 @@ const profileUpdateSchema = z.object({
   company: z.string().optional().or(z.literal("")),
   photo_url: z.string().optional().or(z.literal("")),
   logo_url: z.string().optional().or(z.literal("")),
-  orientation: z.string().optional().or(z.literal("")),
   phone: z.string().optional().or(z.literal("")),
   email: z.string().optional().or(z.literal("")),
-  hAlign: z.any().optional(),
-  vAlign: z.any().optional(),
   link_x: z.string().optional().or(z.literal("")),
   link_instagram: z.string().optional().or(z.literal("")),
   link_line: z.string().optional().or(z.literal("")),
   link_facebook: z.string().optional().or(z.literal("")),
+  // 装備情報も一括で受け取る
+  equipped_assets: z.any().optional(),
 });
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // 門番（レートリミット）のチェック
     const forwarded = req.headers.get("x-forwarded-for");
     const ip = forwarded ? forwarded.split(/, /)[0] : "127.0.0.1";
@@ -37,40 +41,39 @@ export async function POST(req: NextRequest) {
 
     if (!success) {
       return NextResponse.json({ 
-        error: "Updating too fast. Please wait. / 更新頻度が高すぎます。少し時間を置いてください。" 
+        error: "Sync Rate Limited / 更新頻度が制限を超えました。30秒ほどお待ちください。" 
       }, { status: 429 });
-    }
-
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
     const result = profileUpdateSchema.safeParse(body);
 
     if (!result.success) {
-      return NextResponse.json({ error: "Invalid request", details: result.error.format() }, { status: 400 });
+      console.error("Validation error:", result.error.format());
+      return NextResponse.json({ error: "Invalid Data Format", details: result.error.format() }, { status: 400 });
     }
 
     const { 
       name, reading, title, website, bio, company, photo_url, logo_url, 
-      orientation, phone, email, hAlign, vAlign,
-      link_x, link_instagram, link_line, link_facebook
+      phone, email, link_x, link_instagram, link_line, link_facebook,
+      equipped_assets
     } = result.data;
 
     const currentUser = await prisma.user.findUnique({
       where: { id: session.user.id }
     });
 
-    const currentEquipped = (currentUser?.equipped_assets as any) || {};
+    if (!currentUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
     // 画像が "IMAGE_LARGE"（以前の取得で省略されたフラグ）の場合は、既存のデータを維持する
-    const finalPhotoUrl = photo_url === "IMAGE_LARGE" ? currentUser?.photo_url : photo_url;
-    const finalLogoUrl = logo_url === "IMAGE_LARGE" ? currentUser?.logo_url : logo_url;
+    const finalPhotoUrl = photo_url === "IMAGE_LARGE" ? currentUser.photo_url : photo_url;
+    const finalLogoUrl = logo_url === "IMAGE_LARGE" ? currentUser.logo_url : logo_url;
 
-    const updatedUser = await prisma.$transaction(async (tx) => {
-      const user = await tx.user.update({
+    // トランザクションで原子性を保証
+    await prisma.$transaction(async (tx) => {
+      await tx.user.update({
         where: { id: session.user.id },
         data: {
           name: name,
@@ -83,15 +86,15 @@ export async function POST(req: NextRequest) {
           photo_url: finalPhotoUrl,
           logo_url: finalLogoUrl,
           phone: phone,
-          equipped_assets: {
-            ...currentEquipped,
-            orientation: orientation,
-            hAlign: hAlign,
-            vAlign: vAlign
-          },
+          // 装備情報をマージ
+          equipped_assets: equipped_assets ? {
+            ...((currentUser.equipped_assets as any) || {}),
+            ...equipped_assets
+          } : undefined,
+          // プロフィール情報をai_config内に同期
           ai_config: {
             profile: {
-              ...((currentUser?.ai_config as any)?.profile || {}),
+              ...((currentUser.ai_config as any)?.profile || {}),
               title: title,
               bio: bio,
               company: company,
@@ -101,27 +104,21 @@ export async function POST(req: NextRequest) {
         }
       });
 
-      // システムログに記録
+      // 監査ログ
       await tx.auditLog.create({
         data: {
-          user_id: user.id,
-          action: "profile_update",
-          details: {
-            name,
-            reading,
-            title,
-            company,
-            updated_at: new Date().toISOString()
-          }
+          user_id: session.user.id,
+          action: "profile_sync",
+          details: { name, company, updated_at: new Date().toISOString() }
         }
       });
-
-      return user;
     });
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("Profile update error:", error);
-    return NextResponse.json({ error: "Failed to update identity." }, { status: 500 });
+    console.error("Critical Sync Error:", error);
+    return NextResponse.json({ 
+      error: "Vault Sync Error / サーバーとの同期中にエラーが発生しました。" 
+    }, { status: 500 });
   }
 }
