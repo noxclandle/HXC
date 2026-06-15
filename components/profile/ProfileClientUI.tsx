@@ -43,93 +43,9 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
       navigator.vibrate([30, 10, 30]);
     }
 
-    // 画像リサイズ用ユーティリティ
-    const resizeImageForVCard = (base64: string): Promise<string> => {
-      return new Promise((resolve) => {
-        const img = new window.Image();
-        img.src = base64.startsWith("data:") ? base64 : `data:image/jpeg;base64,${base64}`;
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const MAX_SIZE = 300; // vCard画像として最適なサイズ
-          let width = img.width;
-          let height = img.height;
-
-          if (width > height) {
-            if (width > MAX_SIZE) {
-              height *= MAX_SIZE / width;
-              width = MAX_SIZE;
-            }
-          } else {
-            if (height > MAX_SIZE) {
-              width *= MAX_SIZE / height;
-              height = MAX_SIZE;
-            }
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          ctx?.drawImage(img, 0, 0, width, height);
-          // 圧縮率を下げて確実にiOSが受け付ける容量（10-20KB程度）にする
-          resolve(canvas.toDataURL("image/jpeg", 0.6).split(",")[1]);
-        };
-        img.onerror = () => resolve("");
-      });
-    };
-
-    let photoBase64 = "";
-    let actualPhotoUrl = data.photo_url;
-
-    // "IMAGE_LARGE" の場合は専用APIから取得を試みる
-    if (actualPhotoUrl === "IMAGE_LARGE") {
-      try {
-        const res = await fetch("/api/user/resource?type=photo");
-        if (res.ok) {
-          const resData = await res.json();
-          actualPhotoUrl = resData.data;
-        }
-      } catch (e) {
-        console.error("Failed to fetch full resource for vCard:", e);
-      }
-    }
-
-    if (actualPhotoUrl) {
-      if (actualPhotoUrl.startsWith("data:image/")) {
-        photoBase64 = await resizeImageForVCard(actualPhotoUrl);
-      } else if (actualPhotoUrl.startsWith("http")) {
-        try {
-          const response = await fetch(actualPhotoUrl);
-          const blob = await response.blob();
-          const base64 = await new Promise<string>((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.readAsDataURL(blob);
-          });
-          photoBase64 = await resizeImageForVCard(base64);
-        } catch (e) {
-          console.error("Failed to fetch photo for vCard:", e);
-        }
-      }
-    }
-
-    // iOS互換性を極限まで高めたvCard 3.0形式 (CRLF + 適切なヘッダー)
-    const CRLF = "\r\n";
-    let vcard = `BEGIN:VCARD${CRLF}VERSION:3.0${CRLF}FN:${data.name || "MEMBER"}${CRLF}N:${data.name || ""};;;;${CRLF}TEL;TYPE=CELL:${data.phone || ""}${CRLF}EMAIL;TYPE=INTERNET:${data.profile.contact_email || data.email || ""}${CRLF}ORG:${data.profile?.company || ""}${CRLF}TITLE:${data.profile?.title || ""}`;
-
-    if (photoBase64) {
-      // 74文字ごとに改行し、次の行頭にスペースを入れる (Line Folding)
-      const foldedBase64 = photoBase64.match(/.{1,74}/g)?.join(`${CRLF} `) || photoBase64;
-      vcard += `${CRLF}PHOTO;TYPE=JPEG;ENCODING=b:${foldedBase64}`;
-    }
-
-    vcard += `${CRLF}END:VCARD`;
-    const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
-
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${data.handle_name || data.name || "contact"}.vcf`;
-    a.click();
+    // サーバーサイドで生成された確実に画像が埋め込まれたvCardをダウンロードする
+    const slug = data.handle_name || data.id;
+    window.location.href = `/api/profile/${slug}/vcard`;
   };
 
   const handleReport = async () => {
