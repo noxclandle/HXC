@@ -7,13 +7,19 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
   try {
     const slug = params.slug;
 
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+    const conditions: any[] = [
+      { handle_name: { equals: slug, mode: "insensitive" } }
+    ];
+
+    if (isUuid) {
+      conditions.push({ id: slug });
+    }
+
     // 1. Fetch User Data
     const user = await prisma.user.findFirst({
       where: {
-        OR: [
-          { handle_name: { equals: slug, mode: "insensitive" } },
-          { id: slug }
-        ]
+        OR: conditions
       }
     });
 
