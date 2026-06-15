@@ -441,6 +441,10 @@ export default function ProfileEditPage() {
                 </header>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                    <div className="space-y-3">
+                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Website / HP</label>
+                      <input type="text" value={formData.website} onChange={(e) => updateField('website', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="https://example.com" />
+                   </div>
+                   <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">X (Twitter) ID</label>
                       <input type="text" value={formData.link_x} onChange={(e) => updateField('link_x', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="@username" />
                    </div>

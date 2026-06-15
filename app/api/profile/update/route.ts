@@ -23,7 +23,7 @@ const profileUpdateSchema = z.object({
   link_instagram: z.string().optional().or(z.literal("")),
   link_line: z.string().optional().or(z.literal("")),
   link_facebook: z.string().optional().or(z.literal("")),
-  // 装備情報も一括で受け取る
+  // 装備情報はオブジェクト構造を緩く許容する
   equipped_assets: z.any().optional(),
 });
 
