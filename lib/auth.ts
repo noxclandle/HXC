@@ -53,6 +53,8 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) return null;
         const email = credentials.email.toLowerCase();
 
+        console.log(`[AUTH_DEBUG] Attempting login for: ${email}`);
+
         // 1. データベースからユーザーを検索
         try {
           const user = await prisma.user.findUnique({
@@ -60,18 +62,21 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!user) {
-            console.error("Auth Error: User not found ->", email);
+            console.error(`[AUTH_DEBUG] User not found: ${email}`);
             return null;
           }
+
+          console.log(`[AUTH_DEBUG] User found. ID: ${user.id}`);
 
           // 2. パスワードの照合
           const isPasswordValid = await bcrypt.compare(credentials.password, user.password || "");
 
           if (!isPasswordValid) {
-            console.error("Auth Error: Invalid password for ->", credentials.email);
+            console.error(`[AUTH_DEBUG] Password mismatch for: ${email}`);
             return null;
           }
 
+          console.log(`[AUTH_DEBUG] Login successful for: ${email}`);
           return {
             id: user.id,
             name: user.name,
@@ -79,9 +84,10 @@ export const authOptions: NextAuthOptions = {
             role: user.role,
             rank: user.rank,
           };
-        } catch (dbError) {
-          console.error("Auth Error: Database connection failed during login:", dbError);
-          throw new Error("Database connection error");
+        } catch (dbError: any) {
+          console.error("[AUTH_DEBUG] Database error during login:", dbError.message || dbError);
+          // エラー内容を詳しく返す（開発・緊急対応用）
+          throw new Error(`Database Integrity Error: ${dbError.message || "Unknown"}`);
         }
       },
     }),
