@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import sharp from "sharp";
 
 export const dynamic = "force-dynamic";
 
@@ -27,21 +28,18 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       return new NextResponse("Identity not found", { status: 404 });
     }
 
-    // 2. Fetch and Resize Image (Server-Side)
+    // 2. Fetch and Resize Image (Server-Side using Sharp)
     let photoBase64 = "";
     if (user.photo_url && user.photo_url !== "IMAGE_LARGE") {
       try {
         let arrayBuffer: ArrayBuffer;
-        let mimeType = "image/jpeg";
-        let isJpegOrPng = false;
-
+        
         if (user.photo_url.startsWith("http")) {
           const res = await fetch(user.photo_url);
+          if (!res.ok) throw new Error(`Failed to fetch image: ${res.status}`);
           arrayBuffer = await res.arrayBuffer();
-          mimeType = res.headers.get("content-type") || "image/jpeg";
         } else if (user.photo_url.startsWith("data:image/")) {
           const parts = user.photo_url.split(",");
-          mimeType = parts[0].match(/:(.*?);/)?.[1] || "image/jpeg";
           const base64Data = parts[1];
           const buffer = Buffer.from(base64Data, "base64");
           arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
@@ -49,15 +47,19 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
             throw new Error("Invalid image format");
         }
 
-        // We only embed JPEG or PNG.
-        if (mimeType.includes("jpeg") || mimeType.includes("png")) {
-             isJpegOrPng = true;
-        }
+        // Use sharp to resize and compress to JPEG format (max 300x300, 80% quality)
+        // This guarantees the image is small enough (< 30KB) for iOS Contacts to accept.
+        const inputBuffer = Buffer.from(arrayBuffer);
+        const processedBuffer = await sharp(inputBuffer)
+          .resize(300, 300, {
+            fit: 'inside',
+            withoutEnlargement: true
+          })
+          .jpeg({ quality: 80 })
+          .toBuffer();
 
-        if (isJpegOrPng) {
-             const buffer = Buffer.from(arrayBuffer);
-             photoBase64 = buffer.toString("base64");
-        }
+        photoBase64 = processedBuffer.toString("base64");
+        
       } catch (error) {
         console.error("Failed to process vCard image server-side:", error);
       }
