@@ -27,53 +27,11 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       return new NextResponse("Identity not found", { status: 404 });
     }
 
-    // 2. Fetch Image
-    let photoBase64 = "";
-    if (user.photo_url && user.photo_url !== "IMAGE_LARGE") {
-      try {
-        let arrayBuffer: ArrayBuffer;
-        let mimeType = "image/jpeg";
-        let isJpegOrPng = false;
-
-        if (user.photo_url.startsWith("http")) {
-          const res = await fetch(user.photo_url);
-          if (!res.ok) throw new Error(`Failed to fetch image: ${res.status}`);
-          arrayBuffer = await res.arrayBuffer();
-          mimeType = res.headers.get("content-type") || "image/jpeg";
-        } else if (user.photo_url.startsWith("data:image/")) {
-          const parts = user.photo_url.split(",");
-          mimeType = parts[0].match(/:(.*?);/)?.[1] || "image/jpeg";
-          const base64Data = parts[1];
-          const buffer = Buffer.from(base64Data, "base64");
-          arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
-        } else {
-            throw new Error("Invalid image format");
-        }
-
-        if (mimeType.includes("jpeg") || mimeType.includes("png") || mimeType.includes("webp")) {
-             isJpegOrPng = true;
-        }
-
-        if (isJpegOrPng) {
-             const buffer = Buffer.from(arrayBuffer);
-             photoBase64 = buffer.toString("base64");
-             
-             // 安全装置：万が一取得した画像が100KBを超えている場合は、vCardの崩壊を防ぐため破棄する
-             if (photoBase64.length > 150000) {
-                 console.log(`[vCard] Image too large (${photoBase64.length} bytes), skipping attachment.`);
-                 photoBase64 = "";
-             }
-        }
-      } catch (error) {
-        console.error("Failed to process vCard image server-side:", error);
-      }
-    }
-
     // Extract profile info from ai_config or direct fields
     const aiConfig = user.ai_config as any || {};
     const profileData = aiConfig.profile || {};
 
-    // 3. Construct vCard 3.0 String (Strict iOS Compliance)
+    // 2. Construct vCard 3.0 String (Strict iOS Compliance, NO IMAGES)
     const CRLF = "\r\n";
     const name = user.name || "MEMBER";
     const reading = user.handle_name || "";
@@ -81,6 +39,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     const email = profileData.contact_email || user.email || "";
     const company = profileData.company || "";
     const title = profileData.title || "";
+    const website = user.link_website || profileData.website || `https://hxc.hexa-relation.com/p/${slug}`;
 
     let vcard = `BEGIN:VCARD${CRLF}`;
     vcard += `VERSION:3.0${CRLF}`;
@@ -91,16 +50,13 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     if (title) vcard += `TITLE:${title}${CRLF}`;
     if (phone) vcard += `TEL;TYPE=CELL,VOICE:${phone}${CRLF}`;
     if (email) vcard += `EMAIL;TYPE=WORK,INTERNET:${email}${CRLF}`;
-
-    if (photoBase64) {
-      // 厳密なLine Folding: 74文字ごとにCRLF + SPACE
-      const foldedBase64 = photoBase64.match(/.{1,74}/g)?.join(`${CRLF} `) || photoBase64;
-      vcard += `PHOTO;TYPE=JPEG;ENCODING=b:${foldedBase64}${CRLF}`;
-    }
+    if (website) vcard += `URL:${website}${CRLF}`;
+    // Link directly to the digital business card
+    vcard += `URL;type=HexaCard:https://hxc.hexa-relation.com/p/${slug}${CRLF}`;
 
     vcard += `END:VCARD${CRLF}`;
 
-    // 4. Return as File Attachment
+    // 3. Return as File Attachment
     const response = new NextResponse(vcard);
     response.headers.set("Content-Type", "text/vcard; charset=utf-8");
     const encodedFileName = encodeURIComponent(`${name}.vcf`);
