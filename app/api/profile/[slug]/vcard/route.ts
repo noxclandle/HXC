@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import sharp from "sharp";
 
 export const dynamic = "force-dynamic";
 
@@ -28,18 +27,22 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       return new NextResponse("Identity not found", { status: 404 });
     }
 
-    // 2. Fetch and Resize Image (Server-Side using Sharp)
+    // 2. Fetch Image
     let photoBase64 = "";
     if (user.photo_url && user.photo_url !== "IMAGE_LARGE") {
       try {
         let arrayBuffer: ArrayBuffer;
-        
+        let mimeType = "image/jpeg";
+        let isJpegOrPng = false;
+
         if (user.photo_url.startsWith("http")) {
           const res = await fetch(user.photo_url);
           if (!res.ok) throw new Error(`Failed to fetch image: ${res.status}`);
           arrayBuffer = await res.arrayBuffer();
+          mimeType = res.headers.get("content-type") || "image/jpeg";
         } else if (user.photo_url.startsWith("data:image/")) {
           const parts = user.photo_url.split(",");
+          mimeType = parts[0].match(/:(.*?);/)?.[1] || "image/jpeg";
           const base64Data = parts[1];
           const buffer = Buffer.from(base64Data, "base64");
           arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
@@ -47,19 +50,20 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
             throw new Error("Invalid image format");
         }
 
-        // Use sharp to resize and compress to JPEG format (max 300x300, 80% quality)
-        // This guarantees the image is small enough (< 30KB) for iOS Contacts to accept.
-        const inputBuffer = Buffer.from(arrayBuffer);
-        const processedBuffer = await sharp(inputBuffer)
-          .resize(300, 300, {
-            fit: 'inside',
-            withoutEnlargement: true
-          })
-          .jpeg({ quality: 80 })
-          .toBuffer();
+        if (mimeType.includes("jpeg") || mimeType.includes("png") || mimeType.includes("webp")) {
+             isJpegOrPng = true;
+        }
 
-        photoBase64 = processedBuffer.toString("base64");
-        
+        if (isJpegOrPng) {
+             const buffer = Buffer.from(arrayBuffer);
+             photoBase64 = buffer.toString("base64");
+             
+             // 安全装置：万が一取得した画像が100KBを超えている場合は、vCardの崩壊を防ぐため破棄する
+             if (photoBase64.length > 150000) {
+                 console.log(`[vCard] Image too large (${photoBase64.length} bytes), skipping attachment.`);
+                 photoBase64 = "";
+             }
+        }
       } catch (error) {
         console.error("Failed to process vCard image server-side:", error);
       }
@@ -89,7 +93,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     if (email) vcard += `EMAIL;TYPE=WORK,INTERNET:${email}${CRLF}`;
 
     if (photoBase64) {
-      // 厳密なLine Folding: 74文字（バイトではなく文字）ごとにCRLF + SPACE
+      // 厳密なLine Folding: 74文字ごとにCRLF + SPACE
       const foldedBase64 = photoBase64.match(/.{1,74}/g)?.join(`${CRLF} `) || photoBase64;
       vcard += `PHOTO;TYPE=JPEG;ENCODING=b:${foldedBase64}${CRLF}`;
     }
@@ -99,14 +103,13 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     // 4. Return as File Attachment
     const response = new NextResponse(vcard);
     response.headers.set("Content-Type", "text/vcard; charset=utf-8");
-    // UTF-8エンコーディングを指定してファイル名をセット
     const encodedFileName = encodeURIComponent(`${name}.vcf`);
     response.headers.set("Content-Disposition", `attachment; filename*=UTF-8''${encodedFileName}`);
 
     return response;
 
-  } catch (error) {
-    console.error("vCard generation error:", error);
+  } catch (error: any) {
+    console.error("vCard generation error:", error.message || error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
