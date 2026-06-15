@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       await tx.deviceBinding.deleteMany({ where: { user_id: userId } });
       await tx.chatMessage.deleteMany({ where: { user_id: userId } });
       await tx.contact.deleteMany({ where: { owner_id: userId } });
-      await tx.rtTransaction.deleteMany({ where: { user_id: userId } });
+      await tx.rTTransaction.deleteMany({ where: { user_id: userId } });
       
       // 3. ユーザー自身の削除
       await tx.user.delete({

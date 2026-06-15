@@ -263,7 +263,7 @@ export default function ProfileEditPage() {
       setSaveStatus("error");
       showToast("Network Error / 通信エラーが発生しました", "error");
       }
-      }, [showToast]);
+      }, [showToast, formData.faceUrl, formData.logoUrl]);
 
   const timerRef = useRef<any>(null);
   useEffect(() => {
