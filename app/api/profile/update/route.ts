@@ -3,10 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
-import { rateLimit } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
-
 
 const profileUpdateSchema = z.object({
   name: z.string().optional().or(z.literal("")),
@@ -23,7 +21,6 @@ const profileUpdateSchema = z.object({
   link_instagram: z.string().optional().or(z.literal("")),
   link_line: z.string().optional().or(z.literal("")),
   link_facebook: z.string().optional().or(z.literal("")),
-  // 装備情報はオブジェクト構造を緩く許容する
   equipped_assets: z.any().optional(),
 });
 
@@ -32,21 +29,6 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // 門番（レートリミット）のチェック
-    const forwarded = req.headers.get("x-forwarded-for");
-    const ip = forwarded ? forwarded.split(/, /)[0] : "127.0.0.1";
-    
-    try {
-      const { success } = await rateLimit.standard.limit(ip);
-      if (!success) {
-        return NextResponse.json({ 
-          error: "Sync Rate Limited / 更新頻度が制限を超えました。30秒ほどお待ちください。" 
-        }, { status: 429 });
-      }
-    } catch (rlError) {
-      console.warn("[RateLimit Bypass] KV store might be unavailable:", rlError);
     }
 
     const body = await req.json();
