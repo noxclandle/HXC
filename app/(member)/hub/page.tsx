@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { getUserStatus } from "@/lib/user";
 import { prisma } from "@/lib/prisma";
 import HubClientUI from "@/components/hub/HubClientUI";
+import HubErrorBoundary from "@/components/hub/HubErrorBoundary";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -49,10 +50,12 @@ async function HubLoader() {
   } : null;
 
   return (
-    <HubClientUI 
-      initialStats={stats} 
-      initialNews={serializedNews} 
-    />
+    <HubErrorBoundary>
+      <HubClientUI 
+        initialStats={stats} 
+        initialNews={serializedNews} 
+      />
+    </HubErrorBoundary>
   );
 }
 
