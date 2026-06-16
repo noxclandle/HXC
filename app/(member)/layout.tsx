@@ -1,5 +1,6 @@
 import ResidentAgent from "@/components/agent/ResidentAgent";
 import HiddenRTMonitor from "@/components/ui/HiddenRTMonitor";
+import HubErrorBoundary from "@/components/hub/HubErrorBoundary";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -22,8 +23,10 @@ export default function MemberLayout({
         </Link>
       </nav>
       <main className="pb-24">{children}</main>
-      <ResidentAgent />
-      <HiddenRTMonitor />
+      <HubErrorBoundary>
+        <ResidentAgent />
+        <HiddenRTMonitor />
+      </HubErrorBoundary>
     </div>
   );
 }

@@ -137,6 +137,14 @@ export default function HubClientUI({
     }
   };
 
+  if (!mounted) {
+    return (
+      <div className="max-w-7xl mx-auto pt-24 px-6 opacity-0">
+         <div className="h-10 w-64 bg-white/5 rounded-sm mb-12" />
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto pt-24 px-6 pb-24 relative text-moonlight">
       <header className="mb-12 flex flex-col md:flex-row justify-between items-start gap-8">
