@@ -298,19 +298,19 @@ export default function ProfileEditPage() {
       <header className="mb-8 lg:mb-16 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
         <div className="space-y-4 w-full lg:w-auto">
           <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.2em] lg:tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity mb-4 lg:mb-8 text-white">
-            <ArrowLeft size={12} /> ホームへ戻る
+            <ArrowLeft size={12} /> Back to Dashboard / ホームへ戻る
           </Link>
           <div className="flex flex-wrap items-center gap-4 lg:gap-6">
-            <h1 className="text-2xl lg:text-5xl tracking-[0.2em] lg:tracking-[0.5em] uppercase font-extralight text-white">プロフィール編集</h1>
+            <h1 className="text-2xl lg:text-5xl tracking-[0.2em] lg:tracking-[0.5em] uppercase font-extralight text-white">Edit Profile / プロフィール編集</h1>
             <AnimatePresence mode="wait">
                {saveStatus === "saving" && (
                   <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-azure-400 text-[8px] lg:text-[9px] tracking-[0.3em] uppercase font-bold px-2 lg:px-3 py-1 bg-azure-500/10 border border-azure-500/20">
-                    <Save size={10} className="animate-pulse" /> 保存中
+                    <Save size={10} className="animate-pulse" /> Saving / 保存中
                   </motion.div>
                )}
                {saveStatus === "saved" && (
                   <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-emerald-400 text-[8px] lg:text-[9px] tracking-[0.3em] uppercase font-bold px-2 lg:px-3 py-1 bg-emerald-500/10 border border-emerald-500/20">
-                    <Check size={10} /> 保存完了
+                    <Check size={10} /> Saved / 保存完了
                   </motion.div>
                )}
             </AnimatePresence>
