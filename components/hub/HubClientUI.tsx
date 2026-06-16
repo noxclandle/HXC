@@ -27,6 +27,11 @@ export default function HubClientUI({
   const [bubbleDismissed, setBubbleDismissed] = useState(false);
   const [greeting, setGreeting] = useState("");
   const [selectedNews, setSelectedNews] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const isBonusAvailable = !realStats?.last_daily_at || new Date(realStats.last_daily_at).toDateString() !== new Date().toDateString();
 
@@ -148,7 +153,9 @@ export default function HubClientUI({
               
               <p className="text-[9px] uppercase tracking-[0.5em] text-white/30 mb-1">Available Points / 現在の所持ポイント</p>
               <div className="flex items-center justify-start md:justify-end gap-4">
-                 <p className="text-2xl font-extralight tracking-[0.1em] text-white">{Number(realStats?.rt_balance || 0).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
+                 <p className="text-2xl font-extralight tracking-[0.1em] text-white">
+                   {mounted ? Number(realStats?.rt_balance || 0).toLocaleString() : realStats?.rt_balance || 0} <span className="text-xs opacity-20">RT</span>
+                 </p>
                  <Link href="/charge" className="px-2 py-1 border border-azure-500/30 bg-azure-500/5 text-azure-400 text-[7px] tracking-[0.2em] font-bold uppercase hover:bg-azure-500/10 transition-all">
                     Purchase / ポイント購入
                  </Link>
@@ -156,7 +163,7 @@ export default function HubClientUI({
               <div className="mt-2 flex justify-start md:justify-end items-center gap-2 opacity-40">
                  <span className="text-[7px] uppercase tracking-widest font-bold">Total EXP / 累計経験値</span>
                  <span className="text-[10px] font-mono tracking-tighter text-white">
-                   {Number(realStats?.exp || 0).toLocaleString()} / {Number(realStats?.exp_max || 1000).toLocaleString()}
+                   {mounted ? Number(realStats?.exp || 0).toLocaleString() : realStats?.exp || 0} / {mounted ? Number(realStats?.exp_max || 1000).toLocaleString() : realStats?.exp_max || 1000}
                  </span>
               </div>
            </div>

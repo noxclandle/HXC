@@ -1,11 +1,16 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { BarChart3, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
 export default function MonthlyReport({ stats }: { stats?: any }) {
-  const currentMonth = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(new Date());
+  const [currentMonth, setCurrentMonth] = useState("");
+
+  useEffect(() => {
+    setCurrentMonth(new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(new Date()));
+  }, []);
   
   const report = {
     month: currentMonth,
