@@ -2,32 +2,45 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Box, RefreshCw } from "lucide-react";
+import { Sparkles, Box, RefreshCw, AlertCircle } from "lucide-react";
 import { playConnectionSound } from "@/lib/audio/resonance";
+import { getRarityColor, Asset } from "@/lib/game/assets";
 
 export default function GachaPage() {
   const [isSpinning, setIsSpinning] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
-  const [rarityColor, setRarityColor] = useState("rgba(224, 224, 224, 0.5)");
+  const [result, setResult] = useState<Asset | null>(null);
+  const [isDuplicate, setIsDuplicate] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleGacha = () => {
+  const handleGacha = async () => {
     setIsSpinning(true);
     setResult(null);
+    setError(null);
+    setIsDuplicate(false);
     playConnectionSound("void");
 
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/gacha", {
+        method: "POST",
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to resonate with the Void.");
+      }
+
+      // 演出のために少し待つ
+      setTimeout(() => {
+        setIsSpinning(false);
+        setResult(data.item);
+        setIsDuplicate(data.isDuplicate);
+        playConnectionSound(data.item.rarity === "mythic" ? "void" : data.item.rarity === "epic" ? "silver" : "default");
+      }, 2500);
+
+    } catch (err: any) {
       setIsSpinning(false);
-      const items = [
-        { name: "Silver Frame", rarity: "common", color: "rgba(224, 224, 224, 0.5)" },
-        { name: "Obsidian Frame", rarity: "rare", color: "rgba(255, 215, 0, 0.5)" },
-        { name: "Starlight Sound", rarity: "common", color: "rgba(224, 224, 224, 0.5)" },
-        { name: "Golden Aura", rarity: "rare", color: "rgba(255, 215, 0, 0.5)" }
-      ];
-      const win = items[Math.floor(Math.random() * items.length)];
-      setResult(win.name);
-      setRarityColor(win.color);
-      playConnectionSound(win.rarity === "rare" ? "silver" : "default");
-    }, 3000);
+      setError(err.message);
+    }
   };
 
   return (
@@ -39,7 +52,7 @@ export default function GachaPage() {
 
       <div className="relative h-80 flex items-center justify-center">
         <AnimatePresence mode="wait">
-          {!result && !isSpinning && (
+          {!result && !isSpinning && !error && (
             <motion.div
               key="idle"
               initial={{ scale: 0.8, opacity: 0 }}
@@ -73,6 +86,24 @@ export default function GachaPage() {
             </motion.div>
           )}
 
+          {error && (
+             <motion.div
+               key="error"
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               className="flex flex-col items-center gap-6"
+             >
+               <AlertCircle size={48} className="text-rose-500 opacity-50" />
+               <p className="text-[10px] tracking-[0.4em] text-rose-500/80 uppercase">{error}</p>
+               <button 
+                 onClick={() => setError(null)}
+                 className="text-[9px] tracking-[0.4em] uppercase opacity-40 hover:opacity-100 transition-opacity underline underline-offset-8"
+               >
+                 Try Again
+               </button>
+             </motion.div>
+          )}
+
           {result && (
             <motion.div
               key="result"
@@ -85,12 +116,23 @@ export default function GachaPage() {
                   animate={{ scale: [1, 2, 1.5], opacity: [0.5, 0, 0.5] }}
                   transition={{ duration: 2, repeat: Infinity }}
                   className="absolute inset-0 blur-3xl rounded-full"
-                  style={{ backgroundColor: rarityColor }}
+                  style={{ backgroundColor: getRarityColor(result.rarity) }}
                 />
-                <Sparkles size={80} className="relative z-10" style={{ color: rarityColor }} />
+                <Sparkles size={80} className="relative z-10" style={{ color: getRarityColor(result.rarity) }} />
               </div>
-              <h2 className="text-xl tracking-[0.4em] uppercase mb-4">{result}</h2>
-              <p className="text-[10px] tracking-[0.2em] opacity-40 mb-12">New asset bound to your soul record.</p>
+              <div className="space-y-2 mb-12">
+                <p className={`text-[8px] tracking-[0.4em] uppercase font-bold mb-2`}>{result.rarity}</p>
+                <h2 className="text-xl tracking-[0.4em] uppercase">{result.name}</h2>
+                <p className="text-[10px] tracking-[0.2em] opacity-40 max-w-xs mx-auto">{result.description}</p>
+              </div>
+              
+              {isDuplicate && (
+                <p className="text-[9px] tracking-[0.3em] text-azure-400 uppercase mb-8 animate-pulse">
+                  Duplicate Identity // 200 RT Refunded
+                </p>
+              )}
+
+              <p className="text-[9px] tracking-[0.2em] opacity-40 mb-12">New asset bound to your soul record.</p>
               <button 
                 onClick={() => setResult(null)}
                 className="text-[9px] tracking-[0.4em] uppercase opacity-40 hover:opacity-100 transition-opacity underline underline-offset-8"
