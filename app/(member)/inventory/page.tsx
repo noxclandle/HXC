@@ -45,7 +45,16 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
   const [showRTPurchase, setShowRTPurchase] = useState(showPurchaseFromUrl);
   const [confirmingAsset, setConfirmingAsset] = useState<Asset | null>(null);
   
-  const [equipped, setEquipped] = useState<any>(initialStats.equipped || {
+  const defaultAlign = {
+    company: "center",
+    title: "center",
+    name: "center",
+    reading: "center",
+    phone: "center",
+    email: "center"
+  };
+
+  const [equipped, setEquipped] = useState<any>({
     frame: "Obsidian",
     background: "Default",
     effect: "None",
@@ -55,7 +64,10 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
     pointer: "Pure White Hex",
     angel: "Sentinel",
     aura: "None",
-    orientation: "horizontal"
+    orientation: "horizontal",
+    hAlign: defaultAlign,
+    vAlign: defaultAlign,
+    ...(initialStats.equipped || {})
   });
 
   const [profile, setProfile] = useState<any>(initialStats);
@@ -168,6 +180,8 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
     ...equipped,
     ...(previewAsset ? { [previewAsset.type]: previewAsset.id } : {})
   };
+
+  const currentAligns = currentPreview.orientation === 'horizontal' ? (currentPreview.hAlign || defaultAlign) : (currentPreview.vAlign || defaultAlign);
 
   return (
     <div className="max-w-7xl mx-auto pt-24 lg:pt-32 px-4 lg:px-6 pb-24 text-moonlight overflow-x-hidden">
@@ -290,12 +304,12 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
                   fontFamily={currentPreview.fontFamily}
                   sound={currentPreview.sound}
                   orientation={equipped.orientation}
-                  alignCompany="center"
-                  alignName="center"
-                  alignReading="center"
-                  alignTitle="center"
-                  alignPhone="center"
-                  alignEmail="center"
+                  alignCompany={currentAligns.company}
+                  alignName={currentAligns.name}
+                  alignReading={currentAligns.reading}
+                  alignTitle={currentAligns.title}
+                  alignPhone={currentAligns.phone}
+                  alignEmail={currentAligns.email}
                   bio={profile?.profile?.bio}
                 />
               </div>
