@@ -89,7 +89,14 @@ export default function HexaCardPreview({
     setTimeout(() => setIsRotating(false), 800);
   };
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const getAuraLayer = () => {
+    if (!mounted) return null;
     switch (aura) {
       case "WhiteMist":
         return <motion.div animate={{ opacity: [0.2, 0.5, 0.2], scale: [1, 1.2, 1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-[-60px] bg-white/30 blur-[60px] rounded-full z-0" />;
@@ -169,6 +176,7 @@ export default function HexaCardPreview({
   };
 
   const getEffectLayer = () => {
+    if (!mounted) return null;
     switch (effect) {
       case "Sparkle":
         return (
