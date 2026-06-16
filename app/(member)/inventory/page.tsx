@@ -183,6 +183,19 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
 
   const currentAligns = currentPreview.orientation === 'horizontal' ? (currentPreview.hAlign || defaultAlign) : (currentPreview.vAlign || defaultAlign);
 
+  const getCategoryIcon = (id: string) => {
+    switch(id) {
+      case "frame": return Shield;
+      case "aura": return Zap;
+      case "background": return Palette;
+      case "effect": return Sparkles;
+      case "title": return Trophy;
+      case "pointer": return MousePointer2;
+      case "sound": return Music;
+      default: return Shield;
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto pt-24 lg:pt-32 px-4 lg:px-6 pb-24 text-moonlight overflow-x-hidden">
       <ConfirmationModal 
@@ -327,16 +340,19 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
            
            <div className="flex flex-col gap-4">
               <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar scroll-smooth sticky top-[38vh] lg:top-0 bg-void/98 lg:bg-transparent z-40 -mx-4 px-4 lg:mx-0 lg:px-0">
-                {CATEGORIES.map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => { setActiveCategory(cat.id); setPreviewAsset(null); }}
-                    className={`py-4 lg:py-6 px-6 lg:px-8 flex flex-col items-center gap-2 lg:gap-3 transition-all border-b-2 flex-shrink-0 ${activeCategory === cat.id ? "border-azure-500 opacity-100 bg-azure-500/5" : "border-transparent opacity-20 hover:opacity-50"}`}
-                  >
-                    <cat.icon size={16} className={activeCategory === cat.id ? "text-azure-400" : ""} />
-                    <span className="block text-[7px] lg:text-[8px] uppercase tracking-[0.3em] font-bold whitespace-nowrap">{cat.name}</span>
-                  </button>
-                ))}
+                {CATEGORIES.map((cat) => {
+                  const Icon = getCategoryIcon(cat.id);
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => { setActiveCategory(cat.id); setPreviewAsset(null); }}
+                      className={`py-4 lg:py-6 px-6 lg:px-8 flex flex-col items-center gap-2 lg:gap-3 transition-all border-b-2 flex-shrink-0 ${activeCategory === cat.id ? "border-azure-500 opacity-100 bg-azure-500/5" : "border-transparent opacity-20 hover:opacity-50"}`}
+                    >
+                      <Icon size={16} className={activeCategory === cat.id ? "text-azure-400" : ""} />
+                      <span className="block text-[7px] lg:text-[8px] uppercase tracking-[0.3em] font-bold whitespace-nowrap">{cat.name}</span>
+                    </button>
+                  );
+                })}
               </div>
            </div>
 
