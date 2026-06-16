@@ -64,7 +64,7 @@ function LoginContent() {
       });
 
       if (result?.error) {
-        setError("Invalid Credentials / 認証に失敗しました");
+        setError("認証に失敗しました");
       } else if (result?.ok) {
         // ログイン成功後、デバイス紐付け（Soul-Link）を自動実行
         try {
@@ -89,7 +89,7 @@ function LoginContent() {
         }
       }
     } catch (err) {
-      setError("Connection Severed / 接続が遮断されました");
+      setError("通信エラーが発生しました");
     } finally {
       setIsLoading(false);
     }
@@ -112,8 +112,8 @@ function LoginContent() {
               <Sparkles className="text-white relative z-10 animate-pulse" size={40} strokeWidth={1} />
             </div>
             <div className="text-center space-y-2">
-              <h2 className="text-sm tracking-[0.8em] uppercase font-light">Soul Synchronizing</h2>
-              <p className="text-[8px] tracking-[0.4em] opacity-30 uppercase font-bold">魂の同調プロセスを実行中</p>
+              <h2 className="text-sm tracking-[0.8em] uppercase font-light">自動ログイン中</h2>
+              <p className="text-[8px] tracking-[0.4em] opacity-30 uppercase font-bold">端末情報を確認しています</p>
             </div>
           </motion.div>
         )}
@@ -137,8 +137,7 @@ function LoginContent() {
             priority
             className="opacity-40 mb-10 hover:opacity-100 transition-opacity duration-1000 object-contain" 
           />
-          <h1 className="text-2xl tracking-[0.8em] uppercase font-extralight mb-2">Sign In</h1>
-          <p className="text-[8px] tracking-[0.4em] opacity-20 uppercase font-bold">認証プロセス</p>
+          <h1 className="text-2xl tracking-[0.8em] uppercase font-extralight mb-2">ログイン</h1>
         </div>
 
         <motion.form
@@ -155,9 +154,8 @@ function LoginContent() {
               >
                 <div className="flex items-center justify-center gap-2">
                    <AlertCircle size={12} />
-                   <p className="text-[9px] tracking-[0.2em] uppercase font-bold">{error.split(" / ")[0]}</p>
+                   <p className="text-[9px] tracking-[0.2em] font-bold">{error}</p>
                 </div>
-                <p className="text-[7px] tracking-[0.1em] opacity-60">{error.split(" / ")[1]}</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -167,7 +165,7 @@ function LoginContent() {
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 opacity-20 group-focus-within:opacity-100 transition-opacity" size={14} />
               <input
                 type="email"
-                placeholder="EMAIL ADDRESS"
+                placeholder="メールアドレス"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -178,7 +176,7 @@ function LoginContent() {
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 opacity-20 group-focus-within:opacity-100 transition-opacity" size={14} />
               <input
                 type="password"
-                placeholder="PASSWORD"
+                placeholder="パスワード"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -191,9 +189,9 @@ function LoginContent() {
             <button 
               type="button"
               onClick={() => router.push("/login/forgot")}
-              className="text-[8px] tracking-[0.2em] opacity-30 hover:opacity-100 transition-opacity uppercase font-bold"
+              className="text-[8px] tracking-[0.2em] opacity-30 hover:opacity-100 transition-opacity font-bold"
             >
-              Forgot Password? / パスワードを忘れた場合
+              パスワードを忘れた場合
             </button>
           </div>
           
@@ -202,7 +200,7 @@ function LoginContent() {
               disabled={isLoading}
               className={`w-full py-5 bg-white text-void text-[10px] font-bold tracking-[0.8em] uppercase hover:bg-emerald-50 transition-all shadow-2xl relative overflow-hidden ${isLoading && 'opacity-50'}`}
             >
-              {isLoading ? "Signing In..." : "Sign In"}
+              {isLoading ? "ログイン中..." : "ログイン"}
               {isLoading && (
                 <motion.div 
                   animate={{ left: ["-100%", "100%"] }}

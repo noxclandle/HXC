@@ -137,8 +137,8 @@ export default function HubClientUI({
     <div className="max-w-7xl mx-auto pt-24 px-6 pb-24 relative text-moonlight">
       <header className="mb-12 flex flex-col md:flex-row justify-between items-start gap-8">
         <div className="space-y-4">
-          <h1 className="text-2xl md:text-3xl tracking-[0.2em] md:tracking-[0.4em] uppercase font-extralight mb-2 text-white">Atelier</h1>
-          <p className="text-[9px] md:text-[10px] tracking-[0.2em] md:tracking-[0.4em] uppercase opacity-40">Identity Workshop</p>
+          <h1 className="text-2xl md:text-3xl tracking-[0.2em] md:tracking-[0.4em] uppercase font-extralight mb-2 text-white">ホーム</h1>
+          <p className="text-[9px] md:text-[10px] tracking-[0.2em] md:tracking-[0.4em] uppercase opacity-40">ダッシュボード</p>
         </div>
         <div className="flex items-start gap-8 w-full md:w-auto justify-between md:justify-end">
            <div className="text-left md:text-right flex flex-col items-start md:items-end w-full">
@@ -146,15 +146,15 @@ export default function HubClientUI({
                  <ShieldCheck size={10} /> {realStats?.equipped?.title || "ASSOCIATE"}
               </div>
               
-              <p className="text-[9px] uppercase tracking-[0.5em] text-white/30 mb-1">Holding RT / 現在の所持RT</p>
+              <p className="text-[9px] uppercase tracking-[0.5em] text-white/30 mb-1">現在の所持ポイント</p>
               <div className="flex items-center justify-start md:justify-end gap-4">
                  <p className="text-2xl font-extralight tracking-[0.1em] text-white">{Number(realStats?.rt_balance || 0).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
-                 <Link href="/charge" className="px-2 py-1 border border-azure-500/30 bg-azure-500/5 text-azure-400 text-[7px] tracking-[0.2em] font-bold uppercase hover:bg-azure-500/10 transition-all">
-                    Charge / RT購入
+                 <Link href="/charge" className="px-2 py-1 border border-azure-500/30 bg-azure-500/5 text-azure-400 text-[7px] tracking-[0.2em] font-bold hover:bg-azure-500/10 transition-all">
+                    ポイント購入
                  </Link>
               </div>
               <div className="mt-2 flex justify-start md:justify-end items-center gap-2 opacity-40">
-                 <span className="text-[7px] uppercase tracking-widest font-bold">Total EXP</span>
+                 <span className="text-[7px] uppercase tracking-widest font-bold">累計経験値</span>
                  <span className="text-[10px] font-mono tracking-tighter text-white">
                    {Number(realStats?.exp || 0).toLocaleString()} / {Number(realStats?.exp_max || 1000).toLocaleString()}
                  </span>
@@ -184,16 +184,16 @@ export default function HubClientUI({
              <Link href="/scan" className="group p-8 border border-azure-500/20 bg-azure-500/[0.03] hover:bg-azure-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-azure-500/40" />
                 <div>
-                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100">Scan Card</h2>
-                   <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-azure-300 group-hover:opacity-100">紙名刺をスキャンする</p>
+                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100">名刺スキャン</h2>
+                   <p className="text-[9px] tracking-[0.2em] opacity-60 font-bold text-azure-300 group-hover:opacity-100">紙の名刺をカメラで読み込む</p>
                 </div>
                 <Camera size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
              </Link>
              <Link href="/library" className="group p-8 border border-bronze-500/20 bg-bronze-500/[0.03] hover:bg-bronze-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-bronze-500/40" />
                 <div>
-                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100">Contacts</h2>
-                   <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-bronze-300 group-hover:opacity-100">名刺帳・ライブラリ</p>
+                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100">名刺帳</h2>
+                   <p className="text-[9px] tracking-[0.2em] opacity-60 font-bold text-bronze-300 group-hover:opacity-100">交換した名刺の管理</p>
                 </div>
                 < Book size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
              </Link>
@@ -203,8 +203,8 @@ export default function HubClientUI({
         <aside className="lg:col-span-4 space-y-12">
            <div className="p-1 bg-gradient-to-b from-white/5 to-transparent">
               <div className="mb-6 opacity-30 px-4 text-[9px] tracking-[0.4em] uppercase font-bold text-white">
-                 <p>Monthly Insight</p>
-                 <p className="text-[7px] tracking-[0.2em] mt-1 text-white">分析レポート</p>
+                 <p>月間レポート</p>
+                 <p className="text-[7px] tracking-[0.2em] mt-1 text-white">アクセス解析</p>
               </div>
               <MonthlyReport stats={realStats} />
            </div>
@@ -233,7 +233,7 @@ export default function HubClientUI({
                 <header className="mb-8">
                    <div className="flex justify-between items-start mb-4">
                       <span className="text-[8px] tracking-[0.4em] uppercase font-bold text-azure-400 bg-azure-500/10 px-2 py-1 border border-azure-500/20">
-                         {selectedNews.category || "Notice"}
+                         {selectedNews.category || "お知らせ"}
                       </span>
                       <button onClick={() => setSelectedNews(null)} className="opacity-40 hover:opacity-100 transition-opacity">
                          <ChevronRight size={20} className="rotate-90" />
@@ -243,7 +243,7 @@ export default function HubClientUI({
                       {selectedNews.title}
                    </h2>
                    <div className="mt-2 text-[8px] tracking-widest opacity-20 uppercase font-mono">
-                      Published: {new Date(selectedNews.created_at).toLocaleDateString()}
+                      公開日: {new Date(selectedNews.created_at).toLocaleDateString()}
                    </div>
                 </header>
 
@@ -256,9 +256,9 @@ export default function HubClientUI({
                 <div className="mt-12 flex justify-end">
                    <button 
                      onClick={() => setSelectedNews(null)}
-                     className="px-8 py-3 border border-white/10 text-[9px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all text-white/40 hover:text-white"
+                     className="px-8 py-3 border border-white/10 text-[9px] tracking-[0.4em] hover:bg-white/5 transition-all text-white/40 hover:text-white"
                    >
-                      Close / 閉じる
+                      閉じる
                    </button>
                 </div>
               </motion.div>
