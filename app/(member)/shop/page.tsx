@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShoppingBag, CreditCard, Sparkles, ShieldCheck } from "lucide-react";
+import { ShoppingBag, CreditCard, Sparkles, ShieldCheck, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function ShopPage() {
@@ -26,7 +26,10 @@ export default function ShopPage() {
 
   return (
     <div className="max-w-6xl mx-auto pt-32 px-6 pb-24 text-moonlight">
-      <header className="mb-20 text-center">
+      <header className="mb-20 text-center relative">
+        <Link href="/inventory" className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center gap-2 text-[8px] uppercase tracking-[0.4em] opacity-30 hover:opacity-100 transition-opacity">
+           <ChevronLeft size={12} /> Back to Items
+        </Link>
         <h1 className="text-3xl tracking-[0.8em] uppercase font-light mb-4">The Exchange</h1>
         <p className="text-[10px] tracking-[0.4em] opacity-30 uppercase">Equip yourself for the new reality.</p>
       </header>
