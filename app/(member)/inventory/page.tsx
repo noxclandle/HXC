@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/ConnectionToast";
 import { playConnectionSound } from "@/lib/audio/resonance";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { useSearchParams } from "next/navigation";
+import HubErrorBoundary from "@/components/hub/HubErrorBoundary";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -33,15 +34,15 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
   const activeCategoryFromUrl = searchParams.get("category");
   const showPurchaseFromUrl = searchParams.get("purchase") === "true";
 
+  const [mounted, setMounted] = useState(false);
   const [activeCategory, setActiveCategory] = useState(activeCategoryFromUrl || "frame");
-  const [rtBalance, setRTBalance] = useState(initialStats.rt_balance);
+  const [rtBalance, setRTBalance] = useState(initialStats?.rt_balance || 0);
   const [isSaving, setIsSaving] = useState(false);
   const [unlockingAsset, setUnlockingAsset] = useState<string | null>(null);
-  const [ownedAssets, setOwnedAssets] = useState<string[]>(initialStats.owned_assets || []);
-  const [unlockedTitles, setUnlockedTitles] = useState<string[]>(initialStats.titles || ["ASSOCIATE"]);
-  const [assetPrices, setAssetPrices] = useState<Record<string, number>>(initialStats.asset_prices || {});
+  const [ownedAssets, setOwnedAssets] = useState<string[]>(initialStats?.owned_assets || []);
+  const [unlockedTitles, setUnlockedTitles] = useState<string[]>(initialStats?.titles || ["ASSOCIATE"]);
+  const [assetPrices, setAssetPrices] = useState<Record<string, number>>(initialStats?.asset_prices || {});
   const [previewAsset, setPreviewAsset] = useState<Asset | null>(null);
-  const [isLoaded, setIsLoaded] = useState(true); // サーバーサイドデータがあるため、最初はtrue
   const [showRTPurchase, setShowRTPurchase] = useState(showPurchaseFromUrl);
   const [confirmingAsset, setConfirmingAsset] = useState<Asset | null>(null);
   
@@ -67,13 +68,16 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
     orientation: "horizontal",
     hAlign: defaultAlign,
     vAlign: defaultAlign,
-    ...(initialStats.equipped || {})
+    ...(initialStats?.equipped || {})
   });
 
   const [profile, setProfile] = useState<any>(initialStats);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const fetchData = useCallback(async () => {
-    // 初回はサーバーサイドデータを使用するため、即時取得は不要
     try {
       const res = await fetch("/api/user/status", { cache: 'no-store' });
       if (res.ok) {
@@ -89,15 +93,12 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
   }, []);
 
   useEffect(() => {
-    // 最初のマウント時はfetchDataをスキップし、何らかの更新があった際のみ実行する
-    // ただし、もし強制リロードが必要な場合のために登録はしておく
     const handleUpdate = () => fetchData();
     window.addEventListener("hxc-assets-updated", handleUpdate);
     return () => window.removeEventListener("hxc-assets-updated", handleUpdate);
   }, [fetchData]);
 
   const handleCommit = async (customEquipped?: any) => {
-    // 楽観的更新: 既にstateは更新済みである前提で、保存中フラグのみ管理
     setIsSaving(true);
     try {
       const res = await fetch("/api/user/equip", {
@@ -106,7 +107,6 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
         body: JSON.stringify({ equipped: customEquipped || equipped })
       });
       if (res.ok) {
-        // 保存成功時はトーストのみ表示（微かな振動は既に実行済み）
         showToast("保存しました", "success");
         window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
       } else {
@@ -115,7 +115,6 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
     } catch (e) {
       console.error(e);
       showToast("保存に失敗しました。再試行してください。", "error");
-      // 必要に応じてfetchDataを再度呼び出して最新状態に戻す
       fetchData();
     } finally {
       setIsSaving(false);
@@ -151,11 +150,9 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
     const isTitleUnlocked = unlockedTitles.includes(asset.id) || profile?.role === "fixer";
 
     if (asset.type === "title" ? isTitleUnlocked : isUnlocked) {
-      // 楽観的更新: APIの返答を待たずにUIを切り替える
       const newEquipped = { ...equipped, [activeCategory as keyof typeof equipped]: asset.id };
       setEquipped(newEquipped);
       
-      // 指先に伝わるフィードバック（Haptic）
       if (typeof navigator !== "undefined" && navigator.vibrate) {
         navigator.vibrate(10);
       }
@@ -172,9 +169,15 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
     if (asset.type === "sound") playConnectionSound(asset.id);
   };
 
-  const filteredAssets = ASSETS.filter(a => a.type === activeCategory);
+  if (!mounted || status === "loading") {
+    return (
+      <div className="min-h-screen bg-void flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-azure-500 animate-spin opacity-20" />
+      </div>
+    );
+  }
 
-  if (status === "loading") return null;
+  const filteredAssets = ASSETS.filter(a => a.type === activeCategory);
 
   const currentPreview = {
     ...equipped,
@@ -232,7 +235,7 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
         </div>
       </header>
 
-      {/* RT Purchase Section (Boundary) */}
+      {/* RT Purchase Section */}
       <AnimatePresence>
         {showRTPurchase && (
           <motion.section 
@@ -432,9 +435,11 @@ async function InventoryLoader() {
   if (!stats) redirect("/activate");
 
   return (
-    <InventoryContent 
-      initialStats={stats} 
-    />
+    <HubErrorBoundary>
+      <InventoryContent 
+        initialStats={stats} 
+      />
+    </HubErrorBoundary>
   );
 }
 
