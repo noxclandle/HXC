@@ -51,7 +51,7 @@ export async function getUserStatus(email: string | null | undefined) {
   const titles = isFixer ? allTitles : (Array.isArray(user.unlocked_titles) ? user.unlocked_titles : ["ASSOCIATE"]);
 
   const ownedAssets = isFixer
-    ? ["Obsidian", "Gold", "Dynamic", "Sakura", "Emerald", "Platinum", "ImperialGold", "Default", "Carbon", "MonochromeGrid", "BrushedMetal", "Nebula", "SilkBlur", "Stardust", "RoyalGold", "MidnightMist", "DigitalFlow", "PrismFractal", "None", "Aethereal", "Glitch", "Interference", "Petals", "Pure White Hex", "Azure Trace", "Gold Trace", "Emerald Trace", "Violet Trace", "Crimson Trace", "resonance", "silver", "void"]
+    ? ["Obsidian", "Silver", "Gold", "Sakura", "RoseGold", "PearlWhite", "Moonlight", "Grace", "Silk", "Emerald", "Platinum", "Dynamic", "Crimson", "Void", "ImperialGold", "Default", "PastelSakura", "PearlVeil", "SilkSheet", "GraceGradient", "CrystalGlass", "Carbon", "BrushedMetal", "MonochromeGrid", "Stardust", "RoyalGold", "Nebula", "SilkBlur", "DigitalFlow", "PrismFractal", "None", "Sparkle", "FallingFlowers", "Feathers", "Bubbles", "Ribbons", "Glitch", "Petals", "Snow", "Aethereal", "Scanline", "Interference", "Dust", "Aurora", "Singularity", "WhiteMist", "AzureFlame", "GoldenHalo", "VioletHaze", "EmeraldDust", "CrimsonFlare", "VoidEclipse", "PrismGlow", "CyberGrid", "Pure White Hex", "Azure Trace", "Emerald Trace", "Ruby Trace", "Gold Trace", "Violet Trace", "Crimson Trace", "Shadow Trace", "Prism Trace", "Void Trace", "resonance", "click", "wind", "water", "silver", "crystal", "deep", "heaven", "void", "omega"]
     : (Array.isArray(user.owned_assets) ? user.owned_assets : []);
   
   const assetPricesConfig = await prisma.systemConfig.findUnique({
@@ -80,8 +80,8 @@ export async function getUserStatus(email: string | null | undefined) {
     exp_max: isFixer ? "10000" : "1000", // EXPの上限表示用
     rank: isFixer ? "Fixer" : user.rank,
     role: isFixer ? "fixer" : user.role, // Force role to fixer in UI
-    last_daily_at: user.last_daily_at,
-    last_read_news_at: user.last_read_news_at,
+    last_daily_at: user.last_daily_at ? user.last_daily_at.toISOString() : null,
+    last_read_news_at: user.last_read_news_at ? user.last_read_news_at.toISOString() : null,
     titles: titles,
     owned_assets: ownedAssets,
     asset_prices: assetPrices,
