@@ -9,7 +9,16 @@ import { useToast } from "@/components/ui/ConnectionToast";
 export default function IdentityReflection({ user }: { user: any }) {
   const { showToast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
-  const [localOrientation, setLocalOrientation] = useState(user.equipped.orientation);
+  const [localOrientation, setLocalOrientation] = useState(user?.equipped?.orientation || "horizontal");
+
+  const defaultAlign = {
+    company: "center",
+    title: "center",
+    name: "center",
+    reading: "center",
+    phone: "center",
+    email: "center"
+  };
 
   const updateOrientation = async (orientation: 'horizontal' | 'vertical') => {
     if (orientation === localOrientation) return;
@@ -21,7 +30,7 @@ export default function IdentityReflection({ user }: { user: any }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          equipped: { ...user.equipped, orientation } 
+          equipped: { ...(user?.equipped || {}), orientation } 
         })
       });
 
@@ -29,18 +38,20 @@ export default function IdentityReflection({ user }: { user: any }) {
         showToast(`向きを変更しました`, "success");
         window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
       } else {
-        setLocalOrientation(user.equipped.orientation); // 失敗したら戻す
+        setLocalOrientation(user?.equipped?.orientation || "horizontal"); // 失敗したら戻す
       }
     } catch (e) { 
       console.error(e);
-      setLocalOrientation(user.equipped.orientation);
+      setLocalOrientation(user?.equipped?.orientation || "horizontal");
     }
     finally {
       setIsUpdating(false);
     }
   };
 
-  const currentAligns = localOrientation === 'horizontal' ? user.equipped.hAlign : user.equipped.vAlign;
+  const currentAligns = localOrientation === 'horizontal' 
+    ? (user?.equipped?.hAlign || defaultAlign) 
+    : (user?.equipped?.vAlign || defaultAlign);
 
   return (
     <section className="p-4 md:p-8 border border-white/5 bg-white/[0.01] relative overflow-hidden group">
@@ -56,41 +67,42 @@ export default function IdentityReflection({ user }: { user: any }) {
                   <Smartphone size={12}/>
                </button>
             </div>
-            <Link href={`/p/${user.slug}`} className="text-[8px] uppercase tracking-[0.2em] md:tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity flex items-center gap-2 border-l border-white/10 pl-4 md:pl-6">View Public Page <Share2 size={10}/></Link>
+            <Link href={`/p/${user?.slug}`} className="text-[8px] uppercase tracking-[0.2em] md:tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity flex items-center gap-2 border-l border-white/10 pl-4 md:pl-6">View Public Page <Share2 size={10}/></Link>
           </div>
        </div>
        
        <div className="flex flex-col items-center">
           <div className={`relative ${isUpdating ? 'opacity-20' : ''} transition-all duration-700 min-h-[280px] flex items-center justify-center w-full py-6`}>
              <HexaCardPreview 
-                name={user.name} 
-                reading={user.reading} 
-                company={user.profile.company} 
-                title={user.profile.title} 
-                phone={user.profile.phone} 
-                email={user.profile.contact_email} 
-                logoUrl={user.logo_url} 
-                faceUrl={user.photo_url}
-                frame={user.equipped.frame}
-                background={user.equipped.background}
-                effect={user.equipped.effect}
-                fontFamily={user.equipped.fontFamily}
-                scaleName={user.equipped.scaleName}
-                scaleTitle={user.equipped.scaleTitle}
-                scaleCompany={user.equipped.scaleCompany}
-                sound={user.equipped.sound}
+                name={user?.name || "MEMBER"} 
+                reading={user?.reading} 
+                company={user?.profile?.company} 
+                title={user?.profile?.title} 
+                phone={user?.profile?.phone} 
+                email={user?.profile?.contact_email} 
+                logoUrl={user?.logo_url} 
+                faceUrl={user?.photo_url}
+                frame={user?.equipped?.frame}
+                background={user?.equipped?.background}
+                effect={user?.equipped?.effect}
+                aura={user?.equipped?.aura}
+                fontFamily={user?.equipped?.fontFamily}
+                scaleName={user?.equipped?.scaleName}
+                scaleTitle={user?.equipped?.scaleTitle}
+                scaleCompany={user?.equipped?.scaleCompany}
+                sound={user?.equipped?.sound}
                 orientation={localOrientation}
-                alignCompany={currentAligns.company}
-                alignName={currentAligns.name}
-                alignReading={currentAligns.reading}
-                alignTitle={currentAligns.title}
-                alignPhone={currentAligns.phone}
-                alignEmail={currentAligns.email}
-                link_x={user.link_x}
-                link_instagram={user.link_instagram}
-                link_line={user.link_line}
-                link_facebook={user.link_facebook}
-                bio={user.bio}
+                alignCompany={currentAligns?.company || "center"}
+                alignName={currentAligns?.name || "center"}
+                alignReading={currentAligns?.reading || "center"}
+                alignTitle={currentAligns?.title || "center"}
+                alignPhone={currentAligns?.phone || "center"}
+                alignEmail={currentAligns?.email || "center"}
+                link_x={user?.link_x}
+                link_instagram={user?.link_instagram}
+                link_line={user?.link_line}
+                link_facebook={user?.link_facebook}
+                bio={user?.bio}
              />
           </div>
        </div>
