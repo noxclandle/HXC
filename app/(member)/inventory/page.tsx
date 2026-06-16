@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Music, Sparkles, UserCheck, Check, Lock, Wallet, Trophy, ArrowLeft, MousePointer2, Smartphone, Layout, Type, Palette, Eye, Zap, Gem, Loader2 } from "lucide-react";
+import { Shield, Music, Sparkles, UserCheck, Check, Lock, Wallet, Trophy, ArrowLeft, MousePointer2, Smartphone, Layout, Type, Palette, Eye, Zap, Gem, Loader2, ChevronRight } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -189,6 +189,9 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
           <p className="text-[9px] lg:text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold hidden lg:block">ショップ・アイテム管理</p>
         </div>
         <div className="text-right flex flex-col items-end gap-2">
+           <Link href="/shop" className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60 hover:opacity-100 transition-opacity mb-2 flex items-center gap-2">
+              The Exchange <ChevronRight size={10} />
+           </Link>
            <p className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60">Points</p>
            <div className="flex items-center gap-4 group">
               <p className="text-xl lg:text-3xl font-extralight tracking-[0.2em] text-white">{Number(rtBalance).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
