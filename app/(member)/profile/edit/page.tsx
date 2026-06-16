@@ -60,7 +60,7 @@ export default function ProfileEditPage() {
 
     // 5MB以上の生ファイルは、ブラウザ側での処理自体に負荷がかかるため一旦ガード
     if (file.size > 10 * 1024 * 1024) {
-      showToast("File too large / 10MB以下の画像を選択してください", "error");
+      showToast("10MB以下の画像を選択してください", "error");
       return;
     }
 
@@ -93,10 +93,10 @@ export default function ProfileEditPage() {
       
       // 4. DB保存用のフィールドをR2のURLで更新
       updateField(type === "face" ? "faceUrl" : "logoUrl", uploadData.url);
-      showToast("Image Uploaded / 画像をアップロードしました", "success");
+      showToast("画像をアップロードしました", "success");
     } catch (err) {
       console.error(err);
-      showToast("Upload Failed / アップロードに失敗しました", "error");
+      showToast("アップロードに失敗しました", "error");
     } finally {
       setIsUploading(null);
     }
@@ -245,19 +245,19 @@ export default function ProfileEditPage() {
 
       if (res.ok) {
         setSaveStatus("saved");
-        showToast("Synchronized / 情報を同期しました", "success");
+        showToast("保存しました", "success");
         setTimeout(() => setSaveStatus("idle"), 2000);
       } else {
         const errData = await res.json();
         setSaveStatus("error");
         // サーバーからの具体的なエラーメッセージを表示
-        showToast(errData.error || "Synchronization Failed / 同期に失敗しました", "error");
+        showToast(errData.error || "保存に失敗しました", "error");
         console.error("Auto-save sync error:", errData);
       }
       } catch (err) {
       console.error("Auto-save network error:", err);
       setSaveStatus("error");
-      showToast("Network Error / 通信エラーが発生しました", "error");
+      showToast("通信エラーが発生しました", "error");
       }
       }, [showToast]);
 
@@ -298,7 +298,7 @@ export default function ProfileEditPage() {
       <header className="mb-8 lg:mb-16 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
         <div className="space-y-4 w-full lg:w-auto">
           <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.2em] lg:tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity mb-4 lg:mb-8 text-white">
-            <ArrowLeft size={12} /> 拠点へ戻る
+            <ArrowLeft size={12} /> ホームへ戻る
           </Link>
           <div className="flex flex-wrap items-center gap-4 lg:gap-6">
             <h1 className="text-2xl lg:text-5xl tracking-[0.2em] lg:tracking-[0.5em] uppercase font-extralight text-white">プロフィール編集</h1>
@@ -343,7 +343,7 @@ export default function ProfileEditPage() {
               </div>
 
               <div className="lg:hidden text-center mt-[-15%] pb-1">
-                 <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">Live Preview</p>
+                 <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">プレビュー</p>
               </div>
            </div>
         </div>
