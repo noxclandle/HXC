@@ -1,5 +1,3 @@
-import { Shield, Music, Sparkles, MousePointer2, Smartphone, Layout, Palette, Trophy, Zap } from "lucide-react";
-
 export interface Asset {
   id: string;
   name: string;
@@ -11,13 +9,13 @@ export interface Asset {
 }
 
 export const CATEGORIES = [
-  { id: "frame", name: "フレーム", icon: Shield, sub: "外枠" },
-  { id: "aura", name: "オーラ", icon: Zap, sub: "オーラ" },
-  { id: "background", name: "背景", icon: Palette, sub: "背景" },
-  { id: "effect", name: "エフェクト", icon: Sparkles, sub: "エフェクト" },
-  { id: "title", name: "称号", icon: Trophy, sub: "称号" },
-  { id: "pointer", name: "クリック演出", icon: MousePointer2, sub: "クリック演出" },
-  { id: "sound", name: "音響", icon: Music, sub: "音響" },
+  { id: "frame", name: "フレーム", sub: "外枠" },
+  { id: "aura", name: "オーラ", sub: "オーラ" },
+  { id: "background", name: "背景", sub: "背景" },
+  { id: "effect", name: "エフェクト", sub: "エフェクト" },
+  { id: "title", name: "称号", sub: "称号" },
+  { id: "pointer", name: "クリック演出", sub: "クリック演出" },
+  { id: "sound", name: "音響", sub: "音響" },
 ];
 
 export const ASSETS: Asset[] = [
