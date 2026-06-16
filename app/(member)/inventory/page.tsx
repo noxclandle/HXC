@@ -29,19 +29,19 @@ interface Asset {
   cost?: number;
 }
 const CATEGORIES = [
-  { id: "frame", name: "Frames", icon: Shield, sub: "外枠" },
-  { id: "aura", name: "Auras", icon: Zap, sub: "オーラ" },
-  { id: "background", name: "Backgrounds", icon: Palette, sub: "背景" },
-  { id: "effect", name: "Effects", icon: Sparkles, sub: "エフェクト" },
-  { id: "title", name: "Titles / 称号", icon: Trophy, sub: "称号" },
-  { id: "pointer", name: "Interactions", icon: MousePointer2, sub: "クリック演出" },
-  { id: "sound", name: "Sounds", icon: Music, sub: "音響" },
+  { id: "frame", name: "フレーム", icon: Shield, sub: "外枠" },
+  { id: "aura", name: "オーラ", icon: Zap, sub: "オーラ" },
+  { id: "background", name: "背景", icon: Palette, sub: "背景" },
+  { id: "effect", name: "エフェクト", icon: Sparkles, sub: "エフェクト" },
+  { id: "title", name: "称号", icon: Trophy, sub: "称号" },
+  { id: "pointer", name: "クリック演出", icon: MousePointer2, sub: "クリック演出" },
+  { id: "sound", name: "音響", icon: Music, sub: "音響" },
 ];
 
 const RT_PACKS = [
-  { id: "rt_small", price: 1000, rt: 2000, label: "2,000 RT Pack", description: "基本的なポイント補充。1回のアセット購入に。" },
-  { id: "rt_medium", price: 5000, rt: 11000, label: "11,000 RT Pack", description: "推奨パック。広範なカスタマイズを可能にします。", popular: true },
-  { id: "rt_large", price: 10000, rt: 23000, label: "23,000 RT Pack", description: "最大限の補充。すべてのアイテムを揃える方に。" },
+  { id: "rt_small", price: 1000, rt: 2000, label: "2,000 ポイント", description: "基本的なポイント補充。1回のアセット購入に。" },
+  { id: "rt_medium", price: 5000, rt: 11000, label: "11,000 ポイント", description: "推奨パック。広範なカスタマイズを可能にします。", popular: true },
+  { id: "rt_large", price: 10000, rt: 23000, label: "23,000 ポイント", description: "最大限の補充。すべてのアイテムを揃える方に。" },
 ];
 
 function InventoryContent({ initialStats }: { initialStats: any }) {
@@ -113,14 +113,14 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
       });
       if (res.ok) {
         // 保存成功時はトーストのみ表示（微かな振動は既に実行済み）
-        showToast("Synchronized / 宝物庫と同期しました", "success");
+        showToast("保存しました", "success");
         window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
       } else {
         throw new Error("Failed to sync");
       }
     } catch (e) {
       console.error(e);
-      showToast("Sync Error / 同期に失敗しました。再試行してください。", "error");
+      showToast("保存に失敗しました。再試行してください。", "error");
       // 必要に応じてfetchDataを再度呼び出して最新状態に戻す
       fetchData();
     } finally {
@@ -139,14 +139,14 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
       });
       const data = await res.json();
       if (res.ok) {
-        showToast(`Item Unlocked: ${asset.name}`, "success");
+        showToast(`解放しました: ${asset.name}`, "success");
         setRTBalance(data.rt_balance);
         setOwnedAssets(data.owned_assets);
         const newEquipped = { ...equipped, [activeCategory as keyof typeof equipped]: asset.id };
         setEquipped(newEquipped);
         handleCommit(newEquipped);
       } else {
-        showToast(data.error || "Unlock failed", "error");
+        showToast(data.error || "解放に失敗しました", "error");
       }
     } catch (err) { console.error(err); }
     finally { setUnlockingAsset(null); setConfirmingAsset(null); }
@@ -363,10 +363,10 @@ function InventoryContent({ initialStats }: { initialStats: any }) {
                       if (data.url) {
                         window.location.href = data.url;
                       } else {
-                        showToast(data.error || "Connection failed.", "error");
+                        showToast(data.error || "接続に失敗しました", "error");
                       }
                     } catch (e) {
-                      showToast("Gateway error.", "error");
+                      showToast("通信エラー", "error");
                     }
                   }}
                   className="group p-8 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-azure-500/40 transition-all text-left flex flex-col gap-4 relative overflow-hidden"

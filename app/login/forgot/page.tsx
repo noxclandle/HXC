@@ -29,10 +29,10 @@ export default function ForgotPasswordPage() {
         setIsSent(true);
       } else {
         const data = await res.json();
-        setError(data.error || "Failed to process request.");
+        setError(data.error || "リクエストの処理に失敗しました。");
       }
     } catch (err) {
-      setError("Connection error. Please try again.");
+      setError("通信エラーが発生しました。再試行してください。");
     } finally {
       setIsLoading(false);
     }
@@ -53,8 +53,7 @@ export default function ForgotPasswordPage() {
             height={80} 
             className="opacity-40 mb-10 object-contain" 
           />
-          <h1 className="text-2xl tracking-[0.8em] uppercase font-extralight mb-2">Reset</h1>
-          <p className="text-[8px] tracking-[0.4em] opacity-20 uppercase font-bold">パスワード再設定</p>
+          <h1 className="text-2xl tracking-[0.8em] uppercase font-extralight mb-2">パスワード再設定</h1>
         </div>
 
         <AnimatePresence mode="wait">
@@ -83,7 +82,7 @@ export default function ForgotPasswordPage() {
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 opacity-20 group-focus-within:opacity-100 transition-opacity" size={14} />
                 <input
                   type="email"
-                  placeholder="EMAIL ADDRESS"
+                  placeholder="メールアドレス"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -96,7 +95,7 @@ export default function ForgotPasswordPage() {
                   disabled={isLoading}
                   className={`w-full py-5 bg-white text-void text-[10px] font-bold tracking-[0.8em] uppercase hover:bg-emerald-50 transition-all shadow-2xl relative overflow-hidden ${isLoading && 'opacity-50'}`}
                 >
-                  {isLoading ? "Sending..." : "Send Reset Link"}
+                  {isLoading ? "送信中..." : "リセットリンクを送信"}
                 </button>
                 <button 
                   type="button"
@@ -104,7 +103,7 @@ export default function ForgotPasswordPage() {
                   className="w-full flex items-center justify-center gap-2 opacity-30 hover:opacity-100 transition-opacity"
                 >
                   <ArrowLeft size={12} />
-                  <span className="text-[8px] tracking-[0.4em] uppercase font-bold">Back to Login</span>
+                  <span className="text-[8px] tracking-[0.4em] font-bold">ログイン画面へ戻る</span>
                 </button>
               </div>
             </motion.form>
@@ -119,7 +118,7 @@ export default function ForgotPasswordPage() {
                 <CheckCircle className="text-emerald-500" size={48} strokeWidth={1} />
               </div>
               <div className="space-y-4">
-                <h2 className="text-sm tracking-[0.4em] uppercase">Email Sent</h2>
+                <h2 className="text-sm tracking-[0.4em] uppercase">送信完了</h2>
                 <p className="text-[9px] tracking-[0.2em] opacity-40 leading-relaxed uppercase">
                   再設定用のリンクを送信しました。<br/>
                   メールを確認してください。
@@ -127,9 +126,9 @@ export default function ForgotPasswordPage() {
               </div>
               <button 
                 onClick={() => router.push("/login")}
-                className="w-full py-5 border border-moonlight/10 text-[10px] font-bold tracking-[0.8em] uppercase hover:bg-white/5 transition-all"
+                className="w-full py-5 border border-moonlight/10 text-[10px] font-bold tracking-[0.8em] hover:bg-white/5 transition-all"
               >
-                Return to Login
+                ログイン画面へ戻る
               </button>
             </motion.div>
           )}

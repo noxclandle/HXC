@@ -72,8 +72,7 @@ function ResetPasswordContent() {
             height={80} 
             className="opacity-40 mb-10 object-contain" 
           />
-          <h1 className="text-2xl tracking-[0.8em] uppercase font-extralight mb-2">New Password</h1>
-          <p className="text-[8px] tracking-[0.4em] opacity-20 uppercase font-bold">新しいパスワードの設定</p>
+          <h1 className="text-2xl tracking-[0.8em] uppercase font-extralight mb-2">パスワードの再設定</h1>
         </div>
 
         <AnimatePresence mode="wait">
@@ -89,7 +88,7 @@ function ResetPasswordContent() {
               {error && (
                 <div className="p-4 border border-rose-500/30 bg-rose-500/5 text-rose-400 text-center flex items-center justify-center gap-2">
                   <AlertCircle size={12} />
-                  <p className="text-[9px] tracking-[0.2em] uppercase font-bold">{error}</p>
+                  <p className="text-[9px] tracking-[0.2em] font-bold">{error}</p>
                 </div>
               )}
 
@@ -98,7 +97,7 @@ function ResetPasswordContent() {
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 opacity-20 group-focus-within:opacity-100 transition-opacity" size={14} />
                   <input
                     type="password"
-                    placeholder="NEW PASSWORD"
+                    placeholder="新しいパスワード"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -109,7 +108,7 @@ function ResetPasswordContent() {
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 opacity-20 group-focus-within:opacity-100 transition-opacity" size={14} />
                   <input
                     type="password"
-                    placeholder="CONFIRM NEW PASSWORD"
+                    placeholder="新しいパスワード (確認)"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
@@ -122,7 +121,7 @@ function ResetPasswordContent() {
                 disabled={isLoading}
                 className={`w-full py-5 bg-white text-void text-[10px] font-bold tracking-[0.8em] uppercase hover:bg-emerald-50 transition-all shadow-2xl relative overflow-hidden ${isLoading && 'opacity-50'}`}
               >
-                {isLoading ? "Resetting..." : "Reset Password"}
+                {isLoading ? "設定中..." : "パスワードを更新"}
               </button>
             </motion.form>
           ) : (
@@ -136,8 +135,8 @@ function ResetPasswordContent() {
                 <CheckCircle className="text-emerald-500" size={48} strokeWidth={1} />
               </div>
               <div className="space-y-4">
-                <h2 className="text-sm tracking-[0.4em] uppercase">Password Updated</h2>
-                <p className="text-[9px] tracking-[0.2em] opacity-40 leading-relaxed uppercase">
+                <h2 className="text-sm tracking-[0.4em] uppercase">更新完了</h2>
+                <p className="text-[9px] tracking-[0.2em] opacity-40 leading-relaxed">
                   パスワードが更新されました。<br/>
                   新しいパスワードでログインしてください。
                 </p>
@@ -146,7 +145,7 @@ function ResetPasswordContent() {
                 onClick={() => router.push("/login")}
                 className="w-full py-5 bg-white text-void text-[10px] font-bold tracking-[0.8em] uppercase hover:bg-emerald-50 transition-all"
               >
-                Login Now
+                ログイン画面へ
               </button>
             </motion.div>
           )}

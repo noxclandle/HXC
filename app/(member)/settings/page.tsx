@@ -63,15 +63,15 @@ export default function SettingsPage() {
   return (
     <div className="max-w-6xl mx-auto pt-24 px-6 pb-24 text-moonlight">
       <header className="mb-16">
-        <h1 className="text-3xl tracking-[0.4em] uppercase mb-2 font-extralight">Adjust</h1>
-        <p className="text-xs tracking-widest opacity-40 uppercase italic">Customizing your physical reflection.</p>
+        <h1 className="text-3xl tracking-[0.4em] mb-2 font-extralight">設定</h1>
+        <p className="text-xs tracking-widest opacity-40">アカウントとシステムの詳細設定</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-start">
         {/* Left: Live Preview Mirror */}
         <div className="lg:col-span-1 sticky top-32 space-y-8">
           <div>
-            <p className="text-[8px] uppercase tracking-[0.4em] opacity-40 mb-6 text-center italic">Digital Mirror (Live Preview)</p>
+            <p className="text-[8px] tracking-[0.4em] opacity-40 mb-6 text-center">現在の状態</p>
             <div className="scale-90 origin-top">
               <HexaCardPreview 
                 name={session?.user?.name || "MEMBER"} 
@@ -92,8 +92,8 @@ export default function SettingsPage() {
         <div className="lg:col-span-2 space-y-16">
           {/* Frame Selection */}
           <div>
-            <h2 className="text-[10px] tracking-[0.3em] uppercase opacity-40 mb-6 flex items-center gap-2">
-              <Zap size={14} /> Active Frame / 外枠
+            <h2 className="text-[10px] tracking-[0.3em] opacity-40 mb-6 flex items-center gap-2">
+              <Zap size={14} /> 外枠設定
             </h2>
             <div className="grid grid-cols-2 gap-4">
                {[
@@ -117,39 +117,39 @@ export default function SettingsPage() {
           </div>
 
           <div className="pt-8 border-t border-white/5 flex justify-end">
-             <button className="px-16 py-5 bg-white text-void text-[10px] tracking-[0.6em] uppercase font-bold hover:bg-azure-50 transition-all shadow-xl">
-               Confirm Configuration
+             <button className="px-16 py-5 bg-white text-void text-[10px] tracking-[0.6em] font-bold hover:bg-azure-50 transition-all shadow-xl">
+               設定を保存する
              </button>
           </div>
 
           {/* Support Section */}
           <div className="pt-24 border-t border-white/5">
-            <h2 className="text-[10px] tracking-[0.3em] uppercase opacity-40 mb-8 flex items-center gap-2">
-              <Brain size={14} /> Support & Feedback / 不具合・要望
+            <h2 className="text-[10px] tracking-[0.3em] opacity-40 mb-8 flex items-center gap-2">
+              <Brain size={14} /> 不具合・要望
             </h2>
             
             <form onSubmit={handleReport} className="space-y-6 max-w-xl">
               <div className="space-y-2">
-                <label className="text-[8px] uppercase tracking-widest opacity-30">Category</label>
+                <label className="text-[8px] tracking-widest opacity-30">カテゴリー</label>
                 <select 
                   value={reportReason}
                   onChange={(e) => setReportReason(e.target.value)}
-                  className="w-full bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest uppercase outline-none focus:border-azure-400 transition-all"
+                  className="w-full bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-azure-400 transition-all"
                   required
                 >
-                  <option value="" className="bg-void">Select category...</option>
-                  <option value="BUG" className="bg-void">Bug Report / 不具合</option>
-                  <option value="REQUEST" className="bg-void">Feature Request / 要望</option>
-                  <option value="OTHER" className="bg-void">Other / その他</option>
+                  <option value="" className="bg-void">カテゴリーを選択...</option>
+                  <option value="BUG" className="bg-void">不具合の報告</option>
+                  <option value="REQUEST" className="bg-void">機能の要望</option>
+                  <option value="OTHER" className="bg-void">その他</option>
                 </select>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[8px] uppercase tracking-widest opacity-30">Details</label>
+                <label className="text-[8px] tracking-widest opacity-30">詳細</label>
                 <textarea 
                   value={reportDetails}
                   onChange={(e) => setReportDetails(e.target.value)}
-                  placeholder="Describe the situation..."
+                  placeholder="詳細をご記入ください"
                   className="w-full bg-white/[0.02] border border-white/10 p-4 h-32 text-[10px] tracking-widest outline-none focus:border-azure-400 transition-all"
                 />
               </div>
@@ -157,9 +157,9 @@ export default function SettingsPage() {
               <button 
                 type="submit"
                 disabled={isReporting}
-                className="w-full py-4 border border-azure-400/30 text-azure-400 text-[9px] tracking-[0.4em] uppercase font-bold hover:bg-azure-400 hover:text-white transition-all disabled:opacity-20"
+                className="w-full py-4 border border-azure-400/30 text-azure-400 text-[9px] tracking-[0.4em] font-bold hover:bg-azure-400 hover:text-white transition-all disabled:opacity-20"
               >
-                {isReporting ? "Transmitting..." : "Submit Report"}
+                {isReporting ? "送信中..." : "報告を送信する"}
               </button>
 
               <AnimatePresence>
@@ -168,9 +168,9 @@ export default function SettingsPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className="text-[9px] text-azure-400 tracking-widest text-center uppercase"
+                    className="text-[9px] text-azure-400 tracking-widest text-center"
                   >
-                    Report successfully logged. Thank you for your resonance.
+                    報告を送信しました。ご協力ありがとうございます。
                   </motion.p>
                 )}
               </AnimatePresence>
@@ -179,16 +179,16 @@ export default function SettingsPage() {
 
           {/* Danger Zone */}
           <div className="pt-24 border-t border-rose-500/10">
-            <h2 className="text-[10px] tracking-[0.3em] uppercase text-rose-500/50 mb-8 flex items-center gap-2">
-              <Lock size={14} className="text-rose-500" /> Identity Erasure / アカウントの削除
+            <h2 className="text-[10px] tracking-[0.3em] text-rose-500/50 mb-8 flex items-center gap-2">
+              <Lock size={14} className="text-rose-500" /> アカウントの削除
             </h2>
             
             <div className="bg-rose-500/5 border border-rose-500/10 p-8 space-y-6 max-w-xl">
                <div className="space-y-2">
-                 <p className="text-[10px] tracking-[0.2em] text-rose-400 uppercase font-bold">Warning / 警告</p>
+                 <p className="text-[10px] tracking-[0.2em] text-rose-400 font-bold">警告</p>
                  <p className="text-[9px] tracking-[0.1em] opacity-40 leading-relaxed">
                    アカウントを削除すると、あなたの全てのデータ（プロフィール、連絡先、RT残高）が永久に消去されます。<br/>
-                   また、紐付いている物理カードは「永久無効化（Dead）」され、二度と使用できなくなります。
+                   また、紐付いている物理カードは「永久無効化」され、二度と使用できなくなります。
                  </p>
                </div>
                
@@ -199,20 +199,20 @@ export default function SettingsPage() {
                        try {
                          const res = await fetch("/api/user/delete", { method: "POST" });
                          if (res.ok) {
-                           alert("Identity erased. Farewell.");
+                           alert("アカウントを削除しました。");
                            window.location.href = "/";
                          } else {
-                           alert("Deletion failed. Connection error.");
+                           alert("削除に失敗しました。");
                          }
                        } catch (e) {
-                         alert("Deletion failed.");
+                         alert("削除に失敗しました。");
                        }
                      }
                    }
                  }}
-                 className="px-8 py-3 border border-rose-500/30 text-rose-500 text-[9px] tracking-[0.4em] uppercase font-bold hover:bg-rose-500 hover:text-white transition-all"
+                 className="px-8 py-3 border border-rose-500/30 text-rose-500 text-[9px] tracking-[0.4em] font-bold hover:bg-rose-500 hover:text-white transition-all"
                >
-                 Erase My Identity
+                 アカウントを削除する
                </button>
             </div>
           </div>
