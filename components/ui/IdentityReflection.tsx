@@ -9,7 +9,13 @@ import { useToast } from "@/components/ui/ConnectionToast";
 export default function IdentityReflection({ user }: { user: any }) {
   const { showToast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
-  const [localOrientation, setLocalOrientation] = useState(user?.equipped?.orientation || "horizontal");
+  
+  // 絶対的な安全網: userオブジェクトが不完全な場合でもクラッシュさせない
+  const safeUser = user || {};
+  const safeEquipped = safeUser.equipped || {};
+  const safeProfile = safeUser.profile || {};
+
+  const [localOrientation, setLocalOrientation] = useState(safeEquipped.orientation || "horizontal");
 
   const defaultAlign = {
     company: "center",
@@ -23,14 +29,14 @@ export default function IdentityReflection({ user }: { user: any }) {
   const updateOrientation = async (orientation: 'horizontal' | 'vertical') => {
     if (orientation === localOrientation) return;
     setIsUpdating(true);
-    setLocalOrientation(orientation); // 即座にUIに反映
+    setLocalOrientation(orientation);
 
     try {
       const res = await fetch("/api/user/equip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          equipped: { ...(user?.equipped || {}), orientation } 
+          equipped: { ...safeEquipped, orientation } 
         })
       });
 
@@ -38,11 +44,11 @@ export default function IdentityReflection({ user }: { user: any }) {
         showToast(`向きを変更しました`, "success");
         window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
       } else {
-        setLocalOrientation(user?.equipped?.orientation || "horizontal"); // 失敗したら戻す
+        setLocalOrientation(safeEquipped.orientation || "horizontal");
       }
     } catch (e) { 
       console.error(e);
-      setLocalOrientation(user?.equipped?.orientation || "horizontal");
+      setLocalOrientation(safeEquipped.orientation || "horizontal");
     }
     finally {
       setIsUpdating(false);
@@ -50,8 +56,8 @@ export default function IdentityReflection({ user }: { user: any }) {
   };
 
   const currentAligns = localOrientation === 'horizontal' 
-    ? (user?.equipped?.hAlign || defaultAlign) 
-    : (user?.equipped?.vAlign || defaultAlign);
+    ? (safeEquipped.hAlign || defaultAlign) 
+    : (safeEquipped.vAlign || defaultAlign);
 
   return (
     <section className="p-4 md:p-8 border border-white/5 bg-white/[0.01] relative overflow-hidden group">
@@ -67,30 +73,30 @@ export default function IdentityReflection({ user }: { user: any }) {
                   <Smartphone size={12}/>
                </button>
             </div>
-            <Link href={`/p/${user?.slug}`} className="text-[8px] uppercase tracking-[0.2em] md:tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity flex items-center gap-2 border-l border-white/10 pl-4 md:pl-6">View Public Page <Share2 size={10}/></Link>
+            <Link href={`/p/${safeUser.slug || 'unknown'}`} className="text-[8px] uppercase tracking-[0.2em] md:tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity flex items-center gap-2 border-l border-white/10 pl-4 md:pl-6">View Public Page <Share2 size={10}/></Link>
           </div>
        </div>
        
        <div className="flex flex-col items-center">
           <div className={`relative ${isUpdating ? 'opacity-20' : ''} transition-all duration-700 min-h-[280px] flex items-center justify-center w-full py-6`}>
              <HexaCardPreview 
-                name={user?.name || "MEMBER"} 
-                reading={user?.reading} 
-                company={user?.profile?.company} 
-                title={user?.profile?.title} 
-                phone={user?.profile?.phone} 
-                email={user?.profile?.contact_email} 
-                logoUrl={user?.logo_url} 
-                faceUrl={user?.photo_url}
-                frame={user?.equipped?.frame}
-                background={user?.equipped?.background}
-                effect={user?.equipped?.effect}
-                aura={user?.equipped?.aura}
-                fontFamily={user?.equipped?.fontFamily}
-                scaleName={user?.equipped?.scaleName}
-                scaleTitle={user?.equipped?.scaleTitle}
-                scaleCompany={user?.equipped?.scaleCompany}
-                sound={user?.equipped?.sound}
+                name={safeUser.name || "MEMBER"} 
+                reading={safeUser.reading} 
+                company={safeProfile.company} 
+                title={safeProfile.title} 
+                phone={safeProfile.phone} 
+                email={safeProfile.contact_email} 
+                logoUrl={safeUser.logo_url} 
+                faceUrl={safeUser.photo_url}
+                frame={safeEquipped.frame}
+                background={safeEquipped.background}
+                effect={safeEquipped.effect}
+                aura={safeEquipped.aura}
+                fontFamily={safeEquipped.fontFamily}
+                scaleName={safeEquipped.scaleName}
+                scaleTitle={safeEquipped.scaleTitle}
+                scaleCompany={safeEquipped.scaleCompany}
+                sound={safeEquipped.sound}
                 orientation={localOrientation}
                 alignCompany={currentAligns?.company || "center"}
                 alignName={currentAligns?.name || "center"}
@@ -98,11 +104,11 @@ export default function IdentityReflection({ user }: { user: any }) {
                 alignTitle={currentAligns?.title || "center"}
                 alignPhone={currentAligns?.phone || "center"}
                 alignEmail={currentAligns?.email || "center"}
-                link_x={user?.link_x}
-                link_instagram={user?.link_instagram}
-                link_line={user?.link_line}
-                link_facebook={user?.link_facebook}
-                bio={user?.bio}
+                link_x={safeProfile.link_x || safeUser.link_x}
+                link_instagram={safeProfile.link_instagram || safeUser.link_instagram}
+                link_line={safeProfile.link_line || safeUser.link_line}
+                link_facebook={safeProfile.link_facebook || safeUser.link_facebook}
+                bio={safeProfile.bio || safeUser.bio}
              />
           </div>
        </div>
