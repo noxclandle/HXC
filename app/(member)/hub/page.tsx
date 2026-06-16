@@ -39,10 +39,19 @@ async function HubLoader() {
 
   if (!stats) redirect("/activate");
 
+  const serializedNews = news[0] ? {
+    id: news[0].id,
+    title: news[0].title,
+    content: news[0].content,
+    type: news[0].type,
+    created_at: news[0].created_at.toISOString(),
+    updated_at: news[0].updated_at.toISOString()
+  } : null;
+
   return (
     <HubClientUI 
       initialStats={stats} 
-      initialNews={news[0] || null} 
+      initialNews={serializedNews} 
     />
   );
 }

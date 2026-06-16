@@ -7,7 +7,6 @@ import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import MonthlyReport from "@/components/ui/MonthlyReport";
 import IdentityReflection from "@/components/ui/IdentityReflection";
-import GeometricAngel from "@/components/ui/GeometricAngel";
 import { useToast } from "@/components/ui/ConnectionToast";
 
 export default function HubClientUI({ 
@@ -202,7 +201,7 @@ export default function HubClientUI({
                    <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100">Contacts</h2>
                    <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-bronze-300 group-hover:opacity-100">名刺帳・ライブラリ</p>
                 </div>
-                < Book size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
+                <Book size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
              </Link>
           </div>
         </div>
