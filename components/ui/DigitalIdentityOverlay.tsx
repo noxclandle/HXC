@@ -26,8 +26,10 @@ interface DigitalCardProps {
 export default function DigitalIdentityOverlay({ user }: DigitalCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [profileUrl, setProfileUrl] = useState("");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     if (typeof window !== "undefined") {
       setProfileUrl(`${window.location.origin}/p/${user.slug}`);
     }
@@ -107,7 +109,7 @@ export default function DigitalIdentityOverlay({ user }: DigitalCardProps) {
                     <div className="absolute inset-0 bg-gradient-to-t from-white/[0.03] to-transparent animate-pulse" />
                   </div>
                 )}
-                {effect === "Petals" && (
+                {effect === "Petals" && mounted && (
                   <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-50">
                      {[...Array(4)].map((_, i) => (
                        <div key={i} className={`absolute w-1 h-1 bg-white/40 rounded-full animate-float-${i+1}`} style={{ left: `${Math.random() * 100}%`, animationDuration: `${3 + Math.random() * 4}s`, animationDelay: `${Math.random() * 2}s` }} />
