@@ -298,7 +298,7 @@ export default function ProfileEditPage() {
       <header className="mb-8 lg:mb-16 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
         <div className="space-y-4 w-full lg:w-auto">
           <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.2em] lg:tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity mb-4 lg:mb-8 text-white">
-            <ArrowLeft size={12} /> Back to Dashboard / ホームへ戻る
+            <ArrowLeft size={12} /> Back to Atelier / ホームへ戻る
           </Link>
           <div className="flex flex-wrap items-center gap-4 lg:gap-6">
             <h1 className="text-2xl lg:text-5xl tracking-[0.2em] lg:tracking-[0.5em] uppercase font-extralight text-white">Edit Profile / プロフィール編集</h1>
