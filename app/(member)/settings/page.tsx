@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Zap, Brain, Award, Volume2, Lock, Image } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
+import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import { useSession } from "next-auth/react";
 
 export default function SettingsPage() {
@@ -71,8 +72,11 @@ export default function SettingsPage() {
         {/* Left: Live Preview Mirror */}
         <div className="lg:col-span-1 sticky top-32 space-y-8">
           <div>
-            <p className="text-[8px] tracking-[0.4em] opacity-40 mb-6 text-center">現在の状態</p>
-            <div className="scale-90 origin-top">
+            <UnifiedCardContainer 
+              orientation="horizontal"
+              showControls={false}
+              previewLabel="Current Status / 現在の状態"
+            >
               <HexaCardPreview 
                 name={session?.user?.name || "MEMBER"} 
                 title={personality} 
@@ -84,7 +88,7 @@ export default function SettingsPage() {
                 alignPhone="center"
                 alignEmail="center"
               />
-            </div>
+            </UnifiedCardContainer>
           </div>
         </div>
 
@@ -98,123 +102,128 @@ export default function SettingsPage() {
             <div className="grid grid-cols-2 gap-4">
                {[
                  { name: "Obsidian", cost: 0 },
-                 { name: "Gold", cost: 5000 },
-                 { name: "Dynamic", cost: 10000 }
-               ].map((asset) => {
-                 const isUnlocked = unlockedAssets.includes(asset.name);
+                 { name: "Gold", cost: 500 },
+                 { name: "Dynamic", cost: 1000 },
+                 { name: "PearlWhite", cost: 2000 },
+               ].map((item) => {
+                 const isUnlocked = unlockedAssets.includes(item.name);
+                 const isActive = activeBg === item.name;
                  return (
-                   <button 
-                     key={asset.name}
-                     onClick={() => isUnlocked ? setActiveBg(asset.name) : handleUnlock(asset.name, asset.cost)}
-                     className={`p-4 border text-[9px] tracking-[0.4em] uppercase text-left transition-all flex justify-between items-center ${activeBg === asset.name ? 'border-azure-400 bg-azure-400/5' : 'border-white/10 bg-white/[0.02]'}`}
+                   <button
+                     key={item.name}
+                     onClick={() => isUnlocked ? setActiveBg(item.name) : handleUnlock(item.name, item.cost)}
+                     className={`p-6 border text-left transition-all relative overflow-hidden ${
+                       isActive ? "border-azure-500 bg-azure-500/10" : "border-white/5 bg-white/[0.02] hover:bg-white/5"
+                     }`}
                    >
-                     <span className={isUnlocked ? "" : "opacity-40"}>{asset.name}</span>
-                     {!isUnlocked && <span className="flex items-center gap-1 text-[7px] opacity-60"><Lock size={8}/> {asset.cost}</span>}
+                     <p className="text-[10px] tracking-widest uppercase mb-1">{item.name}</p>
+                     <p className="text-[8px] opacity-40">
+                       {isUnlocked ? "Equipped" : `${item.cost} RT`}
+                     </p>
+                     {!isUnlocked && <Lock size={12} className="absolute top-4 right-4 opacity-20" />}
                    </button>
                  );
                })}
             </div>
           </div>
 
-          <div className="pt-8 border-t border-white/5 flex justify-end">
-             <button className="px-16 py-5 bg-white text-void text-[10px] tracking-[0.6em] font-bold hover:bg-azure-50 transition-all shadow-xl">
-               設定を保存する
-             </button>
+          {/* Personality / Title */}
+          <div>
+            <h2 className="text-[10px] tracking-[0.3em] opacity-40 mb-6 flex items-center gap-2">
+              <Brain size={14} /> 性格階級（称号）
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+               {[
+                 { name: "ASSOCIATE", cost: 0 },
+                 { name: "ARCHITECT", cost: 1000 },
+                 { name: "DIRECTOR", cost: 3000 },
+                 { name: "FIXER", cost: 10000 },
+               ].map((item) => {
+                 const isUnlocked = unlockedAssets.includes(item.name);
+                 const isActive = personality === item.name;
+                 return (
+                   <button
+                     key={item.name}
+                     onClick={() => isUnlocked ? setPersonality(item.name) : handleUnlock(item.name, item.cost)}
+                     className={`p-6 border text-left transition-all relative ${
+                       isActive ? "border-bronze-500 bg-bronze-500/10" : "border-white/5 bg-white/[0.02] hover:bg-white/5"
+                     }`}
+                   >
+                     <p className="text-[10px] tracking-widest uppercase mb-1">{item.name}</p>
+                     <p className="text-[8px] opacity-40">
+                       {isUnlocked ? "Active" : `${item.cost} RT`}
+                     </p>
+                     {!isUnlocked && <Lock size={12} className="absolute top-4 right-4 opacity-20" />}
+                   </button>
+                 );
+               })}
+            </div>
           </div>
 
-          {/* Support Section */}
-          <div className="pt-24 border-t border-white/5">
-            <h2 className="text-[10px] tracking-[0.3em] opacity-40 mb-8 flex items-center gap-2">
-              <Brain size={14} /> 不具合・要望
+          {/* Environmental Harmony (Aura) */}
+          <div className="space-y-6">
+            <h2 className="text-[10px] tracking-[0.3em] opacity-40 flex items-center gap-2">
+              <Sparkles size={14} /> 環境調和率（オーラ）
             </h2>
-            
-            <form onSubmit={handleReport} className="space-y-6 max-w-xl">
-              <div className="space-y-2">
-                <label className="text-[8px] tracking-widest opacity-30">カテゴリー</label>
-                <select 
-                  value={reportReason}
-                  onChange={(e) => setReportReason(e.target.value)}
-                  className="w-full bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-azure-400 transition-all"
-                  required
-                >
-                  <option value="" className="bg-void">カテゴリーを選択...</option>
-                  <option value="BUG" className="bg-void">不具合の報告</option>
-                  <option value="REQUEST" className="bg-void">機能の要望</option>
-                  <option value="OTHER" className="bg-void">その他</option>
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[8px] tracking-widest opacity-30">詳細</label>
-                <textarea 
-                  value={reportDetails}
-                  onChange={(e) => setReportDetails(e.target.value)}
-                  placeholder="詳細をご記入ください"
-                  className="w-full bg-white/[0.02] border border-white/10 p-4 h-32 text-[10px] tracking-widest outline-none focus:border-azure-400 transition-all"
+            <div className="space-y-4">
+              <div className="h-1 bg-white/5 w-full relative">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${aura}%` }}
+                  className="h-full bg-azure-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" 
                 />
               </div>
-
-              <button 
-                type="submit"
-                disabled={isReporting}
-                className="w-full py-4 border border-azure-400/30 text-azure-400 text-[9px] tracking-[0.4em] font-bold hover:bg-azure-400 hover:text-white transition-all disabled:opacity-20"
-              >
-                {isReporting ? "送信中..." : "報告を送信する"}
-              </button>
-
-              <AnimatePresence>
-                {reportSuccess && (
-                  <motion.p 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="text-[9px] text-azure-400 tracking-widest text-center"
-                  >
-                    報告を送信しました。ご協力ありがとうございます。
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </form>
+              <div className="flex justify-between items-center text-[8px] tracking-[0.2em] opacity-40 uppercase">
+                <span>Dissonance</span>
+                <span>Harmony: {aura}%</span>
+              </div>
+              <input 
+                type="range" 
+                value={aura} 
+                onChange={(e) => setAura(parseInt(e.target.value))} 
+                className="w-full accent-azure-500 bg-transparent cursor-pointer"
+              />
+            </div>
           </div>
 
-          {/* Danger Zone */}
-          <div className="pt-24 border-t border-rose-500/10">
-            <h2 className="text-[10px] tracking-[0.3em] text-rose-500/50 mb-8 flex items-center gap-2">
-              <Lock size={14} className="text-rose-500" /> アカウントの削除
+          {/* Account Management (Danger Zone) */}
+          <div className="pt-16 border-t border-white/5">
+            <h2 className="text-[10px] tracking-[0.3em] text-red-400 mb-8 uppercase flex items-center gap-2">
+              <Volume2 size={14} /> 環境報告 / サポート
             </h2>
-            
-            <div className="bg-rose-500/5 border border-rose-500/10 p-8 space-y-6 max-w-xl">
+            <form onSubmit={handleReport} className="space-y-6">
                <div className="space-y-2">
-                 <p className="text-[10px] tracking-[0.2em] text-rose-400 font-bold">警告</p>
-                 <p className="text-[9px] tracking-[0.1em] opacity-40 leading-relaxed">
-                   アカウントを削除すると、あなたの全てのデータ（プロフィール、連絡先、RT残高）が永久に消去されます。<br/>
-                   また、紐付いている物理カードは「永久無効化」され、二度と使用できなくなります。
-                 </p>
+                 <label className="text-[8px] tracking-widest opacity-40 uppercase">報告内容</label>
+                 <select 
+                   value={reportReason}
+                   onChange={(e) => setReportReason(e.target.value)}
+                   className="w-full bg-white/5 border border-white/10 p-4 text-xs tracking-widest outline-none focus:border-white/20"
+                 >
+                   <option value="">選択してください</option>
+                   <option value="UI_GLITCH">表示の乱れ (UI Glitch)</option>
+                   <option value="SYNC_ERROR">同期エラー (Sync Error)</option>
+                   <option value="FEATURE_REQUEST">機能提案 (Feature Request)</option>
+                   <option value="OTHER">その他 (Other)</option>
+                 </select>
                </div>
-               
+               <div className="space-y-2">
+                 <label className="text-[8px] tracking-widest opacity-40 uppercase">詳細</label>
+                 <textarea 
+                   value={reportDetails}
+                   onChange={(e) => setReportDetails(e.target.value)}
+                   className="w-full bg-white/5 border border-white/10 p-4 text-xs tracking-widest outline-none focus:border-white/20 h-32 resize-none"
+                   placeholder="状況を詳しく教えてください..."
+                 />
+               </div>
                <button 
-                 onClick={async () => {
-                   if (confirm("本当にアカウントを削除しますか？\nこの操作は取り消せません。\n物理カードも無効化されます。")) {
-                     if (confirm("最終確認です。全てのデータが消去されます。よろしいですか？")) {
-                       try {
-                         const res = await fetch("/api/user/delete", { method: "POST" });
-                         if (res.ok) {
-                           alert("アカウントを削除しました。");
-                           window.location.href = "/";
-                         } else {
-                           alert("削除に失敗しました。");
-                         }
-                       } catch (e) {
-                         alert("削除に失敗しました。");
-                       }
-                     }
-                   }
-                 }}
-                 className="px-8 py-3 border border-rose-500/30 text-rose-500 text-[9px] tracking-[0.4em] font-bold hover:bg-rose-500 hover:text-white transition-all"
+                 type="submit"
+                 disabled={isReporting || !reportReason}
+                 className="px-8 py-3 border border-white/10 text-[9px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all disabled:opacity-20"
                >
-                 アカウントを削除する
+                 {isReporting ? "送信中..." : "報告を送信"}
                </button>
-            </div>
+               {reportSuccess && <p className="text-[9px] text-emerald-400 tracking-widest uppercase">報告を受領しました。境界の調整を行います。</p>}
+            </form>
           </div>
         </div>
       </div>

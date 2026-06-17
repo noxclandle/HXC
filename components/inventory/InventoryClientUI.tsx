@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, Music, Sparkles, UserCheck, Lock, Wallet, Trophy, ArrowLeft, MousePointer2, Smartphone, Layout, Palette, Eye, Zap, Gem, Loader2, ChevronRight } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
+import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useToast } from "@/components/ui/ConnectionToast";
@@ -280,68 +281,39 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
         <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/98 pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[42vh] lg:h-auto flex items-center justify-center">
-           <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-visible group flex flex-col items-center w-full">
-              {previewAsset && (
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-azure-500 animate-pulse z-50" />
-              )}
-              
-              <div className="absolute top-2 right-6 lg:top-4 lg:right-4 z-30 flex flex-col gap-3 p-2 bg-white/10 lg:bg-white/5 border border-white/10 scale-90 lg:scale-100">
-                 <div className="flex gap-2">
-                    <button onClick={() => setEquipped((prev: any) => ({ ...prev, orientation: 'horizontal' }))} className={`p-1.5 transition-all ${equipped.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
-                        <Layout size={10}/>
-                    </button>
-                    <button onClick={() => setEquipped((prev: any) => ({ ...prev, orientation: 'vertical' }))} className={`p-1.5 transition-all ${equipped.orientation === 'vertical' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
-                        <Smartphone size={10}/>
-                    </button>
-                 </div>
-                 <div className="h-px bg-white/10 w-full" />
-                 <div className="flex gap-2">
-                    <button 
-                      onClick={() => { const next = { ...equipped, textColor: 'white' }; setEquipped(next); handleCommit(next); }} 
-                      className={`w-4 h-4 rounded-full border border-white/20 bg-white transition-all ${equipped.textColor === 'white' ? 'ring-2 ring-azure-500 ring-offset-2 ring-offset-void' : 'opacity-40'}`} 
-                      title="White Text"
-                    />
-                    <button 
-                      onClick={() => { const next = { ...equipped, textColor: 'black' }; setEquipped(next); handleCommit(next); }} 
-                      className={`w-4 h-4 rounded-full border border-white/20 bg-black transition-all ${equipped.textColor === 'black' ? 'ring-2 ring-azure-500 ring-offset-2 ring-offset-void' : 'opacity-40'}`} 
-                      title="Black Text"
-                    />
-                 </div>
-              </div>
-
-              <div className="py-1 lg:py-0 w-full flex justify-center scale-[0.6] xs:scale-[0.7] sm:scale-80 lg:scale-100 origin-center lg:origin-top transition-transform duration-500 relative z-20">
-                <HexaCardPreview 
-                  name={profile?.name || "ARCHITECT"}
-                  reading={profile?.handle || profile?.reading}
-                  company={profile?.profile?.company}
-                  title={profile?.profile?.title}
-                  phone={profile?.profile?.phone}
-                  email={profile?.profile?.contact_email || profile?.email}
-                  logoUrl={profile?.logo_url}
-                  faceUrl={profile?.photo_url}
-                  frame={currentPreview.frame}
-                  background={currentPreview.background}
-                  effect={currentPreview.effect}
-                  aura={currentPreview.aura}
-                  fontFamily={currentPreview.fontFamily}
-                  textColor={currentPreview.textColor}
-                  sound={currentPreview.sound}
-                  orientation={equipped.orientation}
-                  alignCompany={currentAligns.company}
-                  alignName={currentAligns.name}
-                  alignReading={currentAligns.reading}
-                  alignTitle={currentAligns.title}
-                  alignPhone={currentAligns.phone}
-                  alignEmail={currentAligns.email}
-                  bio={profile?.profile?.bio}
-                />
-              </div>
-
-              <div className="lg:hidden text-center mt-[-10%] pb-1 flex flex-col items-center gap-1">
-                 <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">Live Preview / ライブプレビュー</p>
-                 {previewAsset && <span className="text-[6px] text-azure-400 uppercase font-bold tracking-widest animate-pulse">Previewing: {previewAsset.name}</span>}
-              </div>
-           </div>
+           <UnifiedCardContainer 
+             orientation={equipped.orientation}
+             onOrientationChange={(o) => setEquipped((prev: any) => ({ ...prev, orientation: o }))}
+             textColor={equipped.textColor}
+             onTextColorChange={(c) => { const next = { ...equipped, textColor: c }; setEquipped(next); handleCommit(next); }}
+             previewLabel={previewAsset ? `Previewing: ${previewAsset.name}` : "Live Preview / ライブプレビュー"}
+           >
+              <HexaCardPreview 
+                name={profile?.name || "ARCHITECT"}
+                reading={profile?.handle || profile?.reading}
+                company={profile?.profile?.company}
+                title={profile?.profile?.title}
+                phone={profile?.profile?.phone}
+                email={profile?.profile?.contact_email || profile?.email}
+                logoUrl={profile?.logo_url}
+                faceUrl={profile?.photo_url}
+                frame={currentPreview.frame}
+                background={currentPreview.background}
+                effect={currentPreview.effect}
+                aura={currentPreview.aura}
+                fontFamily={currentPreview.fontFamily}
+                textColor={currentPreview.textColor}
+                sound={currentPreview.sound}
+                orientation={equipped.orientation}
+                alignCompany={currentAligns.company}
+                alignName={currentAligns.name}
+                alignReading={currentAligns.reading}
+                alignTitle={currentAligns.title}
+                alignPhone={currentAligns.phone}
+                alignEmail={currentAligns.email}
+                bio={profile?.profile?.bio}
+              />
+           </UnifiedCardContainer>
         </div>
 
         <div className="w-full lg:w-7/12 space-y-8 lg:space-y-10 order-2 lg:order-none">
