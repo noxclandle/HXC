@@ -321,7 +321,7 @@ export default function ProfileEditPage() {
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-20 items-start">
         {/* Preview Container */}
         <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/95 backdrop-blur-lg pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[38vh] lg:h-auto flex items-center justify-center">
-           <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-hidden group flex flex-col items-center w-full">
+           <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-visible group flex flex-col items-center w-full">
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent hidden lg:block" />
               
               <div className="absolute top-2 right-6 lg:top-4 lg:right-4 z-30 flex gap-2 p-1 bg-white/10 lg:bg-white/5 border border-white/10 lg:scale-100">
@@ -335,8 +335,8 @@ export default function ProfileEditPage() {
 
               <div className="py-1 lg:py-0 w-full flex justify-center scale-[0.6] xs:scale-[0.75] sm:scale-85 lg:scale-100 origin-center lg:origin-top transition-transform duration-500">
                 <HexaCardPreview 
-                  name={formData.name || "NAME"} reading={formData.reading} company={formData.company} title={formData.title} phone={formData.phone} email={formData.email} bio={formData.bio} logoUrl={formData.logoUrl} faceUrl={formData.faceUrl} frame={equipped.frame} background={equipped.background} effect={equipped.effect} sound={equipped.sound} orientation={formData.orientation}
-                  link_x={formData.link_x} link_instagram={formData.link_instagram} link_line={formData.link_line} link_facebook={formData.link_facebook}
+                  name={formData.name || "NAME"} reading={formData.reading} company={formData.company} title={formData.title} phone={formData.phone} email={formData.email} bio={formData.bio} logoUrl={formData.logoUrl} faceUrl={formData.faceUrl} frame={equipped.frame} background={equipped.background} effect={equipped.effect} aura={equipped.aura} sound={equipped.sound} orientation={formData.orientation}
+                  link_hp={formData.website} link_x={formData.link_x} link_instagram={formData.link_instagram} link_line={formData.link_line} link_facebook={formData.link_facebook}
                   alignName={currentAligns.name as Alignment} alignReading={currentAligns.reading as Alignment} alignCompany={currentAligns.company as Alignment} alignTitle={currentAligns.title as Alignment} alignPhone={currentAligns.phone as Alignment} alignEmail={currentAligns.email as Alignment}
                   fontFamily={equipped.fontFamily} scaleName={equipped.scaleName} scaleTitle={equipped.scaleTitle} scaleCompany={equipped.scaleCompany}
                 />
