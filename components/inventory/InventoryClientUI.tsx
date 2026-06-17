@@ -390,19 +390,19 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                     return (
                       <div 
                         key={asset.id}
-                        className={`group p-4 lg:p-6 border transition-all relative overflow-hidden ${isActive ? "border-white/40 bg-white/5" : isPreviewing ? "border-azure-500/40 bg-azure-500/5" : "border-white/5 bg-white/[0.01] hover:border-white/20"}`}
+                        className={`group p-4 lg:p-6 border transition-all relative overflow-hidden ${isActive ? "border-azure-500 bg-azure-500/10" : isPreviewing ? "border-azure-400/60 bg-azure-400/5" : "border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.05]"}`}
                       >
                         <div className="flex justify-between items-center relative z-10">
                           <div className="flex items-center gap-4 lg:gap-6">
-                            <div className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center border ${isUnlocked ? "border-white text-white" : "border-white/10 opacity-40"}`}>
+                            <div className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center border ${isUnlocked ? "border-white text-white bg-white/5" : "border-white/20 opacity-60"}`}>
                               {isUnlocked ? <UserCheck size={14} /> : <Lock size={14} />}
                             </div>
                             <div>
                               <div className="flex flex-col lg:items-start gap-1 mb-1">
-                                <h3 className="text-[10px] lg:text-[11px] tracking-[0.4em] uppercase font-bold">{asset.name}</h3>
-                                <span className={`text-[6px] lg:text-[7px] w-fit px-2 py-0.5 border uppercase tracking-widest font-bold ${getRarityStyles(asset.rarity)}`}>{asset.rarity}</span>
+                                <h3 className="text-[10px] lg:text-[11px] tracking-[0.4em] uppercase font-bold text-white">{asset.name}</h3>
+                                <span className={`text-[6px] lg:text-[7px] w-fit px-2 py-0.5 border uppercase tracking-widest font-bold ${getRarityStyles(asset.rarity)} opacity-90`}>{asset.rarity}</span>
                               </div>
-                              <p className="text-[8px] lg:text-[9px] tracking-widest opacity-40 uppercase leading-relaxed max-w-[200px] lg:max-w-md line-clamp-1 lg:line-clamp-none">{asset.description}</p>
+                              <p className="text-[8px] lg:text-[9px] tracking-widest opacity-60 uppercase leading-relaxed max-w-[200px] lg:max-w-md line-clamp-1 lg:line-clamp-none text-white">{asset.description}</p>
                             </div>
                           </div>
 
@@ -410,7 +410,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                             {!isActive && (
                               <button 
                                 onClick={() => handlePreviewAsset(asset)}
-                                className={`p-3 border transition-all ${isPreviewing ? "bg-azure-500 text-white border-azure-500" : "border-white/10 opacity-40 hover:opacity-100 hover:border-white/30"}`}
+                                className={`p-3 border transition-all ${isPreviewing ? "bg-azure-500 text-white border-azure-500" : "border-white/20 opacity-60 hover:opacity-100 hover:border-white hover:bg-white hover:text-black"}`}
                                 title="Try on / お試し着用"
                               >
                                 <Eye size={14} />
@@ -419,7 +419,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                             
                             <button 
                               onClick={() => handleSelectAsset(asset)}
-                              className={`px-4 py-3 border text-[8px] uppercase tracking-[0.2em] font-bold transition-all ${isUnlocked ? (isActive ? "bg-white text-void border-white" : "border-white/20 opacity-40 hover:opacity-100 hover:border-white") : "bg-azure-600/10 border-azure-600/30 text-azure-400"}`}
+                              className={`px-4 py-3 border text-[8px] uppercase tracking-[0.2em] font-bold transition-all ${isUnlocked ? (isActive ? "bg-azure-500 text-white border-azure-500" : "border-white/30 text-white hover:bg-white hover:text-black") : "bg-azure-600/10 border-azure-600/50 text-azure-300"}`}
                             >
                               {isUnlocked ? (isActive ? "Active / 使用中" : "Equip / 装備") : `${cost.toLocaleString()} RT`}
                             </button>
