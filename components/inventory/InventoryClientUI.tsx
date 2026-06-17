@@ -295,6 +295,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
              isUpdating={isResonating}
            >
               <motion.div
+                className="w-full flex justify-center"
                 animate={isResonating ? { 
                   scale: [1, 0.98, 1],
                   filter: ["blur(0px)", "blur(4px)", "blur(0px)"],
