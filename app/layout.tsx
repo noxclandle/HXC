@@ -86,7 +86,7 @@ export default function RootLayout({
                 "@context": "https://schema.org",
                 "@type": "Product",
                 "name": "Hexa Card",
-                "description": "Premium NFC Digital Identity Card System. / プレミアムNFCデジタル名刺システム。",
+                "description": "次世代NFCデジタルアイデンティティ。物理カードとデジタル名刺帳が同期する、1万通り以上のカスタマイズが可能なプレミアムスマート名刺。",
                 "brand": {
                   "@type": "Brand",
                   "name": "Hexa Relation"
@@ -95,6 +95,7 @@ export default function RootLayout({
                   "@type": "Offer",
                   "url": "https://hxc.hexa-relation.com/purchase",
                   "priceCurrency": "JPY",
+                  "price": "3000",
                   "availability": "https://schema.org/InStock"
                 }
               }
