@@ -52,7 +52,7 @@ export default function NewsDetailPage() {
           
           <div className="flex items-center gap-4 mb-6">
              <span className="text-[8px] tracking-[0.4em] uppercase font-bold text-azure-400 bg-azure-500/10 px-2 py-1 border border-azure-500/20">
-                {item.category || "Intel"}
+                {item.type || "Intel"}
              </span>
              <div className="flex items-center gap-2 opacity-20 text-[8px] font-mono uppercase tracking-widest">
                 <Calendar size={10} /> {new Date(item.created_at).toLocaleDateString()}

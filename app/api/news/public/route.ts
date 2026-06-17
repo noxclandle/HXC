@@ -14,9 +14,8 @@ export async function GET() {
       select: {
         id: true,
         title: true,
-        category: true,
+        type: true,
         created_at: true,
-        // We don't send the full content for the list to keep it lightweight
       }
     });
 
