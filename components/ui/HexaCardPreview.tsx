@@ -288,34 +288,35 @@ export default function HexaCardPreview({
       onMouseLeave={() => { x.set(0); y.set(0); }}
       onClick={handleFlip}
     >
-      {/* Aura Layer (Strictly isolated with opposite winding hole mask) */}
-      <div 
-        className="absolute inset-0 pointer-events-none z-0 overflow-visible flex items-center justify-center"
-        style={{ 
-          clipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)',
-          WebkitClipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)'
-        }}
-      >
-         {getAuraLayer()}
-      </div>
-
       <motion.div
         style={{ rotateX, rotateY: finalRotateY, transformStyle: "preserve-3d", width: "100%", height: "100%" }}
         animate={{ scale: isRotating ? 0.96 : 1 }}
         transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
         className="relative z-10"
       >
+        {/* Aura Layer (Now inside rotating box, offset backwards with translateZ) */}
+        <div 
+          className="absolute inset-0 pointer-events-none overflow-visible flex items-center justify-center"
+          style={{ 
+            transform: 'translateZ(-50px)',
+            // 穴あけマスク：名刺の中身を100%透過させず、外側だけ描画する
+            clipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)',
+            WebkitClipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)'
+          }}
+        >
+           {getAuraLayer()}
+        </div>
+
         <motion.div style={{ opacity: glowOpacity, rotateY: 90, backfaceVisibility: "hidden" }} className="absolute inset-0 bg-white/10 blur-3xl z-20 pointer-events-none" />
 
+        {/* Front Face */}
         <div 
           className={`absolute inset-0 overflow-hidden border ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
-          {/* Solid Base to prevent transparency bleed */}
-          <div className="absolute inset-0 bg-[#050505] -z-20" />
-          
-          {/* Background Layer with transparency if needed */}
-          <div className={`absolute inset-0 ${getBackgroundStyle()} -z-10`} />
+          {/* CRITICAL: Pure Opaque Black Background to stop any light bleed */}
+          <div className="absolute inset-0 bg-[#000000] -z-30" />
+          <div className={`absolute inset-0 ${getBackgroundStyle()} -z-20`} />
 
           {getEffectLayer()}
 
@@ -374,15 +375,14 @@ export default function HexaCardPreview({
           )}
         </div>
 
+        {/* Back Face */}
         <div 
           className={`absolute inset-0 flex flex-col justify-between items-center text-center border overflow-hidden ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
         >
-          {/* Solid Base to prevent transparency bleed */}
-          <div className="absolute inset-0 bg-[#050505] -z-20" />
-          
-          {/* Background Layer with transparency if needed */}
-          <div className={`absolute inset-0 ${getBackgroundStyle()} -z-10`} />
+          {/* CRITICAL: Pure Opaque Black Background to stop any light bleed */}
+          <div className="absolute inset-0 bg-[#000000] -z-30" />
+          <div className={`absolute inset-0 ${getBackgroundStyle()} -z-20`} />
 
           {isVertical ? (
             <div className="h-full p-10 md:p-16 flex flex-col justify-between items-center w-full">
