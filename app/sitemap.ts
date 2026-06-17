@@ -82,7 +82,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }));
 
-    return [...staticRoutes, ...dynamicRoutes];
+    // Fetch all published news
+    const announcements = await prisma.announcement.findMany({
+      where: { is_published: true },
+      select: { id: true, updated_at: true }
+    });
+
+    const newsRoutes: MetadataRoute.Sitemap = announcements.map((item) => ({
+      url: `${baseUrl}/news/${item.id}`,
+      lastModified: item.updated_at,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    }));
+
+    return [...staticRoutes, ...dynamicRoutes, ...newsRoutes];
   } catch (error) {
     console.error("Failed to generate dynamic sitemap:", error);
     return staticRoutes; // Fallback to static routes if DB fails
