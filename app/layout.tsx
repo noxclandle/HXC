@@ -65,6 +65,7 @@ export default function RootLayout({
       <body className="bg-void text-moonlight min-h-screen flex flex-col antialiased">
         <NextAuthProvider>
           <ConnectionToastProvider>
+            <ConnectionInteraction />
             <div className="relative z-10 flex-grow flex flex-col">
               <main className="flex-grow">
                 {children}
