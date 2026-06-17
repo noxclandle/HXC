@@ -44,19 +44,28 @@ export default function LandingPage() {
           </Link>
 
           <Link
-            href="/activate"
-            className="px-12 py-5 border border-white/10 tracking-[0.5em] uppercase text-[9px] font-bold text-white/40"
+            href="/features"
+            className="px-12 py-5 border border-white/10 tracking-[0.5em] uppercase text-[9px] font-bold text-white/40 hover:bg-white/5 transition-all"
           >
-            Activate / 有効化
+            Showcase / 機能紹介
           </Link>
         </div>
 
-        <Link 
-          href="/login" 
-          className="mt-4 text-[8px] tracking-[0.4em] uppercase text-white/20 hover:text-azure-400 font-bold"
-        >
-          — Identity Access / ログイン —
-        </Link>
+        <div className="flex flex-col md:flex-row gap-8 items-center">
+          <Link
+            href="/activate"
+            className="text-[9px] tracking-[0.4em] uppercase text-white/40 hover:text-white font-bold transition-colors"
+          >
+            Activate / 有効化
+          </Link>
+
+          <Link 
+            href="/login" 
+            className="text-[9px] tracking-[0.4em] uppercase text-white/20 hover:text-azure-400 font-bold transition-colors"
+          >
+            Identity Access / ログイン
+          </Link>
+        </div>
 
         {/* SEO Contextual Section */}
         <section className="max-w-xs mt-12 opacity-[0.15] group-hover:opacity-30 transition-opacity">
