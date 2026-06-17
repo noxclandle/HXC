@@ -122,14 +122,16 @@ export default function HexaCardPreview({
       case "Moonlight": return "border-[2px] border-indigo-200/50 shadow-[0_0_25px_rgba(199,210,254,0.3)] ring-1 ring-indigo-100/20";
       case "Grace": return "border-[4px] border-white/20 shadow-lg ring-1 ring-white/10 after:absolute after:inset-0 after:border after:border-white/5 after:m-1";
       case "Silk": return "border-[2px] border-slate-200/30 shadow-md ring-1 ring-white/5";
-      case "Dynamic": return "border-[3px] border-azure-500 shadow-lg animate-pulse";
+      case "Dynamic": return "border-[3px] border-azure-500 shadow-[0_0_20px_rgba(59,130,246,0.5)]";
       case "Sakura": return "border-[2px] border-rose-400 shadow-xl ring-1 ring-rose-200/10";
-      case "Emerald": return "border-[2px] border-emerald-400 shadow-xl ring-1 ring-emerald-200/10";
+      case "Emerald": return "border-[2px] border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.5)]";
       case "Platinum": return "border-[4px] border-slate-300 shadow-2xl ring-1 ring-white/20";
-      case "Crimson": return "border-[3px] border-rose-700 shadow-xl ring-1 ring-rose-400/10";
+      case "Crimson": return "border-[3px] border-rose-700 shadow-[0_0_30px_rgba(190,18,60,0.5)]";
       case "Obsidian": return "border-[2px] border-white/10 shadow-2xl ring-1 ring-white/5 bg-black";
       case "Neon": return "border-[2px] border-azure-400 shadow-[0_0_20px_rgba(59,130,246,0.5)] ring-1 ring-azure-300/30";
       case "Gothic": return "border-[3px] border-stone-800 shadow-2xl ring-1 ring-red-900/20 bg-[#050505]";
+      case "Void": return "border-[5px] border-black shadow-[0_0_40px_rgba(255,255,255,0.05)] bg-black";
+      case "ImperialGold": return "border-[6px] border-amber-500 shadow-[0_0_50px_rgba(245,158,11,0.3)] bg-[#050505]";
       default: return "border-white/10";
     }
   };
@@ -151,7 +153,7 @@ export default function HexaCardPreview({
       case "SilkBlur": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:via-transparent before:to-white/5 before:blur-[60px]";
       case "DigitalFlow": return "bg-[#010101] bg-[linear-gradient(rgba(59,130,246,0.1)_1px,transparent_1px)] bg-[size:100%_4px] opacity-100";
       case "PrismFractal": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-tr before:from-rose-500/20 before:via-azure-500/20 before:to-emerald-500/20 opacity-100";
-      default: return "bg-black"; // デフォルトを透明から黒に変更
+      default: return "bg-black";
     }
   };
 
