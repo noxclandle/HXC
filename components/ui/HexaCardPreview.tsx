@@ -524,7 +524,7 @@ export default function HexaCardPreview({
           <div className={`absolute inset-0 ${getBackgroundStyle()} -z-30`} />
 
           {isVertical ? (
-            <div className="h-full p-10 md:p-16 flex flex-col justify-between items-center w-full">
+            <div className="h-full p-10 md:p-16 flex flex-col justify-between items-center w-full absolute inset-0">
               <div />
               <div className="space-y-6 relative z-10 w-full flex flex-col items-center">
                 <div className={`w-28 h-28 md:w-36 md:h-36 rounded-full border ${textColor === 'black' ? 'border-black/10' : 'border-white/10'} flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl relative`}>
@@ -538,7 +538,7 @@ export default function HexaCardPreview({
                   </div>
                 )}
               </div>
-              <div className="flex flex-wrap justify-center gap-8 md:gap-12 pb-8">
+              <div className="flex flex-wrap justify-center gap-8 md:gap-12 pb-8 z-10">
                  {link_hp && <a href={link_hp.startsWith('http') ? link_hp : `https://${link_hp}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-2 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Globe size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">HP</span></a>}
                  {link_x && <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-2 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Twitter size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span></a>}
                  {link_instagram && <a href={link_instagram.startsWith('http') ? link_instagram : `https://instagram.com/${link_instagram}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-2 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Instagram size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Insta</span></a>}
@@ -547,11 +547,11 @@ export default function HexaCardPreview({
               </div>
             </div>
           ) : (
-            <div className="h-full p-6 md:p-8 flex flex-row items-center justify-center gap-8 md:gap-12 w-full">
-               <div className={`w-24 h-24 md:w-32 md:h-32 rounded-full border ${textColor === 'black' ? 'border-black/10' : 'border-white/10'} flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl shrink-0 relative`}>
+            <div className="h-full p-6 md:p-8 flex flex-row items-center justify-center gap-8 md:gap-12 w-full absolute inset-0">
+               <div className={`w-24 h-24 md:w-32 md:h-32 rounded-full border ${textColor === 'black' ? 'border-black/10' : 'border-white/10'} flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl shrink-0 relative z-10`}>
                   {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={40} className={textMutedStyle} />}
                </div>
-               <div className="flex flex-col justify-center text-left flex-1 min-w-0">
+               <div className="flex flex-col justify-center text-left flex-1 min-w-0 z-10">
                   {bio && (
                     <p className={`text-[10px] md:text-[13px] tracking-[0.05em] uppercase ${textStyle} leading-relaxed italic line-clamp-4 whitespace-pre-wrap mb-4 border-l ${textColor === 'black' ? 'border-black/10' : 'border-white/10'} pl-4`}>
                       {bio}
