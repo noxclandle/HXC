@@ -347,8 +347,12 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
         <div className="w-full lg:w-7/12 space-y-8 lg:space-y-10 order-2 lg:order-none">
            <div className="lg:hidden h-[42vh]" />
            
-           <div className="flex flex-col gap-4">
-              <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar scroll-smooth sticky top-[42vh] lg:top-0 bg-void/98 lg:bg-transparent z-40 -mx-4 px-4 lg:mx-0 lg:px-0">
+           <div className="flex flex-col gap-4 relative">
+              {/* Fade masks for scroll indication */}
+              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-void to-transparent z-50 pointer-events-none lg:hidden" />
+              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-void to-transparent z-50 pointer-events-none lg:hidden" />
+              
+              <div className="flex border-b border-white/5 overflow-x-auto custom-scrollbar scroll-smooth sticky top-[42vh] lg:top-0 bg-void/98 lg:bg-transparent z-40 -mx-4 px-4 lg:mx-0 lg:px-0">
                 {CATEGORIES.map((cat) => {
                   const Icon = getCategoryIcon(cat.id);
                   return (
