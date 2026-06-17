@@ -30,6 +30,7 @@ export interface HexaCardProps {
   effect?: string;
   aura?: string;
   fontFamily?: string;
+  textColor?: "white" | "black";
   scaleName?: "standard" | "impact" | "maximum";
   scaleTitle?: "standard" | "impact" | "maximum";
   scaleCompany?: "standard" | "impact" | "maximum";
@@ -47,7 +48,8 @@ export default function HexaCardPreview({
   alignName = "center", alignReading = "center", alignCompany = "center",
   alignTitle = "center", alignPhone = "center", alignEmail = "center",
   frame = "Obsidian", background = "Default", effect = "None", aura = "None",
-  fontFamily = "Standard", scaleName = "standard", scaleTitle = "standard", scaleCompany = "standard",
+  fontFamily = "Standard", textColor = "white",
+  scaleName = "standard", scaleTitle = "standard", scaleCompany = "standard",
   sound = "resonance", link_hp, link_x, link_instagram, link_line, link_facebook
 }: HexaCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -132,6 +134,16 @@ export default function HexaCardPreview({
       case "Gothic": return "border-[3px] border-stone-800 shadow-2xl ring-1 ring-red-900/20 bg-[#050505]";
       case "Void": return "border-[5px] border-black shadow-[0_0_40px_rgba(255,255,255,0.05)] bg-black";
       case "ImperialGold": return "border-[6px] border-amber-500 shadow-[0_0_50px_rgba(245,158,11,0.3)] bg-[#050505]";
+      case "Glass": return "border-[2px] border-white/20 shadow-xl bg-white/5 backdrop-blur-md";
+      case "Titanium": return "border-[3px] border-slate-500 shadow-lg bg-zinc-900";
+      case "Marble": return "border-[4px] border-slate-200 shadow-2xl bg-white/90 ring-1 ring-black/5";
+      case "PrismLine": return "border-[2px] border-white/40 shadow-[0_0_15px_rgba(255,255,255,0.5)] bg-gradient-to-tr from-rose-500/10 via-azure-500/10 to-emerald-500/10";
+      case "CarbonFiber": return "border-[2px] border-zinc-700 shadow-lg bg-black";
+      case "Linen": return "border-[1px] border-stone-300 shadow-sm bg-[#faf9f6]";
+      case "Opal": return "border-[3px] border-indigo-100 shadow-[0_0_30px_rgba(199,210,254,0.4)] bg-white/80";
+      case "Iron": return "border-[3px] border-zinc-600 shadow-inner bg-zinc-800";
+      case "Copper": return "border-[2px] border-orange-800 shadow-xl bg-[#2a1a15]";
+      case "Velvet": return "border-[5px] border-rose-900 shadow-2xl bg-[#1a0505]";
       default: return "border-white/10";
     }
   };
@@ -153,6 +165,16 @@ export default function HexaCardPreview({
       case "SilkBlur": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:via-transparent before:to-white/5 before:blur-[60px]";
       case "DigitalFlow": return "bg-[#010101] bg-[linear-gradient(rgba(59,130,246,0.1)_1px,transparent_1px)] bg-[size:100%_4px] opacity-100";
       case "PrismFractal": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-tr before:from-rose-500/20 before:via-azure-500/20 before:to-emerald-500/20 opacity-100";
+      case "InkWash": return "bg-[#f5f5f5] bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.1),transparent)] before:absolute before:inset-0 before:bg-[url('https://www.transparenttextures.com/patterns/rice-paper.png')]";
+      case "SandDune": return "bg-[#d2b48c] bg-[linear-gradient(135deg,#c19a6b_25%,transparent_25%),linear-gradient(225deg,#c19a6b_25%,transparent_25%)] bg-[size:50px_50px]";
+      case "DeepOcean": return "bg-[#000033] bg-[radial-gradient(circle_at_center,rgba(0,102,204,0.2),transparent)]";
+      case "Paper": return "bg-[#fdfcf0] before:absolute before:inset-0 before:bg-[url('https://www.transparenttextures.com/patterns/handmade-paper.png')]";
+      case "NightCity": return "bg-[#050505] bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.05),transparent)] after:absolute after:inset-0 after:bg-[linear-gradient(to_bottom,transparent_90%,rgba(59,130,246,0.1))]";
+      case "Slate": return "bg-zinc-800 before:absolute before:inset-0 before:bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]";
+      case "CosmicVoid": return "bg-black after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02),transparent)]";
+      case "Circuit": return "bg-[#020202] bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:40px_40px] after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03),transparent)]";
+      case "MorningMist": return "bg-[#e6e6e6] bg-gradient-to-b from-white/20 to-transparent";
+      case "RoseQuartzBG": return "bg-[#fff0f5] bg-[radial-gradient(circle_at_50%_50%,rgba(255,182,193,0.3),transparent)]";
       default: return "bg-black";
     }
   };
@@ -293,18 +315,52 @@ export default function HexaCardPreview({
         );
       case "Fireflies":
         return (
-          <div className="absolute inset-0 pointer-events-none z-20">
-             {[...Array(15)].map((_, i) => (
-               <motion.div key={i} animate={{ x: [0, 20, -20, 0], y: [0, -30, 10, 0], opacity: [0, 0.8, 0], scale: [0, 1, 0] }} transition={{ duration: 3 + Math.random() * 2, repeat: Infinity, delay: Math.random() * 5 }} className="absolute w-1 h-1 bg-amber-200 rounded-full blur-[1px]" style={{ left: `${20+Math.random()*60}%`, top: `${20+Math.random()*60}%` }} />
+          <div className="absolute inset-0 pointer-events-none z-50">
+             {[...Array(20)].map((_, i) => (
+               <motion.div key={i} animate={{ x: [0, 40, -40, 0], y: [0, -60, 20, 0], opacity: [0, 0.8, 0], scale: [0, 1, 0] }} transition={{ duration: 4 + Math.random() * 4, repeat: Infinity, delay: Math.random() * 5 }} className="absolute w-1.5 h-1.5 bg-amber-200 rounded-full blur-[1.5px] shadow-[0_0_10px_rgba(251,191,36,0.4)]" style={{ left: `${10+Math.random()*80}%`, top: `${10+Math.random()*80}%` }} />
              ))}
           </div>
         );
       case "Leaves":
         return (
-          <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
-             {[...Array(8)].map((_, i) => (
-               <motion.div key={i} initial={{ y: -20, rotate: 0 }} animate={{ y: 500, rotate: 720, x: [0, 40, -40, 0] }} transition={{ duration: 7 + Math.random() * 3, repeat: Infinity, delay: i * 2 }} className="absolute text-emerald-600/30 text-[12px]" style={{ left: `${Math.random()*100}%` }}>🍃</motion.div>
+          <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
+             {[...Array(10)].map((_, i) => (
+               <motion.div key={i} initial={{ y: -20, rotate: 0 }} animate={{ y: 500, rotate: 720, x: [0, 60, -60, 0] }} transition={{ duration: 10 + Math.random() * 5, repeat: Infinity, delay: i * 2 }} className="absolute text-emerald-600/40 text-[14px]" style={{ left: `${Math.random()*100}%` }}>🍃</motion.div>
              ))}
+          </div>
+        );
+      case "Dandelion":
+        return (
+          <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
+             {[...Array(12)].map((_, i) => (
+               <motion.div key={i} animate={{ x: [0, 100, -100, 0], y: [0, -400], opacity: [0, 0.6, 0] }} transition={{ duration: 15 + Math.random() * 10, repeat: Infinity }} className="absolute text-white/30 text-[12px]" style={{ left: `${Math.random()*100}%`, top: "100%" }}>*</motion.div>
+             ))}
+          </div>
+        );
+      case "Steam":
+        return (
+          <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
+             <motion.div animate={{ y: [0, -10], opacity: [0.1, 0.2, 0.1] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent blur-3xl" />
+          </div>
+        );
+      case "DataStream":
+        return (
+          <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden opacity-20">
+             {[...Array(5)].map((_, i) => (
+               <motion.div key={i} animate={{ x: ["-100%", "200%"] }} transition={{ duration: 3 + i, repeat: Infinity, ease: "linear" }} className="absolute h-px w-24 bg-azure-400" style={{ top: `${20 * i}%` }} />
+             ))}
+          </div>
+        );
+      case "Plasma":
+        return (
+          <div className="absolute inset-0 pointer-events-none z-50 opacity-40">
+             <motion.div animate={{ rotate: 360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent,rgba(59,130,246,0.2),transparent)] blur-3xl" />
+          </div>
+        );
+      case "Halo":
+        return (
+          <div className="absolute inset-0 pointer-events-none z-50 flex items-center justify-center">
+             <motion.div animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 4, repeat: Infinity }} className="w-64 h-64 border border-white/20 rounded-full blur-xl" />
           </div>
         );
       default: return null;
@@ -339,6 +395,10 @@ export default function HexaCardPreview({
   };
 
   const isVertical = orientation === "vertical";
+  const textStyle = textColor === "black" ? "text-black" : "text-white";
+  const textMutedStyle = textColor === "black" ? "text-black/30" : "text-white/30";
+  const textAzureStyle = "text-azure-400";
+  const accentLineStyle = textColor === "black" ? "bg-black/20" : "bg-azure-500/30";
 
   return (
     <div 
@@ -358,12 +418,10 @@ export default function HexaCardPreview({
         transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
         className="relative z-10"
       >
-        {/* Aura Layer (Strictly Isolated with hole mask) */}
         <div 
           className="absolute inset-0 pointer-events-none overflow-visible flex items-center justify-center"
           style={{ 
             transform: 'translateZ(-50px)',
-            // 反時計回りの指定により、中央1%〜99%の領域を物理的に穴あけする
             clipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 1% 1%, 1% 99%, 99% 99%, 99% 1%, 1% 1%)',
             WebkitClipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 1% 1%, 1% 99%, 99% 99%, 99% 1%, 1% 1%)'
           }}
@@ -373,65 +431,60 @@ export default function HexaCardPreview({
 
         <motion.div style={{ opacity: glowOpacity, rotateY: 90, backfaceVisibility: "hidden" }} className="absolute inset-0 bg-white/10 blur-3xl z-20 pointer-events-none" />
 
-        {/* Front Face */}
         <div 
           className={`absolute inset-0 overflow-hidden border ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
-          {/* Light Proof Shield: Force pure black base to prevent any light bleed */}
           <div className="absolute inset-[-1px] bg-black -z-50" />
           <div className="absolute inset-0 bg-[#000000] -z-40" />
           <div className={`absolute inset-0 ${getBackgroundStyle()} -z-30`} />
 
-          {getEffectLayer()}
-
-          {/* Main Card Content */}
           {isVertical ? (
             <div className="h-full p-8 md:p-12 flex flex-col items-center justify-between text-center relative overflow-hidden">
                <div className={`w-full flex flex-col items-center z-10 ${getAlignClass(alignCompany)}`}>
-                  <div className="w-16 h-16 md:w-20 md:h-20 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative">
-                     {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={32} className="text-white/10" />}
+                  <div className={`w-16 h-16 md:w-20 md:h-20 border ${textColor === 'black' ? 'border-black/5' : 'border-white/5'} flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative`}>
+                     {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={32} className={textMutedStyle} />}
                   </div>
-                  <p className={`tracking-[0.25em] uppercase text-white font-medium leading-relaxed mt-4 truncate w-full`} style={{ fontSize: `${getFieldScale('company', true) * 12}px` }}>{company || "CORPORATION"}</p>
+                  <p className={`tracking-[0.25em] uppercase ${textStyle} font-medium leading-relaxed mt-4 truncate w-full`} style={{ fontSize: `${getFieldScale('company', true) * 12}px` }}>{company || "CORPORATION"}</p>
                </div>
 
                <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-8 flex flex-col items-center transition-all duration-500 z-10`}>
                   <div className="space-y-4 md:space-y-6 w-full flex flex-col items-center">
-                    {title && <p className={`tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', true) * 11}px` }}>{title}</p>}
+                    {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', true) * 11}px` }}>{title}</p>}
                     <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
-                       {reading && <p className={`tracking-[0.3em] text-azure-400 font-bold uppercase truncate w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getFieldScale('name', true) * 11}px` }}>{reading}</p>}
-                       <h2 className={`tracking-[0.1em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getFieldScale('name', true) * 32}px` }}>{name}</h2>
+                       {reading && <p className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase truncate w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getFieldScale('name', true) * 11}px` }}>{reading}</p>}
+                       <h2 className={`tracking-[0.1em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getFieldScale('name', true) * 32}px` }}>{name}</h2>
                     </div>
-                    <div className={`h-px w-12 md:w-16 bg-azure-500/30 mt-2 ${alignName === 'left' ? 'self-start' : alignName === 'right' ? 'self-end' : 'self-center'}`} />
+                    <div className={`h-px w-12 md:w-16 ${accentLineStyle} mt-2 ${alignName === 'left' ? 'self-start' : alignName === 'right' ? 'self-end' : 'self-center'}`} />
                   </div>
                </div>
 
-               <div className="w-full space-y-3 md:space-y-4 opacity-40 flex flex-col pb-2 items-center z-10">
-                  {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={11} className="text-azure-400" /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.2em]">{phone}</span></div>}
-                  {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={11} className="text-azure-400" /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span></div>}
+               <div className={`w-full space-y-3 md:space-y-4 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} flex flex-col pb-2 items-center z-10 ${textStyle}`}>
+                  {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={11} className={textAzureStyle} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.2em]">{phone}</span></div>}
+                  {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={11} className={textAzureStyle} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span></div>}
                </div>
             </div>
           ) : (
             <div className="h-full p-8 md:p-12 flex flex-col justify-between relative text-center overflow-hidden">
               <header className={`w-full flex flex-row items-center gap-4 z-10 ${getAlignClass(alignCompany)}`}>
-                 <div className="w-12 h-12 md:w-16 md:h-16 border border-white/5 flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative">
-                    {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={24} className="text-white/10" />}
+                 <div className={`w-12 h-12 md:w-16 md:h-16 border ${textColor === 'black' ? 'border-black/5' : 'border-white/5'} flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative`}>
+                    {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={24} className={textMutedStyle} />}
                  </div>
-                 <p className="tracking-[0.3em] uppercase text-white/80 font-medium leading-tight truncate" style={{ fontSize: `${getFieldScale('company', false) * 12}px` }}>{company || "CORPORATION"}</p>
+                 <p className={`tracking-[0.3em] uppercase ${textStyle} font-medium leading-tight truncate`} style={{ fontSize: `${getFieldScale('company', false) * 12}px` }}>{company || "CORPORATION"}</p>
               </header>
 
               <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-12 flex flex-col items-center transition-all duration-500 z-10`}>
                 <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
-                   {title && <p className={`tracking-[0.4em] uppercase text-white/30 font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', false) * 10}px` }}>{title}</p>}
+                   {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', false) * 10}px` }}>{title}</p>}
                    <div className="flex flex-col w-full items-center">
-                      {reading && <span className={`tracking-[0.3em] text-azure-400 font-bold uppercase mb-1 w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getFieldScale('name', false) * 9}px` }}>{reading}</span>}
-                      <h2 className={`tracking-[0.15em] uppercase font-light text-white whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getFieldScale('name', false) * 28}px` }}>{name}</h2>
+                      {reading && <span className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase mb-1 w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getFieldScale('name', false) * 9}px` }}>{reading}</span>}
+                      <h2 className={`tracking-[0.15em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getFieldScale('name', false) * 28}px` }}>{name}</h2>
                    </div>
                 </div>
               </div>
 
               <footer className="w-full flex flex-col items-center z-10">
-                <div className="flex flex-col gap-2 opacity-40 w-full items-center">
+                <div className={`flex flex-col gap-2 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} w-full items-center ${textStyle}`}>
                    {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest">{phone}</span></div>}
                    {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest uppercase truncate">{email}</span></div>}
                 </div>
@@ -441,12 +494,10 @@ export default function HexaCardPreview({
           {getEffectLayer()}
         </div>
 
-        {/* Back Face */}
         <div 
           className={`absolute inset-0 flex flex-col justify-between items-center text-center border overflow-hidden ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
         >
-          {/* Light Proof Shield: Force pure black base to prevent any light bleed */}
           <div className="absolute inset-[-1px] bg-black -z-50" />
           <div className="absolute inset-0 bg-[#000000] -z-40" />
           <div className={`absolute inset-0 ${getBackgroundStyle()} -z-30`} />
@@ -455,42 +506,42 @@ export default function HexaCardPreview({
             <div className="h-full p-10 md:p-16 flex flex-col justify-between items-center w-full">
               <div />
               <div className="space-y-6 relative z-10 w-full flex flex-col items-center">
-                <div className="w-28 h-28 md:w-36 md:h-36 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl relative">
-                   {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={48} className="text-white/5" />}
+                <div className={`w-28 h-28 md:w-36 md:h-36 rounded-full border ${textColor === 'black' ? 'border-black/10' : 'border-white/10'} flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl relative`}>
+                   {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={48} className={textMutedStyle} />}
                 </div>
                 {bio && (
                   <div className="space-y-4 w-full">
-                     <p className="text-[12px] md:text-[15px] tracking-[0.1em] uppercase text-white/90 leading-relaxed italic max-w-sm mx-auto line-clamp-5 px-4 whitespace-pre-wrap">
+                     <p className={`text-[12px] md:text-[15px] tracking-[0.1em] uppercase ${textStyle} leading-relaxed italic max-w-sm mx-auto line-clamp-5 px-4 whitespace-pre-wrap`}>
                        {bio}
                      </p>
                   </div>
                 )}
               </div>
               <div className="flex flex-wrap justify-center gap-8 md:gap-12 pb-8">
-                 {link_hp && <a href={link_hp.startsWith('http') ? link_hp : `https://${link_hp}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors"><Globe size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">HP</span></a>}
-                 {link_x && <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors"><Twitter size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span></a>}
-                 {link_instagram && <a href={link_instagram.startsWith('http') ? link_instagram : `https://instagram.com/${link_instagram}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors"><Instagram size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Insta</span></a>}
-                 {link_line && <a href={link_line.startsWith('http') ? link_line : `https://line.me/ti/p/~${link_line}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors"><MessageCircle size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">LINE</span></a>}
-                 {link_facebook && <a href={link_facebook.startsWith('http') ? link_facebook : `https://facebook.com/${link_facebook}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-2 text-white/40 hover:text-white transition-colors"><Facebook size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">FB</span></a>}
+                 {link_hp && <a href={link_hp.startsWith('http') ? link_hp : `https://${link_hp}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-2 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Globe size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">HP</span></a>}
+                 {link_x && <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-2 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Twitter size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span></a>}
+                 {link_instagram && <a href={link_instagram.startsWith('http') ? link_instagram : `https://instagram.com/${link_instagram}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-2 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Instagram size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Insta</span></a>}
+                 {link_line && <a href={link_line.startsWith('http') ? link_line : `https://line.me/ti/p/~${link_line}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-2 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><MessageCircle size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">LINE</span></a>}
+                 {link_facebook && <a href={link_facebook.startsWith('http') ? link_facebook : `https://facebook.com/${link_facebook}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-2 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Facebook size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">FB</span></a>}
               </div>
             </div>
           ) : (
             <div className="h-full p-6 md:p-8 flex flex-row items-center justify-center gap-8 md:gap-12 w-full">
-               <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl shrink-0 relative">
-                  {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={40} className="text-white/5" />}
+               <div className={`w-24 h-24 md:w-32 md:h-32 rounded-full border ${textColor === 'black' ? 'border-black/10' : 'border-white/10'} flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl shrink-0 relative`}>
+                  {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={40} className={textMutedStyle} />}
                </div>
                <div className="flex flex-col justify-center text-left flex-1 min-w-0">
                   {bio && (
-                    <p className="text-[10px] md:text-[13px] tracking-[0.05em] uppercase text-white/90 leading-relaxed italic line-clamp-4 whitespace-pre-wrap mb-4 border-l border-white/10 pl-4">
+                    <p className={`text-[10px] md:text-[13px] tracking-[0.05em] uppercase ${textStyle} leading-relaxed italic line-clamp-4 whitespace-pre-wrap mb-4 border-l ${textColor === 'black' ? 'border-black/10' : 'border-white/10'} pl-4`}>
                       {bio}
                     </p>
                   )}
                   <div className="flex flex-wrap gap-4 md:gap-6">
-                    {link_hp && <a href={link_hp.startsWith('http') ? link_hp : `https://${link_hp}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-1.5 text-white/40 hover:text-white transition-colors"><Globe size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">HP</span></a>}
-                    {link_x && <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-1.5 text-white/40 hover:text-white transition-colors"><Twitter size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span></a>}
-                    {link_instagram && <a href={link_instagram.startsWith('http') ? link_instagram : `https://instagram.com/${link_instagram}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-1.5 text-white/40 hover:text-white transition-colors"><Instagram size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Insta</span></a>}
-                    {link_line && <a href={link_line.startsWith('http') ? link_line : `https://line.me/ti/p/~${link_line}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-1.5 text-white/40 hover:text-white transition-colors"><MessageCircle size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">LINE</span></a>}
-                    {link_facebook && <a href={link_facebook.startsWith('http') ? link_facebook : `https://facebook.com/${link_facebook}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="group/sns flex items-center gap-1.5 text-white/40 hover:text-white transition-colors"><Facebook size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">FB</span></a>}
+                    {link_hp && <a href={link_hp.startsWith('http') ? link_hp : `https://${link_hp}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-1.5 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Globe size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">HP</span></a>}
+                    {link_x && <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-1.5 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Twitter size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span></a>}
+                    {link_instagram && <a href={link_instagram.startsWith('http') ? link_instagram : `https://instagram.com/${link_instagram}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-1.5 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Instagram size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Insta</span></a>}
+                    {link_line && <a href={link_line.startsWith('http') ? link_line : `https://line.me/ti/p/~${link_line}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-1.5 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><MessageCircle size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">LINE</span></a>}
+                    {link_facebook && <a href={link_facebook.startsWith('http') ? link_facebook : `https://facebook.com/${link_facebook}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-1.5 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Facebook size={14} /><span className="text-[9px] md:text-[11px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">FB</span></a>}
                   </div>
                </div>
             </div>
