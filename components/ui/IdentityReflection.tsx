@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Layout, Smartphone, Share2, Sparkles, Edit3, Trophy } from "lucide-react";
 import Link from "next/link";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
+import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import { useToast } from "@/components/ui/ConnectionToast";
 
 export default function IdentityReflection({ user }: { user: any }) {
@@ -64,21 +65,17 @@ export default function IdentityReflection({ user }: { user: any }) {
        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 border-b border-white/5 pb-6 sm:pb-4 gap-4">
           <h2 className="text-[9px] md:text-[10px] tracking-[0.3em] md:tracking-[0.5em] uppercase opacity-30 font-bold italic">Profile / プロフィール情報</h2>
           <div className="flex items-center justify-between w-full sm:w-auto gap-4 md:gap-6">
-            {/* レイアウト即時切替ボタン */}
-            <div className="flex gap-1 md:gap-2 p-1 bg-white/5 border border-white/5">
-               <button onClick={() => updateOrientation('horizontal')} className={`p-1.5 transition-all ${localOrientation === 'horizontal' ? 'bg-azure-600 text-white' : 'opacity-20 hover:opacity-100'}`} title="Horizontal">
-                  <Layout size={12}/>
-               </button>
-               <button onClick={() => updateOrientation('vertical')} className={`p-1.5 transition-all ${localOrientation === 'vertical' ? 'bg-azure-600 text-white' : 'opacity-20 hover:opacity-100'}`} title="Vertical">
-                  <Smartphone size={12}/>
-               </button>
-            </div>
-            <Link href={`/p/${safeUser.slug || 'unknown'}`} className="text-[8px] uppercase tracking-[0.2em] md:tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity flex items-center gap-2 border-l border-white/10 pl-4 md:pl-6">View Public Page <Share2 size={10}/></Link>
+            <Link href={`/p/${safeUser.slug || 'unknown'}`} className="text-[8px] uppercase tracking-[0.2em] md:tracking-[0.4em] opacity-20 hover:opacity-100 transition-opacity flex items-center gap-2">View Public Page <Share2 size={10}/></Link>
           </div>
        </div>
        
        <div className="flex flex-col items-center">
-          <div className={`relative ${isUpdating ? 'opacity-20' : ''} transition-all duration-700 min-h-[280px] flex items-center justify-center w-full py-6`}>
+          <UnifiedCardContainer 
+            orientation={localOrientation}
+            onOrientationChange={updateOrientation}
+            isUpdating={isUpdating}
+            previewLabel=""
+          >
              <HexaCardPreview 
                 name={safeUser.name || "MEMBER"} 
                 reading={safeUser.reading} 
@@ -110,7 +107,7 @@ export default function IdentityReflection({ user }: { user: any }) {
                 link_facebook={safeProfile.link_facebook || safeUser.link_facebook}
                 bio={safeProfile.bio || safeUser.bio}
              />
-          </div>
+          </UnifiedCardContainer>
        </div>
        
        <div className="grid grid-cols-2 gap-4 mt-12">

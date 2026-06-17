@@ -438,15 +438,17 @@ export default function HexaCardPreview({
           <div className={`absolute inset-0 ${getBackgroundStyle()} -z-30`} />
 
           {isVertical ? (
-            <div className="h-full p-8 md:p-12 flex flex-col items-center justify-between text-center relative overflow-hidden">
-               <div className={`w-full flex flex-col items-center z-10 ${getAlignClass(alignCompany)}`}>
+            <div className="h-full p-8 md:p-12 flex flex-col items-center relative overflow-hidden">
+               {/* Header: Company & Logo */}
+               <div className={`w-full flex flex-col items-center z-10 shrink-0 ${getAlignClass(alignCompany)}`}>
                   <div className={`w-16 h-16 md:w-20 md:h-20 border ${textColor === 'black' ? 'border-black/5' : 'border-white/5'} flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative`}>
                      {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={32} className={textMutedStyle} />}
                   </div>
                   <p className={`tracking-[0.25em] uppercase ${textStyle} font-medium leading-relaxed mt-4 truncate w-full`} style={{ fontSize: `${getFieldScale('company', true) * 12}px` }}>{company || "CORPORATION"}</p>
                </div>
 
-               <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-8 flex flex-col items-center transition-all duration-500 z-10`}>
+               {/* Middle: Name & Title */}
+               <div className="flex-1 flex flex-col justify-center items-center w-full transition-all duration-500 z-10 py-6">
                   <div className="space-y-4 md:space-y-6 w-full flex flex-col items-center">
                     {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', true) * 11}px` }}>{title}</p>}
                     <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
@@ -457,21 +459,24 @@ export default function HexaCardPreview({
                   </div>
                </div>
 
-               <div className={`w-full space-y-3 md:space-y-4 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} flex flex-col pb-2 items-center z-10 ${textStyle}`}>
-                  {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={11} className={textAzureStyle} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.2em]">{phone}</span></div>}
-                  {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={11} className={textAzureStyle} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span></div>}
+               {/* Footer: Contact Info */}
+               <div className={`w-full space-y-3 md:space-y-4 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} flex flex-col pb-2 items-center z-10 shrink-0 ${textStyle}`}>
+                  {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={11} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.2em]">{phone}</span></div>}
+                  {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={11} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span></div>}
                </div>
             </div>
           ) : (
-            <div className="h-full p-8 md:p-12 flex flex-col justify-between relative text-center overflow-hidden">
-              <header className={`w-full flex flex-row items-center gap-4 z-10 ${getAlignClass(alignCompany)}`}>
+            <div className="h-full p-8 md:p-12 flex flex-col relative overflow-hidden">
+              {/* Header: Company & Logo */}
+              <header className={`w-full flex flex-row items-center gap-4 z-10 shrink-0 ${getAlignClass(alignCompany)}`}>
                  <div className={`w-12 h-12 md:w-16 md:h-16 border ${textColor === 'black' ? 'border-black/5' : 'border-white/5'} flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative`}>
                     {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={24} className={textMutedStyle} />}
                  </div>
                  <p className={`tracking-[0.3em] uppercase ${textStyle} font-medium leading-tight truncate`} style={{ fontSize: `${getFieldScale('company', false) * 12}px` }}>{company || "CORPORATION"}</p>
               </header>
 
-              <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-12 flex flex-col items-center transition-all duration-500 z-10`}>
+              {/* Middle: Name & Title */}
+              <div className="flex-1 flex flex-col justify-center items-center w-full transition-all duration-500 z-10 py-4">
                 <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
                    {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', false) * 10}px` }}>{title}</p>}
                    <div className="flex flex-col w-full items-center">
@@ -481,7 +486,8 @@ export default function HexaCardPreview({
                 </div>
               </div>
 
-              <footer className="w-full flex flex-col items-center z-10">
+              {/* Footer: Contact Info */}
+              <footer className="w-full flex flex-col items-center z-10 shrink-0 pt-2">
                 <div className={`flex flex-col gap-2 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} w-full items-center ${textStyle}`}>
                    {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest">{phone}</span></div>}
                    {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest uppercase truncate">{email}</span></div>}
