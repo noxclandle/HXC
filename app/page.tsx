@@ -58,6 +58,16 @@ export default function LandingPage() {
           — Identity Access (Sign In) —
         </Link>
 
+        {/* SEO Contextual Section */}
+        <section className="max-w-xs mt-12 opacity-[0.15] group-hover:opacity-30 transition-opacity">
+           <h2 className="text-[8px] tracking-[0.4em] uppercase font-bold mb-3">NFC Digital Identity System</h2>
+           <p className="text-[7px] leading-relaxed tracking-[0.2em] uppercase">
+             The Hexa Card is a next-generation smart business card. 
+             Utilizing secure NFC technology to bridge your physical presence with a sophisticated digital identity. 
+             Designed for professionals who demand excellence in every connection.
+           </p>
+        </section>
+
         <div className="flex flex-col items-center gap-5 mt-4">
            <div className="flex gap-10 justify-center opacity-10">
               <Zap size={12} className="text-white" />

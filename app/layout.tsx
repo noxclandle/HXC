@@ -6,14 +6,14 @@ import GeometricBackground from "@/components/background/GeometricBackground";
 export const metadata: Metadata = {
   metadataBase: new URL("https://hxc.hexa-relation.com"),
   title: {
-    default: "Hexa Card | Premium Identity",
+    default: "Hexa Card | Next-Generation NFC Digital Identity",
     template: "%s | Hexa System"
   },
-  description: "Beyond existence. A high-end identity synchronization system for the chosen few.",
+  description: "Beyond existence. A premium NFC digital business card and identity synchronization system for modern networking. Secure, elegant, and smart.",
   manifest: "/manifest.json",
   openGraph: {
-    title: "Hexa Card | Premium Identity",
-    description: "Synchronize your identity via the Hexa Card system. A masterpiece of gothic tech and minimal chic.",
+    title: "Hexa Card | Premium NFC Digital Identity",
+    description: "Synchronize your identity via the Hexa Card system. A high-end NFC digital business card solution combining gothic tech and minimal chic.",
     url: "https://hxc.hexa-relation.com",
     siteName: "Hexa Card",
     images: [
@@ -29,8 +29,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hexa Card | Premium Identity",
-    description: "Beyond existence. A masterpiece of gothic tech and minimal chic.",
+    title: "Hexa Card | NFC Digital Identity System",
+    description: "Beyond existence. The ultimate NFC digital business card platform for the chosen few.",
     images: ["/logo.png"],
   },
 };

@@ -163,132 +163,132 @@ export default function HexaCardPreview({
       case "Sparkle":
         return (
           <div className="absolute inset-0 pointer-events-none z-50">
-             {[...Array(30)].map((_, i) => (
-               <motion.div key={i} animate={{ scale: [0, 1.5, 0], opacity: [0, 1, 0] }} transition={{ duration: 1 + Math.random(), repeat: Infinity, delay: Math.random() * 2 }} className="absolute w-2 h-2 bg-white rounded-full blur-[1px] shadow-[0_0_10px_white]" style={{ left: `${Math.random()*100}%`, top: `${Math.random()*100}%` }} />
+             {[...Array(20)].map((_, i) => (
+               <motion.div key={i} animate={{ scale: [0, 1.2, 0], opacity: [0, 0.8, 0] }} transition={{ duration: 2 + Math.random() * 2, repeat: Infinity, delay: Math.random() * 3 }} className="absolute w-1.5 h-1.5 bg-white rounded-full blur-[1px] shadow-[0_0_8px_white]" style={{ left: `${Math.random()*100}%`, top: `${Math.random()*100}%` }} />
              ))}
           </div>
         );
       case "FallingFlowers":
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
-             {[...Array(20)].map((_, i) => (
-               <motion.div key={i} initial={{ y: -20, rotate: 0 }} animate={{ y: 500, rotate: 360, x: [0, 40, -40, 0] }} transition={{ duration: 4 + Math.random() * 4, repeat: Infinity, delay: i * 0.5 }} className="absolute text-white text-[16px] drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" style={{ left: `${Math.random()*100}%` }}>❀</motion.div>
+             {[...Array(15)].map((_, i) => (
+               <motion.div key={i} initial={{ y: -20, rotate: 0 }} animate={{ y: 500, rotate: 360, x: [0, 30, -30, 0] }} transition={{ duration: 8 + Math.random() * 8, repeat: Infinity, delay: i * 0.8 }} className="absolute text-white/80 text-[14px] drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]" style={{ left: `${Math.random()*100}%` }}>❀</motion.div>
              ))}
           </div>
         );
       case "Petals":
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
-             {[...Array(20)].map((_, i) => (
-               <motion.div key={i} initial={{ y: -20, rotate: 0 }} animate={{ y: 500, rotate: 720, x: [0, 60, -60, 0] }} transition={{ duration: 6 + Math.random() * 6, repeat: Infinity, delay: i * 0.8 }} className="absolute text-rose-300 text-[18px] drop-shadow-[0_0_10px_rgba(244,114,182,0.5)]" style={{ left: `${Math.random()*100}%` }}>🌸</motion.div>
+             {[...Array(15)].map((_, i) => (
+               <motion.div key={i} initial={{ y: -20, rotate: 0 }} animate={{ y: 500, rotate: 720, x: [0, 50, -50, 0] }} transition={{ duration: 10 + Math.random() * 10, repeat: Infinity, delay: i * 1.2 }} className="absolute text-rose-300/60 text-[16px] drop-shadow-[0_0_8px_rgba(244,114,182,0.3)]" style={{ left: `${Math.random()*100}%` }}>🌸</motion.div>
              ))}
           </div>
         );
       case "Feathers":
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
-             {[...Array(12)].map((_, i) => (
-               <motion.div key={i} initial={{ y: -20, rotate: 0, opacity: 0 }} animate={{ y: 500, rotate: [0, 90, -90, 0], x: [0, 50, -50, 0], opacity: [0, 0.8, 0] }} transition={{ duration: 7 + Math.random() * 4, repeat: Infinity, delay: i * 1.2 }} className="absolute text-white text-[24px] drop-shadow-[0_0_12px_rgba(255,255,255,0.4)]" style={{ left: `${Math.random()*100}%` }}>🪶</motion.div>
+             {[...Array(8)].map((_, i) => (
+               <motion.div key={i} initial={{ y: -20, rotate: 0, opacity: 0 }} animate={{ y: 500, rotate: [0, 45, -45, 0], x: [0, 40, -40, 0], opacity: [0, 0.6, 0] }} transition={{ duration: 12 + Math.random() * 8, repeat: Infinity, delay: i * 2 }} className="absolute text-white/50 text-[20px] drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]" style={{ left: `${Math.random()*100}%` }}>🪶</motion.div>
              ))}
           </div>
         );
       case "Bubbles":
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
-             {[...Array(25)].map((_, i) => (
-               <motion.div key={i} initial={{ y: 500, opacity: 0 }} animate={{ y: -100, x: [0, 15, -15, 0], opacity: [0, 0.7, 0], scale: [0.5, 1.2, 0.8] }} transition={{ duration: 3 + Math.random() * 3, repeat: Infinity, delay: i * 0.3 }} className="absolute w-5 h-5 border-2 border-white/40 rounded-full bg-white/10 blur-[0.5px] shadow-[0_0_15px_rgba(255,255,255,0.3)]" style={{ left: `${Math.random()*100}%` }} />
+             {[...Array(15)].map((_, i) => (
+               <motion.div key={i} initial={{ y: 500, opacity: 0 }} animate={{ y: -100, x: [0, 10, -10, 0], opacity: [0, 0.5, 0], scale: [0.5, 1, 0.8] }} transition={{ duration: 6 + Math.random() * 6, repeat: Infinity, delay: i * 0.5 }} className="absolute w-4 h-4 border border-white/30 rounded-full bg-white/5 blur-[0.5px] shadow-[0_0_10px_rgba(255,255,255,0.2)]" style={{ left: `${Math.random()*100}%` }} />
              ))}
           </div>
         );
       case "Ribbons":
         return (
-          <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden opacity-60">
-             {[...Array(6)].map((_, i) => (
-               <motion.div key={i} animate={{ x: ["-150%", "250%"], y: [0, 80, -80, 0] }} transition={{ duration: 8 + i * 2, repeat: Infinity, ease: "linear" }} className="absolute h-[2px] w-full bg-gradient-to-r from-transparent via-white to-transparent shadow-[0_0_20px_white]" style={{ top: `${15 + i * 15}%`, transform: `rotate(${i * 8}deg)` }} />
+          <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden opacity-40">
+             {[...Array(4)].map((_, i) => (
+               <motion.div key={i} animate={{ x: ["-120%", "220%"], y: [0, 50, -50, 0] }} transition={{ duration: 15 + i * 5, repeat: Infinity, ease: "linear" }} className="absolute h-px w-full bg-gradient-to-r from-transparent via-white to-transparent shadow-[0_0_15px_white]" style={{ top: `${20 + i * 20}%`, transform: `rotate(${i * 5}deg)` }} />
              ))}
           </div>
         );
       case "Rain":
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
-             {[...Array(60)].map((_, i) => (
-               <motion.div key={i} initial={{ y: -10 }} animate={{ y: 500 }} transition={{ duration: 0.3 + Math.random() * 0.3, repeat: Infinity, delay: Math.random() * 2 }} className="absolute w-[2px] h-10 bg-white/40 blur-[0.5px] shadow-[0_0_10px_rgba(255,255,255,0.3)]" style={{ left: `${Math.random()*100}%` }} />
+             {[...Array(40)].map((_, i) => (
+               <motion.div key={i} initial={{ y: -10 }} animate={{ y: 500 }} transition={{ duration: 0.6 + Math.random() * 0.4, repeat: Infinity, delay: Math.random() * 2 }} className="absolute w-[1px] h-8 bg-white/20 blur-[0.5px]" style={{ left: `${Math.random()*100}%` }} />
              ))}
           </div>
         );
       case "Snow":
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
-             {[...Array(60)].map((_, i) => (
-               <motion.div key={i} initial={{ y: -10, opacity: 0 }} animate={{ y: 500, x: [0, 30, -30, 0], opacity: [0, 1, 0], scale: [0.8, 1.5, 0.8] }} transition={{ duration: 3 + Math.random() * 3, repeat: Infinity, delay: Math.random() * 5 }} className="absolute w-2.5 h-2.5 bg-white rounded-full blur-[2px] shadow-[0_0_12px_white]" style={{ left: `${Math.random()*100}%` }} />
+             {[...Array(40)].map((_, i) => (
+               <motion.div key={i} initial={{ y: -10, opacity: 0 }} animate={{ y: 500, x: [0, 20, -20, 0], opacity: [0, 0.8, 0], scale: [0.6, 1.2, 0.6] }} transition={{ duration: 5 + Math.random() * 5, repeat: Infinity, delay: Math.random() * 5 }} className="absolute w-2 h-2 bg-white rounded-full blur-[1.5px] shadow-[0_0_8px_white]" style={{ left: `${Math.random()*100}%` }} />
              ))}
           </div>
         );
       case "DigitalRain":
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
-             {[...Array(30)].map((_, i) => (
-               <motion.div key={i} initial={{ y: -20, opacity: 0 }} animate={{ y: 500, opacity: [0, 1, 0] }} transition={{ duration: 1 + Math.random() * 1.5, repeat: Infinity, delay: Math.random() * 3 }} className="absolute text-[14px] font-mono text-azure-400 blur-[0.5px] font-bold" style={{ left: `${Math.random()*100}%` }}>{Math.random() > 0.5 ? '1' : '0'}</motion.div>
+             {[...Array(20)].map((_, i) => (
+               <motion.div key={i} initial={{ y: -20, opacity: 0 }} animate={{ y: 500, opacity: [0, 0.6, 0] }} transition={{ duration: 2 + Math.random() * 3, repeat: Infinity, delay: Math.random() * 3 }} className="absolute text-[12px] font-mono text-azure-400 blur-[0.5px]" style={{ left: `${Math.random()*100}%` }}>{Math.random() > 0.5 ? '1' : '0'}</motion.div>
              ))}
           </div>
         );
       case "Glitch":
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
-             <motion.div animate={{ x: [-15, 15, -5, 0], opacity: [0, 0.6, 0] }} transition={{ duration: 0.1, repeat: Infinity, repeatDelay: 1.5 }} className="absolute inset-0 bg-red-500/40" />
-             <motion.div animate={{ x: [15, -15, 5, 0], opacity: [0, 0.6, 0] }} transition={{ duration: 0.1, repeat: Infinity, repeatDelay: 1.8 }} className="absolute inset-0 bg-blue-500/40" />
-             <motion.div animate={{ y: [-20, 20, 0], opacity: [0, 0.3, 0], scaleY: [1, 2, 1] }} transition={{ duration: 0.05, repeat: Infinity, repeatDelay: 3 }} className="absolute inset-0 bg-white/20" />
+             <motion.div animate={{ x: [-8, 8, -3, 0], opacity: [0, 0.3, 0] }} transition={{ duration: 0.15, repeat: Infinity, repeatDelay: 2.5 }} className="absolute inset-0 bg-red-500/20" />
+             <motion.div animate={{ x: [8, -8, 3, 0], opacity: [0, 0.3, 0] }} transition={{ duration: 0.15, repeat: Infinity, repeatDelay: 3 }} className="absolute inset-0 bg-blue-500/20" />
+             <motion.div animate={{ opacity: [0, 0.1, 0] }} transition={{ duration: 0.1, repeat: Infinity, repeatDelay: 5 }} className="absolute inset-0 bg-white/10" />
           </div>
         );
       case "Aethereal":
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
-             <motion.div animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 0.1, repeat: Infinity }} className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-40 mix-blend-screen" />
-             <motion.div animate={{ opacity: [0.1, 0.4, 0.1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-0 bg-white/20 blur-[60px]" />
+             <motion.div animate={{ opacity: [0.1, 0.2, 0.1] }} transition={{ duration: 0.15, repeat: Infinity }} className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-screen" />
+             <motion.div animate={{ opacity: [0.05, 0.15, 0.05] }} transition={{ duration: 6, repeat: Infinity }} className="absolute inset-0 bg-white/10 blur-[80px]" />
           </div>
         );
       case "Interference":
         return (
-          <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden opacity-50">
-             {[...Array(10)].map((_, i) => (
-               <motion.div key={i} animate={{ y: ["0%", "100%"], opacity: [0, 1, 0] }} transition={{ duration: 0.05 + Math.random() * 0.2, repeat: Infinity, repeatDelay: Math.random() * 3 }} className="absolute w-full h-[3px] bg-azure-400 shadow-[0_0_30px_rgba(59,130,246,0.8)]" style={{ top: `${Math.random() * 100}%` }} />
+          <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden opacity-30">
+             {[...Array(6)].map((_, i) => (
+               <motion.div key={i} animate={{ y: ["0%", "100%"], opacity: [0, 0.8, 0] }} transition={{ duration: 0.1 + Math.random() * 0.3, repeat: Infinity, repeatDelay: Math.random() * 5 }} className="absolute w-full h-[2px] bg-azure-400 shadow-[0_0_20px_rgba(59,130,246,0.6)]" style={{ top: `${Math.random() * 100}%` }} />
              ))}
           </div>
         );
       case "Dust":
         return (
           <div className="absolute inset-0 pointer-events-none z-50">
-             {[...Array(50)].map((_, i) => (
-               <motion.div key={i} animate={{ x: [0, 40, -40, 0], y: [0, -40, 40, 0], opacity: [0, 0.8, 0] }} transition={{ duration: 4 + Math.random() * 8, repeat: Infinity }} className="absolute w-[3px] h-[3px] bg-white/60 blur-[1.5px] shadow-[0_0_10px_white]" style={{ left: `${Math.random()*100}%`, top: `${Math.random()*100}%` }} />
+             {[...Array(30)].map((_, i) => (
+               <motion.div key={i} animate={{ x: [0, 30, -30, 0], y: [0, -30, 30, 0], opacity: [0, 0.6, 0] }} transition={{ duration: 6 + Math.random() * 12, repeat: Infinity }} className="absolute w-[2px] h-[2px] bg-white/50 blur-[1px] shadow-[0_0_5px_white]" style={{ left: `${Math.random()*100}%`, top: `${Math.random()*100}%` }} />
              ))}
           </div>
         );
       case "Aurora":
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
-             <motion.div animate={{ opacity: [0.3, 0.8, 0.3], x: ["-15%", "15%"], rotate: [0, 5, -5, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-[-30%] bg-[conic-gradient(from_0deg,transparent,rgba(168,85,247,0.4),transparent,rgba(59,130,246,0.4),transparent)] blur-[100px] mix-blend-screen" />
+             <motion.div animate={{ opacity: [0.2, 0.5, 0.2], x: ["-10%", "10%"] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-[-40%] bg-[conic-gradient(from_0deg,transparent,rgba(168,85,247,0.3),transparent,rgba(59,130,246,0.3),transparent)] blur-[120px] mix-blend-screen" />
           </div>
         );
       case "Singularity":
         return (
           <div className="absolute inset-0 pointer-events-none z-50 flex items-center justify-center">
-             <motion.div animate={{ rotate: 360, scale: [1, 1.5, 1], opacity: [0.2, 0.6, 0.2] }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="w-[300%] h-[300%] bg-[radial-gradient(circle_at_center,transparent_0%,rgba(255,255,255,0.1)_40%,transparent_60%)] mix-blend-screen" />
-             <motion.div animate={{ rotate: -360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} className="absolute w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent,rgba(255,255,255,0.2),transparent)] blur-[60px]" />
+             <motion.div animate={{ rotate: 360, scale: [1, 1.3, 1], opacity: [0.1, 0.4, 0.1] }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} className="w-[300%] h-[300%] bg-[radial-gradient(circle_at_center,transparent_0%,rgba(255,255,255,0.08)_40%,transparent_60%)] mix-blend-screen" />
+             <motion.div animate={{ rotate: -360 }} transition={{ duration: 50, repeat: Infinity, ease: "linear" }} className="absolute w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent,rgba(255,255,255,0.15),transparent)] blur-[80px]" />
           </div>
         );
       case "Scanline":
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
-             {/* Primary "Layer Line" - High Visibility Holographic Beam */}
+             {/* Primary "Layer Line" - Refined Beam */}
              <motion.div 
-               animate={{ y: ["-20%", "120%"] }} 
-               transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }} 
-               className="w-full h-8 bg-gradient-to-b from-transparent via-white/60 to-transparent shadow-[0_0_40px_rgba(255,255,255,0.8),0_0_100px_rgba(255,255,255,0.4)] relative z-[60]" 
+               animate={{ y: ["-15%", "115%"] }} 
+               transition={{ duration: 5, repeat: Infinity, ease: "linear" }} 
+               className="w-full h-5 bg-gradient-to-b from-transparent via-white/40 to-transparent shadow-[0_0_30px_rgba(255,255,255,0.5)] relative z-[60]" 
              />
              {/* Dynamic Scanline Grid */}
-             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_2px,transparent_2px)] bg-[size:100%_6px] opacity-70" />
-             {/* Intensive CRT Flicker */}
-             <motion.div animate={{ opacity: [0.08, 0.15, 0.08] }} transition={{ duration: 0.04, repeat: Infinity }} className="absolute inset-0 bg-white/20" />
+             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:100%_4px] opacity-40" />
+             {/* Soft CRT Flicker */}
+             <motion.div animate={{ opacity: [0.03, 0.08, 0.03] }} transition={{ duration: 0.08, repeat: Infinity }} className="absolute inset-0 bg-white/10" />
           </div>
         );
       case "Fireflies":
