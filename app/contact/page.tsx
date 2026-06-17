@@ -39,12 +39,13 @@ export default function ContactPage() {
       <main className="min-h-screen pt-32 px-6 flex flex-col items-center justify-center text-center">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
           <CheckCircle className="text-azure-400 mx-auto mb-8" size={64} strokeWidth={1} />
-          <h1 className="text-2xl tracking-[0.4em] uppercase font-light mb-6">Connection Received</h1>
+          <h1 className="text-2xl tracking-[0.4em] uppercase font-light mb-6">Connection Received / 送信完了</h1>
           <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase leading-relaxed max-w-sm mx-auto mb-12">
-            メッセージを受け取りました。中央監視局にて内容を精査し、必要に応じて接続を試みます。
+            メッセージを受け取りました。中央監視局にて内容を精査し、必要に応じて接続を試みます。<br /><br />
+            Message received. Our central station will analyze the frequency and connect if necessary.
           </p>
           <Link href="/" className="px-10 py-4 border border-white/10 text-[9px] uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all">
-            Return to Gateway
+            Return to Gateway / ゲートウェイへ
           </Link>
         </motion.div>
       </main>
@@ -117,7 +118,7 @@ export default function ContactPage() {
               ) : (
                 <>
                   <Send size={14} />
-                  Transmit Message
+                  Transmit Message / 送信する
                 </>
               )}
             </button>

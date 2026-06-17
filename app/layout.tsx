@@ -6,14 +6,14 @@ import GeometricBackground from "@/components/background/GeometricBackground";
 export const metadata: Metadata = {
   metadataBase: new URL("https://hxc.hexa-relation.com"),
   title: {
-    default: "Hexa Card | Next-Generation NFC Digital Identity",
+    default: "Hexa Card | 次世代NFCデジタルアイデンティティ / Next-Gen NFC Digital Identity",
     template: "%s | Hexa System"
   },
-  description: "Beyond existence. A premium NFC digital business card and identity synchronization system for modern networking. Secure, elegant, and smart.",
+  description: "存在を超越する。選ばれた者のための、プレミアムなNFCデジタル名刺とアイデンティティ同期システム。 / Beyond existence. A premium NFC digital business card and identity synchronization system for the chosen few.",
   manifest: "/manifest.json",
   openGraph: {
-    title: "Hexa Card | Premium NFC Digital Identity",
-    description: "Synchronize your identity via the Hexa Card system. A high-end NFC digital business card solution combining gothic tech and minimal chic.",
+    title: "Hexa Card | プレミアムNFCデジタルアイデンティティ",
+    description: "Hexa Cardシステムでアイデンティティを同期。物理とデジタルを繋ぐ、究極のスマート名刺。 / Synchronize your identity via the Hexa Card system. The ultimate smart card bridging physical and digital presence.",
     url: "https://hxc.hexa-relation.com",
     siteName: "Hexa Card",
     images: [
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Hexa Card | NFC Digital Identity System",
-    description: "Beyond existence. The ultimate NFC digital business card platform for the chosen few.",
+    description: "アイデンティティの透過と拡張。 / Permeation and expansion of identity.",
     images: ["/logo.png"],
   },
 };
@@ -61,6 +61,46 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         {/* Preload critical assets */}
         <link rel="preload" href="/logo.png" as="image" />
+        {/* JSON-LD Structured Data for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "Hexa Card",
+                "url": "https://hxc.hexa-relation.com"
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                "name": "Hexa Relation",
+                "url": "https://hxc.hexa-relation.com",
+                "logo": "https://hxc.hexa-relation.com/logo.png",
+                "sameAs": [
+                  "https://x.com/HexaRelation"
+                ]
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "Product",
+                "name": "Hexa Card",
+                "description": "Premium NFC Digital Identity Card System. / プレミアムNFCデジタル名刺システム。",
+                "brand": {
+                  "@type": "Brand",
+                  "name": "Hexa Relation"
+                },
+                "offers": {
+                  "@type": "Offer",
+                  "url": "https://hxc.hexa-relation.com/purchase",
+                  "priceCurrency": "JPY",
+                  "availability": "https://schema.org/InStock"
+                }
+              }
+            ])
+          }}
+        />
       </head>
       <body className="bg-void text-moonlight min-h-screen flex flex-col antialiased">
         <NextAuthProvider>

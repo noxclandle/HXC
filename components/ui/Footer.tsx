@@ -11,22 +11,22 @@ export default function Footer() {
       <div className="max-w-4xl mx-auto flex flex-col items-center gap-12">
         {/* Branding */}
         <div className="flex flex-col items-center text-center group">
-          <span className="text-[11px] tracking-[1.2em] uppercase font-light text-moonlight/60">Hexa Relation</span>
+          <span className="text-[11px] tracking-[1.2em] uppercase font-light text-moonlight/60">Hexa Relation / アイデンティティの透過</span>
         </div>
 
         {/* Navigation/Legal Links */}
         <div className="flex flex-wrap justify-center gap-x-12 gap-y-6">
           <Link href="/contact" className="text-[10px] tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity uppercase">
-            Contact
+            Contact / お問い合わせ
           </Link>
           <Link href="/terms" className="text-[10px] tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity flex items-center gap-2 uppercase">
-            <FileText size={12} /> Terms
+            <FileText size={12} /> Terms / 利用規約
           </Link>
           <Link href="/privacy" className="text-[10px] tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity flex items-center gap-2 uppercase">
-            <Shield size={12} /> Privacy
+            <Shield size={12} /> Privacy / 規約
           </Link>
           <Link href="/legal" className="text-[10px] tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity flex items-center gap-2 uppercase">
-            <Scale size={12} /> Legal
+            <Scale size={12} /> Legal / 特定商取引法に基づく表記
           </Link>
         </div>
 
