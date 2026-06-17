@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Camera, Book, ShieldCheck, ChevronRight, Newspaper, Sparkles, Smartphone } from "lucide-react";
+import { Camera, Book, ShieldCheck, ChevronRight, Newspaper, Sparkles, Smartphone, HelpCircle } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -166,6 +166,9 @@ export default function HubClientUI({
                  <Link href="/charge" className="px-2 py-1 border border-azure-500/30 bg-azure-500/5 text-azure-400 text-[7px] tracking-[0.2em] font-bold uppercase hover:bg-azure-500/10 transition-all">
                     Purchase / 購入
                  </Link>
+                 <Link href="/guide" className="p-1.5 border border-white/10 bg-white/5 text-white/40 hover:text-white transition-all ml-2" title="System Guide">
+                    <Book size={12} />
+                 </Link>
               </div>
               <div className="mt-2 flex justify-start md:justify-end items-center gap-2 opacity-40">
                  <span className="text-[7px] uppercase tracking-widest font-bold">Total EXP / 累計経験値</span>
@@ -222,6 +225,17 @@ export default function HubClientUI({
               </div>
               <MonthlyReport stats={realStats} />
            </div>
+
+           <Link href="/guide" className="group flex items-center justify-between p-6 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all">
+              <div className="flex items-center gap-4">
+                 <HelpCircle size={20} className="opacity-20 group-hover:opacity-100 group-hover:text-azure-400 transition-all" />
+                 <div>
+                    <p className="text-[10px] tracking-[0.3em] uppercase font-bold text-white/80">System Guide</p>
+                    <p className="text-[7px] tracking-[0.1em] uppercase opacity-30 mt-0.5">How to utilize Hexa Relation</p>
+                 </div>
+              </div>
+              <ChevronRight size={14} className="opacity-10 group-hover:opacity-100 transition-all" />
+           </Link>
           </aside>
         </div>
 
