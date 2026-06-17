@@ -1,9 +1,13 @@
 import { MetadataRoute } from 'next'
- 
-export default function sitemap(): MetadataRoute.Sitemap {
+import { prisma } from '@/lib/prisma'
+
+export const revalidate = 3600 // Cache sitemap for 1 hour
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://hxc.hexa-relation.com'
   
-  return [
+  // Base static routes
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: new Date(),
@@ -53,4 +57,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.3,
     },
   ]
+
+  try {
+    // Fetch all active user profiles that should be indexed
+    const users = await prisma.user.findMany({
+      where: {
+        handle_name: { not: null }
+      },
+      select: {
+        handle_name: true,
+      }
+    });
+
+    const dynamicRoutes: MetadataRoute.Sitemap = users.map((user) => ({
+      url: `${baseUrl}/p/${user.handle_name}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.6,
+    }));
+
+    return [...staticRoutes, ...dynamicRoutes];
+  } catch (error) {
+    console.error("Failed to generate dynamic sitemap:", error);
+    return staticRoutes; // Fallback to static routes if DB fails
+  }
 }
