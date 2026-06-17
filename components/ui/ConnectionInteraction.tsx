@@ -24,11 +24,11 @@ export default function ConnectionInteraction() {
         
         switch (equippedPointer) {
           case "Azure Trace": setCurrentStyle({ color: "#3B82F6", shape: "hex" }); break;
-          case "Emerald Pulse": setCurrentStyle({ color: "#10B981", shape: "hex" }); break;
-          case "Ruby Flare": setCurrentStyle({ color: "#F43F5E", shape: "square" }); break;
+          case "Emerald Trace": setCurrentStyle({ color: "#10B981", shape: "hex" }); break;
+          case "Ruby Trace": setCurrentStyle({ color: "#F43F5E", shape: "square" }); break;
           case "Gold Trace": setCurrentStyle({ color: "#F59E0B", shape: "hex" }); break;
-          case "Violet Connection": setCurrentStyle({ color: "#8B5CF6", shape: "hex" }); break;
-          case "Crimson Ember": setCurrentStyle({ color: "#EF4444", shape: "square" }); break;
+          case "Violet Trace": setCurrentStyle({ color: "#8B5CF6", shape: "hex" }); break;
+          case "Crimson Trace": setCurrentStyle({ color: "#EF4444", shape: "square" }); break;
           case "Shadow Trace": setCurrentStyle({ color: "#111111", shape: "square" }); break;
           case "Prism Trace": setCurrentStyle({ color: "rgba(255,255,255,0.8)", shape: "hex" }); break;
           case "Void Trace": setCurrentStyle({ color: "#000000", shape: "square" }); break;
@@ -101,7 +101,7 @@ export default function ConnectionInteraction() {
               borderColor: p.color,
               width: "48px",
               height: "48px",
-              // 六角形をCSSで表現（clip-pathを使用、未対応ブラウザは四角で見える）
+              // 六角形をCSSで表現（clip-pathを使用、未対応ブラウザは四角で見え る）
               clipPath: p.shape === "hex" ? "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)" : "none"
             }}
           />
