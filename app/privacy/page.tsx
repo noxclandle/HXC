@@ -7,24 +7,24 @@ import Link from "next/link";
 export default function PrivacyPage() {
   const sections = [
     {
-      title: "1. 個人情報の取得",
-      content: "当組織は、本サービスの提供にあたり、氏名、メールアドレス、配送先住所、決済情報等の個人情報を適正な手段により取得します。"
+      title: "1. 個人情報の取得 / Collection of Personal Information",
+      content: "当組織は、本サービスの提供にあたり、氏名、メールアドレス、配送先住所、決済情報等の個人情報を適正な手段により取得します。 / We collect personal information such as name, email address, shipping address, and payment information through appropriate means for the provision of our services."
     },
     {
-      title: "2. 利用目的",
-      content: "取得した個人情報は、商品の発送、お問い合わせ対応、本人確認、および本サービスの維持・改善の目的で利用します。"
+      title: "2. 利用目的 / Purpose of Use",
+      content: "取得した個人情報は、商品の発送、お問い合わせ対応、本人確認、および本サービスの維持・改善の目的で利用します。 / Collected information will be used for product shipping, customer support, identity verification, and maintaining or improving our services."
     },
     {
-      title: "3. 第三者提供の禁止",
-      content: "当組織は、法令に基づく場合を除き、利用者の同意なく個人情報を第三者に提供することはありません。ただし、配送や決済等の業務委託先を除きます。"
+      title: "3. 第三者提供の禁止 / Prohibition of Third-Party Disclosure",
+      content: "当組織は、法令に基づく場合を除き、利用者の同意なく個人情報を第三者に提供することはありません。ただし、配送や決済等の業務委託先を除きます。 / We do not provide personal information to third parties without consent, except as required by law or for delegated operations such as shipping and payment processing."
     },
     {
-      title: "4. 安全管理措置",
-      content: "当組織は、個人情報の漏洩、滅失の防止のため、適切なセキュリティ対策を講じ、個人情報を厳重に管理します。"
+      title: "4. 安全管理措置 / Security Measures",
+      content: "当組織は、個人情報の漏洩、滅失の防止のため、適切なセキュリティ対策を講じ、個人情報を厳重に管理します。 / We implement appropriate security measures to prevent leakage or loss, and strictly manage personal information."
     },
     {
-      title: "5. 開示・訂正・削除",
-      content: "利用者は、自己の個人情報の開示、訂正、削除を請求することができます。請求があった場合は、本人確認の上、速やかに対応いたします。"
+      title: "5. 開示・訂正・削除 / Disclosure, Correction, and Deletion",
+      content: "利用者は、自己の個人情報の開示、訂正、削除を請求することができます。請求があった場合は、本人確認の上、速やかに対応いたします。 / Users may request disclosure, correction, or deletion of their personal information. We will respond promptly after verifying your identity."
     }
   ];
 

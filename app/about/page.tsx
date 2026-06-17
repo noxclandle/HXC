@@ -9,17 +9,17 @@ export default function InvitationPage() {
   const features = [
     { 
       title: "Digital Rebirth", 
-      desc: "紙の名刺を、一瞬であなたのシックなデジタル・フォーマットへ。OCRによる自動解析が「名刺のあり方」を書き換えます。", 
+      desc: "紙の名刺を、一瞬であなたのシックなデジタル・フォーマットへ。OCRによる自動解析が「名刺のあり方」を書き換えます。 / Transform physical paper cards into a chic digital format instantly. Our OCR analysis redefines the essence of networking.", 
       icon: <Camera className="opacity-40" /> 
     },
     { 
       title: "Physical Link", 
-      desc: "スマートフォンをかざすだけ。物理的なNFCチップとの同期が、電子名刺にかつてないセキュリティと「実体感」をもたらします。", 
+      desc: "スマートフォンをかざすだけ。物理的なNFCチップとの同期が、電子名刺にかつてないセキュリティと「実体感」をもたらします。 / Simply tap. Synchronization with a physical NFC chip brings unprecedented security and tangibility to digital identity.", 
       icon: <Shield className="opacity-40" /> 
     },
     { 
       title: "Silent Luxury", 
-      desc: "静寂と月光。哲学に基づく一切の無駄を省いたUIが、持ち主の確かな品格を証明します。", 
+      desc: "静寂と月光。哲学に基づく一切の無駄を省いたUIが、持ち主の確かな品格を証明します。 / Silence and Moonlight. A UI stripped of excess proves the owner's true character and sophistication.", 
       icon: <Zap className="opacity-40" /> 
     }
   ];
@@ -41,7 +41,8 @@ export default function InvitationPage() {
         <h1 className="text-4xl md:text-5xl tracking-[0.2em] uppercase font-extralight mb-8 italic">Hexa Relation</h1>
         <p className="text-sm tracking-[0.3em] opacity-40 leading-relaxed uppercase">
           物理的な制約を超え、<br />
-          あなたのアイデンティティを世界へ拡張する。
+          あなたのアイデンティティを世界へ拡張する。<br />
+          <span className="text-[10px]">Transcending physical limits, expanding your identity to the world.</span>
         </p>
       </motion.div>
 
@@ -69,14 +70,14 @@ export default function InvitationPage() {
       >
         <div className="text-center space-y-2">
           <p className="text-[10px] tracking-[0.6em] uppercase opacity-40">Ready to Synchronize?</p>
-          <p className="text-[8px] tracking-[0.2em] uppercase opacity-20 italic">新たな次元の繋がりを、あなたにも。</p>
+          <p className="text-[8px] tracking-[0.2em] uppercase opacity-20 italic">新たな次元の繋がりを、あなたにも。 / A new dimension of connection awaits.</p>
         </div>
         
         <Link 
           href="/activate" 
           className="px-24 py-5 border border-moonlight/30 hover:bg-white/5 transition-all text-[11px] tracking-[0.8em] font-bold uppercase"
         >
-          Join the Void
+          Join the Void / 同期を開始する
         </Link>
       </motion.div>
     </main>

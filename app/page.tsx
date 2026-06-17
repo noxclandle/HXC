@@ -26,7 +26,7 @@ export default function LandingPage() {
 
       <h1 className="text-4xl md:text-6xl font-extralight tracking-[0.25em] uppercase mb-4 text-white">
         Hexa Card
-        <span className="block text-[9px] md:text-[10px] tracking-[0.8em] opacity-30 mt-6 ml-[0.8em]">アイデンティティの透過</span>
+        <span className="block text-[9px] md:text-[10px] tracking-[0.8em] opacity-30 mt-6 ml-[0.8em]">アイデンティティの透過 / Permeation of Identity</span>
       </h1>
 
       <p className="text-white/40 max-w-sm mb-16 tracking-[0.2em] text-[10px] md:text-[11px] leading-relaxed uppercase">
@@ -40,14 +40,14 @@ export default function LandingPage() {
             href="/purchase"
             className="px-16 py-5 bg-white text-void tracking-[0.6em] uppercase text-[10px] font-bold flex items-center gap-2"
           >
-            <CreditCard size={12} /> Order Card
+            <CreditCard size={12} /> Order Card / 購入
           </Link>
 
           <Link
             href="/activate"
             className="px-12 py-5 border border-white/10 tracking-[0.5em] uppercase text-[9px] font-bold text-white/40"
           >
-            Activate
+            Activate / 有効化
           </Link>
         </div>
 
@@ -55,16 +55,20 @@ export default function LandingPage() {
           href="/login" 
           className="mt-4 text-[8px] tracking-[0.4em] uppercase text-white/20 hover:text-azure-400 font-bold"
         >
-          — Identity Access (Sign In) —
+          — Identity Access / ログイン —
         </Link>
 
         {/* SEO Contextual Section */}
         <section className="max-w-xs mt-12 opacity-[0.15] group-hover:opacity-30 transition-opacity">
-           <h2 className="text-[8px] tracking-[0.4em] uppercase font-bold mb-3">NFC Digital Identity System</h2>
+           <h2 className="text-[8px] tracking-[0.4em] uppercase font-bold mb-3">NFC Digital Identity System / デジタル名刺システム</h2>
            <p className="text-[7px] leading-relaxed tracking-[0.2em] uppercase">
              The Hexa Card is a next-generation smart business card. 
              Utilizing secure NFC technology to bridge your physical presence with a sophisticated digital identity. 
              Designed for professionals who demand excellence in every connection.
+             <br /><br />
+             Hexa Cardは次世代のスマート名刺です。
+             高度なNFC技術を活用し、物理的な存在と洗練されたデジタル・アイデンティティを融合させます。
+             すべての「繋がり」に卓越性を求めるプロフェッショナルのために設計されました。
            </p>
         </section>
 

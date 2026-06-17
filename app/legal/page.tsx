@@ -6,17 +6,17 @@ import Link from "next/link";
 
 export default function LegalPage() {
   const sections = [
-    { title: "販売業者", content: "Hexa Relation" },
-    { title: "代表責任者", content: "請求により遅滞なく開示いたします" },
-    { title: "所在地", content: "請求により遅滞なく開示いたします" },
-    { title: "電話番号", content: "請求により遅滞なく開示いたします" },
-    { title: "メールアドレス", content: "support@hexa-relation.com" },
-    { title: "販売価格", content: "各商品ページに記載の金額（税込）" },
-    { title: "商品代金以外の必要料金", content: "配送料（日本国内一律無料 または ○○円）、決済手数料" },
-    { title: "支払方法", content: "クレジットカード決済（Stripe）" },
-    { title: "支払時期", content: "商品注文確定時にお支払いが確定します。" },
-    { title: "商品の引渡時期", content: "決済完了確認後、○営業日以内に発送いたします。" },
-    { title: "返品・交換・キャンセルについて", content: "商品の性質上、決済完了後のキャンセルは受け付けておりません。製品に初期不良がある場合は、商品到着後7日以内にご連絡ください。" },
+    { title: "販売業者 / Vendor", content: "Hexa Relation" },
+    { title: "代表責任者 / Representative", content: "請求により遅滞なく開示いたします / Disclosed upon request" },
+    { title: "所在地 / Location", content: "請求により遅滞なく開示いたします / Disclosed upon request" },
+    { title: "電話番号 / Phone Number", content: "請求により遅滞なく開示いたします / Disclosed upon request" },
+    { title: "メールアドレス / Email", content: "support@hexa-relation.com" },
+    { title: "販売価格 / Price", content: "各商品ページに記載の金額（税込） / Amount as listed on product pages (incl. tax)" },
+    { title: "商品代金以外の必要料金 / Additional Fees", content: "配送料（日本国内一律無料）、決済手数料 / Shipping (Free within Japan), Payment fees" },
+    { title: "支払方法 / Payment Methods", content: "クレジットカード決済（Stripe） / Credit Card (Stripe)" },
+    { title: "支払時期 / Payment Timing", content: "商品注文確定時にお支払いが確定します。 / Payment is processed at the time of order confirmation." },
+    { title: "商品の引渡時期 / Delivery Timing", content: "決済完了確認後、○営業日以内に発送いたします。 / Shipped within X business days after payment verification." },
+    { title: "返品・交換・キャンセルについて / Returns & Cancellations", content: "商品の性質上、決済完了後のキャンセルは受け付けておりません。製品に初期不良がある場合は、商品到着後7日以内にご連絡ください。 / Due to the nature of the product, we do not accept cancellations after payment. Contact us within 7 days if the product is defective." },
   ];
 
   return (
