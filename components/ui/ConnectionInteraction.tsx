@@ -22,6 +22,7 @@ export default function ConnectionInteraction() {
         const data = await res.json();
         const equippedPointer = data.equipped?.pointer || "Pure White Hex";
         
+        // アイテムIDをlib/game/assets.tsの定義と完全に一致させる
         switch (equippedPointer) {
           case "Azure Trace": setCurrentStyle({ color: "#3B82F6", shape: "hex" }); break;
           case "Emerald Trace": setCurrentStyle({ color: "#10B981", shape: "hex" }); break;
@@ -101,7 +102,7 @@ export default function ConnectionInteraction() {
               borderColor: p.color,
               width: "48px",
               height: "48px",
-              // 六角形をCSSで表現（clip-pathを使用、未対応ブラウザは四角で見え る）
+              // 六角形をCSSで表現
               clipPath: p.shape === "hex" ? "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)" : "none"
             }}
           />

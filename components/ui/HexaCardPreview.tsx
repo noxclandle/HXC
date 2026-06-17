@@ -151,7 +151,7 @@ export default function HexaCardPreview({
       case "SilkBlur": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:via-transparent before:to-white/5 before:blur-[60px]";
       case "DigitalFlow": return "bg-[#010101] bg-[linear-gradient(rgba(59,130,246,0.1)_1px,transparent_1px)] bg-[size:100%_4px] opacity-100";
       case "PrismFractal": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-tr before:from-rose-500/20 before:via-azure-500/20 before:to-emerald-500/20 opacity-100";
-      default: return "bg-transparent";
+      default: return "bg-black"; // デフォルトを透明から黒に変更
     }
   };
 
@@ -294,14 +294,14 @@ export default function HexaCardPreview({
         transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
         className="relative z-10"
       >
-        {/* Aura Layer (Now inside rotating box, offset backwards with translateZ) */}
+        {/* Aura Layer (Strictly Isolated with hole mask) */}
         <div 
           className="absolute inset-0 pointer-events-none overflow-visible flex items-center justify-center"
           style={{ 
             transform: 'translateZ(-50px)',
-            // 穴あけマスク：名刺の中身を100%透過させず、外側だけ描画する
-            clipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 0% 0%, 0% 100%, 100% 100%, 100% 0%, 0% 0%)',
-            WebkitClipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 0% 0%, 0% 100%, 100% 100%, 100% 0%, 0% 0%)'
+            // 反時計回りの指定により、中央1%〜99%の領域を物理的に穴あけする
+            clipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 1% 1%, 1% 99%, 99% 99%, 99% 1%, 1% 1%)',
+            WebkitClipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 1% 1%, 1% 99%, 99% 99%, 99% 1%, 1% 1%)'
           }}
         >
            {getAuraLayer()}
@@ -314,9 +314,10 @@ export default function HexaCardPreview({
           className={`absolute inset-0 overflow-hidden border ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
-          {/* CRITICAL: Pure Opaque Black Background to stop any light bleed */}
-          <div className="absolute inset-0 bg-[#000000] -z-30" />
-          <div className={`absolute inset-0 ${getBackgroundStyle()} -z-20`} />
+          {/* Light Proof Shield: Force pure black base to prevent any light bleed */}
+          <div className="absolute inset-[-1px] bg-black -z-50" />
+          <div className="absolute inset-0 bg-[#000000] -z-40" />
+          <div className={`absolute inset-0 ${getBackgroundStyle()} -z-30`} />
 
           {getEffectLayer()}
 
@@ -380,9 +381,10 @@ export default function HexaCardPreview({
           className={`absolute inset-0 flex flex-col justify-between items-center text-center border overflow-hidden ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
         >
-          {/* CRITICAL: Pure Opaque Black Background to stop any light bleed */}
-          <div className="absolute inset-0 bg-[#000000] -z-30" />
-          <div className={`absolute inset-0 ${getBackgroundStyle()} -z-20`} />
+          {/* Light Proof Shield: Force pure black base to prevent any light bleed */}
+          <div className="absolute inset-[-1px] bg-black -z-50" />
+          <div className="absolute inset-0 bg-[#000000] -z-40" />
+          <div className={`absolute inset-0 ${getBackgroundStyle()} -z-30`} />
 
           {isVertical ? (
             <div className="h-full p-10 md:p-16 flex flex-col justify-between items-center w-full">
