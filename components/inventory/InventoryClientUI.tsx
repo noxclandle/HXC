@@ -177,7 +177,9 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
 
   const currentPreview = {
     ...equipped,
-    ...(previewAsset ? { [previewAsset.type]: previewAsset.id } : {})
+    ...(previewAsset ? { 
+      [previewAsset.type]: previewAsset.id 
+    } : {})
   };
 
   const currentAligns = currentPreview.orientation === 'horizontal' ? (currentPreview.hAlign || defaultAlign) : (currentPreview.vAlign || defaultAlign);
