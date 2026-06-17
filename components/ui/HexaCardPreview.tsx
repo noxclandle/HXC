@@ -394,6 +394,16 @@ export default function HexaCardPreview({
     return maps[scale] || base;
   };
 
+  const getDynamicFontSize = (text: string, baseSize: number, field: "name" | "company", isVertical: boolean) => {
+    const scale = getFieldScale(field === "name" ? "name" : "company", isVertical);
+    const limit = field === "name" ? 10 : 20;
+    if (text.length > limit) {
+      const reduction = Math.max(0.6, 1 - (text.length - limit) * 0.03);
+      return baseSize * scale * reduction;
+    }
+    return baseSize * scale;
+  };
+
   const isVertical = orientation === "vertical";
   const textStyle = textColor === "black" ? "text-black" : "text-white";
   const textMutedStyle = textColor === "black" ? "text-black/30" : "text-white/30";
@@ -444,7 +454,7 @@ export default function HexaCardPreview({
                   <div className={`w-16 h-16 md:w-20 md:h-20 border ${textColor === 'black' ? 'border-black/5' : 'border-white/5'} flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative`}>
                      {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={32} className={textMutedStyle} />}
                   </div>
-                  <p className={`tracking-[0.25em] uppercase ${textStyle} font-medium leading-relaxed mt-4 truncate w-full`} style={{ fontSize: `${getFieldScale('company', true) * 12}px` }}>{company || "CORPORATION"}</p>
+                  <p className={`tracking-[0.25em] uppercase ${textStyle} font-medium leading-relaxed mt-4 truncate w-full`} style={{ fontSize: `${getDynamicFontSize(company || "CORPORATION", 12, "company", true)}px` }}>{company || "CORPORATION"}</p>
                </div>
 
                {/* Middle: Name & Title */}
@@ -452,8 +462,8 @@ export default function HexaCardPreview({
                   <div className="space-y-4 md:space-y-6 w-full flex flex-col items-center">
                     {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', true) * 11}px` }}>{title}</p>}
                     <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
-                       {reading && <p className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase truncate w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getFieldScale('name', true) * 11}px` }}>{reading}</p>}
-                       <h2 className={`tracking-[0.1em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getFieldScale('name', true) * 32}px` }}>{name}</h2>
+                       {reading && <p className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase truncate w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getDynamicFontSize(reading, 11, "name", true)}px` }}>{reading}</p>}
+                       <h2 className={`tracking-[0.1em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getDynamicFontSize(name, 32, "name", true)}px` }}>{name}</h2>
                     </div>
                     <div className={`h-px w-12 md:w-16 ${accentLineStyle} mt-2 ${alignName === 'left' ? 'self-start' : alignName === 'right' ? 'self-end' : 'self-center'}`} />
                   </div>
@@ -472,7 +482,7 @@ export default function HexaCardPreview({
                  <div className={`w-12 h-12 md:w-16 md:h-16 border ${textColor === 'black' ? 'border-black/5' : 'border-white/5'} flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative`}>
                     {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={24} className={textMutedStyle} />}
                  </div>
-                 <p className={`tracking-[0.3em] uppercase ${textStyle} font-medium leading-tight truncate`} style={{ fontSize: `${getFieldScale('company', false) * 12}px` }}>{company || "CORPORATION"}</p>
+                 <p className={`tracking-[0.3em] uppercase ${textStyle} font-medium leading-tight truncate`} style={{ fontSize: `${getDynamicFontSize(company || "CORPORATION", 12, "company", false)}px` }}>{company || "CORPORATION"}</p>
               </header>
 
               {/* Middle: Name & Title */}
@@ -480,8 +490,8 @@ export default function HexaCardPreview({
                 <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
                    {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', false) * 10}px` }}>{title}</p>}
                    <div className="flex flex-col w-full items-center">
-                      {reading && <span className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase mb-1 w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getFieldScale('name', false) * 9}px` }}>{reading}</span>}
-                      <h2 className={`tracking-[0.15em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getFieldScale('name', false) * 28}px` }}>{name}</h2>
+                      {reading && <span className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase mb-1 w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getDynamicFontSize(reading, 9, "name", false)}px` }}>{reading}</span>}
+                      <h2 className={`tracking-[0.15em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getDynamicFontSize(name, 28, "name", false)}px` }}>{name}</h2>
                    </div>
                 </div>
               </div>

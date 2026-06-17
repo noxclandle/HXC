@@ -35,6 +35,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
   const [unlockedTitles, setUnlockedTitles] = useState<string[]>(initialStats?.titles || ["ASSOCIATE"]);
   const [assetPrices, setAssetPrices] = useState<Record<string, number>>(initialStats?.asset_prices || {});
   const [previewAsset, setPreviewAsset] = useState<Asset | null>(null);
+  const [isResonating, setIsResonating] = useState(false);
   const [showRTPurchase, setShowRTPurchase] = useState(showPurchaseFromUrl);
   const [confirmingAsset, setConfirmingAsset] = useState<Asset | null>(null);
   
@@ -158,8 +159,10 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
   };
 
   const handlePreviewAsset = (asset: Asset) => {
+    setIsResonating(true);
     setPreviewAsset(asset);
     if (asset.type === "sound") playConnectionSound(asset.id);
+    setTimeout(() => setIsResonating(false), 600);
   };
 
   if (!mounted || status === "loading") {
@@ -287,32 +290,42 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
              textColor={equipped.textColor}
              onTextColorChange={(c) => { const next = { ...equipped, textColor: c }; setEquipped(next); handleCommit(next); }}
              previewLabel={previewAsset ? `Previewing: ${previewAsset.name}` : "Live Preview / ライブプレビュー"}
+             isUpdating={isResonating}
            >
-              <HexaCardPreview 
-                name={profile?.name || "ARCHITECT"}
-                reading={profile?.handle || profile?.reading}
-                company={profile?.profile?.company}
-                title={profile?.profile?.title}
-                phone={profile?.profile?.phone}
-                email={profile?.profile?.contact_email || profile?.email}
-                logoUrl={profile?.logo_url}
-                faceUrl={profile?.photo_url}
-                frame={currentPreview.frame}
-                background={currentPreview.background}
-                effect={currentPreview.effect}
-                aura={currentPreview.aura}
-                fontFamily={currentPreview.fontFamily}
-                textColor={currentPreview.textColor}
-                sound={currentPreview.sound}
-                orientation={equipped.orientation}
-                alignCompany={currentAligns.company}
-                alignName={currentAligns.name}
-                alignReading={currentAligns.reading}
-                alignTitle={currentAligns.title}
-                alignPhone={currentAligns.phone}
-                alignEmail={currentAligns.email}
-                bio={profile?.profile?.bio}
-              />
+              <motion.div
+                animate={isResonating ? { 
+                  scale: [1, 0.98, 1],
+                  filter: ["blur(0px)", "blur(4px)", "blur(0px)"],
+                  opacity: [1, 0.5, 1]
+                } : {}}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+              >
+                <HexaCardPreview 
+                  name={profile?.name || "ARCHITECT"}
+                  reading={profile?.handle || profile?.reading}
+                  company={profile?.profile?.company}
+                  title={profile?.profile?.title}
+                  phone={profile?.profile?.phone}
+                  email={profile?.profile?.contact_email || profile?.email}
+                  logoUrl={profile?.logo_url}
+                  faceUrl={profile?.photo_url}
+                  frame={currentPreview.frame}
+                  background={currentPreview.background}
+                  effect={currentPreview.effect}
+                  aura={currentPreview.aura}
+                  fontFamily={currentPreview.fontFamily}
+                  textColor={currentPreview.textColor}
+                  sound={currentPreview.sound}
+                  orientation={equipped.orientation}
+                  alignCompany={currentAligns.company}
+                  alignName={currentAligns.name}
+                  alignReading={currentAligns.reading}
+                  alignTitle={currentAligns.title}
+                  alignPhone={currentAligns.phone}
+                  alignEmail={currentAligns.email}
+                  bio={profile?.profile?.bio}
+                />
+              </motion.div>
            </UnifiedCardContainer>
         </div>
 
