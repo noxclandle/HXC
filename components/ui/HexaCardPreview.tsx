@@ -63,9 +63,7 @@ export default function HexaCardPreview({
   const finalRotateY = useTransform(rotateY, (val) => isFlipped ? val + 180 : val);
 
   const handleFlip = (e: React.MouseEvent) => {
-    // リンククリック時はフリップさせない
     if ((e.target as HTMLElement).closest('a')) return;
-    
     setIsRotating(true);
     setIsFlipped(!isFlipped);
     if (sound) playConnectionSound(sound);
@@ -119,8 +117,8 @@ export default function HexaCardPreview({
     switch (frame) {
       case "Silver": return "border-[2px] border-zinc-400 shadow-xl ring-1 ring-white/10";
       case "Gold": return "border-[3px] border-amber-600 shadow-2xl ring-1 ring-amber-300/10";
-      case "RoseGold": return "border-[3px] border-rose-300 shadow-[0_0_30px_rgba(244,114,182,0.3)] ring-1 ring-rose-200/40 bg-rose-50/5";
-      case "PearlWhite": return "border-[2px] border-slate-100 shadow-[0_0_20px_rgba(255,255,255,0.5)] ring-1 ring-white/60 bg-white/20";
+      case "RoseGold": return "border-[3px] border-rose-300 shadow-[0_0_30px_rgba(244,114,182,0.3)] ring-1 ring-rose-200/40";
+      case "PearlWhite": return "border-[2px] border-slate-100 shadow-[0_0_20px_rgba(255,255,255,0.5)] ring-1 ring-white/60";
       case "Moonlight": return "border-[2px] border-indigo-200/50 shadow-[0_0_25px_rgba(199,210,254,0.3)] ring-1 ring-indigo-100/20";
       case "Grace": return "border-[4px] border-white/20 shadow-lg ring-1 ring-white/10 after:absolute after:inset-0 after:border after:border-white/5 after:m-1";
       case "Silk": return "border-[2px] border-slate-200/30 shadow-md ring-1 ring-white/5";
@@ -153,7 +151,7 @@ export default function HexaCardPreview({
       case "SilkBlur": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:via-transparent before:to-white/5 before:blur-[60px]";
       case "DigitalFlow": return "bg-[#010101] bg-[linear-gradient(rgba(59,130,246,0.1)_1px,transparent_1px)] bg-[size:100%_4px] opacity-100";
       case "PrismFractal": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-tr before:from-rose-500/20 before:via-azure-500/20 before:to-emerald-500/20 opacity-100";
-      default: return "bg-[#080808]";
+      default: return "bg-transparent";
     }
   };
 
