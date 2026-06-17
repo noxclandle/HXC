@@ -290,12 +290,12 @@ export default function HexaCardPreview({
       onMouseLeave={() => { x.set(0); y.set(0); }}
       onClick={handleFlip}
     >
-      {/* Aura Layer (Rendered BEHIND with a "hole" in the middle to protect card face) */}
+      {/* Aura Layer (Strictly isolated with opposite winding hole mask) */}
       <div 
         className="absolute inset-0 pointer-events-none z-0 overflow-visible flex items-center justify-center"
         style={{ 
-          clipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 0% 0%, 0% 100%, 100% 100%, 100% 0%, 0% 0%)',
-          WebkitClipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 0% 0%, 0% 100%, 100% 100%, 100% 0%, 0% 0%)'
+          clipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)',
+          WebkitClipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)'
         }}
       >
          {getAuraLayer()}
@@ -310,9 +310,15 @@ export default function HexaCardPreview({
         <motion.div style={{ opacity: glowOpacity, rotateY: 90, backfaceVisibility: "hidden" }} className="absolute inset-0 bg-white/10 blur-3xl z-20 pointer-events-none" />
 
         <div 
-          className={`absolute inset-0 overflow-hidden border bg-[#050505] ${getFrameStyle()} ${getBackgroundStyle()} ${getFontStyle()}`}
+          className={`absolute inset-0 overflow-hidden border ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
+          {/* Solid Base to prevent transparency bleed */}
+          <div className="absolute inset-0 bg-[#050505] -z-20" />
+          
+          {/* Background Layer with transparency if needed */}
+          <div className={`absolute inset-0 ${getBackgroundStyle()} -z-10`} />
+
           {getEffectLayer()}
 
           {/* Main Card Content */}
@@ -371,9 +377,15 @@ export default function HexaCardPreview({
         </div>
 
         <div 
-          className={`absolute inset-0 flex flex-col justify-between items-center text-center border overflow-hidden bg-[#050505] ${getFrameStyle()} ${getBackgroundStyle()} ${getFontStyle()}`}
+          className={`absolute inset-0 flex flex-col justify-between items-center text-center border overflow-hidden ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
         >
+          {/* Solid Base to prevent transparency bleed */}
+          <div className="absolute inset-0 bg-[#050505] -z-20" />
+          
+          {/* Background Layer with transparency if needed */}
+          <div className={`absolute inset-0 ${getBackgroundStyle()} -z-10`} />
+
           {isVertical ? (
             <div className="h-full p-10 md:p-16 flex flex-col justify-between items-center w-full">
               <div />
