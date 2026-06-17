@@ -55,7 +55,7 @@ export default function PublicNewsPage() {
                       <div className="space-y-4">
                          <div className="flex items-center gap-4">
                             <span className="text-[8px] tracking-[0.3em] font-bold uppercase text-azure-400 bg-azure-500/10 px-2 py-0.5 border border-azure-500/20">
-                               {item.category || "General"}
+                               {item.type || "Intel"}
                             </span>
                             <div className="flex items-center gap-2 opacity-20 text-[8px] font-mono uppercase tracking-widest">
                                <Calendar size={10} /> {new Date(item.created_at).toLocaleDateString()}
