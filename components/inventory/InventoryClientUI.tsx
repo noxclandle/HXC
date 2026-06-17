@@ -51,6 +51,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
     background: "Default",
     effect: "None",
     fontFamily: "Standard",
+    textColor: "white",
     title: "ASSOCIATE",
     sound: "resonance",
     pointer: "Pure White Hex",
@@ -78,7 +79,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
         setOwnedAssets(data.owned_assets || []);
         setUnlockedTitles(data.titles || ["ASSOCIATE"]);
         setAssetPrices(data.asset_prices || {});
-        if (data.equipped) setEquipped((prev: any) => ({ ...prev, ...data.equipped }));
+        if (data.equipped) setEquipped((prev: any) => ({ ...prev, ...data.equipped, textColor: data.equipped.textColor || "white" }));
       }
     } catch (e) { console.error(e); }
   }, []);
@@ -98,14 +99,14 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
         body: JSON.stringify({ equipped: customEquipped || equipped })
       });
       if (res.ok) {
-        showToast("保存しました", "success");
+        showToast("設定を保存しました / Saved successfully", "success");
         window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
       } else {
         throw new Error("Failed to sync");
       }
     } catch (e) {
       console.error(e);
-      showToast("保存に失敗しました。再試行してください。", "error");
+      showToast("保存に失敗しました / Save failed", "error");
       fetchData();
     } finally {
       setIsSaving(false);
@@ -123,14 +124,14 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
       });
       const data = await res.json();
       if (res.ok) {
-        showToast(`解放しました: ${asset.name}`, "success");
+        showToast(`解放しました: ${asset.name} / Unlocked successfully`, "success");
         setRTBalance(data.rt_balance);
         setOwnedAssets(data.owned_assets);
         const newEquipped = { ...equipped, [activeCategory as keyof typeof equipped]: asset.id };
         setEquipped(newEquipped);
         handleCommit(newEquipped);
       } else {
-        showToast(data.error || "解放に失敗しました", "error");
+        showToast(data.error || "解放に失敗しました / Unlock failed", "error");
       }
     } catch (err) { console.error(err); }
     finally { setUnlockingAsset(null); setConfirmingAsset(null); }
@@ -197,7 +198,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
         onClose={() => setConfirmingAsset(null)} 
         onConfirm={() => confirmingAsset && handleUnlock(confirmingAsset)}
         title={`Unlock ${confirmingAsset?.name}`}
-        description="Do you wish to acquire this asset?"
+        description="Do you wish to acquire this asset? / このアイテムを解放しますか？"
         cost={assetPrices[confirmingAsset?.rarity || "common"] || 0}
       />
 
@@ -207,13 +208,13 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
             <ArrowLeft size={12} /> Back to Home / 拠点へ戻る
           </Link>
           <h1 className="text-3xl lg:text-5xl tracking-[0.3em] lg:tracking-[0.5em] uppercase font-extralight text-white">Shop & Items</h1>
-          <p className="text-[9px] lg:text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold hidden lg:block">ショップ・アイテム管理</p>
+          <p className="text-[9px] lg:text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold hidden lg:block">ショップ・アイテム管理 / Asset Management</p>
         </div>
         <div className="text-right flex flex-col items-end gap-2">
            <Link href="/shop" className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60 hover:opacity-100 transition-opacity mb-2 flex items-center gap-2">
-              The Exchange <ChevronRight size={10} />
+              The Exchange / 交換所 <ChevronRight size={10} />
            </Link>
-           <p className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60">Points</p>
+           <p className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60">Frequency Points</p>
            <div className="flex items-center gap-4 group">
               <p className="text-xl lg:text-3xl font-extralight tracking-[0.2em] text-white">{Number(rtBalance).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
               <button 
@@ -272,28 +273,43 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                 </button>
               ))}
             </div>
-            <p className="text-[8px] tracking-[0.5em] uppercase opacity-20 text-center mt-8 italic">購入内容を確認し、決済を完了してください。</p>
+            <p className="text-[8px] tracking-[0.5em] uppercase opacity-20 text-center mt-8 italic">購入内容を確認し、決済を完了してください。 / Review and complete your purchase.</p>
           </motion.section>
         )}
       </AnimatePresence>
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
-        <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/98 pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[38vh] lg:h-auto flex items-center justify-center">
+        <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/98 pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[42vh] lg:h-auto flex items-center justify-center">
            <div className="py-2 lg:p-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-visible group flex flex-col items-center w-full">
               {previewAsset && (
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-azure-500 animate-pulse z-50" />
               )}
               
-              <div className="absolute top-2 right-6 lg:top-4 lg:right-4 z-30 flex gap-2 p-1 bg-white/10 lg:bg-white/5 border border-white/10 scale-90 lg:scale-100">
-                 <button onClick={() => setEquipped((prev: any) => ({ ...prev, orientation: 'horizontal' }))} className={`p-1.5 transition-all ${equipped.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
-                    <Layout size={10}/>
-                 </button>
-                 <button onClick={() => setEquipped((prev: any) => ({ ...prev, orientation: 'vertical' }))} className={`p-1.5 transition-all ${equipped.orientation === 'vertical' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
-                    <Smartphone size={10}/>
-                 </button>
+              <div className="absolute top-2 right-6 lg:top-4 lg:right-4 z-30 flex flex-col gap-3 p-2 bg-white/10 lg:bg-white/5 border border-white/10 scale-90 lg:scale-100">
+                 <div className="flex gap-2">
+                    <button onClick={() => setEquipped((prev: any) => ({ ...prev, orientation: 'horizontal' }))} className={`p-1.5 transition-all ${equipped.orientation === 'horizontal' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
+                        <Layout size={10}/>
+                    </button>
+                    <button onClick={() => setEquipped((prev: any) => ({ ...prev, orientation: 'vertical' }))} className={`p-1.5 transition-all ${equipped.orientation === 'vertical' ? 'bg-azure-600 text-white' : 'hover:bg-white/10'}`}>
+                        <Smartphone size={10}/>
+                    </button>
+                 </div>
+                 <div className="h-px bg-white/10 w-full" />
+                 <div className="flex gap-2">
+                    <button 
+                      onClick={() => { const next = { ...equipped, textColor: 'white' }; setEquipped(next); handleCommit(next); }} 
+                      className={`w-4 h-4 rounded-full border border-white/20 bg-white transition-all ${equipped.textColor === 'white' ? 'ring-2 ring-azure-500 ring-offset-2 ring-offset-void' : 'opacity-40'}`} 
+                      title="White Text"
+                    />
+                    <button 
+                      onClick={() => { const next = { ...equipped, textColor: 'black' }; setEquipped(next); handleCommit(next); }} 
+                      className={`w-4 h-4 rounded-full border border-white/20 bg-black transition-all ${equipped.textColor === 'black' ? 'ring-2 ring-azure-500 ring-offset-2 ring-offset-void' : 'opacity-40'}`} 
+                      title="Black Text"
+                    />
+                 </div>
               </div>
 
-              <div className="py-1 lg:py-0 w-full flex justify-center scale-[0.6] xs:scale-[0.75] sm:scale-85 lg:scale-100 origin-center lg:origin-top transition-transform duration-500 relative z-20">
+              <div className="py-1 lg:py-0 w-full flex justify-center scale-[0.6] xs:scale-[0.7] sm:scale-80 lg:scale-100 origin-center lg:origin-top transition-transform duration-500 relative z-20">
                 <HexaCardPreview 
                   name={profile?.name || "ARCHITECT"}
                   reading={profile?.handle || profile?.reading}
@@ -308,6 +324,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                   effect={currentPreview.effect}
                   aura={currentPreview.aura}
                   fontFamily={currentPreview.fontFamily}
+                  textColor={currentPreview.textColor}
                   sound={currentPreview.sound}
                   orientation={equipped.orientation}
                   alignCompany={currentAligns.company}
@@ -320,18 +337,18 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                 />
               </div>
 
-              <div className="lg:hidden text-center mt-[-15%] pb-1 flex flex-col items-center gap-1">
-                 <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">Live Preview</p>
+              <div className="lg:hidden text-center mt-[-10%] pb-1 flex flex-col items-center gap-1">
+                 <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">Live Preview / ライブプレビュー</p>
                  {previewAsset && <span className="text-[6px] text-azure-400 uppercase font-bold tracking-widest animate-pulse">Previewing: {previewAsset.name}</span>}
               </div>
            </div>
         </div>
 
         <div className="w-full lg:w-7/12 space-y-8 lg:space-y-10 order-2 lg:order-none">
-           <div className="lg:hidden h-[38vh]" />
+           <div className="lg:hidden h-[42vh]" />
            
            <div className="flex flex-col gap-4">
-              <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar scroll-smooth sticky top-[38vh] lg:top-0 bg-void/98 lg:bg-transparent z-40 -mx-4 px-4 lg:mx-0 lg:px-0">
+              <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar scroll-smooth sticky top-[42vh] lg:top-0 bg-void/98 lg:bg-transparent z-40 -mx-4 px-4 lg:mx-0 lg:px-0">
                 {CATEGORIES.map((cat) => {
                   const Icon = getCategoryIcon(cat.id);
                   return (
@@ -341,7 +358,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                       className={`py-4 lg:py-6 px-6 lg:px-8 flex flex-col items-center gap-2 lg:gap-3 transition-all border-b-2 flex-shrink-0 ${activeCategory === cat.id ? "border-azure-500 opacity-100 bg-azure-500/5" : "border-transparent opacity-20 hover:opacity-50"}`}
                     >
                       <Icon size={16} className={activeCategory === cat.id ? "text-azure-400" : ""} />
-                      <span className="block text-[7px] lg:text-[8px] uppercase tracking-[0.3em] font-bold whitespace-nowrap">{cat.name}</span>
+                      <span className="block text-[7px] lg:text-[8px] uppercase tracking-[0.3em] font-bold whitespace-nowrap">{cat.name} / {cat.id.toUpperCase()}</span>
                     </button>
                   );
                 })}
@@ -400,7 +417,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                               onClick={() => handleSelectAsset(asset)}
                               className={`px-4 py-3 border text-[8px] uppercase tracking-[0.2em] font-bold transition-all ${isUnlocked ? (isActive ? "bg-white text-void border-white" : "border-white/20 opacity-40 hover:opacity-100 hover:border-white") : "bg-azure-600/10 border-azure-600/30 text-azure-400"}`}
                             >
-                              {isUnlocked ? (isActive ? "Active" : "Equip") : `${cost.toLocaleString()} RT`}
+                              {isUnlocked ? (isActive ? "Active / 使用中" : "Equip / 装備") : `${cost.toLocaleString()} RT`}
                             </button>
                           </div>
                         </div>
