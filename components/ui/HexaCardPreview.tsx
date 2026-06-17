@@ -448,57 +448,64 @@ export default function HexaCardPreview({
           <div className={`absolute inset-0 ${getBackgroundStyle()} -z-30`} />
 
           {isVertical ? (
-            <div className="h-full p-10 md:p-14 grid grid-rows-[1fr_auto_1fr] items-center relative overflow-hidden">
-               {/* Header: Company & Logo */}
-               <div className={`w-full flex flex-col items-center self-start z-10 ${getAlignClass(alignCompany)}`}>
+            <div className="h-full p-8 md:p-12 relative overflow-hidden">
+               {/* Header: Company & Logo (Top Left/Center/Right aligned to top edge) */}
+               <div className={`absolute top-8 left-8 right-8 md:top-12 md:left-12 md:right-12 flex flex-col z-10 ${getAlignClass(alignCompany)}`}>
                   <div className={`w-16 h-16 md:w-20 md:h-20 border ${textColor === 'black' ? 'border-black/5' : 'border-white/5'} flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative mb-4`}>
                      {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={32} className={textMutedStyle} />}
                   </div>
                   <p className={`tracking-[0.25em] uppercase ${textStyle} font-medium leading-relaxed truncate w-full`} style={{ fontSize: `${getDynamicFontSize(company || "CORPORATION", 12, "company", true)}px` }}>{company || "CORPORATION"}</p>
                </div>
 
-               {/* Middle: Name & Title */}
-               <div className="w-full flex flex-col justify-center items-center transition-all duration-500 z-10 py-6">
-                  <div className="space-y-4 md:space-y-6 w-full flex flex-col items-center">
-                    {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', true) * 11}px` }}>{title}</p>}
-                    <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
+               {/* Absolute Center: Name */}
+               <div className={`absolute top-1/2 left-8 right-8 md:left-12 md:right-12 -translate-y-1/2 flex flex-col z-10 ${getAlignClass(alignName)}`}>
+                  <div className="relative w-full flex justify-center items-center">
+                    {/* Elements floating above the name */}
+                    <div className="absolute bottom-full mb-3 w-full flex flex-col items-center">
+                       {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full mb-4 ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', true) * 11}px` }}>{title}</p>}
                        {reading && <p className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase truncate w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getDynamicFontSize(reading, 11, "name", true)}px` }}>{reading}</p>}
-                       <h2 className={`tracking-[0.1em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getDynamicFontSize(name, 32, "name", true)}px` }}>{name}</h2>
                     </div>
-                    <div className={`h-px w-12 md:w-16 ${accentLineStyle} mt-2 ${alignName === 'left' ? 'self-start' : alignName === 'right' ? 'self-end' : 'self-center'}`} />
+                    {/* The Name Itself (Dead Center) */}
+                    <h2 className={`tracking-[0.1em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getDynamicFontSize(name, 32, "name", true)}px` }}>{name}</h2>
+                    {/* Element floating below the name */}
+                    <div className="absolute top-full mt-3 w-full flex justify-center">
+                       <div className={`h-px w-12 md:w-16 ${accentLineStyle} ${alignName === 'left' ? 'mr-auto' : alignName === 'right' ? 'ml-auto' : 'mx-auto'}`} />
+                    </div>
                   </div>
                </div>
 
-               {/* Footer: Contact Info */}
-               <div className={`w-full self-end space-y-3 md:space-y-4 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} flex flex-col pb-4 items-center z-10 ${textStyle}`}>
+               {/* Footer: Contact Info (Bottom Left/Center/Right aligned to bottom edge) */}
+               <div className={`absolute bottom-8 left-8 right-8 md:bottom-12 md:left-12 md:right-12 space-y-3 md:space-y-4 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} flex flex-col z-10 ${textStyle}`}>
                   {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={11} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.2em]">{phone}</span></div>}
                   {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={11} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span></div>}
                </div>
             </div>
           ) : (
-            <div className="h-full p-10 md:p-14 grid grid-rows-[1fr_auto_1fr] items-center relative overflow-hidden">
+            <div className="h-full p-8 md:p-12 relative overflow-hidden">
               {/* Header: Company & Logo */}
-              <header className={`w-full flex flex-row items-center gap-4 self-start z-10 ${getAlignClass(alignCompany)}`}>
+              <header className={`absolute top-8 left-8 right-8 md:top-12 md:left-12 md:right-12 flex flex-row items-center gap-4 z-10 ${getAlignClass(alignCompany)}`}>
                  <div className={`w-12 h-12 md:w-16 md:h-16 border ${textColor === 'black' ? 'border-black/5' : 'border-white/5'} flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative`}>
                     {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={24} className={textMutedStyle} />}
                  </div>
                  <p className={`tracking-[0.3em] uppercase ${textStyle} font-medium leading-tight truncate`} style={{ fontSize: `${getDynamicFontSize(company || "CORPORATION", 12, "company", false)}px` }}>{company || "CORPORATION"}</p>
               </header>
 
-              {/* Middle: Name & Title */}
-              <div className="w-full flex flex-col justify-center items-center transition-all duration-500 z-10 py-4">
-                <div className="flex flex-col gap-2 md:gap-3 w-full items-center">
-                   {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', false) * 10}px` }}>{title}</p>}
-                   <div className="flex flex-col w-full items-center">
-                      {reading && <span className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase mb-1 w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getDynamicFontSize(reading, 9, "name", false)}px` }}>{reading}</span>}
-                      <h2 className={`tracking-[0.15em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getDynamicFontSize(name, 28, "name", false)}px` }}>{name}</h2>
+              {/* Absolute Center: Name */}
+              <div className={`absolute top-1/2 left-8 right-8 md:left-12 md:right-12 -translate-y-1/2 flex flex-col z-10 ${getAlignClass(alignName)}`}>
+                 <div className="relative w-full flex justify-center items-center">
+                   {/* Elements floating above the name */}
+                   <div className="absolute bottom-full mb-2 w-full flex flex-col items-center">
+                      {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full mb-3 ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', false) * 10}px` }}>{title}</p>}
+                      {reading && <span className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getDynamicFontSize(reading, 9, "name", false)}px` }}>{reading}</span>}
                    </div>
-                </div>
+                   {/* The Name Itself (Dead Center) */}
+                   <h2 className={`tracking-[0.15em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getDynamicFontSize(name, 28, "name", false)}px` }}>{name}</h2>
+                 </div>
               </div>
 
               {/* Footer: Contact Info */}
-              <footer className="w-full self-end flex flex-col items-center z-10 pb-4">
-                <div className={`flex flex-col gap-2 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} w-full items-center ${textStyle}`}>
+              <footer className={`absolute bottom-8 left-8 right-8 md:bottom-12 md:left-12 md:right-12 flex flex-col z-10`}>
+                <div className={`flex flex-col gap-2 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} w-full ${textStyle}`}>
                    {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest">{phone}</span></div>}
                    {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest uppercase truncate">{email}</span></div>}
                 </div>
