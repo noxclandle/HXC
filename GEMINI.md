@@ -42,3 +42,9 @@ The brand identity is a blend of High-end/Luxury, Cyber/Tech, and Minimal/Chic, 
 *   **Filter Restriction:** Avoid `backdrop-filter: blur()` and `drop-shadow` on high-frequency moving parts or fixed layout layers. They are the primary causes of rendering crashes on iPhone.
 *   **Cache Hygiene:** Do not implement Service Workers (PWA) unless explicitly requested. They create a "cache trap" that prevents security patches and Safari bug fixes from reaching the user.
 
+## UI/UX & Mobile-First Conventions (Established Phase 2)
+*   **Bilingual Labels:** UI labels, especially on forms and technical interfaces, should follow a bilingual format (e.g., `English / 日本語`) to maintain the Cyber/Tech aesthetic.
+*   **Absolute Geometric Centering:** When positioning the main content in the business card preview (`HexaCardPreview`), rely on absolute anchoring (`top-1/2 -translate-y-1/2`) rather than Flexbox stacking. This guarantees perfect centering regardless of dynamic text length or adjacent elements.
+*   **Unified Containers:** Always use `UnifiedCardContainer` to wrap `HexaCardPreview`. This ensures consistent scaling across Hub, Inventory, and Edit screens, particularly maximizing width on mobile devices (`scale-[0.8]` to `scale-100`).
+*   **Resonance Animations:** Transitions between assets (like in Inventory) must use subtle Framer Motion effects (e.g., `blur` and `scale` pulsing) to represent "Resonance," elevating the interaction from a simple data update to a premium experience.
+
