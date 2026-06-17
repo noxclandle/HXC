@@ -457,18 +457,20 @@ export default function HexaCardPreview({
                   <p className={`tracking-[0.25em] uppercase ${textStyle} font-medium leading-relaxed truncate w-full`} style={{ fontSize: `${getDynamicFontSize(company || "CORPORATION", 14, "company", true)}px` }}>{company || "CORPORATION"}</p>
                </div>
 
-               {/* Absolute Center: Name & Sub-elements */}
-               <div className={`absolute top-1/2 left-6 right-6 md:left-10 md:right-10 -translate-y-1/2 flex flex-col z-10 ${getAlignClass(alignName)}`}>
-                  <div className="relative w-full flex flex-col justify-center items-center">
-                    {/* Elements above the name (Title -> Reading) */}
-                    <div className="w-full flex flex-col items-center mb-3">
-                       {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full mb-3 ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', true) * 11}px` }}>{title}</p>}
-                       {reading && <p className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase truncate w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getDynamicFontSize(reading, 11, "name", true)}px` }}>{reading}</p>}
+               {/* Absolute Center: Name Anchor */}
+               <div className="absolute top-1/2 left-6 right-6 md:left-10 md:right-10 -translate-y-1/2 flex flex-col z-10 pointer-events-none">
+                  <div className="relative w-full flex justify-center items-center">
+                    {/* Elements floating strictly above the name */}
+                    <div className="absolute bottom-[100%] mb-4 w-full flex flex-col items-center justify-end">
+                       {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full mb-3 ${getAlignClass(alignTitle)} pointer-events-auto`} style={{ fontSize: `${getFieldScale('title', true) * 11}px` }}>{title}</p>}
+                       {reading && <p className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase truncate w-full ${getAlignClass(alignReading)} pointer-events-auto`} style={{ fontSize: `${getDynamicFontSize(reading, 11, "name", true)}px` }}>{reading}</p>}
                     </div>
+                    
                     {/* The Name Itself (Dead Center Anchor) */}
-                    <h2 className={`tracking-[0.1em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getDynamicFontSize(name, 32, "name", true)}px` }}>{name}</h2>
-                    {/* Element below the name */}
-                    <div className="mt-4 w-full flex justify-center">
+                    <h2 className={`tracking-[0.1em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)} pointer-events-auto leading-none`} style={{ fontSize: `${getDynamicFontSize(name, 32, "name", true)}px` }}>{name}</h2>
+                    
+                    {/* Element floating strictly below the name */}
+                    <div className="absolute top-[100%] mt-4 w-full flex justify-center pointer-events-none">
                        <div className={`h-px w-12 md:w-16 ${accentLineStyle} ${alignName === 'left' ? 'mr-auto' : alignName === 'right' ? 'ml-auto' : 'mx-auto'}`} />
                     </div>
                   </div>
@@ -490,16 +492,16 @@ export default function HexaCardPreview({
                  <p className={`tracking-[0.3em] uppercase ${textStyle} font-medium leading-tight truncate`} style={{ fontSize: `${getDynamicFontSize(company || "CORPORATION", 14, "company", false)}px` }}>{company || "CORPORATION"}</p>
               </header>
 
-              {/* Absolute Center: Name & Sub-elements */}
-              <div className={`absolute top-1/2 left-6 right-6 md:left-10 md:right-10 -translate-y-[45%] flex flex-col z-10 ${getAlignClass(alignName)}`}>
-                 <div className="relative w-full flex flex-col justify-center items-center">
-                   {/* Elements above the name */}
-                   <div className="w-full flex flex-col items-center mb-2.5">
-                      {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full mb-2 ${getAlignClass(alignTitle)}`} style={{ fontSize: `${getFieldScale('title', false) * 10}px` }}>{title}</p>}
-                      {reading && <span className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase w-full ${getAlignClass(alignReading)}`} style={{ fontSize: `${getDynamicFontSize(reading, 9, "name", false)}px` }}>{reading}</span>}
+              {/* Absolute Center: Name Anchor */}
+              <div className="absolute top-1/2 left-6 right-6 md:left-10 md:right-10 -translate-y-1/2 flex flex-col z-10 pointer-events-none">
+                 <div className="relative w-full flex justify-center items-center">
+                   {/* Elements floating strictly above the name */}
+                   <div className="absolute bottom-[100%] mb-3 w-full flex flex-col items-center justify-end">
+                      {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full mb-2.5 ${getAlignClass(alignTitle)} pointer-events-auto`} style={{ fontSize: `${getFieldScale('title', false) * 10}px` }}>{title}</p>}
+                      {reading && <span className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase w-full ${getAlignClass(alignReading)} pointer-events-auto`} style={{ fontSize: `${getDynamicFontSize(reading, 9, "name", false)}px` }}>{reading}</span>}
                    </div>
-                   {/* The Name Itself */}
-                   <h2 className={`tracking-[0.15em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)}`} style={{ fontSize: `${getDynamicFontSize(name, 28, "name", false)}px` }}>{name}</h2>
+                   {/* The Name Itself (Dead Center) */}
+                   <h2 className={`tracking-[0.15em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)} pointer-events-auto leading-none`} style={{ fontSize: `${getDynamicFontSize(name, 28, "name", false)}px` }}>{name}</h2>
                  </div>
               </div>
 
