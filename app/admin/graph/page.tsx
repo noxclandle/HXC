@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Share2, Filter, ZoomIn, Activity, Download } from "lucide-react";
+import Image from "next/image";
 
 export default function ConnectionGraphPage() {
   const [nodes, setNodes] = useState<any[]>([]);
@@ -171,7 +172,7 @@ export default function ConnectionGraphPage() {
                <motion.div key={node.id} animate={{ scale: isFocused ? 1.2 : 1, opacity: focusedId && !isFocused ? 0.1 : 1 }} className="absolute cursor-pointer group" style={{ top: node.y, left: node.x, transform: 'translate(-50%, -50%)' }} onClick={() => setFocusedId(isFocused ? null : node.id)}>
                 <div className="flex flex-col items-center gap-2">
                    <div className="w-16 h-16 border border-moonlight/20 overflow-hidden flex flex-col items-center justify-center bg-gothic-dark group-hover:border-moonlight transition-all shadow-xl relative">
-                     <img src={node.photo} alt={node.id} className="absolute inset-0 w-full h-full object-cover grayscale opacity-40 group-hover:opacity-100 transition-opacity" />
+                     <Image src={node.photo} alt={node.id} fill className="object-cover grayscale opacity-40 group-hover:opacity-100 transition-opacity" />
                      <div className="absolute inset-0 bg-void/40 group-hover:opacity-0 transition-opacity" />
                      <span className="relative z-10 text-[6px] opacity-80 mb-1 drop-shadow-md">{node.rank}</span>
                      <span className="relative z-10 text-[8px] uppercase tracking-tighter drop-shadow-md font-bold">{node.id}</span>

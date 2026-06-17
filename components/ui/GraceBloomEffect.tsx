@@ -16,11 +16,12 @@ export default function GraceBloomEffect({ isActive, onComplete }: { isActive: b
         delay: Math.random() * 2
       }));
       setParticles(newParticles);
-      setTimeout(onComplete, 6000);
+      const timer = setTimeout(onComplete, 6000);
+      return () => clearTimeout(timer);
     } else {
       setParticles([]);
     }
-  }, [isActive]);
+  }, [isActive, onComplete]);
 
   return (
     <AnimatePresence>

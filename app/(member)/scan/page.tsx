@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, X, Check, Loader2, ScanLine } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { playConnectionSound } from "@/lib/audio/resonance";
 
 export default function ScanPage() {
@@ -241,7 +242,9 @@ export default function ScanPage() {
             <div className="w-full aspect-[1.6/1] bg-gothic-dark border border-moonlight/20 p-8 relative mb-12 shadow-2xl">
                <header className="flex justify-between items-start">
                   <h2 className="text-xl tracking-[0.2em] uppercase">{scannedData.name}</h2>
-                  <img src="/logo.png" className="w-8 h-8 opacity-20" />
+                  <div className="relative w-8 h-8 opacity-20">
+                     <Image src="/logo.png" alt="Hexa Relation" fill className="object-contain" />
+                  </div>
                </header>
                <footer className="mt-12 space-y-1">
                   <p className="text-[11px] tracking-widest opacity-60">{scannedData.email}</p>

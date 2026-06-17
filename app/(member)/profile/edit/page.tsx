@@ -27,8 +27,8 @@ export default function ProfileEditPage() {
   const [isLoaded, setIsLoaded] = useState(false);
   const originalDataRef = useRef<any>(null);
 
-  // 画像圧縮ユーティリティ
-  const compressImage = (file: File, maxWidth: number = 800): Promise<string> => {
+  // 強力な画像リサイズ・圧縮ユーティリティ (iOS/Safari 最適化)
+  const compressImage = (file: File, type: "face" | "logo"): Promise<string> => {
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -37,19 +37,35 @@ export default function ProfileEditPage() {
         img.src = event.target?.result as string;
         img.onload = () => {
           const canvas = document.createElement("canvas");
+          
+          // 憲法に基づき、名刺用画像は 300x300 を基準にクロップ・リサイズ
+          // アスペクト比を維持しつつ、中央で切り抜く
+          const targetSize = type === "face" ? 400 : 300; 
           let width = img.width;
           let height = img.height;
-
-          if (width > maxWidth) {
-            height = (maxWidth / width) * height;
-            width = maxWidth;
+          
+          let offsetX = 0;
+          let offsetY = 0;
+          
+          if (width > height) {
+            offsetX = (width - height) / 2;
+            width = height;
+          } else {
+            offsetY = (height - width) / 2;
+            height = width;
           }
 
-          canvas.width = width;
-          canvas.height = height;
+          canvas.width = targetSize;
+          canvas.height = targetSize;
+          
           const ctx = canvas.getContext("2d");
-          ctx?.drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL("image/jpeg", 0.7)); // 圧縮率0.7のJPEGに変換
+          if (ctx) {
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = "high";
+            ctx.drawImage(img, offsetX, offsetY, width, height, 0, 0, targetSize, targetSize);
+          }
+          
+          resolve(canvas.toDataURL("image/jpeg", 0.85)); // 高品質を保ちつつJPEG圧縮
         };
       };
     });
@@ -59,7 +75,7 @@ export default function ProfileEditPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // 5MB以上の生ファイルは、ブラウザ側での処理自体に負荷がかかるため一旦ガード
+    // 10MB以上の生ファイルはガード
     if (file.size > 10 * 1024 * 1024) {
       showToast("10MB以下の画像を選択してください", "error");
       return;
@@ -67,22 +83,19 @@ export default function ProfileEditPage() {
 
     setIsUploading(type);
     try {
-      // 1. 画像を圧縮して軽量化（世界的エンジニア基準：見た目を維持しつつ容量を1/10以下にする）
-      const maxWidth = type === "face" ? 1000 : 600;
-      const compressedBase64 = await compressImage(file, maxWidth);
+      // 1. 強力なリサイズと圧縮
+      const compressedBase64 = await compressImage(file, type);
       
       // 2. 圧縮後のBase64をBlobに変換してFormDataを作成
       const resBlob = await fetch(compressedBase64);
       const blob = await resBlob.blob();
       
-      // 圧縮後のファイルサイズをチェック（デバッグ・確実性のため）
       console.log(`Optimized ${type} size: ${(blob.size / 1024).toFixed(2)} KB`);
 
       const formData = new FormData();
       formData.append("file", blob, `upload.${type === "face" ? "jpg" : "png"}`);
       formData.append("type", type === "face" ? "photo" : "logo");
 
-      // 3. R2アップロードAPIを叩く
       const uploadRes = await fetch("/api/upload", {
         method: "POST",
         body: formData,
@@ -91,10 +104,8 @@ export default function ProfileEditPage() {
       if (!uploadRes.ok) throw new Error("Upload failed");
 
       const uploadData = await uploadRes.json();
-      
-      // 4. DB保存用のフィールドをR2のURLで更新
       updateField(type === "face" ? "faceUrl" : "logoUrl", uploadData.url);
-      showToast("画像をアップロードしました", "success");
+      showToast("画像を最適化してアップロードしました", "success");
     } catch (err) {
       console.error(err);
       showToast("アップロードに失敗しました", "error");
