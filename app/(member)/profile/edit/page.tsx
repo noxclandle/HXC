@@ -129,6 +129,7 @@ export default function ProfileEditPage() {
     link_instagram: "",
     link_line: "",
     link_facebook: "",
+    portfolio_links: [] as { title: string, url: string }[],
     orientation: "horizontal" as "horizontal" | "vertical",
     hAlign: { ...defaultAlign },
     vAlign: { ...defaultAlign }
@@ -167,6 +168,7 @@ export default function ProfileEditPage() {
             link_instagram: data.profile?.link_instagram || "",
             link_line: data.profile?.link_line || "",
             link_facebook: data.profile?.link_facebook || "",
+            portfolio_links: data.portfolio_links || [],
             orientation: data.equipped?.orientation || "horizontal",
             hAlign: data.equipped?.hAlign || { ...defaultAlign },
             vAlign: data.equipped?.vAlign || { ...defaultAlign }
@@ -204,6 +206,28 @@ export default function ProfileEditPage() {
 
   const updateField = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const addPortfolioLink = () => {
+    setFormData(prev => ({
+      ...prev,
+      portfolio_links: [...prev.portfolio_links, { title: "", url: "" }]
+    }));
+  };
+
+  const updatePortfolioLink = (index: number, field: "title" | "url", value: string) => {
+    setFormData(prev => {
+      const newList = [...prev.portfolio_links];
+      newList[index] = { ...newList[index], [field]: value };
+      return { ...prev, portfolio_links: newList };
+    });
+  };
+
+  const removePortfolioLink = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      portfolio_links: prev.portfolio_links.filter((_, i) => i !== index)
+    }));
   };
 
   const updateAlign = (field: string, align: Alignment) => {
@@ -460,14 +484,70 @@ export default function ProfileEditPage() {
                    </div>
                 </div>
                 <div className="space-y-3">
-                   <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Biography (Backface) / 自己紹介（裏面表示）</label>
-                   <textarea value={formData.bio} onChange={(e) => updateField('bio', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white h-32 resize-none" placeholder="Displayed on the back of the card. / 裏面に表示されるメッセージや紹介文" />
+                 <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Biography (Backface) / 自己紹介（裏面表示）</label>
+                 <textarea value={formData.bio} onChange={(e) => updateField('bio', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white h-32 resize-none" placeholder="Displayed on the back of the card. / 裏面に表示されるメッセージや紹介文" />
                 </div>
-              </section>
+                </section>
 
-              <section className="space-y-10 p-4 lg:p-0 pb-20">
+                <section className="space-y-10 p-4 lg:p-0">
                 <header className="flex items-center gap-4 opacity-40 border-b border-white/5 pb-4">
-                   <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-[10px]">04</div>
+                 <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-[10px]">04</div>
+                 <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold text-white opacity-100">Documents & Portfolio / 資料・実績設定</h3>
+                </header>
+                <div className="space-y-8">
+                 <p className="text-[9px] tracking-widest text-white/40 leading-relaxed uppercase">
+                   商談資料(PDF)のURLや実績サイトを登録してください。名刺を読み取った相手がその場で閲覧・保存できるようになります。
+                 </p>
+
+                 <div className="space-y-6">
+                    {formData.portfolio_links.map((link, index) => (
+                      <div key={index} className="p-6 bg-white/[0.02] border border-white/5 space-y-6 relative group/link">
+                         <button 
+                           type="button" 
+                           onClick={() => removePortfolioLink(index)}
+                           className="absolute top-4 right-4 p-2 text-white/20 hover:text-rose-500 transition-colors"
+                         >
+                           <RotateCcw size={14} className="rotate-45" />
+                         </button>
+
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                               <label className="text-[7px] tracking-[0.3em] uppercase opacity-30 font-bold">Title / 資料タイトル</label>
+                               <input 
+                                 type="text" value={link.title} 
+                                 onChange={(e) => updatePortfolioLink(index, "title", e.target.value)}
+                                 className="w-full bg-white/[0.03] border border-white/10 p-3 text-xs tracking-widest focus:border-azure-400 outline-none text-white" 
+                                 placeholder="例：会社案内資料 / 提案書" 
+                               />
+                            </div>
+                            <div className="space-y-2">
+                               <label className="text-[7px] tracking-[0.3em] uppercase opacity-30 font-bold">URL (PDF or Web)</label>
+                               <input 
+                                 type="text" value={link.url} 
+                                 onChange={(e) => updatePortfolioLink(index, "url", e.target.value)}
+                                 className="w-full bg-white/[0.03] border border-white/10 p-3 text-xs tracking-widest focus:border-azure-400 outline-none text-white" 
+                                 placeholder="https://drive.google.com/..." 
+                               />
+                            </div>
+                         </div>
+                      </div>
+                    ))}
+
+                    <button 
+                      type="button" 
+                      onClick={addPortfolioLink}
+                      className="w-full py-4 border border-dashed border-white/10 text-[9px] tracking-[0.4em] uppercase text-white/30 hover:text-white hover:border-white/30 transition-all flex items-center justify-center gap-3"
+                    >
+                      <Upload size={14} /> Add New Link / 資料を追加
+                    </button>
+                 </div>
+                </div>
+                </section>
+
+                <section className="space-y-10 p-4 lg:p-0 pb-20">
+                <header className="flex items-center gap-4 opacity-40 border-b border-white/5 pb-4">
+                 <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-[10px]">05</div>
+
                    <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">Portrait / プロフィール写真設定</h3>
                 </header>
                 <div className="flex flex-col gap-12">

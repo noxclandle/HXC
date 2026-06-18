@@ -21,6 +21,10 @@ const profileUpdateSchema = z.object({
   link_instagram: z.string().optional().or(z.literal("")),
   link_line: z.string().optional().or(z.literal("")),
   link_facebook: z.string().optional().or(z.literal("")),
+  portfolio_links: z.array(z.object({
+    title: z.string(),
+    url: z.string()
+  })).optional(),
   equipped_assets: z.any().optional(),
 });
 
@@ -42,7 +46,7 @@ export async function POST(req: NextRequest) {
     const { 
       name, reading, title, website, bio, company, photo_url, logo_url, 
       phone, email, link_x, link_instagram, link_line, link_facebook,
-      equipped_assets
+      portfolio_links, equipped_assets
     } = result.data;
 
     const currentUser = await prisma.user.findUnique({
@@ -72,6 +76,7 @@ export async function POST(req: NextRequest) {
           photo_url: finalPhotoUrl,
           logo_url: finalLogoUrl,
           phone: phone,
+          portfolio_links: portfolio_links,
           // 装備情報をマージ
           equipped_assets: equipped_assets ? {
             ...((currentUser.equipped_assets as any) || {}),
