@@ -27,20 +27,20 @@ export default function BackgroundGenerator({ userSlug }: { userSlug: string }) 
     ctx.fillStyle = "#020202";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // 2. Draw Subtle Hex Pattern
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+    // 2. Draw Subtle Hex Pattern (極めてシンプルに)
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
     ctx.lineWidth = 1;
-    for (let i = 0; i < canvas.width; i += 40) {
-      for (let j = 0; j < canvas.height; j += 40) {
-        ctx.strokeRect(i, j, 40, 40);
+    for (let i = 0; i < canvas.width; i += 80) {
+      for (let j = 0; j < canvas.height; j += 80) {
+        ctx.strokeRect(i, j, 80, 80);
       }
     }
 
     // 3. Draw Brand Text
-    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-    ctx.font = "20px sans-serif";
-    ctx.letterSpacing = "10px";
-    ctx.fillText("HEXA RELATION / HXC SYSTEM", 60, canvas.height - 60);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+    ctx.font = "24px sans-serif";
+    ctx.letterSpacing = "12px";
+    ctx.fillText("HEXA RELATION", 80, canvas.height - 80);
 
     // 4. Convert SVG QR to Image and Draw it
     const svgElement = qrRef.current?.querySelector("svg");
@@ -88,7 +88,7 @@ export default function BackgroundGenerator({ userSlug }: { userSlug: string }) 
            <div className="space-y-8">
               <div className="aspect-video bg-[#020202] border border-white/10 flex items-center justify-center relative overflow-hidden group">
                  {/* Subtle Hex Pattern Background (Simulated) */}
-                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]" />
+                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]" />
                  
                  <Camera size={48} className="opacity-10 z-10" />
                  
@@ -98,8 +98,8 @@ export default function BackgroundGenerator({ userSlug }: { userSlug: string }) 
                  </div>
 
                  {/* Simulated Brand Text at Bottom Left */}
-                 <div className="absolute bottom-4 left-4 text-[6px] tracking-[3px] text-white/40 uppercase z-10">
-                   HEXA RELATION / HXC SYSTEM
+                 <div className="absolute bottom-4 left-4 text-[6px] tracking-[4px] text-white/30 uppercase z-10">
+                   HEXA RELATION
                  </div>
 
                  <div className="absolute bottom-4 right-4 text-[5px] tracking-[2px] opacity-20 uppercase z-10">Preview Mode</div>
