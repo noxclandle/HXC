@@ -165,7 +165,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
             phone={data.phone} email={data.profile.contact_email || data.email} bio={data.profile.bio}
             logoUrl={data.logo_url} faceUrl={data.photo_url}
             frame={rawEquipped.frame} background={rawEquipped.background} effect={rawEquipped.effect} fontFamily={rawEquipped.fontFamily || rawEquipped.font}
-            sound={rawEquipped.sound} link_x={data.link_x} link_instagram={data.link_instagram} link_line={data.link_line} link_facebook={data.link_facebook}
+            sound={rawEquipped.sound} link_x={data.link_x} link_instagram={data.link_instagram} link_line={data.link_line} link_facebook={data.link_facebook} link_hp={data.profile?.website}
             orientation={currentOrientation}
             alignCompany={currentAligns.company || defaultAlign}
             alignName={currentAligns.name || defaultAlign}
