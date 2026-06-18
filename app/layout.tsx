@@ -33,6 +33,11 @@ export const metadata: Metadata = {
     description: "アイデンティティの透過と拡張。 / Permeation and expansion of identity.",
     images: ["/logo.png"],
   },
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export const viewport: Viewport = {
