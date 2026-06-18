@@ -21,10 +21,10 @@ export const metadata: Metadata = {
     siteName: "Hexa Card",
     images: [
       {
-        url: "/logo.png",
-        width: 800,
-        height: 800,
-        alt: "Hexa Card Logo",
+        url: "/ogp_card.png",
+        width: 1200,
+        height: 630,
+        alt: "Hexa Card Physical Asset",
       },
     ],
     locale: "ja_JP",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Hexa Card | NFC Digital Identity System",
     description: "アイデンティティの透過と拡張。 / Permeation and expansion of identity.",
-    images: ["/logo.png"],
+    images: ["/ogp_card.png"],
   },
   icons: {
     icon: "/logo.png",
@@ -94,7 +94,7 @@ export default function RootLayout({
                 "@context": "https://schema.org",
                 "@type": "Product",
                 "name": "Hexa Card",
-                "image": "https://hxc.hexa-relation.com/logo.png",
+                "image": "https://hxc.hexa-relation.com/ogp_card.png",
                 "description": "次世代NFCデジタルアイデンティティ。物理カードとデジタル名刺帳が同期する、1万通り以上のカスタマイズが可能なプレミアムスマート名刺。",
                 "brand": {
                   "@type": "Brand",
