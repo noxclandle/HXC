@@ -27,6 +27,7 @@ export async function getUserStatus(email: string | null | undefined) {
       link_instagram: true,
       link_line: true,
       link_facebook: true,
+      portfolio_links: true,
       last_daily_at: true,
       last_read_news_at: true,
       card: {
@@ -78,6 +79,10 @@ export async function getUserStatus(email: string | null | undefined) {
     rt_balance: user.rt_balance.toString(),
     exp: isFixer ? "10000" : user.exp.toString(),
     exp_max: isFixer ? "10000" : "1000", // EXPの上限表示用
+    unread_messages: await prisma.cardMessage.count({
+      where: { target_user_id: user.id, is_read: false }
+    }),
+    portfolio_links: user.portfolio_links || [],
     rank: isFixer ? "Fixer" : user.rank,
     role: isFixer ? "fixer" : user.role, // Force role to fixer in UI
     last_daily_at: user.last_daily_at ? user.last_daily_at.toISOString() : null,
@@ -153,6 +158,7 @@ export async function getPublicProfile(slug: string) {
       link_instagram: true,
       link_line: true,
       link_facebook: true,
+      portfolio_links: true,
       rt_balance: true,
       exp: true,
       role: true,
@@ -181,6 +187,7 @@ export async function getPublicProfile(slug: string) {
     link_instagram: user.link_instagram,
     link_line: user.link_line,
     link_facebook: user.link_facebook,
+    portfolio_links: user.portfolio_links || [],
     profile: {
       company: profile.company || "",
       title: profile.title || "",

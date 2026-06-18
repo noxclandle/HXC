@@ -1,85 +1,97 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Camera, Shield, Zap, Hexagon } from "lucide-react";
+import { Shield, Zap, RefreshCw, Layers, Database, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function InvitationPage() {
+export default function AboutLP() {
   const features = [
-    { 
-      title: "Digital Rebirth", 
-      desc: "紙の名刺を、一瞬であなたのシックなデジタル・フォーマットへ。OCRによる自動解析が「名刺のあり方」を書き換えます。 / Transform physical paper cards into a chic digital format instantly. Our OCR analysis redefines the essence of networking.", 
-      icon: <Camera className="opacity-40" /> 
+    {
+      title: "Instant Sync / 0秒の接続",
+      desc: "LINE, Instagram, HP。あらゆる接続先を一瞬で相手のスマホへインストール。検索の手間をゼロにします。",
+      icon: <Zap className="text-azure-400" size={24} />
     },
-    { 
-      title: "Physical Link", 
-      desc: "スマートフォンをかざすだけ。物理的なNFCチップとの同期が、電子名刺にかつてないセキュリティと「実体感」をもたらします。 / Simply tap. Synchronization with a physical NFC chip brings unprecedented security and tangibility to digital identity.", 
-      icon: <Shield className="opacity-40" /> 
+    {
+      title: "Eternal Freshness / 鮮度の維持",
+      desc: "あなたが進化すれば、名刺も進化する。クラウド管理により、既に渡した名刺の中身も常に最新に保たれます。",
+      icon: <RefreshCw className="text-emerald-400" size={24} />
     },
-    { 
-      title: "Silent Luxury", 
-      desc: "静寂と月光。哲学に基づく一切の無駄を省いたUIが、持ち主の確かな品格を証明します。 / Silence and Moonlight. A UI stripped of excess proves the owner's true character and sophistication.", 
-      icon: <Zap className="opacity-40" /> 
+    {
+      title: "Resonance Experience / 五感の刺激",
+      desc: "洗練された接続音、光、アニメーション。単なるデータ交換を、忘れられない「体験」へと昇華させます。",
+      icon: <Layers className="text-rose-400" size={24} />
+    },
+    {
+      title: "Observation Log / 観測と記憶",
+      desc: "もらった側がその場でメモを残せる機能を搭載。相手の記憶の中に、あなたの存在を深く刻み込みます。",
+      icon: <Database className="text-amber-400" size={24} />
+    },
+    {
+      title: "Stealth Layer / 秘密結社の特権",
+      desc: "パスワードを知る者だけに明かされる秘匿情報。HXC会員であること自体が、次世代のステータスとなります。",
+      icon: <Shield className="text-white" size={24} />
     }
   ];
 
   return (
-    <main className="min-h-screen bg-void text-moonlight px-6 py-24 flex flex-col items-center">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="mb-24 flex flex-col items-center text-center max-w-2xl"
-      >
-        <Image 
-          src="/logo.png" 
-          alt="Hexa Relation Logo"
-          width={96} 
-          height={96} 
-          className="mb-16 opacity-40 animate-pulse object-contain" 
-        />
-        <h1 className="text-4xl md:text-5xl tracking-[0.2em] uppercase font-extralight mb-8 italic">Hexa Relation</h1>
-        <p className="text-sm tracking-[0.3em] opacity-40 leading-relaxed uppercase">
-          物理的な制約を超え、<br />
-          あなたのアイデンティティを世界へ拡張する。<br />
-          <span className="text-[10px]">Transcending physical limits, expanding your identity to the world.</span>
-        </p>
-      </motion.div>
-
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mb-32">
-        {features.map((f, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.2 }}
-            className="p-8 border border-moonlight/5 bg-gothic-dark/10 group hover:border-moonlight/20 transition-all"
-          >
-            <div className="mb-8">{f.icon}</div>
-            <h3 className="text-xs tracking-[0.4em] uppercase mb-4 opacity-80">{f.title}</h3>
-            <p className="text-[10px] tracking-widest opacity-40 leading-relaxed">{f.desc}</p>
+    <main className="min-h-screen bg-void text-moonlight pt-32 pb-40 px-6 overflow-hidden">
+      <div className="max-w-5xl mx-auto">
+        <header className="text-center mb-32">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <span className="text-[10px] tracking-[1em] uppercase text-azure-400 font-bold mb-6 block">Beyond the Business Card</span>
+            <h1 className="text-4xl md:text-6xl font-light tracking-[0.3em] uppercase mb-8">
+              Identity <br className="md:hidden" /> Resonance
+            </h1>
+            <p className="text-[12px] tracking-[0.2em] text-white/40 max-w-2xl mx-auto leading-loose uppercase">
+              紙の名刺を渡す時代は終わった。<br />
+              これは、あなたの存在（アイデンティティ）を<br className="md:hidden" />同期するための「儀式」である。
+            </p>
           </motion.div>
-        ))}
-      </section>
+        </header>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="flex flex-col items-center gap-12"
-      >
-        <div className="text-center space-y-2">
-          <p className="text-[10px] tracking-[0.6em] uppercase opacity-40">Ready to Synchronize?</p>
-          <p className="text-[8px] tracking-[0.2em] uppercase opacity-20 italic">新たな次元の繋がりを、あなたにも。 / A new dimension of connection awaits.</p>
-        </div>
-        
-        <Link 
-          href="/activate" 
-          className="px-24 py-5 border border-moonlight/30 hover:bg-white/5 transition-all text-[11px] tracking-[0.8em] font-bold uppercase"
-        >
-          Join the Void / 同期を開始する
-        </Link>
-      </motion.div>
+        {/* 5 Powers Section */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-40">
+          {features.map((f, i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="p-8 border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-colors group"
+            >
+              <div className="mb-6">{f.icon}</div>
+              <h3 className="text-lg tracking-[0.2em] uppercase font-light mb-4 group-hover:text-azure-400 transition-colors">{f.title}</h3>
+              <p className="text-[11px] tracking-widest text-white/40 leading-relaxed uppercase">{f.desc}</p>
+            </motion.div>
+          ))}
+        </section>
+
+        {/* CTA Section */}
+        <section className="text-center border-t border-white/5 pt-32">
+          <h2 className="text-2xl tracking-[0.4em] uppercase font-light mb-12">Join the Genesis</h2>
+          <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
+            <Link 
+              href="/purchase" 
+              className="px-16 py-6 bg-white text-void font-bold tracking-[0.5em] uppercase text-[10px] hover:bg-azure-50 transition-all flex items-center gap-4"
+            >
+              Order Card / 購入 <ArrowRight size={14} />
+            </Link>
+            <Link 
+              href="/" 
+              className="text-[10px] tracking-[0.4em] uppercase text-white/40 hover:text-white transition-colors"
+            >
+              Back to Gateway / 戻る
+            </Link>
+          </div>
+        </section>
+
+        {/* Footer Concept */}
+        <footer className="mt-40 text-center opacity-10">
+           <p className="text-[8px] tracking-[1em] uppercase">Private Network / Identity Synchronization System</p>
+        </footer>
+      </div>
     </main>
   );
 }

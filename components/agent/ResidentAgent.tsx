@@ -17,6 +17,7 @@ export default function ResidentAgent() {
   const [rtBalance, setRtBalance] = useState("0");
   const [userRank, setUserRank] = useState("Initiate");
   const [userRole, setUserRole] = useState("member");
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const [lastReadAt, setLastReadAt] = useState<string | null>(null);
   const [isSoulLinked, setIsSoulLinked] = useState(false);
   const [bubbleDismissed, setBubbleDismissed] = useState(false);
@@ -44,6 +45,7 @@ export default function ResidentAgent() {
   
   const latestNews = allNews && allNews.length > 0 ? allNews[0] : null;
   const isNewMessage = latestNews && (!lastReadAt || new Date(latestNews.created_at || 0) > new Date(lastReadAt));
+  const hasUnreadMessages = unreadMessages > 0;
 
   const markAsRead = async () => {
     if (!latestNews) return;
@@ -90,6 +92,7 @@ export default function ResidentAgent() {
         setRtBalance(data.rt_balance);
         setUserRank(data.rank || "Member");
         setUserRole(data.role || "member");
+        setUnreadMessages(data.unread_messages || 0);
         setHasDaily(checkDailyStatus(data.last_daily_at));
         setLastReadAt(data.last_read_news_at);
       }
@@ -360,15 +363,17 @@ export default function ResidentAgent() {
       </AnimatePresence>
       
       <button onClick={() => setIsOpen(!isOpen)} className="relative group w-16 h-16 flex items-center justify-center">
-        {isNewMessage && !bubbleDismissed && (
+        {(hasUnreadMessages || (isNewMessage && !bubbleDismissed)) && (
           <motion.div 
             initial={{ opacity: 0, scale: 0.8, x: 20 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
-            className="absolute bottom-full right-0 mb-4 bg-void/90 backdrop-blur-md border border-white/10 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl text-left pointer-events-none"
+            className="absolute bottom-full right-0 mb-4 bg-void/90 backdrop-blur-md border border-azure-500/30 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl text-left pointer-events-none"
           >
-             <p className="text-[7px] uppercase tracking-[0.2em] text-azure-400 font-bold mb-1 italic">Message Received</p>
+             <p className="text-[7px] uppercase tracking-[0.2em] text-azure-400 font-bold mb-1 italic">
+               {hasUnreadMessages ? "Observation Report" : "Message Received"}
+             </p>
              <p className="text-[9px] leading-tight text-white/80 line-clamp-2 font-medium">
-               {latestNews.title}
+               {hasUnreadMessages ? `観測局より報告：未読メッセージが ${unreadMessages} 件あります。` : latestNews?.title}
              </p>
           </motion.div>
         )}
