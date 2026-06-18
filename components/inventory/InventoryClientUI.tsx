@@ -340,17 +340,24 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
               <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-void to-transparent z-50 pointer-events-none lg:hidden" />
               <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-void to-transparent z-50 pointer-events-none lg:hidden" />
               
-              <div className="flex border-b border-white/5 overflow-x-auto custom-scrollbar scroll-smooth sticky top-[42vh] lg:top-0 bg-void/98 lg:bg-transparent z-40 -mx-4 px-4 lg:mx-0 lg:px-0">
+              <div className="flex border-b border-white/10 overflow-x-auto custom-scrollbar scroll-smooth sticky top-[42vh] lg:top-0 bg-void/98 lg:bg-transparent z-40 -mx-4 px-4 lg:mx-0 lg:px-0">
                 {CATEGORIES.map((cat) => {
                   const Icon = getCategoryIcon(cat.id);
+                  const isActive = activeCategory === cat.id;
                   return (
                     <button
                       key={cat.id}
                       onClick={() => { setActiveCategory(cat.id); setPreviewAsset(null); }}
-                      className={`py-4 lg:py-6 px-6 lg:px-8 flex flex-col items-center gap-2 lg:gap-3 transition-all border-b-2 flex-shrink-0 ${activeCategory === cat.id ? "border-azure-500 opacity-100 bg-azure-500/5" : "border-transparent opacity-20 hover:opacity-50"}`}
+                      className={`relative py-4 lg:py-6 px-6 lg:px-8 flex flex-col items-center gap-2 lg:gap-3 transition-all flex-shrink-0 group overflow-hidden ${isActive ? "opacity-100 bg-white/[0.03]" : "opacity-30 hover:opacity-100 hover:bg-white/[0.02]"}`}
                     >
-                      <Icon size={16} className={activeCategory === cat.id ? "text-azure-400" : ""} />
-                      <span className="block text-[7px] lg:text-[8px] uppercase tracking-[0.3em] font-bold whitespace-nowrap">{cat.name} / {cat.id.toUpperCase()}</span>
+                      {isActive && (
+                        <motion.div layoutId="activeCategory" className="absolute bottom-0 left-0 w-full h-[2px] bg-azure-400" />
+                      )}
+                      {isActive && (
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 bg-azure-500/20 blur-xl pointer-events-none" />
+                      )}
+                      <Icon size={18} className={`relative z-10 transition-colors ${isActive ? "text-azure-400" : "text-white group-hover:text-azure-300"}`} />
+                      <span className={`relative z-10 block text-[7px] lg:text-[8px] uppercase tracking-[0.3em] font-bold whitespace-nowrap transition-colors ${isActive ? "text-white" : "text-white/60"}`}>{cat.name} / {cat.id.toUpperCase()}</span>
                     </button>
                   );
                 })}
