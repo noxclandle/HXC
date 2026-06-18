@@ -17,7 +17,6 @@ export default function LegalPage() {
     { title: "支払時期 / Payment Timing", content: "商品注文確定時にお支払いが確定します。 / Payment is processed at the time of order confirmation." },
     { title: "商品の引渡時期 / Delivery Timing", content: "決済完了確認後、3〜7営業日以内に発送いたします。 / Shipped within 3-7 business days after payment verification." },
     { title: "返品・交換・キャンセルについて / Returns & Cancellations", content: "商品の性質（オーダーメイド・特注品）上、決済完了後のキャンセルは受け付けておりません。製品に初期不良がある場合は、商品到着後7日以内にご連絡ください。良品と交換させていただきます。 / Due to the custom nature of the product, cancellations are not accepted after payment. Contact us within 7 days if the product is defective for a replacement." },
-    ];
   ];
 
   return (
