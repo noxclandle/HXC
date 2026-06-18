@@ -86,13 +86,23 @@ export default function BackgroundGenerator({ userSlug }: { userSlug: string }) 
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
            <div className="space-y-8">
-              <div className="aspect-video bg-black border border-white/10 flex items-center justify-center relative overflow-hidden group">
-                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px]" />
-                 <Camera size={48} className="opacity-10" />
-                 <div className="absolute top-4 right-4 w-12 h-12 bg-white flex items-center justify-center">
-                    <div className="w-8 h-8 bg-black opacity-40" />
+              <div className="aspect-video bg-[#020202] border border-white/10 flex items-center justify-center relative overflow-hidden group">
+                 {/* Subtle Hex Pattern Background (Simulated) */}
+                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]" />
+                 
+                 <Camera size={48} className="opacity-10 z-10" />
+                 
+                 {/* Simulated QR Code Area at Top Right */}
+                 <div className="absolute top-4 right-4 p-1.5 bg-white z-10 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                    <QRCodeSVG value={profileUrl} size={48} />
                  </div>
-                 <div className="absolute bottom-4 left-4 text-[6px] tracking-[2px] opacity-20 uppercase">Preview Mode</div>
+
+                 {/* Simulated Brand Text at Bottom Left */}
+                 <div className="absolute bottom-4 left-4 text-[6px] tracking-[3px] text-white/40 uppercase z-10">
+                   HEXA RELATION / HXC SYSTEM
+                 </div>
+
+                 <div className="absolute bottom-4 right-4 text-[5px] tracking-[2px] opacity-20 uppercase z-10">Preview Mode</div>
               </div>
 
               <div className="space-y-4">
