@@ -28,6 +28,21 @@ export function playConnectionSound(type: string = "resonance") {
 
   const id = type.toLowerCase();
 
+  if (id === "snap") {
+    createOscillator(2000, 0.15, 0.05, "triangle");
+    createOscillator(150, 0.2, 0.08, "square");
+    return;
+  }
+  if (id === "tap") {
+    createOscillator(600, 0.1, 0.1, "sine");
+    createOscillator(800, 0.05, 0.05, "sine");
+    return;
+  }
+  if (id === "sweep") {
+    createOscillator(300, 0.05, 0.5, "triangle");
+    createOscillator(800, 0.02, 0.8, "sine");
+    return;
+  }
   if (id === "click") {
     createOscillator(1200, 0.1, 0.1, "square");
     return;
