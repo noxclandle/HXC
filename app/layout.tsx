@@ -94,6 +94,7 @@ export default function RootLayout({
                 "@context": "https://schema.org",
                 "@type": "Product",
                 "name": "Hexa Card",
+                "image": "https://hxc.hexa-relation.com/logo.png",
                 "description": "次世代NFCデジタルアイデンティティ。物理カードとデジタル名刺帳が同期する、1万通り以上のカスタマイズが可能なプレミアムスマート名刺。",
                 "brand": {
                   "@type": "Brand",
