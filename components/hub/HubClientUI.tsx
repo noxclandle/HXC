@@ -107,6 +107,8 @@ export default function HubClientUI({
   useEffect(() => {
     if (isBonusAvailable) {
       setGreeting("Awaiting daily bonus");
+    } else if (realStats?.unread_messages > 0) {
+      setGreeting(`観測局より報告：未読のメッセージが ${realStats.unread_messages} 件届いています。`);
     } else {
       const hour = new Date().getHours();
       if (hour < 5) setGreeting("静かな夜ですね。");
@@ -114,7 +116,7 @@ export default function HubClientUI({
       else if (hour < 17) setGreeting("こんにちは。");
       else setGreeting("こんばんは。");
     }
-  }, [isBonusAvailable]);
+  }, [isBonusAvailable, realStats?.unread_messages]);
 
   const closeGuide = () => {
     setShowGuide(false);
@@ -213,6 +215,22 @@ export default function HubClientUI({
                    <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-bronze-300 group-hover:opacity-100">名刺帳 / Library</p>
                 </div>
                 <Book size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
+             </Link>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 pb-12">
+             <Link href="/hub/background" className="group p-8 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all flex items-center justify-between relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-azure-500/20" />
+                <div className="flex items-center gap-6">
+                   <div className="w-12 h-12 border border-white/10 flex items-center justify-center bg-white/5">
+                      <Smartphone size={24} className="opacity-40" />
+                   </div>
+                   <div>
+                      <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100">Virtual Background</h2>
+                      <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-white group-hover:opacity-100">商談用背景生成 / For Zoom & Meet</p>
+                   </div>
+                </div>
+                <ChevronRight size={24} className="opacity-10 group-hover:opacity-40 transition-all" />
              </Link>
           </div>
         </div>

@@ -11,12 +11,56 @@ import ResidentAgent from "@/components/agent/ResidentAgent";
 import { useSession, signIn } from "next-auth/react";
 import { useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { Send, MessageSquare, Edit3, CheckCircle2, Loader2, FileText, ExternalLink } from "lucide-react";
 
 export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?: boolean }) {
   const { status } = useSession();
   const [showReport, setShowReport] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [reporting, setReporting] = useState(false);
+
+  // Portfolio Links
+  const portfolioLinks = data.portfolio_links || [];
+
+  // Local Memo (Observation Log) State
+  const [memo, setMemo] = useState("");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedMemo = localStorage.getItem(`hxc_memo_${data.id}`);
+      if (savedMemo) setMemo(savedMemo);
+    }
+  }, [data.id]);
+
+  const handleSaveMemo = (val: string) => {
+    setMemo(val);
+    localStorage.setItem(`hxc_memo_${data.id}`, val);
+  };
+
+  // Message Form State
+  const [messageForm, setMessageForm] = useState({ name: "", company: "", content: "" });
+  const [sendingMessage, setSendingMessage] = useState(false);
+  const [messageSent, setMessageSent] = useState(false);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSendingMessage(true);
+    try {
+      const res = await fetch("/api/card/message", {
+        method: "POST",
+        body: JSON.stringify({
+          sender_name: messageForm.name,
+          sender_company: messageForm.company,
+          content: messageForm.content,
+          target_user_id: data.id
+        })
+      });
+      if (res.ok) {
+        setMessageSent(true);
+        setMessageForm({ name: "", company: "", content: "" });
+      }
+    } catch (e) { console.error(e); }
+    finally { setSendingMessage(false); }
+  };
 
   useEffect(() => {
     // 魂の同調チェック（未ログインかつ、この端末の持ち主である場合のみ試行）
@@ -133,6 +177,27 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
         </motion.div>
 
         <div className="w-full max-w-sm space-y-6 mt-20">
+           {portfolioLinks.length > 0 && (
+             <div className="space-y-4 mb-12">
+                <p className="text-[9px] tracking-[0.4em] uppercase text-azure-400 font-bold text-center mb-6">Documents & Portfolio</p>
+                {portfolioLinks.map((link: any, i: number) => (
+                  <a 
+                    key={i} 
+                    href={link.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-5 border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all group"
+                  >
+                    <div className="flex items-center gap-4">
+                       <FileText size={16} className="text-white/30 group-hover:text-white transition-colors" />
+                       <span className="text-[10px] tracking-widest uppercase font-bold text-white/80">{link.title}</span>
+                    </div>
+                    <ExternalLink size={14} className="opacity-10 group-hover:opacity-100 transition-opacity" />
+                  </a>
+                ))}
+             </div>
+           )}
+
            <button onClick={handleSaveContact} className="w-full py-6 bg-azure-600 text-white font-bold text-[11px] tracking-[1em] uppercase shadow-[0_0_40px_rgba(59,130,246,0.3)] hover:bg-azure-500 transition-all flex items-center justify-center gap-4 group">
               <Download size={14} className="group-hover:translate-y-1 transition-transform" /> Save Contact
            </button>
@@ -146,6 +211,76 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
            <ChevronDown size={14} className="text-white" />
         </motion.div>
       </div>
+
+      {/* Observation Log & Messaging Section */}
+      <section className="relative z-10 w-full max-w-lg mx-auto py-24 px-6 space-y-24 border-t border-white/5">
+         {/* Observation Log (Local Only) */}
+         <div className="space-y-8">
+            <header className="flex items-center gap-4">
+               <Edit3 className="text-azure-400" size={18} />
+               <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-white">Observation Log</h3>
+               <span className="text-[8px] tracking-[0.2em] uppercase opacity-20 ml-auto">Local Archive Only</span>
+            </header>
+            <p className="text-[9px] tracking-widest text-white/30 leading-relaxed uppercase">
+              この人物に関するあなた専用のメモです。サーバーには送信されず、この端末にのみ保存されます。
+            </p>
+            <textarea 
+              value={memo}
+              onChange={(e) => handleSaveMemo(e.target.value)}
+              placeholder="MEMO..."
+              className="w-full bg-white/[0.02] border border-white/10 p-6 text-xs tracking-widest outline-none focus:border-azure-500/50 transition-all h-32 resize-none text-white font-sans uppercase"
+            />
+         </div>
+
+         {/* Identity Contact (Message to Owner) */}
+         <div className="space-y-8">
+            <header className="flex items-center gap-4">
+               <MessageSquare className="text-rose-400" size={18} />
+               <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-white">Transmit Message</h3>
+               <span className="text-[8px] tracking-[0.2em] uppercase opacity-20 ml-auto">Secure Channel</span>
+            </header>
+            
+            {messageSent ? (
+              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="p-12 border border-emerald-500/20 bg-emerald-500/5 text-center space-y-4">
+                 <CheckCircle2 size={32} className="mx-auto text-emerald-400" />
+                 <p className="text-[10px] tracking-[0.3em] uppercase text-emerald-400 font-bold">Transmission Complete</p>
+                 <p className="text-[8px] tracking-widest text-white/40 uppercase">メッセージを送信しました。管理局にて精査されます。</p>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSendMessage} className="space-y-6">
+                 <div className="grid grid-cols-2 gap-4">
+                    <input 
+                      required
+                      placeholder="NAME / お名前"
+                      value={messageForm.name}
+                      onChange={(e) => setMessageForm({...messageForm, name: e.target.value})}
+                      className="bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-white/30 text-white uppercase"
+                    />
+                    <input 
+                      placeholder="COMPANY / 社名 (OPTIONAL)"
+                      value={messageForm.company}
+                      onChange={(e) => setMessageForm({...messageForm, company: e.target.value})}
+                      className="bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-white/30 text-white uppercase"
+                    />
+                 </div>
+                 <textarea 
+                   required
+                   rows={4}
+                   placeholder="YOUR MESSAGE..."
+                   value={messageForm.content}
+                   onChange={(e) => setMessageForm({...messageForm, content: e.target.value})}
+                   className="w-full bg-white/[0.02] border border-white/10 p-6 text-[10px] tracking-widest outline-none focus:border-white/30 transition-all resize-none text-white font-sans uppercase"
+                 />
+                 <button 
+                   disabled={sendingMessage}
+                   className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.5em] uppercase hover:bg-zinc-200 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+                 >
+                   {sendingMessage ? <Loader2 size={16} className="animate-spin" /> : <><Send size={14} /> Transmit Identity Message</>}
+                 </button>
+              </form>
+            )}
+         </div>
+      </section>
 
       {/* Digital QR Exchange Section */}
       <section className="relative z-10 w-full max-w-lg mx-auto py-24 px-6 border-t border-white/5 flex flex-col items-center space-y-12">

@@ -33,9 +33,11 @@ model User {
   equipped_assets   Json?
   logo_url          String?
   link_facebook     String?
-  link_line         String?
-  exp               BigInt          @default(0)
+  link_line        String?
+  exp              BigInt          @default(0)
   last_read_news_at DateTime?
+  // 外部ドキュメント・資料リンク集 (JSON: [{title: string, url: string}])
+  portfolio_links   Json?           @default("[]")
   reset_token       String?         @unique
   reset_token_at    DateTime?
   audit_logs        AuditLog[]
@@ -44,8 +46,22 @@ model User {
   contacts          Contact[]       @relation("UserContacts")
   device_bindings   DeviceBinding[]
   rt_transactions   RTTransaction[]
+  card_messages     CardMessage[]   @relation("ReceivedMessages")
 
   @@map("users")
+}
+
+model CardMessage {
+  id               String   @id @default(uuid()) @db.Uuid
+  target_user_id   String   @db.Uuid
+  sender_name      String
+  sender_company   String?
+  content          String
+  is_read          Boolean  @default(false)
+  created_at       DateTime @default(now())
+  target_user      User     @relation("ReceivedMessages", fields: [target_user_id], references: [id])
+
+  @@map("card_messages")
 }
 
 model DeviceBinding {
