@@ -340,7 +340,8 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
               <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-void to-transparent z-50 pointer-events-none lg:hidden" />
               <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-void to-transparent z-50 pointer-events-none lg:hidden" />
               
-              <div className="flex border-b border-white/10 overflow-x-auto custom-scrollbar scroll-smooth sticky top-[42vh] lg:top-0 bg-void/98 lg:bg-transparent z-40 -mx-4 px-4 lg:mx-0 lg:px-0">
+              {/* Category Navigation (Wrapped for full visibility) */}
+              <div className="flex flex-wrap justify-center lg:justify-start border-b border-white/10 sticky top-[42vh] lg:top-0 bg-void/98 lg:bg-transparent z-40 -mx-4 px-4 lg:mx-0 lg:px-0 pt-2 pb-0 gap-y-2">
                 {CATEGORIES.map((cat) => {
                   const Icon = getCategoryIcon(cat.id);
                   const isActive = activeCategory === cat.id;
@@ -348,7 +349,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                     <button
                       key={cat.id}
                       onClick={() => { setActiveCategory(cat.id); setPreviewAsset(null); }}
-                      className={`relative py-4 lg:py-6 px-6 lg:px-8 flex flex-col items-center gap-2 lg:gap-3 transition-all flex-shrink-0 group overflow-hidden ${isActive ? "opacity-100 bg-white/[0.03]" : "opacity-30 hover:opacity-100 hover:bg-white/[0.02]"}`}
+                      className={`relative py-3 lg:py-4 px-4 lg:px-6 flex flex-col items-center gap-1.5 lg:gap-2 transition-all group overflow-hidden flex-1 sm:flex-none min-w-[70px] ${isActive ? "opacity-100 bg-white/[0.03]" : "opacity-30 hover:opacity-100 hover:bg-white/[0.02]"}`}
                     >
                       {isActive && (
                         <motion.div layoutId="activeCategory" className="absolute bottom-0 left-0 w-full h-[2px] bg-azure-400" />
@@ -356,8 +357,8 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                       {isActive && (
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 bg-azure-500/20 blur-xl pointer-events-none" />
                       )}
-                      <Icon size={18} className={`relative z-10 transition-colors ${isActive ? "text-azure-400" : "text-white group-hover:text-azure-300"}`} />
-                      <span className={`relative z-10 block text-[7px] lg:text-[8px] uppercase tracking-[0.3em] font-bold whitespace-nowrap transition-colors ${isActive ? "text-white" : "text-white/60"}`}>{cat.name} / {cat.id.toUpperCase()}</span>
+                      <Icon size={16} className={`relative z-10 transition-colors ${isActive ? "text-azure-400" : "text-white group-hover:text-azure-300"}`} />
+                      <span className={`relative z-10 block text-[6px] lg:text-[7px] uppercase tracking-[0.2em] font-bold whitespace-nowrap transition-colors ${isActive ? "text-white" : "text-white/60"}`}>{cat.name} / {cat.id.toUpperCase()}</span>
                     </button>
                   );
                 })}
@@ -373,10 +374,16 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                   exit={{ opacity: 0, y: -10 }}
                   className="grid grid-cols-1 gap-4 px-2 lg:px-0 pb-12"
                 >
-                  {filteredAssets.filter(asset => {
-                    if (profile?.role === "fixer") return true;
-                    return asset.type !== "title" || unlockedTitles.includes(asset.id);
-                  }).map((asset) => {
+                  {filteredAssets
+                    .filter(asset => {
+                      if (profile?.role === "fixer") return true;
+                      return asset.type !== "title" || unlockedTitles.includes(asset.id);
+                    })
+                    .sort((a, b) => {
+                      const rarityOrder: Record<string, number> = { common: 0, rare: 1, epic: 2, legendary: 3, mythic: 4 };
+                      return rarityOrder[a.rarity] - rarityOrder[b.rarity];
+                    })
+                    .map((asset) => {
                     const isUnlocked = ownedAssets.includes(asset.id) || asset.rarity === "common" || profile?.role === "fixer";
                     const isActive = equipped[activeCategory as keyof typeof equipped] === asset.id;
                     const isPreviewing = previewAsset?.id === asset.id;
