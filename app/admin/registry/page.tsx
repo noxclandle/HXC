@@ -308,11 +308,36 @@ export default function RegistryPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6">
-                  <div className="text-right">
+                <div className="flex items-center gap-4 flex-wrap mt-4 md:mt-0">
+                  <div className="text-right hidden md:block">
                     <p className="text-[8px] uppercase tracking-widest opacity-20 mb-1">Created At</p>
                     <p className="text-[10px] font-mono opacity-60">{new Date(order.created_at).toLocaleDateString()}</p>
                   </div>
+                  
+                  <button 
+                    onClick={() => {
+                      const subject = encodeURIComponent("【HXC】アイデンティティの転送（発送）が完了しました");
+                      const body = encodeURIComponent(`${order.customer_name} 様\n\nご注文ありがとうございます。\n先ほど、あなたの物理カードの初期設定と発送が完了しました。\n数日以内にご指定の住所へお届けいたします。\n\nHexa Relation 監視局`);
+                      window.location.href = `mailto:${order.customer_email}?subject=${subject}&body=${body}`;
+                    }}
+                    title="Launch Mail App"
+                    className="p-3 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/30 transition-all text-white/60 hover:text-white"
+                  >
+                    <Mail size={14} />
+                  </button>
+                  
+                  <button 
+                    onClick={() => {
+                      const text = `${order.customer_email}\n\n件名: 【HXC】アイデンティティの転送（発送）が完了しました\n\n${order.customer_name} 様\n\nご注文ありがとうございます。\n先ほど、あなたの物理カードの初期設定と発送が完了しました。\n数日以内にご指定の住所へお届けいたします。\n\nHexa Relation 監視局`;
+                      navigator.clipboard.writeText(text);
+                      alert("メールの宛先とテンプレート本文をコピーしました。");
+                    }}
+                    title="Copy Mail Template"
+                    className="p-3 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/30 transition-all text-white/60 hover:text-white"
+                  >
+                    <Copy size={14} />
+                  </button>
+
                   <button 
                     onClick={() => setSelectedOrder(order)}
                     className="px-6 py-3 bg-azure-600 text-white text-[9px] uppercase tracking-[0.3em] font-bold hover:bg-azure-500 transition-all flex items-center gap-2 shadow-lg"
