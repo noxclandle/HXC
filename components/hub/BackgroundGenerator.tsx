@@ -13,7 +13,7 @@ export default function BackgroundGenerator({ userSlug }: { userSlug: string }) 
 
   const profileUrl = typeof window !== "undefined" 
     ? `${window.location.origin}/p/${userSlug}` 
-    : `https://hxc.hexa-relation.com/p/${userSlug}`;
+    : `https://virtual-business-card.hexa-relation.com/p/${userSlug}`;
 
   const handleDownload = async () => {
     setGenerating(true);

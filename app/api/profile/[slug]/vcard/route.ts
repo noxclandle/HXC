@@ -39,7 +39,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     const email = profileData.contact_email || user.email || "";
     const company = profileData.company || "";
     const title = profileData.title || "";
-    const website = user.link_website || profileData.website || `https://hxc.hexa-relation.com/p/${slug}`;
+    const website = user.link_website || profileData.website || `https://virtual-business-card.hexa-relation.com/p/${slug}`;
 
     let vcard = `BEGIN:VCARD${CRLF}`;
     vcard += `VERSION:3.0${CRLF}`;
@@ -52,7 +52,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     if (email) vcard += `EMAIL;TYPE=WORK,INTERNET:${email}${CRLF}`;
     if (website) vcard += `URL:${website}${CRLF}`;
     // Link directly to the digital business card
-    vcard += `URL;type=HexaCard:https://hxc.hexa-relation.com/p/${slug}${CRLF}`;
+    vcard += `URL;type=HexaCard:https://virtual-business-card.hexa-relation.com/p/${slug}${CRLF}`;
 
     vcard += `END:VCARD${CRLF}`;
 

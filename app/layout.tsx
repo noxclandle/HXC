@@ -4,9 +4,9 @@ import GeometricBackground from "@/components/background/GeometricBackground";
 
 // Build Triggered: 2026-05-17
 export const metadata: Metadata = {
-  metadataBase: new URL("https://hxc.hexa-relation.com"),
+  metadataBase: new URL("https://virtual-business-card.hexa-relation.com"),
   alternates: {
-    canonical: "https://hxc.hexa-relation.com",
+    canonical: "https://virtual-business-card.hexa-relation.com",
   },
   title: {
     default: "Hexa Card | 次世代NFCデジタルアイデンティティ / Next-Gen NFC Digital Identity",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Hexa Card | プレミアムNFCデジタルアイデンティティ",
     description: "Hexa Cardシステムでアイデンティティを同期。物理とデジタルを繋ぐ、究極のスマート名刺。 / Synchronize your identity via the Hexa Card system. The ultimate smart card bridging physical and digital presence.",
-    url: "https://hxc.hexa-relation.com",
+    url: "https://virtual-business-card.hexa-relation.com",
     siteName: "Hexa Card",
     images: [
       {
@@ -78,14 +78,14 @@ export default function RootLayout({
                 "@context": "https://schema.org",
                 "@type": "WebSite",
                 "name": "Hexa Card",
-                "url": "https://hxc.hexa-relation.com"
+                "url": "https://virtual-business-card.hexa-relation.com"
               },
               {
                 "@context": "https://schema.org",
                 "@type": "Organization",
                 "name": "Hexa Relation",
-                "url": "https://hxc.hexa-relation.com",
-                "logo": "https://hxc.hexa-relation.com/logo.png",
+                "url": "https://virtual-business-card.hexa-relation.com",
+                "logo": "https://virtual-business-card.hexa-relation.com/logo.png",
                 "sameAs": [
                   "https://x.com/HexaRelation"
                 ]
@@ -94,7 +94,7 @@ export default function RootLayout({
                 "@context": "https://schema.org",
                 "@type": "Product",
                 "name": "Hexa Card",
-                "image": "https://hxc.hexa-relation.com/ogp_card.png",
+                "image": "https://virtual-business-card.hexa-relation.com/ogp_card.png",
                 "description": "次世代NFCデジタルアイデンティティ。物理カードとデジタル名刺帳が同期する、1万通り以上のカスタマイズが可能なプレミアムスマート名刺。",
                 "brand": {
                   "@type": "Brand",
@@ -102,7 +102,7 @@ export default function RootLayout({
                 },
                 "offers": {
                   "@type": "Offer",
-                  "url": "https://hxc.hexa-relation.com/purchase",
+                  "url": "https://virtual-business-card.hexa-relation.com/purchase",
                   "priceCurrency": "JPY",
                   "price": "3000",
                   "availability": "https://schema.org/InStock"

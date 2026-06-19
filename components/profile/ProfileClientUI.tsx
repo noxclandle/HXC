@@ -295,7 +295,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
          <div className="p-6 bg-white border border-white/10 shadow-[0_0_50px_rgba(59,130,246,0.2)] rounded-xl relative group">
             <div className="absolute inset-[-10px] border border-azure-500/20 rounded-2xl animate-pulse" />
             <QRCodeSVG 
-              value={typeof window !== "undefined" ? window.location.href : `https://hxc.hexa-relation.com/p/${data.handle_name || data.id}`}
+              value={typeof window !== "undefined" ? window.location.href : `https://virtual-business-card.hexa-relation.com/p/${data.handle_name || data.id}`}
               size={180}
               level="H"
               includeMargin={false}

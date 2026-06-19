@@ -18,6 +18,6 @@ export default function robots(): MetadataRoute.Robots {
         '/gate'
       ],
     },
-    sitemap: 'https://hxc.hexa-relation.com/sitemap.xml',
+    sitemap: 'https://virtual-business-card.hexa-relation.com/sitemap.xml',
   }
 }
