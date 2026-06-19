@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         { id: params.slug } // IDでアクセスされた場合のフォールバック
       ]
     },
-    select: { name: true, handle_name: true, ai_config: true, photo_url: true }
+    select: { name: true, handle_name: true, role: true, ai_config: true, photo_url: true }
   });
 
   if (!user) {
@@ -19,6 +19,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     };
   }
 
+  const isOfficial = user.role === 'admin' || user.role === 'architect' || user.handle_name === 'architect';
   const aiConfig = (user.ai_config as any) || {};
   const profile = aiConfig.profile || {};
   const title = profile.title ? `${profile.title} | ` : "";
@@ -27,6 +28,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return {
     title: `${displayName}`,
     description: profile.bio || `${displayName} のデジタルアイデンティティ / Digital Identity for ${displayName}.`,
+    robots: {
+      index: isOfficial,
+      follow: true,
+    },
     openGraph: {
       title: `${title}${displayName} | Hexa Card`,
       description: profile.bio || "アイデンティティを同期する次世代スマート名刺。",
