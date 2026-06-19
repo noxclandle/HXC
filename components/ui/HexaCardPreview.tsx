@@ -478,7 +478,7 @@ export default function HexaCardPreview({
 
   return (
     <div 
-      className={`relative cursor-pointer transition-all duration-700 ease-in-out ${isVertical ? "w-[177px] h-[280px] sm:w-full sm:h-auto sm:max-w-[320px] sm:aspect-[1/1.58]" : "w-[280px] h-[177px] sm:w-full sm:h-auto sm:max-w-[min(450px,90vw)] sm:aspect-[1.58/1]"}`}
+      className={`relative cursor-pointer transition-all duration-700 ease-in-out ${isVertical ? "w-[120px] h-[190px] sm:w-full sm:h-auto sm:max-w-[320px] sm:aspect-[1/1.58]" : "w-[240px] h-[152px] sm:w-full sm:h-auto sm:max-w-[min(450px,90vw)] sm:aspect-[1.58/1]"}`}
       style={{ perspective: "2500px" }}
       onMouseMove={(e) => {
         const rect = e.currentTarget.getBoundingClientRect();
