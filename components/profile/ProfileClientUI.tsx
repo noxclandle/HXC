@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Phone, Download, Share2, ArrowRight, ShieldCheck, Sparkles, Smartphone, Layers, Network, AlertCircle, ChevronDown, QrCode } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
@@ -10,7 +10,6 @@ import ConnectionInteraction from "@/components/ui/ConnectionInteraction";
 import Link from "next/link";
 import ResidentAgent from "@/components/agent/ResidentAgent";
 import { useSession, signIn } from "next-auth/react";
-import { useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Send, MessageSquare, Edit3, CheckCircle2, Loader2, FileText, ExternalLink } from "lucide-react";
 
@@ -63,11 +62,14 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
     finally { setSendingMessage(false); }
   };
 
+  const soulLinkAttempted = useRef(false);
   useEffect(() => {
     // 魂の同調チェック（未ログインかつ、この端末の持ち主である場合のみ試行）
     const trySoulLink = async () => {
+      if (soulLinkAttempted.current) return;
       const token = localStorage.getItem("hxc_soul_fragment");
       if (token && !isOwner && status === "unauthenticated") {
+        soulLinkAttempted.current = true;
         const res = await signIn("soul-link", {
           deviceToken: token,
           redirect: false

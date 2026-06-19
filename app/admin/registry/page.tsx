@@ -65,6 +65,7 @@ export default function RegistryPage() {
   const [cards, setCards] = useState<Card[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [newCard, setNewCard] = useState({ uid: "", serial: "" });
   const [search, setSearch] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -130,6 +131,7 @@ export default function RegistryPage() {
       return;
     }
 
+    setSubmitting(true);
     try {
       const res = await fetch("/api/admin/card/create", {
         method: "POST",
@@ -137,7 +139,7 @@ export default function RegistryPage() {
         body: JSON.stringify({ uid: normalizedUid, serial: newCard.serial })
       });
       if (res.ok) {
-        fetchData();
+        await fetchData();
         setNewCard({ uid: "", serial: "" });
       } else {
         const data = await res.json();
@@ -145,10 +147,13 @@ export default function RegistryPage() {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const assignCardToOrder = async (orderId: string, cardUid: string) => {
+    setSubmitting(true);
     try {
       const res = await fetch("/api/admin/order/update", {
         method: "POST",
@@ -158,18 +163,21 @@ export default function RegistryPage() {
       if (res.ok) {
         alert("Card assigned and order marked as shipped.");
         setSelectedOrder(null);
-        fetchData();
+        await fetchData();
       } else {
         alert("Assignment failed");
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const unlinkCard = async (uid: string) => {
     if (!confirm("実行しますか？ このカードは『未発行』状態に戻り、シリアル番号もリセットされます。既存のユーザーとの紐付けは完全に解除されます。")) return;
     
+    setSubmitting(true);
     try {
       const res = await fetch("/api/admin/card/unlink", {
         method: "POST",
@@ -178,18 +186,21 @@ export default function RegistryPage() {
       });
       if (res.ok) {
         alert("カードの紐付けを解除し、初期化しました。");
-        fetchData();
+        await fetchData();
       } else {
         alert("紐付け解除に失敗しました。");
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const voidCard = async (uid: string) => {
     if (!confirm("【警告】永久無効化を実行しますか？ このカードは二度と使用できなくなります。この操作は取り消せません。")) return;
     
+    setSubmitting(true);
     try {
       const res = await fetch("/api/admin/card/void", {
         method: "POST",
@@ -198,12 +209,14 @@ export default function RegistryPage() {
       });
       if (res.ok) {
         alert("カードを永久無効化しました。");
-        fetchData();
+        await fetchData();
       } else {
         alert("無効化処理に失敗しました。");
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -218,6 +231,7 @@ export default function RegistryPage() {
     const step3 = confirm("【最終確認】このカードの存在をこの世界から完全に消し去ります。よろしいですか？");
     if (!step3) return;
 
+    setSubmitting(true);
     try {
       const res = await fetch("/api/admin/card/delete", {
         method: "POST",
@@ -234,13 +248,15 @@ export default function RegistryPage() {
 
       if (res.ok) {
         alert("抹消完了：このカードの存在は世界から完全に消し去られました。");
-        fetchData();
+        await fetchData();
       } else {
         alert(data.error || "抹消に失敗しました。権限が不足しているか、システムエラーです。");
       }
     } catch (err) {
       alert("通信エラー：抹消プロセスを完遂できませんでした。ネットワークを確認してください。");
       console.error(err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -348,7 +364,8 @@ export default function RegistryPage() {
 
                   <button 
                     onClick={() => setSelectedOrder(order)}
-                    className="px-6 py-3.5 bg-azure-600 hover:bg-azure-500 text-white text-[9px] uppercase tracking-[0.25em] font-bold transition-all flex items-center gap-2 rounded-sm shadow-lg shadow-azure-900/10 hover:shadow-azure-500/10 active:scale-95"
+                    disabled={submitting}
+                    className="px-6 py-3.5 bg-azure-600 hover:bg-azure-500 text-white text-[9px] uppercase tracking-[0.25em] font-bold transition-all flex items-center gap-2 rounded-sm shadow-lg shadow-azure-900/10 hover:shadow-azure-500/10 active:scale-95 disabled:opacity-50"
                   >
                     Assign Card / カード紐付け <ArrowRight size={12} />
                   </button>
@@ -393,10 +410,10 @@ export default function RegistryPage() {
               />
               <button 
                 onClick={createSlot}
-                disabled={!newCard.uid}
-                className="px-10 bg-white text-black text-[9px] uppercase tracking-[0.35em] font-bold hover:bg-azure-400 hover:text-white transition-all disabled:opacity-20 active:scale-98 rounded-sm shrink-0"
+                disabled={!newCard.uid || submitting}
+                className="px-10 bg-white text-black text-[9px] uppercase tracking-[0.35em] font-bold hover:bg-azure-400 hover:text-white transition-all disabled:opacity-20 active:scale-98 rounded-sm shrink-0 font-sans"
               >
-                Register
+                {submitting ? "Registering..." : "Register"}
               </button>
             </div>
           </div>
@@ -503,7 +520,8 @@ export default function RegistryPage() {
                       {(card.status === "active" || card.status === "shipped") && (
                         <button 
                           onClick={() => unlinkCard(card.uid)}
-                          className="text-[8px] text-amber-500 border border-amber-500/20 px-3 py-1.5 hover:bg-amber-500/10 transition-all flex items-center gap-2"
+                          disabled={submitting}
+                          className="text-[8px] text-amber-500 border border-amber-500/20 px-3 py-1.5 hover:bg-amber-500/10 transition-all flex items-center gap-2 disabled:opacity-50"
                         >
                           <RefreshCcw size={10} /> Unlink
                         </button>
@@ -511,7 +529,8 @@ export default function RegistryPage() {
                       {card.status !== "void" && (
                         <button 
                           onClick={() => voidCard(card.uid)}
-                          className="text-[8px] text-rose-500 border border-rose-500/20 px-3 py-1.5 hover:bg-rose-500/10 transition-all flex items-center gap-2"
+                          disabled={submitting}
+                          className="text-[8px] text-rose-500 border border-rose-500/20 px-3 py-1.5 hover:bg-rose-500/10 transition-all flex items-center gap-2 disabled:opacity-50"
                         >
                           <Shield size={10} /> Void
                         </button>
@@ -519,7 +538,8 @@ export default function RegistryPage() {
                       {currentUserRole === "fixer" && card.status === "void" && (
                         <button 
                           onClick={() => deleteCard(card.uid)}
-                          className="text-[8px] text-rose-500 border border-rose-500/40 bg-rose-500/5 px-3 py-1.5 hover:bg-rose-500 hover:text-white transition-all flex items-center gap-2"
+                          disabled={submitting}
+                          className="text-[8px] text-rose-500 border border-rose-500/40 bg-rose-500/5 px-3 py-1.5 hover:bg-rose-500 hover:text-white transition-all flex items-center gap-2 disabled:opacity-50"
                           title="物理的抹消 (Fixer Only)"
                         >
                           <Trash2 size={10} /> Eradicate
@@ -559,8 +579,8 @@ export default function RegistryPage() {
                   unissuedCards.map(card => (
                     <div 
                       key={card.uid}
-                      className="p-4 border border-white/5 bg-white/[0.02] hover:border-azure-500/40 transition-all flex justify-between items-center group cursor-pointer"
-                      onClick={() => assignCardToOrder(selectedOrder.id, card.uid)}
+                      className={`p-4 border border-white/5 bg-white/[0.02] hover:border-azure-500/40 transition-all flex justify-between items-center group ${submitting ? 'opacity-50 pointer-events-none' : 'cursor-pointer'}`}
+                      onClick={() => !submitting && assignCardToOrder(selectedOrder.id, card.uid)}
                     >
                       <div>
                         <p className="text-[10px] font-mono tracking-widest text-white">{card.uid}</p>
