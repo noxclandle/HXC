@@ -18,7 +18,7 @@ async function main() {
     update: {
       password: hashedPassword,
       name: name,
-      rt_balance: BigInt(rtAmount),
+      rt_balance: rtAmount,
       role: "member",
       rank: "ASSOCIATE"
     },
@@ -26,10 +26,10 @@ async function main() {
       email,
       password: hashedPassword,
       name: name,
-      rt_balance: BigInt(rtAmount),
+      rt_balance: rtAmount,
       role: "member",
       rank: "ASSOCIATE",
-      exp: BigInt(0),
+      exp: 0,
       owned_assets: ["Obsidian", "Default", "None", "Standard", "ASSOCIATE", "resonance", "Pure White Hex"],
       unlocked_titles: ["ASSOCIATE", "Initiate"]
     }

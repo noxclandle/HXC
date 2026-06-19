@@ -51,3 +51,21 @@ export async function sendPasswordResetEmail(email: string, token: string) {
   // In production, use Resend or SendGrid here.
   // For now, logging to console as per current pattern.
 }
+
+/**
+ * Send Customer Shipment Confirmation Email
+ */
+export async function sendCustomerShipmentNotification(email: string, name: string) {
+  console.log(`[MAILER] Sending shipment notification to ${email}`);
+  console.log(`[MAILER] Subject: 【HXC】アイデンティティ（カード）の発送が完了しました`);
+  console.log(`[MAILER] Content: 
+    ${name}様、ご注文ありがとうございます。
+    先ほど、あなたの物理カードの初期設定と発送が完了しました。
+    数日以内にご指定の住所へお届けいたします。
+    
+    到着後、カードをスマホ（iPhone）の背面に近づけて読み取ることで、アクティベーション（初期登録）を開始できます。
+    `);
+
+  // In production, use Resend or SendGrid here.
+}
+

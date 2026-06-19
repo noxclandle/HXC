@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 import { z } from "zod";
+import { sendCustomerShipmentNotification } from "@/lib/mail";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +52,14 @@ export async function POST(req: NextRequest) {
 
       return order;
     });
+
+    if (status === "shipped") {
+      try {
+        await sendCustomerShipmentNotification(updatedOrder.customer_email, updatedOrder.customer_name);
+      } catch (mailError) {
+        console.error("Failed to send shipment confirmation email:", mailError);
+      }
+    }
 
     await prisma.auditLog.create({
       data: {

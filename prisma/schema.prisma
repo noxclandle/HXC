@@ -24,7 +24,7 @@ model User {
   link_x            String?
   link_instagram    String?
   link_website      String?
-  rt_balance        BigInt          @default(0)
+  rt_balance        Int             @default(0)
   last_daily_at     DateTime?
   ai_config         Json?
   owned_assets      Json?
@@ -34,7 +34,7 @@ model User {
   logo_url          String?
   link_facebook     String?
   link_line        String?
-  exp              BigInt          @default(0)
+  exp              Int             @default(0)
   last_read_news_at DateTime?
   // 外部ドキュメント・資料リンク集 (JSON: [{title: string, url: string}])
   portfolio_links   Json?           @default("[]")

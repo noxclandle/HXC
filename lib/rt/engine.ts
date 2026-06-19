@@ -31,10 +31,10 @@ export async function executeRTTransaction(
 
     if (!currentUser) throw new Error("User not found.");
 
-    const newBalance = currentUser.rt_balance + BigInt(amount);
+    const newBalance = currentUser.rt_balance + amount;
 
     // 消費（spend）または転送（transfer）の場合の残高不足チェック
-    if (newBalance < BigInt(0)) {
+    if (newBalance < 0) {
       throw new Error("Insufficient RT balance.");
     }
 
@@ -45,7 +45,7 @@ export async function executeRTTransaction(
 
     // 獲得（earn）の場合のみEXPも増やす
     if (type === "earn" && amount > 0) {
-      updateData.exp = { increment: BigInt(amount) };
+      updateData.exp = { increment: amount };
     }
 
     const updatedUser = await tx.user.update({

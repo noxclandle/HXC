@@ -261,88 +261,96 @@ export default function RegistryPage() {
 
   return (
     <div className="max-w-7xl mx-auto p-12 bg-void text-moonlight min-h-screen">
-      <header className="mb-16">
+      <header className="mb-16 border-b border-white/5 pb-8 relative z-10">
         <div className="flex justify-between items-end">
           <div>
-            <h1 className="text-2xl tracking-[0.5em] uppercase font-light mb-2 flex items-center gap-4">
-              <Layers className="text-azure-400 opacity-50" size={24} /> Central Asset Registry
+            <h1 className="text-2xl tracking-[0.4em] uppercase font-light mb-2 flex items-center gap-4 text-white">
+              <Layers className="text-azure-400 animate-pulse" size={22} /> Central Asset Registry / 物理資産中央台帳
             </h1>
-            <p className="text-[10px] tracking-widest text-azure-400 opacity-40 uppercase font-bold italic">Hexa System / 物理資産中央台帳</p>
+            <p className="text-[9px] tracking-[0.2em] text-azure-400/60 uppercase font-bold italic">Hexa System Oversight Protocol</p>
           </div>
-          <Link href="/admin/onboarding" className="text-[9px] uppercase tracking-widest text-azure-400 border-b border-azure-400/20 pb-1 hover:border-azure-400 transition-all flex items-center gap-2">
-            Protocol Guide <ExternalLink size={10} />
+          <Link href="/admin/onboarding" className="text-[9px] uppercase tracking-[0.2em] text-azure-400 hover:text-white border-b border-azure-400/20 pb-1 hover:border-white/50 transition-all flex items-center gap-2 font-bold">
+            Protocol Guide / 出荷手順書 <ExternalLink size={10} />
           </Link>
         </div>
       </header>
 
       {/* 1. Pending Orders Section */}
       <section id="orders" className="mb-20">
-        <h2 className="text-[11px] tracking-[0.4em] uppercase text-azure-400 font-bold mb-6 flex items-center gap-3">
-          <Package size={16} /> Pending Shipments
+        <h2 className="text-[11px] tracking-[0.3em] uppercase text-azure-400 font-bold mb-6 flex items-center gap-3">
+          <Package className="text-azure-400" size={16} /> Pending Shipments / 発送待ちの注文
           {pendingOrders.length > 0 && (
-            <span className="bg-azure-500 text-white text-[8px] px-2 py-0.5 rounded-full animate-pulse">{pendingOrders.length}</span>
+            <span className="bg-azure-500 text-white text-[8px] px-2.5 py-0.5 rounded-full font-bold shadow-md shadow-azure-500/20 animate-pulse">{pendingOrders.length}</span>
           )}
         </h2>
 
         {pendingOrders.length === 0 ? (
-          <div className="p-12 border border-white/5 bg-white/[0.01] text-center opacity-20 text-[10px] tracking-widest uppercase">
-            No pending orders detected in the system.
+          <div className="p-16 border border-white/5 bg-white/[0.01] rounded-sm text-center opacity-30 text-[10px] tracking-[0.3em] uppercase">
+            No pending orders detected in the system. / 発送待ちの注文はありません。
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
             {pendingOrders.map(order => (
               <motion.div 
                 key={order.id}
-                className="p-6 border border-white/10 bg-white/[0.02] flex flex-col md:flex-row justify-between items-center gap-6"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-6 border border-white/10 bg-white/[0.02] hover:bg-white/[0.03] hover:border-white/20 transition-all flex flex-col md:flex-row justify-between items-center gap-6 rounded-sm"
               >
                 <div className="flex-1">
-                  <div className="flex items-center gap-4 mb-2">
-                    <span className="text-xs font-bold tracking-widest uppercase">{order.customer_name}</span>
-                    <span className={`text-[8px] px-2 py-0.5 border uppercase tracking-widest font-bold ${order.tier === 'Apex' ? 'border-rose-500 text-rose-500 bg-rose-500/5' : 'border-azure-400 text-azure-400 bg-azure-400/5'}`}>
+                  <div className="flex items-center gap-4 mb-3">
+                    <span className="text-xs font-bold tracking-widest text-white uppercase">{order.customer_name}</span>
+                    <span className={`text-[8px] px-2.5 py-0.5 border uppercase tracking-widest font-bold rounded-sm ${order.tier === 'Apex' ? 'border-rose-500 text-rose-500 bg-rose-500/5' : 'border-azure-400 text-azure-400 bg-azure-400/5'}`}>
                       {order.tier} {order.variant && `- ${order.variant}`}
                     </span>
                   </div>
-                  <div className="text-[9px] opacity-40 uppercase tracking-widest space-y-1">
-                    <p>{order.customer_email}</p>
-                    <p>{order.shipping_address?.postal_code} {order.shipping_address?.state}{order.shipping_address?.city}{order.shipping_address?.line1} {order.shipping_address?.line2}</p>
+                  <div className="text-[9px] opacity-40 uppercase tracking-widest space-y-1.5 font-sans">
+                    <p className="font-mono">{order.customer_email}</p>
+                    <p className="text-[10px] text-white/60 flex items-center gap-2">
+                      <MapPin size={10} className="text-azure-400/60" />
+                      〒{order.shipping_address?.postal_code} {order.shipping_address?.state}{order.shipping_address?.city}{order.shipping_address?.line1} {order.shipping_address?.line2}
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4 flex-wrap mt-4 md:mt-0">
-                  <div className="text-right hidden md:block">
-                    <p className="text-[8px] uppercase tracking-widest opacity-20 mb-1">Created At</p>
+                  <div className="text-right hidden md:block mr-4 border-r border-white/5 pr-4">
+                    <p className="text-[8px] uppercase tracking-widest opacity-20 mb-1">Created At / 注文日</p>
                     <p className="text-[10px] font-mono opacity-60">{new Date(order.created_at).toLocaleDateString()}</p>
                   </div>
                   
-                  <button 
-                    onClick={() => {
-                      const subject = encodeURIComponent("【HXC】アイデンティティの転送（発送）が完了しました");
-                      const body = encodeURIComponent(`${order.customer_name} 様\n\nご注文ありがとうございます。\n先ほど、あなたの物理カードの初期設定と発送が完了しました。\n数日以内にご指定の住所へお届けいたします。\n\nHexa Relation 監視局`);
-                      window.location.href = `mailto:${order.customer_email}?subject=${subject}&body=${body}`;
-                    }}
-                    title="Launch Mail App"
-                    className="p-3 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/30 transition-all text-white/60 hover:text-white"
-                  >
-                    <Mail size={14} />
-                  </button>
-                  
-                  <button 
-                    onClick={() => {
-                      const text = `${order.customer_email}\n\n件名: 【HXC】アイデンティティの転送（発送）が完了しました\n\n${order.customer_name} 様\n\nご注文ありがとうございます。\n先ほど、あなたの物理カードの初期設定と発送が完了しました。\n数日以内にご指定の住所へお届けいたします。\n\nHexa Relation 監視局`;
-                      navigator.clipboard.writeText(text);
-                      alert("メールの宛先とテンプレート本文をコピーしました。");
-                    }}
-                    title="Copy Mail Template"
-                    className="p-3 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/30 transition-all text-white/60 hover:text-white"
-                  >
-                    <Copy size={14} />
-                  </button>
+                  {/* Manual mail triggers styled smaller as overrides */}
+                  <div className="flex gap-2 border border-white/5 p-1 bg-white/[0.01] rounded-sm">
+                    <button 
+                      onClick={() => {
+                        const subject = encodeURIComponent("【HXC】アイデンティティの転送（発送）が完了しました");
+                        const body = encodeURIComponent(`${order.customer_name} 様\n\nご注文ありがとうございます。\n先ほど、あなたの物理カードの初期設定と発送が完了しました。\n数日以内にご指定の住所へお届けいたします。\n\nHexa Relation 監視局`);
+                        window.location.href = `mailto:${order.customer_email}?subject=${subject}&body=${body}`;
+                      }}
+                      title="Launch Mail App (Manual) / 手動メール送信"
+                      className="p-2.5 bg-transparent hover:bg-white/5 transition-all text-white/40 hover:text-white rounded-sm"
+                    >
+                      <Mail size={12} />
+                    </button>
+                    
+                    <button 
+                      onClick={() => {
+                        const text = `${order.customer_email}\n\n件名: 【HXC】アイデンティティの転送（発送）が完了しました\n\n${order.customer_name} 様\n\nご注文ありがとうございます。\n先ほど、あなたの物理カードの初期設定と発送が完了しました。\n数日以内にご指定の住所へお届けいたします。\n\nHexa Relation 監視局`;
+                        navigator.clipboard.writeText(text);
+                        alert("メールの宛先とテンプレート本文をコピーしました。");
+                      }}
+                      title="Copy Mail Template (Manual) / 本文コピー"
+                      className="p-2.5 bg-transparent hover:bg-white/5 transition-all text-white/40 hover:text-white rounded-sm"
+                    >
+                      <Copy size={12} />
+                    </button>
+                  </div>
 
                   <button 
                     onClick={() => setSelectedOrder(order)}
-                    className="px-6 py-3 bg-azure-600 text-white text-[9px] uppercase tracking-[0.3em] font-bold hover:bg-azure-500 transition-all flex items-center gap-2 shadow-lg"
+                    className="px-6 py-3.5 bg-azure-600 hover:bg-azure-500 text-white text-[9px] uppercase tracking-[0.25em] font-bold transition-all flex items-center gap-2 rounded-sm shadow-lg shadow-azure-900/10 hover:shadow-azure-500/10 active:scale-95"
                   >
-                    Assign Card <ArrowRight size={12} />
+                    Assign Card / カード紐付け <ArrowRight size={12} />
                   </button>
                 </div>
               </motion.div>
@@ -352,13 +360,14 @@ export default function RegistryPage() {
       </section>
 
       {/* 2. Quick Registry Section */}
-      <section className="mb-20 bg-azure-500/5 border border-azure-500/10 p-10">
-        <h2 className="text-[11px] tracking-[0.4em] uppercase text-azure-400 font-bold mb-8 flex items-center gap-3">
-          <Zap size={16} /> Asset Provisioning
+      <section className="mb-20 bg-azure-950/10 border border-azure-500/15 p-10 rounded-sm relative overflow-hidden z-10 shadow-xl shadow-black/20">
+        <div className="absolute top-0 left-0 w-1 h-full bg-azure-500/30" />
+        <h2 className="text-[11px] tracking-[0.3em] uppercase text-azure-400 font-bold mb-8 flex items-center gap-3">
+          <Zap className="text-amber-400" size={16} /> Asset Provisioning / ハードウェア登録
         </h2>
         <div className="flex flex-col md:flex-row gap-6">
-          <div className="flex-1 space-y-2">
-            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">Card UID (NFC Serial)</label>
+          <div className="flex-1 space-y-2.5">
+            <label className="text-[8px] uppercase tracking-[0.2em] opacity-40 ml-1 font-bold">Card UID (NFC Serial) / カード固有識別子</label>
             <input 
               placeholder="e.g. 04A23B..." 
               value={newCard.uid} 
@@ -370,22 +379,22 @@ export default function RegistryPage() {
                    serial: prev.serial || generateRandomSerial(cards) 
                 }));
               }}
-              className="w-full bg-void border border-white/10 p-4 text-azure-400 tracking-widest outline-none focus:border-azure-400 font-mono text-lg"
+              className="w-full bg-void/50 border border-white/10 p-4 text-azure-400 tracking-widest outline-none focus:border-azure-400 font-mono text-lg rounded-sm transition-all focus:bg-void/80"
             />
           </div>
-          <div className="flex-1 space-y-2">
-            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">Serial Number (Auto-Assigned)</label>
+          <div className="flex-1 space-y-2.5">
+            <label className="text-[8px] uppercase tracking-[0.2em] opacity-40 ml-1 font-bold">Serial Number (Auto-Assigned) / 発行シリアル番号</label>
             <div className="flex gap-4">
               <input 
                 value={newCard.serial} 
                 readOnly
                 placeholder="UID entry required"
-                className="flex-1 bg-white/[0.03] border border-white/10 p-4 text-azure-400 tracking-widest outline-none font-mono text-lg"
+                className="flex-1 bg-white/[0.02] border border-white/5 p-4 text-azure-400/50 tracking-widest outline-none font-mono text-lg rounded-sm"
               />
               <button 
                 onClick={createSlot}
                 disabled={!newCard.uid}
-                className="px-10 bg-white text-black text-[10px] uppercase tracking-[0.4em] font-bold hover:bg-azure-400 hover:text-white transition-all disabled:opacity-20"
+                className="px-10 bg-white text-black text-[9px] uppercase tracking-[0.35em] font-bold hover:bg-azure-400 hover:text-white transition-all disabled:opacity-20 active:scale-98 rounded-sm shrink-0"
               >
                 Register
               </button>
@@ -395,33 +404,33 @@ export default function RegistryPage() {
       </section>
 
       {/* 3. Card Ledger Section */}
-      <section>
+      <section className="relative z-10">
         <div className="flex justify-between items-end mb-8">
-          <h2 className="text-[11px] tracking-[0.4em] uppercase text-azure-400 font-bold flex items-center gap-3">
-            <Shield size={16} /> Master Ledger
+          <h2 className="text-[11px] tracking-[0.3em] uppercase text-azure-400 font-bold flex items-center gap-3">
+            <Shield className="text-azure-400" size={16} /> Master Ledger / 中央登録台帳
           </h2>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 opacity-20" size={12} />
             <input 
               type="text" 
-              placeholder="Search assets..." 
+              placeholder="Search assets... / 資産検索" 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="bg-white/5 border border-white/10 p-2 pl-10 text-[9px] tracking-widest uppercase outline-none focus:border-azure-500 transition-all w-48"
+              className="bg-white/5 border border-white/10 p-2.5 pl-10 text-[9px] tracking-widest uppercase outline-none focus:border-azure-500 focus:bg-white/[0.02] rounded-sm transition-all w-60"
             />
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto border border-white/5 rounded-sm bg-white/[0.01]">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="text-left text-[8px] uppercase tracking-[0.4em] opacity-20 border-b border-white/5">
-                <th className="p-4 font-normal">UID</th>
-                <th className="p-4 font-normal">Secret Serial</th>
-                <th className="p-4 font-normal">Status</th>
-                <th className="p-4 font-normal">Fulfillment / Shipping</th>
-                <th className="p-4 font-normal">Owner / Linked User</th>
-                <th className="p-4 text-right font-normal">Action</th>
+              <tr className="text-left text-[8px] uppercase tracking-[0.25em] opacity-35 border-b border-white/10 bg-white/[0.01]">
+                <th className="p-4 font-bold text-azure-400">UID / 固有識別子</th>
+                <th className="p-4 font-bold text-azure-400">Secret Serial / 秘密シリアル</th>
+                <th className="p-4 font-bold text-azure-400">Status / 状態</th>
+                <th className="p-4 font-bold text-azure-400">Fulfillment / 発送先</th>
+                <th className="p-4 font-bold text-azure-400">Owner / 所有者</th>
+                <th className="p-4 text-right font-bold text-azure-400">Action / 操作</th>
               </tr>
             </thead>
             <tbody className="text-[11px] tracking-widest uppercase">
@@ -577,6 +586,7 @@ export default function RegistryPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
       {/* User Details Inspector Modal */}
       <AnimatePresence>
         {inspectUser && (

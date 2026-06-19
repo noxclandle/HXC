@@ -38,18 +38,24 @@ function SuccessContent() {
             <p className="font-mono text-[10px] text-white/60 truncate">{sessionId || "PROTOCOL_MOCK_SUCCESS"}</p>
          </div>
          <p className="text-[11px] leading-relaxed tracking-widest text-white/40 uppercase">
-            貴方のカードは現在、Hexa Systemに基づき製造工程に入りました。<br />
-            発行完了まで、今暫くお待ちください。<br />
-            進行状況はメンバーハブから確認可能です。
+            貴方のアイデンティティ（物理カード）は現在、製造および初期化プロセスに入りました。<br />
+            発送完了まで、今暫くお待ちください。<br />
+            カードがお手元に届きましたら、スマートフォンにかざして初期登録（アカウント作成）を行ってください。
          </p>
       </div>
 
       <div className="flex flex-col gap-4">
          <Link 
-           href="/hub"
+           href="/"
            className="w-full py-5 bg-white text-void text-[10px] font-bold tracking-[0.5em] uppercase hover:bg-azure-50 transition-all shadow-xl flex items-center justify-center gap-4"
          >
-           Return to Hub <ArrowRight size={14} />
+           Return to Home <ArrowRight size={14} />
+         </Link>
+         <Link 
+           href="/contact"
+           className="w-full py-5 border border-white/10 text-white/60 text-[10px] font-bold tracking-[0.5em] uppercase hover:bg-white/5 transition-all flex items-center justify-center gap-4"
+         >
+           Contact Support / お問い合わせ <ArrowRight size={14} />
          </Link>
          <p className="text-[7px] tracking-widest opacity-20 uppercase">Authorized by Hexa Relation</p>
       </div>

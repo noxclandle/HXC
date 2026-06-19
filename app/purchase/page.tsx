@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, CreditCard, Shield, Star, Crown, Check, ArrowRight } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
+import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 
 type TierId = "standard" | "executive" | "apex";
 
@@ -216,17 +217,19 @@ export default function PurchasePage() {
                 </AnimatePresence>
 
                 {/* Card Visual Preview Approximation */}
-                <div className="mb-10 w-full h-32 relative pointer-events-none transform -skew-y-3 group-hover:skew-y-0 group-hover:scale-105 transition-all duration-700 opacity-60 group-hover:opacity-100">
-                  <HexaCardPreview
-                    name="HXC MEMBER"
-                    title={tier.name}
-                    company="HEXA RELATION INC."
-                    logoUrl="/logo.png"
-                    orientation="horizontal"
-                    frame={tier.id === "apex" ? "BlackCard" : tier.id === "executive" ? "Platinum" : "Obsidian"}
-                    background={tier.id === "apex" ? "BlackCard" : tier.id === "executive" ? "BrushedMetal" : "BrandedHex"}
-                    effect={tier.id === "apex" ? "Interference" : tier.id === "executive" ? "Glitch" : "None"}
-                  />
+                <div className="mb-10 w-full relative pointer-events-none transform -skew-y-3 group-hover:skew-y-0 group-hover:scale-105 transition-all duration-700 opacity-60 group-hover:opacity-100 flex justify-center">
+                  <UnifiedCardContainer orientation="horizontal" showControls={false} previewLabel="">
+                    <HexaCardPreview
+                      name="HXC MEMBER"
+                      title={tier.name}
+                      company="HEXA RELATION INC."
+                      logoUrl="/logo.png"
+                      orientation="horizontal"
+                      frame={tier.id === "apex" ? "BlackCard" : tier.id === "executive" ? "Platinum" : "Obsidian"}
+                      background={tier.id === "apex" ? "BlackCard" : tier.id === "executive" ? "BrushedMetal" : "BrandedHex"}
+                      effect={tier.id === "apex" ? "Interference" : tier.id === "executive" ? "Glitch" : "None"}
+                    />
+                  </UnifiedCardContainer>
                 </div>
 
                 <div className="space-y-12">

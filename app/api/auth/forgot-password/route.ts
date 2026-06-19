@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
 import { sendPasswordResetEmail } from "@/lib/mail";
 import { z } from "zod";
+import crypto from "crypto";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email(),
@@ -22,18 +23,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "If an account exists, a reset link has been sent." });
     }
 
-    const token = uuidv4();
+    const rawToken = uuidv4();
+    const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
     const expires = new Date(Date.now() + 3600000); // 1 hour
 
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        reset_token: token,
+        reset_token: hashedToken,
         reset_token_at: expires,
       },
     });
 
-    await sendPasswordResetEmail(user.email!, token);
+    await sendPasswordResetEmail(user.email!, rawToken);
+
 
     return NextResponse.json({ message: "If an account exists, a reset link has been sent." });
   } catch (error) {

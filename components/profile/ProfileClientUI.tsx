@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Phone, Download, Share2, ArrowRight, ShieldCheck, Sparkles, Smartphone, Layers, Network, AlertCircle, ChevronDown, QrCode } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
+import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import GeometricBackground from "@/components/background/GeometricBackground";
 import ConnectionInteraction from "@/components/ui/ConnectionInteraction";
 import Link from "next/link";
@@ -158,22 +159,24 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
         <motion.div 
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-          className="w-full flex flex-col items-center gap-12 lg:scale-110 xl:scale-125 transition-transform duration-1000"
+          className="w-full flex flex-col items-center gap-12 transition-all duration-1000"
         >
-          <HexaCardPreview 
-            name={data.name} reading={data.handle_name} company={data.profile.company} title={data.profile.title}
-            phone={data.phone} email={data.profile.contact_email || data.email} bio={data.profile.bio}
-            logoUrl={data.logo_url} faceUrl={data.photo_url}
-            frame={rawEquipped.frame} background={rawEquipped.background} effect={rawEquipped.effect} fontFamily={rawEquipped.fontFamily || rawEquipped.font}
-            sound={rawEquipped.sound} link_x={data.link_x} link_instagram={data.link_instagram} link_line={data.link_line} link_facebook={data.link_facebook} link_hp={data.profile?.website}
-            orientation={currentOrientation}
-            alignCompany={currentAligns.company || defaultAlign}
-            alignName={currentAligns.name || defaultAlign}
-            alignReading={currentAligns.reading || defaultAlign}
-            alignTitle={currentAligns.title || defaultAlign}
-            alignPhone={currentAligns.phone || defaultAlign}
-            alignEmail={currentAligns.email || defaultAlign}
-          />
+          <UnifiedCardContainer orientation={currentOrientation} showControls={false} previewLabel="">
+            <HexaCardPreview 
+              name={data.name} reading={data.handle_name} company={data.profile.company} title={data.profile.title}
+              phone={data.phone} email={data.profile.contact_email || data.email} bio={data.profile.bio}
+              logoUrl={data.logo_url} faceUrl={data.photo_url}
+              frame={rawEquipped.frame} background={rawEquipped.background} effect={rawEquipped.effect} fontFamily={rawEquipped.fontFamily || rawEquipped.font}
+              sound={rawEquipped.sound} link_x={data.link_x} link_instagram={data.link_instagram} link_line={data.link_line} link_facebook={data.link_facebook} link_hp={data.profile?.website}
+              orientation={currentOrientation}
+              alignCompany={currentAligns.company || defaultAlign}
+              alignName={currentAligns.name || defaultAlign}
+              alignReading={currentAligns.reading || defaultAlign}
+              alignTitle={currentAligns.title || defaultAlign}
+              alignPhone={currentAligns.phone || defaultAlign}
+              alignEmail={currentAligns.email || defaultAlign}
+            />
+          </UnifiedCardContainer>
         </motion.div>
 
         <div className="w-full max-w-sm space-y-6 mt-20">
