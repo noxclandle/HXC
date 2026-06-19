@@ -45,8 +45,8 @@ export async function POST(req: NextRequest) {
       const updatedUser = await tx.user.update({
         where: { id: userId },
         data: {
-          rt_balance: { increment: BigInt(RT_REWARD) },
-          exp: { increment: BigInt(RT_REWARD) },
+          rt_balance: { increment: RT_REWARD },
+          exp: { increment: RT_REWARD },
           last_daily_at: now
         }
       });

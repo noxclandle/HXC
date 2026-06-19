@@ -29,4 +29,43 @@ body {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 10px;
   }
+
+  /* サイト全体で、すべてのボタンおよびボタンとして振る舞うリンク・入力欄を完全に丸みをおびたカプセル型にする */
+  button,
+  input[type="button"],
+  input[type="submit"],
+  a[class*="py-"][class*="px-"],
+  a[class*="py-"][class*="w-full"],
+  a.px-16.py-5,
+  a.px-12.py-5,
+  a[class*="py-3"],
+  a[class*="py-4"],
+  a[class*="py-5"],
+  a[class*="py-6"] {
+    border-radius: 9999px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* ボタンホバー・タップ時の微小なインタラクションを追加（Resonance感覚） */
+  button:hover,
+  input[type="button"]:hover,
+  input[type="submit"]:hover,
+  a.px-16.py-5:hover,
+  a.px-12.py-5:hover,
+  a[class*="py-3"]:hover,
+  a[class*="py-4"]:hover,
+  a[class*="py-5"]:hover,
+  a[class*="py-6"]:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+  }
+
+  button:active,
+  a[class*="py-"]:active {
+    transform: translateY(1px) !important;
+  }
 }

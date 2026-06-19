@@ -1,10 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 
-// BigIntのシリアライズ問題を解決
-(BigInt.prototype as any).toJSON = function () {
-  return this.toString();
-};
-
 /**
  * Prisma Client のシングルトンインスタンスを作成
  * 本番環境でのコネクションリークを防ぐ

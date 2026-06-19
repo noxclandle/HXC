@@ -26,32 +26,32 @@ export default function LandingPage() {
 
       <h1 className="text-4xl md:text-6xl font-extralight tracking-[0.25em] uppercase mb-4 text-white">
         Hexa Card
-        <span className="block text-[9px] md:text-[10px] tracking-[0.8em] opacity-30 mt-6 ml-[0.8em]">アイデンティティの透過 / Permeation of Identity</span>
+        <span className="block text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.8em] opacity-30 mt-6 md:ml-[0.8em] leading-relaxed">アイデンティティの透過 / Permeation of Identity</span>
       </h1>
 
-      <p className="text-white/40 max-w-sm mb-16 tracking-[0.2em] text-[10px] md:text-[11px] leading-relaxed uppercase">
+      <p className="text-white/40 max-w-sm mb-16 tracking-[0.2em] text-[10px] md:text-[11px] leading-relaxed uppercase px-4">
         Connecting physical and digital identities.<br />
         Redefining business networking.
       </p>
 
-      <div className="flex flex-col gap-10 items-center z-10">
-        <div className="flex flex-col md:flex-row gap-6 items-center">
+      <div className="flex flex-col gap-10 items-center z-10 w-full max-w-xs md:max-w-none">
+        <div className="flex flex-col md:flex-row gap-6 items-center w-full px-4 md:px-0">
           <Link
             href="/purchase"
-            className="px-16 py-5 bg-white text-void tracking-[0.6em] uppercase text-[10px] font-bold flex items-center gap-2"
+            className="w-full md:w-auto px-8 md:px-16 py-5 bg-white text-void tracking-[0.4em] md:tracking-[0.6em] uppercase text-[10px] font-bold flex items-center justify-center gap-2"
           >
             <CreditCard size={12} /> Order Card / 購入
           </Link>
 
           <Link
             href="/features"
-            className="px-12 py-5 border border-white/10 tracking-[0.5em] uppercase text-[9px] font-bold text-white/40 hover:bg-white/5 transition-all"
+            className="w-full md:w-auto px-8 md:px-12 py-5 border border-white/10 tracking-[0.3em] md:tracking-[0.5em] uppercase text-[9px] font-bold text-white/40 hover:bg-white/5 transition-all flex items-center justify-center"
           >
             Showcase / 機能紹介
           </Link>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-8 items-center">
+        <div className="flex gap-8 items-center justify-center">
           <Link
             href="/activate"
             className="text-[9px] tracking-[0.4em] uppercase text-white/40 hover:text-white font-bold transition-colors"

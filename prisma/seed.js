@@ -22,7 +22,7 @@ async function main() {
     where: { email: "orehasaikyounotensai@gmail.com" },
     update: {
       password: hashedSasakiPassword,
-      rt_balance: 10000n,
+      rt_balance: 10000,
       role: "member"
     },
     create: {
@@ -32,7 +32,7 @@ async function main() {
       password: hashedSasakiPassword,
       role: "member",
       rank: "ASSOCIATE",
-      rt_balance: 10000n,
+      rt_balance: 10000,
       owned_assets: ["Obsidian", "Default", "None", "Standard", "ASSOCIATE", "resonance", "Pure White Hex"],
       unlocked_titles: ["ASSOCIATE", "Initiate"]
     },
@@ -51,7 +51,7 @@ async function main() {
       rank: "Architect",
       address: "HEXA HQ, SHIBUYA",
       phone: "090-XXXX-XXXX",
-      rt_balance: 1000000n,
+      rt_balance: 1000000,
       ai_config: { personality: "Sentinel", visual_effect: 100 },
       unlocked_titles: ["Chief Officer", "Founder", "Architect"]
     },
