@@ -199,6 +199,23 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
 
   return (
     <div className="max-w-7xl mx-auto pt-24 lg:pt-32 px-4 lg:px-6 pb-24 text-moonlight overflow-x-hidden">
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        @keyframes hxc-marquee {
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(-40%); }
+        }
+        .animate-hxc-marquee {
+          display: inline-block;
+          animation: hxc-marquee 8s ease-in-out infinite;
+        }
+      `}</style>
       <ConfirmationModal 
         isOpen={!!confirmingAsset} 
         onClose={() => setConfirmingAsset(null)} 
@@ -285,7 +302,8 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
       </AnimatePresence>
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
-        <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/98 pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[42vh] lg:h-auto flex items-center justify-center">
+        {/* Sticky Preview Card Container */}
+        <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void pb-2 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[300px] lg:h-auto flex items-center justify-center">
            <UnifiedCardContainer 
              orientation={equipped.orientation}
              onOrientationChange={(o) => setEquipped((prev: any) => ({ ...prev, orientation: o }))}
@@ -310,16 +328,14 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
            </UnifiedCardContainer>
         </div>
 
+        {/* Scrollable Items Container */}
         <div className="w-full lg:w-7/12 space-y-8 lg:space-y-10 order-2 lg:order-none">
-           <div className="lg:hidden h-[42vh]" />
+           {/* Spacer for sticky preview on mobile */}
+           <div className="lg:hidden h-[300px]" />
            
            <div className="flex flex-col gap-4 relative">
-              {/* Fade masks for scroll indication */}
-              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-void to-transparent z-50 pointer-events-none lg:hidden" />
-              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-void to-transparent z-50 pointer-events-none lg:hidden" />
-              
-              {/* Category Navigation (Wrapped for full visibility) */}
-              <div className="flex flex-wrap justify-center lg:justify-start border-b border-white/10 sticky top-[42vh] lg:top-0 bg-void/98 lg:bg-transparent z-40 -mx-4 px-4 lg:mx-0 lg:px-0 pt-2 pb-0 gap-y-2">
+              {/* Category Navigation (Horizontal swipe menu for mobile, sticky under preview card) */}
+              <div className="flex overflow-x-auto lg:flex-wrap no-scrollbar justify-start lg:justify-start border-b border-white/10 sticky top-[300px] lg:top-0 bg-void z-40 -mx-4 px-4 lg:mx-0 lg:px-0 pt-2 pb-0 gap-x-2">
                 {CATEGORIES.map((cat) => {
                   const Icon = getCategoryIcon(cat.id);
                   const isActive = activeCategory === cat.id;
@@ -327,7 +343,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                     <button
                       key={cat.id}
                       onClick={() => { setActiveCategory(cat.id); setPreviewAsset(null); }}
-                      className={`relative py-3 lg:py-4 px-4 lg:px-6 flex flex-col items-center gap-1.5 lg:gap-2 transition-all group overflow-hidden flex-1 sm:flex-none min-w-[70px] ${isActive ? "opacity-100 bg-white/[0.03]" : "opacity-30 hover:opacity-100 hover:bg-white/[0.02]"}`}
+                      className={`relative py-3 lg:py-4 px-4 lg:px-6 flex flex-col items-center gap-1.5 lg:gap-2 transition-all group overflow-hidden flex-none shrink-0 ${isActive ? "opacity-100 bg-white/[0.03]" : "opacity-30 hover:opacity-100 hover:bg-white/[0.02]"}`}
                     >
                       {isActive && (
                         <motion.div layoutId="activeCategory" className="absolute bottom-0 left-0 w-full h-[2px] bg-azure-400" />
@@ -335,81 +351,92 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                       {isActive && (
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 bg-azure-500/20 blur-xl pointer-events-none" />
                       )}
-                      <Icon size={16} className={`relative z-10 transition-colors ${isActive ? "text-azure-400" : "text-white group-hover:text-azure-300"}`} />
-                      <span className={`relative z-10 block text-[6px] lg:text-[7px] uppercase tracking-[0.2em] font-bold whitespace-nowrap transition-colors ${isActive ? "text-white" : "text-white/60"}`}>{cat.name} / {cat.id.toUpperCase()}</span>
+                      <Icon size={16} className={`relative z-10 transition-colors ${isActive ? "text-azure-400" : "text-white group-hover:text-azure-400"}`} />
+                      <span className="text-[9px] lg:text-[10px] tracking-widest relative z-10 uppercase whitespace-nowrap">
+                        {cat.name} / {cat.id.toUpperCase()}
+                      </span>
                     </button>
                   );
                 })}
               </div>
-           </div>
 
-           <div className="space-y-4 lg:max-h-[700px] overflow-y-visible lg:overflow-y-auto lg:pr-4 custom-scrollbar">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeCategory}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="grid grid-cols-1 gap-4 px-2 lg:px-0 pb-12"
-                >
-                  {filteredAssets
-                    .filter(asset => {
-                      if (profile?.role === "fixer") return true;
-                      return asset.type !== "title" || unlockedTitles.includes(asset.id);
-                    })
-                    .sort((a, b) => {
-                      const rarityOrder: Record<string, number> = { common: 0, rare: 1, epic: 2, legendary: 3, mythic: 4 };
-                      return rarityOrder[a.rarity] - rarityOrder[b.rarity];
-                    })
-                    .map((asset) => {
-                    const isUnlocked = ownedAssets.includes(asset.id) || asset.rarity === "common" || profile?.role === "fixer";
-                    const isActive = equipped[activeCategory as keyof typeof equipped] === asset.id;
-                    const isPreviewing = previewAsset?.id === asset.id;
-                    const cost = assetPrices[asset.rarity] || 0;
+              {/* Items List Container */}
+              <div className="space-y-4 lg:max-h-[680px] lg:overflow-y-auto pr-2 lg:pr-4 custom-scrollbar">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeCategory}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="grid grid-cols-1 gap-4 px-2 lg:px-0 pb-12"
+                  >
+                    {filteredAssets
+                      .filter(asset => {
+                        if (profile?.role === "fixer") return true;
+                        return asset.type !== "title" || unlockedTitles.includes(asset.id);
+                      })
+                      .sort((a, b) => {
+                        const rarityOrder: Record<string, number> = { common: 0, rare: 1, epic: 2, legendary: 3, mythic: 4 };
+                        return rarityOrder[a.rarity] - rarityOrder[b.rarity];
+                      })
+                      .map((asset) => {
+                        const isUnlocked = ownedAssets.includes(asset.id) || asset.rarity === "common" || profile?.role === "fixer";
+                        const isActive = equipped[activeCategory as keyof typeof equipped] === asset.id;
+                        const isPreviewing = previewAsset?.id === asset.id;
+                        const cost = assetPrices[asset.rarity] || 0;
 
-                    return (
-                      <div 
-                        key={asset.id}
-                        className={`group p-4 lg:p-6 border transition-all relative overflow-hidden ${isActive ? "border-azure-500 bg-azure-500/10" : isPreviewing ? "border-azure-400/60 bg-azure-400/5" : "border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.05]"}`}
-                      >
-                        <div className="flex justify-between items-center relative z-10">
-                          <div className="flex items-center gap-4 lg:gap-6">
-                            <div className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center border ${isUnlocked ? "border-white text-white bg-white/5" : "border-white/20 opacity-60"}`}>
-                              {isUnlocked ? <UserCheck size={14} /> : <Lock size={14} />}
-                            </div>
-                            <div>
-                              <div className="flex flex-col lg:items-start gap-1 mb-1">
-                                <h3 className="text-[10px] lg:text-[11px] tracking-[0.4em] uppercase font-bold text-white">{asset.name}</h3>
-                                <span className={`text-[6px] lg:text-[7px] w-fit px-2 py-0.5 border uppercase tracking-widest font-bold ${getRarityStyles(asset.rarity)} opacity-90`}>{asset.rarity}</span>
+                        return (
+                          <div 
+                            key={asset.id}
+                            className={`group p-4 lg:p-6 border transition-all relative overflow-hidden ${isActive ? "border-azure-500 bg-azure-500/10" : isPreviewing ? "border-azure-400/60 bg-azure-400/5" : "border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.05]"}`}
+                          >
+                            <div className="flex justify-between items-center relative z-10">
+                              <div className="flex items-center gap-4 lg:gap-6 min-w-0 flex-1">
+                                <div className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center border shrink-0 ${isUnlocked ? "border-white text-white bg-white/5" : "border-white/20 opacity-60"}`}>
+                                  {isUnlocked ? <UserCheck size={14} /> : <Lock size={14} />}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex flex-col lg:items-start gap-1 mb-1 max-w-[140px] sm:max-w-xs overflow-hidden">
+                                    <h3 className="text-[10px] lg:text-[11px] tracking-[0.4em] uppercase font-bold text-white relative w-full overflow-hidden whitespace-nowrap">
+                                      {asset.name.length > 12 ? (
+                                        <span className="inline-block animate-hxc-marquee whitespace-nowrap">
+                                          {asset.name}
+                                        </span>
+                                      ) : (
+                                        <span>{asset.name}</span>
+                                      )}
+                                    </h3>
+                                    <span className={`text-[6px] lg:text-[7px] w-fit px-2 py-0.5 border uppercase tracking-widest font-bold ${getRarityStyles(asset.rarity)} opacity-90`}>{asset.rarity}</span>
+                                  </div>
+                                  <p className="text-[8px] lg:text-[9px] tracking-widest opacity-60 uppercase leading-relaxed max-w-[200px] lg:max-w-md line-clamp-1 lg:line-clamp-none text-white">{asset.description}</p>
+                                </div>
                               </div>
-                              <p className="text-[8px] lg:text-[9px] tracking-widest opacity-60 uppercase leading-relaxed max-w-[200px] lg:max-w-md line-clamp-1 lg:line-clamp-none text-white">{asset.description}</p>
+
+                              <div className="flex items-center gap-3">
+                                {!isActive && (
+                                  <button 
+                                    onClick={() => handlePreviewAsset(asset)}
+                                    className={`p-3 border transition-all ${isPreviewing ? "bg-azure-500 text-white border-azure-500" : "border-white/20 opacity-60 hover:opacity-100 hover:border-white hover:bg-white hover:text-black"}`}
+                                    title="Try on / お試し着用"
+                                  >
+                                    <Eye size={14} />
+                                  </button>
+                                )}
+                                
+                                <button 
+                                  onClick={() => handleSelectAsset(asset)}
+                                  className={`px-4 py-3 border text-[8px] uppercase tracking-[0.2em] font-bold transition-all ${isUnlocked ? (isActive ? "bg-azure-500 text-white border-azure-500" : "border-white/30 text-white hover:bg-white hover:text-black") : "bg-azure-600/10 border-azure-600/50 text-azure-300"}`}
+                                >
+                                  {isUnlocked ? (isActive ? "Active / 使用中" : "Equip / 装備") : `${cost.toLocaleString()} RT`}
+                                </button>
+                              </div>
                             </div>
                           </div>
-
-                          <div className="flex items-center gap-3">
-                            {!isActive && (
-                              <button 
-                                onClick={() => handlePreviewAsset(asset)}
-                                className={`p-3 border transition-all ${isPreviewing ? "bg-azure-500 text-white border-azure-500" : "border-white/20 opacity-60 hover:opacity-100 hover:border-white hover:bg-white hover:text-black"}`}
-                                title="Try on / お試し着用"
-                              >
-                                <Eye size={14} />
-                              </button>
-                            )}
-                            
-                            <button 
-                              onClick={() => handleSelectAsset(asset)}
-                              className={`px-4 py-3 border text-[8px] uppercase tracking-[0.2em] font-bold transition-all ${isUnlocked ? (isActive ? "bg-azure-500 text-white border-azure-500" : "border-white/30 text-white hover:bg-white hover:text-black") : "bg-azure-600/10 border-azure-600/50 text-azure-300"}`}
-                            >
-                              {isUnlocked ? (isActive ? "Active / 使用中" : "Equip / 装備") : `${cost.toLocaleString()} RT`}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </motion.div>
-              </AnimatePresence>
+                        );
+                      })}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
            </div>
         </div>
       </div>
