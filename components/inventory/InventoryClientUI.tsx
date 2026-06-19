@@ -251,7 +251,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
 
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-16 items-stretch lg:items-start flex-1 min-h-0">
         {/* Top Area: Fixed Preview Block on Mobile, Left Column on Desktop */}
-        <div className="w-full lg:w-5/12 shrink-0 bg-void pb-2 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[260px] lg:h-auto flex items-center justify-center lg:sticky lg:top-32 z-30">
+        <div className="w-full lg:w-5/12 shrink-0 bg-void pb-2 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[210px] lg:h-auto flex items-center justify-center lg:sticky lg:top-32 z-30">
            <UnifiedCardContainer 
              orientation={equipped.orientation}
              onOrientationChange={(o) => setEquipped((prev: any) => ({ ...prev, orientation: o }))}
@@ -330,30 +330,39 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
            </AnimatePresence>
 
            <div className="flex flex-col gap-4 relative">
-              {/* Category Navigation (Horizontal swipe menu, sticky to top of scroll container) */}
-              <div className="flex overflow-x-auto lg:flex-wrap no-scrollbar justify-start lg:justify-start border-b border-white/10 sticky top-0 bg-void z-20 -mx-4 px-4 lg:mx-0 lg:px-0 pt-2 pb-0 gap-x-2">
-                {CATEGORIES.map((cat) => {
-                  const Icon = getCategoryIcon(cat.id);
-                  const isActive = activeCategory === cat.id;
-                  return (
-                    <button
-                      key={cat.id}
-                      onClick={() => { setActiveCategory(cat.id); setPreviewAsset(null); }}
-                      className={`relative py-3 lg:py-4 px-4 lg:px-6 flex flex-col items-center gap-1.5 lg:gap-2 transition-all group overflow-hidden flex-none shrink-0 ${isActive ? "opacity-100 bg-white/[0.03]" : "opacity-30 hover:opacity-100 hover:bg-white/[0.02]"}`}
-                    >
-                      {isActive && (
-                        <motion.div layoutId="activeCategory" className="absolute bottom-0 left-0 w-full h-[2px] bg-azure-400" />
-                      )}
-                      {isActive && (
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 bg-azure-500/20 blur-xl pointer-events-none" />
-                      )}
-                      <Icon size={16} className={`relative z-10 transition-colors ${isActive ? "text-azure-400" : "text-white group-hover:text-azure-400"}`} />
-                      <span className="text-[9px] lg:text-[10px] tracking-widest relative z-10 uppercase whitespace-nowrap">
-                        {cat.name} / {cat.id.toUpperCase()}
-                      </span>
-                    </button>
-                  );
-                })}
+              {/* Category Navigation Wrapper with Left/Right Fades to visually indicate horizontal scroll */}
+              <div className="relative w-full -mx-4 px-4 lg:mx-0 lg:px-0 z-20">
+                 {/* Left Fade Overlay */}
+                 <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-void via-void/80 to-transparent pointer-events-none z-30 lg:hidden" />
+
+                 {/* Category Navigation (Horizontal swipe menu, sticky to top of scroll container) */}
+                 <div className="flex overflow-x-auto lg:flex-wrap no-scrollbar justify-start lg:justify-start border-b border-white/10 sticky top-0 bg-void pt-2 pb-0 gap-x-2">
+                   {CATEGORIES.map((cat) => {
+                     const Icon = getCategoryIcon(cat.id);
+                     const isActive = activeCategory === cat.id;
+                     return (
+                       <button
+                         key={cat.id}
+                         onClick={() => { setActiveCategory(cat.id); setPreviewAsset(null); }}
+                         className={`relative py-3 lg:py-4 px-4 lg:px-6 flex flex-col items-center gap-1.5 lg:gap-2 transition-all group overflow-hidden flex-none shrink-0 ${isActive ? "opacity-100 bg-white/[0.03]" : "opacity-30 hover:opacity-100 hover:bg-white/[0.02]"}`}
+                       >
+                         {isActive && (
+                           <motion.div layoutId="activeCategory" className="absolute bottom-0 left-0 w-full h-[2px] bg-azure-400" />
+                         )}
+                         {isActive && (
+                           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 bg-azure-500/20 blur-xl pointer-events-none" />
+                         )}
+                         <Icon size={16} className={`relative z-10 transition-colors ${isActive ? "text-azure-400" : "text-white group-hover:text-azure-400"}`} />
+                         <span className="text-[9px] lg:text-[10px] tracking-widest relative z-10 uppercase whitespace-nowrap">
+                           {cat.name} / {cat.id.toUpperCase()}
+                         </span>
+                       </button>
+                     );
+                   })}
+                 </div>
+
+                 {/* Right Fade Overlay */}
+                 <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-void via-void/80 to-transparent pointer-events-none z-30 lg:hidden" />
               </div>
 
               {/* Items List Container */}
@@ -364,7 +373,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="grid grid-cols-1 gap-4 px-2 lg:px-0 pb-12"
+                    className="grid grid-cols-1 gap-2.5 lg:gap-4 px-2 lg:px-0 pb-12"
                   >
                     {filteredAssets
                       .filter(asset => {
@@ -384,7 +393,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                         return (
                           <div 
                             key={asset.id}
-                            className={`group p-4 lg:p-6 border transition-all relative overflow-hidden ${isActive ? "border-azure-500 bg-azure-500/10" : isPreviewing ? "border-azure-400/60 bg-azure-400/5" : "border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.05]"}`}
+                            className={`group p-3 lg:p-6 border transition-all relative overflow-hidden ${isActive ? "border-azure-500 bg-azure-500/10" : isPreviewing ? "border-azure-400/60 bg-azure-400/5" : "border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.05]"}`}
                           >
                             <div className="flex justify-between items-center relative z-10">
                               <div className="flex items-center gap-4 lg:gap-6 min-w-0 flex-1">
