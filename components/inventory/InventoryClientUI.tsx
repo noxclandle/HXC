@@ -198,7 +198,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
   };
 
   return (
-    <div className="max-w-7xl mx-auto pt-24 lg:pt-32 px-4 lg:px-6 pb-24 text-moonlight overflow-x-hidden">
+    <div className="max-w-7xl mx-auto pt-20 lg:pt-32 px-4 lg:px-6 pb-4 lg:pb-32 text-moonlight overflow-hidden h-[calc(100dvh-80px)] lg:h-auto flex flex-col lg:block">
       <style>{`
         .no-scrollbar::-webkit-scrollbar {
           display: none;
@@ -225,85 +225,33 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
         cost={assetPrices[confirmingAsset?.rarity || "common"] || 0}
       />
 
-      <header className="mb-8 lg:mb-20 flex justify-between items-end">
-        <div className="space-y-4">
-          <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-30 hover:opacity-100 transition-opacity mb-4 lg:mb-8">
-            <ArrowLeft size={12} /> Back to Home / 拠点へ戻る
+      <header className="mb-4 lg:mb-20 flex justify-between items-center lg:items-end shrink-0">
+        <div className="flex flex-col justify-end">
+          <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-30 hover:opacity-100 transition-opacity">
+            <ArrowLeft size={12} /> <span className="hidden lg:inline">Back to Home / </span>拠点へ戻る
           </Link>
-          <h1 className="text-3xl lg:text-5xl tracking-[0.3em] lg:tracking-[0.5em] uppercase font-extralight text-white">Shop & Items</h1>
+          <h1 className="hidden lg:block text-3xl lg:text-5xl tracking-[0.3em] lg:tracking-[0.5em] uppercase font-extralight text-white mt-4">Shop & Items</h1>
           <p className="text-[9px] lg:text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold hidden lg:block">ショップ・アイテム管理 / Asset Management</p>
         </div>
-        <div className="text-right flex flex-col items-end gap-2">
-           <Link href="/shop" className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60 hover:opacity-100 transition-opacity mb-2 flex items-center gap-2">
-              The Exchange / 交換所 <ChevronRight size={10} />
+        <div className="text-right flex items-center lg:flex-col lg:items-end gap-3 lg:gap-2">
+           <Link href="/shop" className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60 hover:opacity-100 transition-opacity flex items-center gap-1.5 lg:gap-2">
+              The Exchange <span className="hidden lg:inline">/ 交換所</span> <ChevronRight size={8} />
            </Link>
-           <p className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60">Frequency Points</p>
-           <div className="flex items-center gap-4 group">
-              <p className="text-xl lg:text-3xl font-extralight tracking-[0.2em] text-white">{Number(rtBalance).toLocaleString()} <span className="text-xs opacity-20">RT</span></p>
+           <div className="flex items-center gap-2 lg:gap-4 group">
+              <p className="text-sm lg:text-3xl font-extralight tracking-[0.2em] text-white">{Number(rtBalance).toLocaleString()} <span className="text-[9px] lg:text-xs opacity-20">RT</span></p>
               <button 
                 onClick={() => setShowRTPurchase(!showRTPurchase)} 
-                className={`p-2 border transition-all ${showRTPurchase ? "bg-white text-void border-white" : "border-white/10 hover:border-azure-500 hover:bg-azure-500/10"}`}
+                className={`p-1.5 lg:p-2 border transition-all ${showRTPurchase ? "bg-white text-void border-white" : "border-white/10 hover:border-azure-500 hover:bg-azure-500/10"}`}
               >
-                <Gem size={16} className={showRTPurchase ? "" : "text-azure-400"} />
+                <Gem size={12} className={showRTPurchase ? "" : "text-azure-400"} />
               </button>
            </div>
         </div>
       </header>
 
-      {/* RT Purchase Section */}
-      <AnimatePresence>
-        {showRTPurchase && (
-          <motion.section 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mb-12 overflow-hidden border-b border-white/5 pb-12"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {RT_PACKS.map((pack) => (
-                <button
-                  key={pack.id}
-                  onClick={async () => {
-                    try {
-                      showToast(`Processing...`, "success");
-                      const res = await fetch("/api/stripe/rt-checkout", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ packId: pack.id })
-                      });
-                      const data = await res.json();
-                      if (data.url) {
-                        window.location.href = data.url;
-                      } else {
-                        showToast(data.error || "接続に失敗しました", "error");
-                      }
-                    } catch (e) {
-                      showToast("通信エラー", "error");
-                    }
-                  }}
-                  className="group p-8 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-azure-500/40 transition-all text-left flex flex-col gap-4 relative overflow-hidden"
-                >
-                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-[10px] tracking-[0.4em] uppercase font-bold text-azure-400">{pack.label}</h3>
-                    <Gem size={14} className="opacity-20 group-hover:opacity-100 group-hover:text-azure-400 transition-all" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-extralight tracking-widest text-white">{pack.rt.toLocaleString()} <span className="text-[10px] opacity-30">RT</span></p>
-                    <p className="text-[12px] opacity-60 mt-1">¥{pack.price.toLocaleString()}</p>
-                  </div>
-                  <p className="text-[9px] tracking-widest opacity-30 uppercase leading-relaxed mt-4">{pack.description}</p>
-                </button>
-              ))}
-            </div>
-            <p className="text-[8px] tracking-[0.5em] uppercase opacity-20 text-center mt-8 italic">購入内容を確認し、決済を完了してください。 / Review and complete your purchase.</p>
-          </motion.section>
-        )}
-      </AnimatePresence>
-
-      <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
-        {/* Sticky Preview Card Container */}
-        <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void pb-2 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[300px] lg:h-auto flex items-center justify-center">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-16 items-stretch lg:items-start flex-1 min-h-0">
+        {/* Top Area: Fixed Preview Block on Mobile, Left Column on Desktop */}
+        <div className="w-full lg:w-5/12 shrink-0 bg-void pb-2 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[260px] lg:h-auto flex items-center justify-center lg:sticky lg:top-32 z-30">
            <UnifiedCardContainer 
              orientation={equipped.orientation}
              onOrientationChange={(o) => setEquipped((prev: any) => ({ ...prev, orientation: o }))}
@@ -328,14 +276,62 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
            </UnifiedCardContainer>
         </div>
 
-        {/* Scrollable Items Container */}
-        <div className="w-full lg:w-7/12 space-y-8 lg:space-y-10 order-2 lg:order-none">
-           {/* Spacer for sticky preview on mobile */}
-           <div className="lg:hidden h-[300px]" />
-           
+        {/* Bottom Area: Scrollable Items & Navigation on Mobile, Right Column on Desktop */}
+        <div className="w-full lg:w-7/12 flex flex-col min-h-0 flex-1 overflow-y-auto lg:overflow-visible no-scrollbar">
+           {/* RT Purchase Section (Inside scrollable container on mobile) */}
+           <AnimatePresence>
+             {showRTPurchase && (
+               <motion.section 
+                 initial={{ opacity: 0, height: 0 }}
+                 animate={{ opacity: 1, height: "auto" }}
+                 exit={{ opacity: 0, height: 0 }}
+                 className="mb-6 overflow-hidden border-b border-white/5 pb-6 shrink-0"
+               >
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                   {RT_PACKS.map((pack) => (
+                     <button
+                       key={pack.id}
+                       onClick={async () => {
+                         try {
+                           showToast(`Processing...`, "success");
+                           const res = await fetch("/api/stripe/rt-checkout", {
+                             method: "POST",
+                             headers: { "Content-Type": "application/json" },
+                             body: JSON.stringify({ packId: pack.id })
+                           });
+                           const data = await res.json();
+                           if (data.url) {
+                             window.location.href = data.url;
+                           } else {
+                             showToast(data.error || "接続に失敗しました", "error");
+                           }
+                         } catch (e) {
+                           showToast("通信エラー", "error");
+                         }
+                       }}
+                       className="group p-4 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-azure-500/40 transition-all text-left flex flex-col gap-2 relative overflow-hidden"
+                     >
+                       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                       <div className="flex justify-between items-start">
+                         <h3 className="text-[8px] tracking-[0.4em] uppercase font-bold text-azure-400">{pack.label}</h3>
+                         <Gem size={12} className="opacity-20 group-hover:opacity-100 group-hover:text-azure-400 transition-all" />
+                       </div>
+                       <div>
+                         <p className="text-lg font-extralight tracking-widest text-white">{pack.rt.toLocaleString()} <span className="text-[8px] opacity-30">RT</span></p>
+                         <p className="text-[10px] opacity-60 mt-0.5">¥{pack.price.toLocaleString()}</p>
+                       </div>
+                       <p className="text-[8px] tracking-widest opacity-30 uppercase leading-relaxed mt-2">{pack.description}</p>
+                     </button>
+                   ))}
+                 </div>
+                 <p className="text-[7px] tracking-[0.5em] uppercase opacity-20 text-center mt-4 italic">購入内容を確認し、決済を完了してください。 / Review and complete your purchase.</p>
+               </motion.section>
+             )}
+           </AnimatePresence>
+
            <div className="flex flex-col gap-4 relative">
-              {/* Category Navigation (Horizontal swipe menu for mobile, sticky under preview card) */}
-              <div className="flex overflow-x-auto lg:flex-wrap no-scrollbar justify-start lg:justify-start border-b border-white/10 sticky top-[300px] lg:top-0 bg-void z-40 -mx-4 px-4 lg:mx-0 lg:px-0 pt-2 pb-0 gap-x-2">
+              {/* Category Navigation (Horizontal swipe menu, sticky to top of scroll container) */}
+              <div className="flex overflow-x-auto lg:flex-wrap no-scrollbar justify-start lg:justify-start border-b border-white/10 sticky top-0 bg-void z-20 -mx-4 px-4 lg:mx-0 lg:px-0 pt-2 pb-0 gap-x-2">
                 {CATEGORIES.map((cat) => {
                   const Icon = getCategoryIcon(cat.id);
                   const isActive = activeCategory === cat.id;
@@ -361,7 +357,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
               </div>
 
               {/* Items List Container */}
-              <div className="space-y-4 lg:max-h-[680px] lg:overflow-y-auto pr-2 lg:pr-4 custom-scrollbar">
+              <div className="space-y-4 lg:max-h-[680px] lg:overflow-y-auto pr-2 lg:pr-4 custom-scrollbar pb-24">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeCategory}
