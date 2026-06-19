@@ -101,11 +101,11 @@ export default function IdentityReflection({ user }: { user: any }) {
                 alignTitle={currentAligns?.title || "center"}
                 alignPhone={currentAligns?.phone || "center"}
                 alignEmail={currentAligns?.email || "center"}
-                link_hp={safeProfile.website}
-                link_x={safeProfile.link_x}
-                link_instagram={safeProfile.link_instagram}
-                link_line={safeProfile.link_line}
-                link_facebook={safeProfile.link_facebook}
+                link_hp={safeProfile.website || safeUser.link_website || safeUser.website}
+                link_x={safeProfile.link_x || safeUser.link_x}
+                link_instagram={safeProfile.link_instagram || safeUser.link_instagram}
+                link_line={safeProfile.link_line || safeUser.link_line}
+                link_facebook={safeProfile.link_facebook || safeUser.link_facebook}
                 bio={safeProfile.bio || safeUser.bio}
              />
           </UnifiedCardContainer>

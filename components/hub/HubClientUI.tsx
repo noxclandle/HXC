@@ -193,10 +193,10 @@ export default function HubClientUI({
             profile: {
               ...realStats?.profile,
               website: realStats?.profile?.website || realStats?.link_website,
-              link_x: realStats?.link_x,
-              link_instagram: realStats?.link_instagram,
-              link_line: realStats?.link_line,
-              link_facebook: realStats?.link_facebook,
+              link_x: realStats?.profile?.link_x || realStats?.link_x,
+              link_instagram: realStats?.profile?.link_instagram || realStats?.link_instagram,
+              link_line: realStats?.profile?.link_line || realStats?.link_line,
+              link_facebook: realStats?.profile?.link_facebook || realStats?.link_facebook,
             },
             equipped: realStats?.equipped,
             bio: realStats?.profile?.bio
