@@ -1,90 +1,95 @@
-"use client";
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
+import NewsDetailClient from '@/components/news/NewsDetailClient';
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { ChevronRight, Newspaper, ArrowLeft, Loader2, Calendar, Tag, Share2 } from "lucide-react";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+interface Props {
+  params: { id: string };
+}
 
-export default function NewsDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const [item, setItem] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+async function getAnnouncement(id: string) {
+  try {
+    const announcement = await prisma.announcement.findUnique({
+      where: { id, is_published: true },
+    });
+    return announcement;
+  } catch (error) {
+    console.error("Failed to fetch announcement in SSR:", error);
+    return null;
+  }
+}
 
-  useEffect(() => {
-    const fetchDetail = async () => {
-      if (!params.id) return;
-      try {
-        const res = await fetch(`/api/news/public/${params.id}`);
-        if (res.ok) {
-           setItem(await res.json());
-        } else {
-           router.push("/news");
-        }
-      } catch (e) { 
-        console.error(e); 
-        router.push("/news");
-      } finally {
-        setLoading(false);
-      }
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const item = await getAnnouncement(params.id);
+  if (!item) {
+    return {
+      title: "Intel Not Found",
     };
-    fetchDetail();
-  }, [params.id, router]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-void flex items-center justify-center">
-         <Loader2 size={32} className="animate-spin text-azure-400 opacity-20" />
-      </div>
-    );
   }
 
-  if (!item) return null;
+  const summary = item.content.slice(0, 160) + (item.content.length > 160 ? "..." : "");
+
+  return {
+    title: item.title,
+    description: summary,
+    openGraph: {
+      title: `${item.title} | Hexa Card`,
+      description: summary,
+      type: "article",
+      publishedTime: item.created_at.toISOString(),
+      modifiedTime: item.updated_at.toISOString(),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${item.title} | Hexa Card`,
+      description: summary,
+    }
+  };
+}
+
+export default async function NewsDetailPage({ params }: Props) {
+  const item = await getAnnouncement(params.id);
+  if (!item) {
+    notFound();
+  }
+
+  // 構造化データ (NewsArticle) JSON-LD
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": item.title,
+    "datePublished": item.created_at.toISOString(),
+    "dateModified": item.updated_at.toISOString(),
+    "description": item.content.slice(0, 160),
+    "author": {
+      "@type": "Organization",
+      "name": "Hexa Relation",
+      "url": "https://virtual-business-card.hexa-relation.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Hexa Relation",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://virtual-business-card.hexa-relation.com/logo.png"
+      }
+    }
+  };
+
+  // Dateオブジェクトをシリアライズ可能なフォーマット（文字列）に変換して渡す
+  const serializedItem = {
+    ...item,
+    created_at: item.created_at.toISOString(),
+    updated_at: item.updated_at.toISOString(),
+  };
 
   return (
-    <main className="min-h-screen bg-void text-moonlight pt-32 px-6 pb-24">
-      <article className="max-w-3xl mx-auto">
-        <header className="mb-16">
-          <Link href="/news" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity mb-8">
-            <ArrowLeft size={12} /> Back to Archives
-          </Link>
-          
-          <div className="flex items-center gap-4 mb-6">
-             <span className="text-[8px] tracking-[0.4em] uppercase font-bold text-azure-400 bg-azure-500/10 px-2 py-1 border border-azure-500/20">
-                {item.type || "Intel"}
-             </span>
-             <div className="flex items-center gap-2 opacity-20 text-[8px] font-mono uppercase tracking-widest">
-                <Calendar size={10} /> {new Date(item.created_at).toLocaleDateString()}
-             </div>
-          </div>
-
-          <h1 className="text-3xl md:text-4xl tracking-widest uppercase font-light leading-relaxed text-white">
-            {item.title}
-          </h1>
-          <div className="w-16 h-px bg-azure-500/30 mt-8" />
-        </header>
-
-        <section className="prose prose-invert max-w-none mb-24">
-           <div className="text-sm md:text-base leading-loose tracking-[0.05em] text-white/70 whitespace-pre-wrap font-light">
-              {item.content}
-           </div>
-        </section>
-
-        <footer className="pt-12 border-t border-white/5 flex justify-between items-center opacity-40">
-           <p className="text-[8px] tracking-[0.4em] uppercase font-mono italic">Source: Hexa Relation Internal Intel</p>
-           <button 
-             onClick={() => {
-               if (navigator.share) {
-                 navigator.share({ title: item.title, url: window.location.href });
-               }
-             }}
-             className="flex items-center gap-2 text-[8px] uppercase tracking-[0.4em] hover:text-white transition-colors"
-           >
-              Share Signal <Share2 size={10} />
-           </button>
-        </footer>
-      </article>
-    </main>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <NewsDetailClient item={serializedItem} />
+    </>
   );
 }

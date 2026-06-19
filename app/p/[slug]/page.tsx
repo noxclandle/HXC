@@ -1,8 +1,16 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import PublicProfileClient from "@/components/profile/PublicProfileClient";
+import ProfileClientUI from "@/components/profile/ProfileClientUI";
+import { getPublicProfile } from "@/lib/user";
+import { headers } from 'next/headers';
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+interface Props {
+  params: { slug: string };
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const user = await prisma.user.findFirst({
     where: { 
       OR: [
@@ -53,6 +61,60 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function PublicProfilePage({ params }: { params: { slug: string } }) {
-  return <PublicProfileClient slug={params.slug} />;
+export default async function PublicProfilePage({ params }: Props) {
+  // 1. クローラー判定
+  const reqHeaders = headers();
+  const userAgent = reqHeaders.get('user-agent') || '';
+  const isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(userAgent);
+
+  // 2. サーバーサイドでプロフィール情報をフェッチ
+  const profileData = await getPublicProfile(params.slug);
+  
+  if (!profileData) {
+    notFound();
+  }
+
+  const isOfficial = profileData.role === 'admin' || profileData.role === 'architect' || profileData.handle_name === 'architect';
+
+  // 構造化データ（JSON-LD）用オブジェクトの生成
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "mainEntity": {
+      "@type": "Person",
+      "name": profileData.name || profileData.handle_name || "MEMBER",
+      "jobTitle": profileData.profile?.title || undefined,
+      "worksFor": profileData.profile?.company ? {
+        "@type": "Organization",
+        "name": profileData.profile.company
+      } : undefined,
+      "image": profileData.photo_url || undefined,
+      "description": profileData.profile?.bio || undefined,
+      "sameAs": [
+        profileData.link_x ? `https://x.com/${profileData.link_x}` : undefined,
+        profileData.link_instagram ? `https://instagram.com/${profileData.link_instagram}` : undefined,
+        profileData.profile?.website || undefined
+      ].filter(Boolean)
+    }
+  };
+
+  return (
+    <>
+      {/* 公式アカウントかつインデックス対象の場合のみJSON-LDを注入 */}
+      {isOfficial && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      
+      {isBot ? (
+        // クローラーにはクリックなどのUI演出をバイパスして、直接SSRデータをレンダリング（SEOスコア100点）
+        <ProfileClientUI data={profileData} isOwner={false} />
+      ) : (
+        // 通常ユーザーには、高級感のある「アンヴェイル（開封）」演出を体験させる
+        <PublicProfileClient slug={params.slug} />
+      )}
+    </>
+  );
 }
