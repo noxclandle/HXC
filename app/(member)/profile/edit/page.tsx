@@ -6,7 +6,7 @@ import { User, Building2, Globe, Shield, Save, ArrowLeft, Languages, Camera, Inf
 import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import HexaCardPreview, { Alignment } from "@/components/ui/HexaCardPreview";
+import HexaCardPreview, { Alignment, mapUserToCardProps } from "@/components/ui/HexaCardPreview";
 import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import { useToast } from "@/components/ui/ConnectionToast";
 
@@ -363,10 +363,7 @@ export default function ProfileEditPage() {
              previewLabel="Live Preview / ライブプレビュー"
            >
                 <HexaCardPreview 
-                  name={formData.name || "NAME"} reading={formData.reading} company={formData.company} title={formData.title} phone={formData.phone} email={formData.email} bio={formData.bio} logoUrl={formData.logoUrl} faceUrl={formData.faceUrl} frame={equipped.frame} background={equipped.background} effect={equipped.effect} aura={equipped.aura} sound={equipped.sound} orientation={formData.orientation}
-                  link_hp={formData.website} link_x={formData.link_x} link_instagram={formData.link_instagram} link_line={formData.link_line} link_facebook={formData.link_facebook}
-                  alignName={currentAligns.name as Alignment} alignReading={currentAligns.reading as Alignment} alignCompany={currentAligns.company as Alignment} alignTitle={currentAligns.title as Alignment} alignPhone={currentAligns.phone as Alignment} alignEmail={currentAligns.email as Alignment}
-                  fontFamily={equipped.fontFamily} scaleName={equipped.scaleName} scaleTitle={equipped.scaleTitle} scaleCompany={equipped.scaleCompany}
+                  {...mapUserToCardProps(formData, formData.orientation, equipped)}
                 />
            </UnifiedCardContainer>
         </div>

@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import MonthlyReport from "@/components/ui/MonthlyReport";
 import IdentityReflection from "@/components/ui/IdentityReflection";
 import { useToast } from "@/components/ui/ConnectionToast";
+import TarotModal from "@/components/ui/TarotModal";
 
 export default function HubClientUI({ 
   initialStats, 
@@ -27,6 +28,7 @@ export default function HubClientUI({
   const [greeting, setGreeting] = useState("");
   const [selectedNews, setSelectedNews] = useState<any>(null);
   const [mounted, setMounted] = useState(false);
+  const [isTarotOpen, setIsTarotOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -285,28 +287,32 @@ export default function HubClientUI({
             >
               <div className="bg-void/95 backdrop-blur-md border border-azure-500/30 shadow-[0_8px_32px_rgba(59,130,246,0.2)] p-3.5 rounded-2xl relative overflow-hidden group">
                  <div className="absolute inset-0 bg-azure-500/5 animate-pulse pointer-events-none" />
-                 <button onClick={async () => {
-                   try {
-                     const res = await fetch("/api/user/daily-bonus", { method: "POST" });
-                     if (res.ok) {
-                       showToast("デイリーボーナスを受け取りました / Received Daily Bonus", "success");
-                       fetchData(); // Reload to update status and hide prompt
-                     }
-                   } catch(e) { console.error(e); }
-                 }} className="relative z-10 text-left w-full">
+                 <button onClick={() => setIsTarotOpen(true)} className="relative z-10 text-left w-full">
                     <div className="flex items-center gap-2 mb-1.5">
                       <Sparkles size={11} className="text-azure-400" />
                       <span className="text-[8px] tracking-[0.2em] font-bold uppercase text-azure-400">Daily Resonance</span>
                     </div>
                     <p className="text-[7.5px] tracking-wider opacity-60 uppercase mb-3 leading-relaxed font-sans">境界が安定しています。<br/>本日の共鳴（ボーナス）を受け取りますか？</p>
                     <div className="text-[8px] font-bold tracking-[0.3em] uppercase text-white bg-white/10 text-center py-1.5 hover:bg-white/20 transition-colors rounded-full border border-white/5">
-                      Receive 50 RT
+                      Receive Blessing / 啓示を受ける
                     </div>
                  </button>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Tarot Daily Resonance Modal */}
+        <TarotModal
+          isOpen={isTarotOpen}
+          onClose={() => setIsTarotOpen(false)}
+          mode="daily"
+          onSuccess={async () => {
+            await fetchData();
+            window.dispatchEvent(new CustomEvent("rt-grace-received"));
+            window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
+          }}
+        />
 
         {/* Announcement Detail Modal */}
         <AnimatePresence>

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, Music, Sparkles, UserCheck, Lock, Wallet, Trophy, ArrowLeft, MousePointer2, Smartphone, Layout, Palette, Eye, Zap, Gem, Loader2, ChevronRight } from "lucide-react";
-import HexaCardPreview from "@/components/ui/HexaCardPreview";
+import HexaCardPreview, { mapUserToCardProps } from "@/components/ui/HexaCardPreview";
 import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -304,34 +304,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                 transition={{ duration: 0.6, ease: "easeInOut" }}
               >
                 <HexaCardPreview 
-                  name={profile?.name || "ARCHITECT"}
-                  reading={profile?.handle || profile?.reading}
-                  company={profile?.profile?.company}
-                  title={profile?.profile?.title}
-                  phone={profile?.profile?.phone}
-                  email={profile?.profile?.contact_email || profile?.email}
-                  logoUrl={profile?.logo_url}
-                  faceUrl={profile?.photo_url}
-                  frame={currentPreview.frame}
-                  background={currentPreview.background}
-                  effect={currentPreview.effect}
-                  aura={currentPreview.aura}
-                  fontFamily={currentPreview.fontFamily}
-                  textColor={currentPreview.textColor}
-                  sound={currentPreview.sound}
-                  orientation={equipped.orientation}
-                  alignCompany={currentAligns.company}
-                  alignName={currentAligns.name}
-                  alignReading={currentAligns.reading}
-                  alignTitle={currentAligns.title}
-                  alignPhone={currentAligns.phone}
-                  alignEmail={currentAligns.email}
-                  bio={profile?.profile?.bio}
-                  link_hp={profile?.profile?.website || profile?.link_website}
-                  link_x={profile?.profile?.link_x || profile?.link_x}
-                  link_instagram={profile?.profile?.link_instagram || profile?.link_instagram}
-                  link_line={profile?.profile?.link_line || profile?.link_line}
-                  link_facebook={profile?.profile?.link_facebook || profile?.link_facebook}
+                  {...mapUserToCardProps(profile, equipped.orientation, currentPreview)}
                 />
               </motion.div>
            </UnifiedCardContainer>
