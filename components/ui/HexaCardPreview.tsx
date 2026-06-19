@@ -42,6 +42,72 @@ export interface HexaCardProps {
   link_facebook?: string;
 }
 
+export function mapUserToCardProps(
+  user: any, 
+  orientation: "horizontal" | "vertical", 
+  equippedOverride?: any
+): HexaCardProps {
+  if (!user) {
+    return { name: "MEMBER" };
+  }
+  
+  const safeProfile = user.profile || {};
+  const safeEquipped = equippedOverride || user.equipped || {};
+  
+  const defaultAlign = {
+    company: "center",
+    title: "center",
+    name: "center",
+    reading: "center",
+    phone: "center",
+    email: "center"
+  };
+
+  const currentAligns = orientation === "horizontal"
+    ? (safeEquipped.hAlign || user.hAlign || defaultAlign)
+    : (safeEquipped.vAlign || user.vAlign || defaultAlign);
+
+  return {
+    name: user.name || "MEMBER",
+    reading: user.handle || user.reading || user.handle_name || "",
+    company: safeProfile.company || user.company || "",
+    title: safeProfile.title || user.title || "",
+    phone: safeProfile.phone || user.phone || "",
+    email: safeProfile.contact_email || user.email || user.contact_email || "",
+    logoUrl: user.logo_url || user.logoUrl || "",
+    faceUrl: user.photo_url || user.faceUrl || "",
+    bio: safeProfile.bio || user.bio || "",
+    
+    // SNS Links (Unified Mapping with Fallbacks)
+    link_hp: safeProfile.website || user.link_website || user.website || user.link_hp || "",
+    link_x: safeProfile.link_x || user.link_x || "",
+    link_instagram: safeProfile.link_instagram || user.link_instagram || "",
+    link_line: safeProfile.link_line || user.link_line || "",
+    link_facebook: safeProfile.link_facebook || user.link_facebook || "",
+    
+    // Equipped Assets (Unified Mapping with Fallbacks)
+    frame: safeEquipped.frame || "Obsidian",
+    background: safeEquipped.background || "Default",
+    effect: safeEquipped.effect || "None",
+    aura: safeEquipped.aura || "None",
+    fontFamily: safeEquipped.fontFamily || "Standard",
+    textColor: safeEquipped.textColor || "white",
+    sound: safeEquipped.sound || "resonance",
+    scaleName: safeEquipped.scaleName || "standard",
+    scaleTitle: safeEquipped.scaleTitle || "standard",
+    scaleCompany: safeEquipped.scaleCompany || "standard",
+    
+    // Orientation & Alignments
+    orientation: orientation,
+    alignCompany: currentAligns.company || "center",
+    alignName: currentAligns.name || "center",
+    alignReading: currentAligns.reading || "center",
+    alignTitle: currentAligns.title || "center",
+    alignPhone: currentAligns.phone || "center",
+    alignEmail: currentAligns.email || "center",
+  };
+}
+
 export default function HexaCardPreview({
   name, reading, company, title, phone, email, bio, logoUrl, faceUrl,
   orientation = "horizontal",

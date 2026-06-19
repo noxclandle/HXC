@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Layout, Smartphone, Share2, Sparkles, Edit3, Trophy } from "lucide-react";
 import Link from "next/link";
-import HexaCardPreview from "@/components/ui/HexaCardPreview";
+import HexaCardPreview, { mapUserToCardProps } from "@/components/ui/HexaCardPreview";
 import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import { useToast } from "@/components/ui/ConnectionToast";
 
@@ -77,36 +77,7 @@ export default function IdentityReflection({ user }: { user: any }) {
             previewLabel=""
           >
              <HexaCardPreview 
-                name={safeUser.name || "MEMBER"} 
-                reading={safeUser.reading} 
-                company={safeProfile.company} 
-                title={safeProfile.title} 
-                phone={safeProfile.phone} 
-                email={safeProfile.contact_email} 
-                logoUrl={safeUser.logo_url} 
-                faceUrl={safeUser.photo_url}
-                frame={safeEquipped.frame}
-                background={safeEquipped.background}
-                effect={safeEquipped.effect}
-                aura={safeEquipped.aura}
-                fontFamily={safeEquipped.fontFamily}
-                scaleName={safeEquipped.scaleName}
-                scaleTitle={safeEquipped.scaleTitle}
-                scaleCompany={safeEquipped.scaleCompany}
-                sound={safeEquipped.sound}
-                orientation={localOrientation}
-                alignCompany={currentAligns?.company || "center"}
-                alignName={currentAligns?.name || "center"}
-                alignReading={currentAligns?.reading || "center"}
-                alignTitle={currentAligns?.title || "center"}
-                alignPhone={currentAligns?.phone || "center"}
-                alignEmail={currentAligns?.email || "center"}
-                link_hp={safeProfile.website || safeUser.link_website || safeUser.website}
-                link_x={safeProfile.link_x || safeUser.link_x}
-                link_instagram={safeProfile.link_instagram || safeUser.link_instagram}
-                link_line={safeProfile.link_line || safeUser.link_line}
-                link_facebook={safeProfile.link_facebook || safeUser.link_facebook}
-                bio={safeProfile.bio || safeUser.bio}
+                {...mapUserToCardProps(safeUser, localOrientation)}
              />
           </UnifiedCardContainer>
        </div>

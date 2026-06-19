@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Phone, Download, Share2, ArrowRight, ShieldCheck, Sparkles, Smartphone, Layers, Network, AlertCircle, ChevronDown, QrCode } from "lucide-react";
-import HexaCardPreview from "@/components/ui/HexaCardPreview";
+import HexaCardPreview, { mapUserToCardProps } from "@/components/ui/HexaCardPreview";
 import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import GeometricBackground from "@/components/background/GeometricBackground";
 import ConnectionInteraction from "@/components/ui/ConnectionInteraction";
@@ -165,18 +165,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
         >
           <UnifiedCardContainer orientation={currentOrientation} showControls={false} previewLabel="">
             <HexaCardPreview 
-              name={data.name} reading={data.handle_name} company={data.profile.company} title={data.profile.title}
-              phone={data.phone} email={data.profile.contact_email || data.email} bio={data.profile.bio}
-              logoUrl={data.logo_url} faceUrl={data.photo_url}
-              frame={rawEquipped.frame} background={rawEquipped.background} effect={rawEquipped.effect} fontFamily={rawEquipped.fontFamily || rawEquipped.font}
-              sound={rawEquipped.sound} link_x={data.link_x} link_instagram={data.link_instagram} link_line={data.link_line} link_facebook={data.link_facebook} link_hp={data.profile?.website}
-              orientation={currentOrientation}
-              alignCompany={currentAligns.company || defaultAlign}
-              alignName={currentAligns.name || defaultAlign}
-              alignReading={currentAligns.reading || defaultAlign}
-              alignTitle={currentAligns.title || defaultAlign}
-              alignPhone={currentAligns.phone || defaultAlign}
-              alignEmail={currentAligns.email || defaultAlign}
+              {...mapUserToCardProps(data, currentOrientation, rawEquipped)}
             />
           </UnifiedCardContainer>
         </motion.div>

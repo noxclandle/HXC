@@ -7,11 +7,13 @@ import Link from "next/link";
 import { ambientManager } from "@/lib/audio/ambient";
 import { useToast } from "@/components/ui/ConnectionToast";
 import GeometricAngel from "@/components/ui/GeometricAngel";
+import TarotModal from "@/components/ui/TarotModal";
 
 export default function ResidentAgent() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"portal" | "notices" | "help">("portal");
   const [hasDaily, setHasDaily] = useState(false);
+  const [isTarotOpen, setIsTarotOpen] = useState(false);
   const [ambientMode, setAmbientMode] = useState<"off" | "space" | "rain">("off");
   const [userExp, setUserExp] = useState(0);
   const [rtBalance, setRtBalance] = useState("0");
@@ -190,7 +192,11 @@ export default function ResidentAgent() {
                </div>
                
                <div className="py-4">
-                  <GeometricAngel level={level} size={160} mood={activeTab === 'portal' ? 'stable' : 'excited'} />
+                  <GeometricAngel 
+                    level={level} 
+                    size={160} 
+                    mood={isTarotOpen ? 'excited' : activeTab === 'portal' ? 'stable' : 'excited'} 
+                  />
                </div>
 
                <div className="space-y-2 w-full">
@@ -287,6 +293,17 @@ export default function ResidentAgent() {
                          </div>
                          <ChevronRight size={14} className="opacity-20"/>
                       </Link>
+
+                      <button 
+                        onClick={() => setIsTarotOpen(true)} 
+                        className="w-full p-4 bg-white/5 border border-white/10 flex items-center justify-between group transition-all hover:border-white/30 text-left"
+                      >
+                         <div className="flex items-center gap-3">
+                            <Sparkles size={14} className="opacity-40 group-hover:opacity-100 transition-opacity text-azure-400" />
+                            <span className="text-[9px] tracking-[0.2em] uppercase">Tarot / 境界の神託（ワンオラクル）</span>
+                         </div>
+                         <ChevronRight size={14} className="opacity-20"/>
+                      </button>
                     </div>
 
                     <div className="space-y-3">
@@ -427,6 +444,12 @@ export default function ResidentAgent() {
           </div>
         )}
       </AnimatePresence>
+
+      <TarotModal 
+        isOpen={isTarotOpen} 
+        onClose={() => setIsTarotOpen(false)} 
+        mode="oracle" 
+      />
     </div>
   );
 }
