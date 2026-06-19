@@ -35,17 +35,17 @@ export default function LandingPage() {
       </p>
 
       <div className="flex flex-col gap-10 items-center z-10 w-full max-w-xs md:max-w-none">
-        <div className="flex flex-col md:flex-row gap-6 items-center w-full px-4 md:px-0">
+        <div className="flex flex-col md:flex-row gap-6 items-center justify-center w-full px-4 md:px-0">
           <Link
             href="/purchase"
-            className="w-full md:w-auto px-8 md:px-16 py-5 bg-white text-void tracking-[0.4em] md:tracking-[0.6em] uppercase text-[10px] font-bold flex items-center justify-center gap-2"
+            className="w-full md:w-auto px-8 md:px-16 h-[56px] bg-white text-void tracking-[0.4em] md:tracking-[0.6em] uppercase text-[10px] font-bold flex items-center justify-center gap-2"
           >
             <CreditCard size={12} /> Order Card / 購入
           </Link>
 
           <Link
             href="/features"
-            className="w-full md:w-auto px-8 md:px-12 py-5 border border-white/10 tracking-[0.3em] md:tracking-[0.5em] uppercase text-[9px] font-bold text-white/40 hover:bg-white/5 transition-all flex items-center justify-center"
+            className="w-full md:w-auto px-8 md:px-12 h-[56px] border border-white/10 tracking-[0.3em] md:tracking-[0.5em] uppercase text-[10px] font-bold text-white/40 hover:bg-white/5 transition-all flex items-center justify-center"
           >
             Showcase / 機能紹介
           </Link>
