@@ -38,14 +38,14 @@ export default function LandingPage() {
         <div className="flex flex-col md:flex-row gap-6 items-center justify-center w-full px-4 md:px-0">
           <Link
             href="/purchase"
-            className="w-full md:w-auto px-8 md:px-16 h-[56px] bg-white text-void tracking-[0.4em] md:tracking-[0.6em] uppercase text-[10px] font-bold flex items-center justify-center gap-2"
+            className="w-full md:w-auto px-8 md:px-16 h-[56px] bg-white text-void tracking-[0.4em] md:tracking-[0.6em] uppercase text-[10px] font-bold flex items-center justify-center gap-2 rounded-full"
           >
             <CreditCard size={12} /> Order Card / 購入
           </Link>
 
           <Link
             href="/features"
-            className="w-full md:w-auto px-8 md:px-12 h-[56px] border border-white/10 tracking-[0.3em] md:tracking-[0.5em] uppercase text-[10px] font-bold text-white/40 hover:bg-white/5 transition-all flex items-center justify-center"
+            className="w-full md:w-auto px-8 md:px-12 h-[56px] border border-white/10 tracking-[0.3em] md:tracking-[0.5em] uppercase text-[10px] font-bold text-white/40 hover:bg-white/5 transition-all flex items-center justify-center rounded-full"
           >
             Showcase / 機能紹介
           </Link>
