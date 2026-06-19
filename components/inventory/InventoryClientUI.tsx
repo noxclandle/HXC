@@ -396,15 +396,9 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                                   {isUnlocked ? <UserCheck size={14} /> : <Lock size={14} />}
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                  <div className="flex flex-col lg:items-start gap-1 mb-1 max-w-[140px] sm:max-w-xs overflow-hidden">
-                                    <h3 className="text-[10px] lg:text-[11px] tracking-[0.4em] uppercase font-bold text-white relative w-full overflow-hidden whitespace-nowrap">
-                                      {asset.name.length > 12 ? (
-                                        <span className="inline-block animate-hxc-marquee whitespace-nowrap">
-                                          {asset.name}
-                                        </span>
-                                      ) : (
-                                        <span>{asset.name}</span>
-                                      )}
+                                  <div className="flex flex-col items-start gap-1 mb-1 max-w-[170px] xs:max-w-[200px] sm:max-w-xs overflow-hidden">
+                                    <h3 className="text-[10px] lg:text-[11px] tracking-[0.15em] lg:tracking-[0.4em] uppercase font-bold text-white relative w-full overflow-hidden whitespace-nowrap text-ellipsis">
+                                      {asset.name}
                                     </h3>
                                     <span className={`text-[6px] lg:text-[7px] w-fit px-2 py-0.5 border uppercase tracking-widest font-bold ${getRarityStyles(asset.rarity)} opacity-90`}>{asset.rarity}</span>
                                   </div>
@@ -412,11 +406,11 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                                 </div>
                               </div>
 
-                              <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-2 lg:gap-3">
                                 {!isActive && (
                                   <button 
                                     onClick={() => handlePreviewAsset(asset)}
-                                    className={`p-3 border transition-all ${isPreviewing ? "bg-azure-500 text-white border-azure-500" : "border-white/20 opacity-60 hover:opacity-100 hover:border-white hover:bg-white hover:text-black"}`}
+                                    className={`p-2.5 lg:p-3 border transition-all ${isPreviewing ? "bg-azure-500 text-white border-azure-500" : "border-white/20 opacity-60 hover:opacity-100 hover:border-white hover:bg-white hover:text-black"}`}
                                     title="Try on / お試し着用"
                                   >
                                     <Eye size={14} />
@@ -425,7 +419,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                                 
                                 <button 
                                   onClick={() => handleSelectAsset(asset)}
-                                  className={`px-4 py-3 border text-[8px] uppercase tracking-[0.2em] font-bold transition-all ${isUnlocked ? (isActive ? "bg-azure-500 text-white border-azure-500" : "border-white/30 text-white hover:bg-white hover:text-black") : "bg-azure-600/10 border-azure-600/50 text-azure-300"}`}
+                                  className={`px-3 py-2.5 lg:px-4 lg:py-3 border text-[8px] uppercase tracking-[0.2em] font-bold transition-all ${isUnlocked ? (isActive ? "bg-azure-500 text-white border-azure-500" : "border-white/30 text-white hover:bg-white hover:text-black") : "bg-azure-600/10 border-azure-600/50 text-azure-300"}`}
                                 >
                                   {isUnlocked ? (isActive ? "Active / 使用中" : "Equip / 装備") : `${cost.toLocaleString()} RT`}
                                 </button>
