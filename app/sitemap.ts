@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 export const revalidate = 3600 // Cache sitemap for 1 hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://hxc.hexa-relation.com'
+  const baseUrl = 'https://virtual-business-card.hexa-relation.com'
   
   // Base static routes
   const staticRoutes: MetadataRoute.Sitemap = [

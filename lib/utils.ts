@@ -4,5 +4,5 @@ export function getBaseUrl() {
   }
   
   // 本番環境のカスタムドメインを最優先にする
-  return "https://hxc.hexa-relation.com";
+  return "https://virtual-business-card.hexa-relation.com";
 }

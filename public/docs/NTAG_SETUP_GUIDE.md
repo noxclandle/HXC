@@ -21,7 +21,7 @@
 3.  次に「書き込み」メニューを選びます。
 4.  「レコードを追加」→「URL / URI」の順に押します。
 5.  管理画面にある **「書き込み用URL」** をコピーして、ここに貼り付けます。
-    （例：https://hxc.hexa-relation.com/api/card/04A23F...）
+    （例：https://virtual-business-card.hexa-relation.com/api/card/04A23F...）
 6.  「書き込み」を押し、もう一度カードをかざせば完了です。
 
 ---
