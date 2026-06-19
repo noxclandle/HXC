@@ -278,13 +278,13 @@ export default function HubClientUI({
         <AnimatePresence>
           {isBonusAvailable && (
             <motion.div 
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 50 }}
-              className="fixed bottom-24 right-4 z-50 max-w-[280px]"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 30, scale: 0.95 }}
+              className="fixed bottom-[92px] right-6 z-50 max-w-[220px]"
             >
-              <div className="bg-void border border-azure-500/50 shadow-[0_0_30px_rgba(59,130,246,0.3)] p-4 relative overflow-hidden group">
-                 <div className="absolute inset-0 bg-azure-500/10 animate-pulse pointer-events-none" />
+              <div className="bg-void/95 backdrop-blur-md border border-azure-500/30 shadow-[0_8px_32px_rgba(59,130,246,0.2)] p-3.5 rounded-2xl relative overflow-hidden group">
+                 <div className="absolute inset-0 bg-azure-500/5 animate-pulse pointer-events-none" />
                  <button onClick={async () => {
                    try {
                      const res = await fetch("/api/user/daily-bonus", { method: "POST" });
@@ -294,12 +294,12 @@ export default function HubClientUI({
                      }
                    } catch(e) { console.error(e); }
                  }} className="relative z-10 text-left w-full">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Sparkles size={14} className="text-azure-400" />
-                      <span className="text-[10px] tracking-[0.3em] font-bold uppercase text-azure-400">Daily Resonance</span>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Sparkles size={11} className="text-azure-400" />
+                      <span className="text-[8px] tracking-[0.2em] font-bold uppercase text-azure-400">Daily Resonance</span>
                     </div>
-                    <p className="text-[8px] tracking-widest opacity-60 uppercase mb-3 leading-relaxed">境界が安定しています。<br/>本日の共鳴（ログインボーナス）を受け取りますか？</p>
-                    <div className="text-[9px] font-bold tracking-[0.4em] uppercase text-white bg-white/10 text-center py-2 hover:bg-white/20 transition-colors">
+                    <p className="text-[7.5px] tracking-wider opacity-60 uppercase mb-3 leading-relaxed font-sans">境界が安定しています。<br/>本日の共鳴（ボーナス）を受け取りますか？</p>
+                    <div className="text-[8px] font-bold tracking-[0.3em] uppercase text-white bg-white/10 text-center py-1.5 hover:bg-white/20 transition-colors rounded-full border border-white/5">
                       Receive 50 RT
                     </div>
                  </button>
