@@ -219,16 +219,26 @@ export default function PurchasePage() {
                 {/* Card Visual Preview Approximation */}
                 <div className="mb-10 w-full relative pointer-events-none transform -skew-y-3 group-hover:skew-y-0 group-hover:scale-105 transition-all duration-700 opacity-60 group-hover:opacity-100 flex justify-center">
                   <UnifiedCardContainer orientation="horizontal" showControls={false} previewLabel="">
-                    <HexaCardPreview
-                      name="HXC MEMBER"
-                      title={tier.name}
-                      company="HEXA RELATION INC."
-                      logoUrl="/logo.png"
-                      orientation="horizontal"
-                      frame={tier.id === "apex" ? "BlackCard" : tier.id === "executive" ? "Platinum" : "Obsidian"}
-                      background={tier.id === "apex" ? "BlackCard" : tier.id === "executive" ? "BrushedMetal" : "BrandedHex"}
-                      effect={tier.id === "apex" ? "Interference" : tier.id === "executive" ? "Glitch" : "None"}
-                    />
+                    {tier.id === "standard" ? (
+                      <div className="relative w-[350px] h-[220px] rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_20px_rgba(255,255,255,0.05)] bg-[#0c0c0c]">
+                        <img
+                          src="/ogp_card.png"
+                          alt="Standard Physical Card Design"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <HexaCardPreview
+                        name="HXC MEMBER"
+                        title={tier.name}
+                        company="HEXA RELATION INC."
+                        logoUrl="/logo.png"
+                        orientation="horizontal"
+                        frame={tier.id === "apex" ? "BlackCard" : tier.id === "executive" ? "Platinum" : "Obsidian"}
+                        background={tier.id === "apex" ? "BlackCard" : tier.id === "executive" ? "BrushedMetal" : "BrandedHex"}
+                        effect={tier.id === "apex" ? "Interference" : tier.id === "executive" ? "Glitch" : "None"}
+                      />
+                    )}
                   </UnifiedCardContainer>
                 </div>
 

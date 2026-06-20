@@ -39,19 +39,26 @@ export default function LandingPage() {
         </p>
 
         {/* Action Buttons */}
-        <div className="flex flex-col md:flex-row gap-6 items-center justify-center w-full max-w-md px-4 mb-16 z-10">
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-center w-full max-w-2xl px-4 mb-16 z-10">
           <Link
             href="/purchase"
-            className="w-full md:w-auto px-8 md:px-12 h-[56px] bg-white text-void tracking-[0.4em] uppercase text-[10px] font-bold flex items-center justify-center gap-2 rounded-full hover:bg-zinc-200 transition-all"
+            className="w-full md:w-auto px-6 md:px-8 h-[56px] bg-white text-void tracking-[0.4em] uppercase text-[10px] font-bold flex items-center justify-center gap-2 rounded-full hover:bg-zinc-200 transition-all"
           >
             <CreditCard size={12} /> Order Card / 購入
           </Link>
 
           <Link
             href="/features"
-            className="w-full md:w-auto px-8 md:px-12 h-[56px] border border-white/10 tracking-[0.3em] uppercase text-[10px] font-bold text-white/40 hover:bg-white/5 hover:text-white transition-all flex items-center justify-center rounded-full"
+            className="w-full md:w-auto px-6 md:px-8 h-[56px] border border-white/10 tracking-[0.3em] uppercase text-[10px] font-bold text-white/40 hover:bg-white/5 hover:text-white transition-all flex items-center justify-center rounded-full"
           >
             Showcase / 機能紹介
+          </Link>
+
+          <Link
+            href="/login"
+            className="w-full md:w-auto px-6 md:px-8 h-[56px] border border-white/10 tracking-[0.3em] uppercase text-[10px] font-bold text-azure-400/80 hover:bg-white/5 hover:text-azure-400 transition-all flex items-center justify-center rounded-full"
+          >
+            Member Login / ログイン
           </Link>
         </div>
 
@@ -163,7 +170,7 @@ export default function LandingPage() {
               </Link>
               <span className="text-white/10">|</span>
               <a 
-                href="https://www.hexa-relation.com/nox" 
+                href="https://www.hexa-relation.com/save/nox/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-[9px] tracking-[0.3em] uppercase text-azure-400 hover:text-azure-300 transition-colors font-bold flex items-center gap-1"
@@ -173,16 +180,6 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-
-        {/* Identity Access Area */}
-        <div className="flex justify-center gap-8 items-center z-10 w-full mb-12">
-          <Link 
-            href="/login" 
-            className="text-[9px] tracking-[0.4em] uppercase text-white/20 hover:text-azure-400 font-bold transition-colors"
-          >
-            Identity Access / ログイン
-          </Link>
-        </div>
 
         {/* Status Indicator */}
         <div className="flex items-center gap-3 opacity-30">
