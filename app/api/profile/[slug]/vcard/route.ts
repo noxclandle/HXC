@@ -31,7 +31,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     const aiConfig = user.ai_config as any || {};
     const profileData = aiConfig.profile || {};
 
-    // 2. Construct vCard 3.0 String (Strict iOS Compliance, NO IMAGES)
+    // 2. Construct vCard 3.0 String with Embedded Profile Image Support
     const CRLF = "\r\n";
     const name = user.name || "MEMBER";
     const reading = user.handle_name || "";
@@ -40,6 +40,44 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     const company = profileData.company || "";
     const title = profileData.title || "";
     const website = user.link_website || profileData.website || `https://virtual-business-card.hexa-relation.com/p/${slug}`;
+
+    // Fetch and encode profile photo in Base64 if available
+    let photoSection = "";
+    const photoUrl = user.photo_url;
+    if (photoUrl) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000); // 4-second timeout limit
+
+        let fetchUrl = photoUrl;
+        if (photoUrl.startsWith("/")) {
+          const baseUrl = process.env.NEXTAUTH_URL || `https://virtual-business-card.hexa-relation.com`;
+          fetchUrl = `${baseUrl}${photoUrl}`;
+        }
+
+        const imageRes = await fetch(fetchUrl, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (imageRes.ok) {
+          const arrayBuffer = await imageRes.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          const base64Photo = buffer.toString("base64");
+          const contentType = imageRes.headers.get("content-type") || "image/jpeg";
+          const imageType = contentType.includes("png") ? "PNG" : "JPEG";
+
+          // Line folding according to RFC 2426 (vCard 3.0) - max 75 chars per line
+          // Continuation lines must start with a space character
+          const photoLines = base64Photo.match(/.{1,72}/g) || [];
+          photoSection = `PHOTO;TYPE=${imageType};ENCODING=b:`;
+          photoLines.forEach((line) => {
+            photoSection += `${CRLF} ${line}`;
+          });
+          photoSection += CRLF;
+        }
+      } catch (err: any) {
+        console.error("Failed to embed profile photo in vCard:", err.message || err);
+      }
+    }
 
     let vcard = `BEGIN:VCARD${CRLF}`;
     vcard += `VERSION:3.0${CRLF}`;
@@ -53,6 +91,11 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     if (website) vcard += `URL:${website}${CRLF}`;
     // Link directly to the digital business card
     vcard += `URL;type=HexaCard:https://virtual-business-card.hexa-relation.com/p/${slug}${CRLF}`;
+    
+    // Add photo if successfully encoded
+    if (photoSection) {
+      vcard += photoSection;
+    }
 
     vcard += `END:VCARD${CRLF}`;
 
