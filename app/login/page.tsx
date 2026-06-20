@@ -112,8 +112,8 @@ function LoginContent() {
               <Sparkles className="text-white relative z-10 animate-pulse" size={40} strokeWidth={1} />
             </div>
             <div className="text-center space-y-2">
-              <h2 className="text-sm tracking-[0.8em] uppercase font-light">自動ログイン中</h2>
-              <p className="text-[8px] tracking-[0.4em] opacity-30 uppercase font-bold">端末情報を確認しています</p>
+              <h2 className="text-sm tracking-[0.6em] uppercase font-light">AUTO LOGGING IN / 自動ログイン中</h2>
+              <p className="text-[7px] tracking-[0.4em] opacity-30 uppercase font-bold">VERIFYING SOUL-FRAGMENT / 端末情報を確認しています</p>
             </div>
           </motion.div>
         )}
@@ -137,7 +137,7 @@ function LoginContent() {
             priority
             className="opacity-40 mb-10 hover:opacity-100 transition-opacity duration-1000 object-contain" 
           />
-          <h1 className="text-2xl tracking-[0.8em] uppercase font-extralight mb-2">ログイン</h1>
+          <h1 className="text-xl tracking-[0.6em] uppercase font-extralight mb-2">LOG IN / ログイン</h1>
         </div>
 
         <motion.form
@@ -165,7 +165,7 @@ function LoginContent() {
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 opacity-20 group-focus-within:opacity-100 transition-opacity" size={14} />
               <input
                 type="email"
-                placeholder="メールアドレス"
+                placeholder="EMAIL ADDRESS / メールアドレス"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -176,7 +176,7 @@ function LoginContent() {
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 opacity-20 group-focus-within:opacity-100 transition-opacity" size={14} />
               <input
                 type="password"
-                placeholder="パスワード"
+                placeholder="PASSWORD / パスワード"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -191,7 +191,7 @@ function LoginContent() {
               onClick={() => router.push("/login/forgot")}
               className="text-[8px] tracking-[0.2em] opacity-30 hover:opacity-100 transition-opacity font-bold"
             >
-              パスワードを忘れた場合
+              FORGOT PASSWORD / パスワードの再設定
             </button>
           </div>
           
@@ -200,7 +200,7 @@ function LoginContent() {
               disabled={isLoading}
               className={`w-full py-5 bg-white text-void text-[10px] font-bold tracking-[0.8em] uppercase hover:bg-emerald-50 transition-all shadow-2xl relative overflow-hidden ${isLoading && 'opacity-50'}`}
             >
-              {isLoading ? "ログイン中..." : "ログイン"}
+              {isLoading ? "LOGGING IN / 接続中..." : "LOG IN / ログイン"}
               {isLoading && (
                 <motion.div 
                   animate={{ left: ["-100%", "100%"] }}
@@ -212,9 +212,9 @@ function LoginContent() {
           </div>
 
           <div className="text-center pt-8">
-            <p className="text-[7px] tracking-[0.4em] opacity-20 uppercase">
-              物理カードをかざしてもログインできない場合は、<br/>
-              メールアドレスとパスワードでログインしてください。
+            <p className="text-[7px] leading-relaxed tracking-[0.2em] opacity-25 uppercase">
+              If you cannot log in by tapping your card, please enter credentials.<br />
+              物理カードをかざしてログインできない場合は、メールアドレスとパスワードを入力してください。
             </p>
           </div>
         </motion.form>

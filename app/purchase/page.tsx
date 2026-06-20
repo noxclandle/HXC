@@ -30,9 +30,13 @@ export default function PurchasePage() {
       name: "Standard",
       price: "¥3,000",
       type: "Original Design",
-      desc: "Hexa Relationのフィロソフィーを体現するオリジナルデザイン。マットな質感が、ビジネスにおける誠実さを象徴します。",
+      desc: "Hexa Relationのフィロソフィーを体現するオリジナルデザイン。マットな質感が、ビジネスにおける誠実さを象徴します。 / Matte design embodying the Hexa Relation philosophy. The matte finish represents professional integrity.",
       options: [{ label: "Original", value: "Original" }],
-      features: ["オリジナルデザイン", "初期 3,000 RT 付与", "システム利用権（永続）"],
+      features: [
+        "Original Design / オリジナルデザイン",
+        "Initial 3,000 RT / 初期 3,000 RT 付与",
+        "Lifetime Access / システム利用権（永続）"
+      ],
       bgColor: "bg-zinc-950",
       accentColor: "border-zinc-800",
       glow: "group-hover:shadow-[0_0_40px_rgba(255,255,255,0.03)]",
@@ -42,12 +46,16 @@ export default function PurchasePage() {
       name: "Executive",
       price: "¥20,000",
       type: "Metallic Series",
-      desc: "卓越した存在感を示すメタリック加工。伝統的な価値観と最新技術が融合した、エグゼクティブのための洗練された選択。",
+      desc: "卓越した存在感を示すメタリック加工。伝統的な価値観と最新技術が融合した、エグゼクティブのための洗練された選択。 / Premium metallic finish showing outstanding presence. A sophisticated blend of traditional values and next-gen tech.",
       options: [
         { label: "Silver", value: "Silver" },
         { label: "Gold", value: "Gold" },
       ],
-      features: ["プレミアム・メタリック素材", "初期 3,000 RT 付与", "優先発行レーン"],
+      features: [
+        "Premium Metallic / プレミアム・メタリック素材",
+        "Initial 3,000 RT / 初期 3,000 RT 付与",
+        "Priority Issuance / 優先発行レーン"
+      ],
       bgColor: "bg-zinc-950",
       accentColor: "border-zinc-800",
       glow: "group-hover:shadow-[0_0_40px_rgba(234,179,8,0.07)]",
@@ -57,9 +65,15 @@ export default function PurchasePage() {
       name: "Apex",
       price: "¥1,000,000",
       type: "The Black",
-      desc: "究極のステータスを証明する完全特注のブラックカード。全世界10枠限定発行。残された席はあと僅かです。",
+      desc: "究極のステータスを証明する完全特注のブラックカード。全世界10枠限定発行。残された席はあと僅かです。 / Custom-crafted black card representing the ultimate status. Limited to 10 slots worldwide. Very few remain.",
       options: [{ label: "Black", value: "Black" }],
-      features: ["特注最高級ブラック素材", "全世界限定 10 枠 (残り 8)", "初期 3,000 RT 付与", "限定称号付与権", "エグゼクティブ・コンシェルジュ"],
+      features: [
+        "Bespoke Apex Material / 特注最高級ブラック素材",
+        "Limit 10 (8 left) / 全世界限定 10 枠 (残り 8)",
+        "Initial 3,000 RT / 初期 3,000 RT 付与",
+        "Exclusive Title / 限定称号付与権",
+        "Concierge / エグゼクティブ・コンシェルジュ"
+      ],
       bgColor: "bg-zinc-950",
       accentColor: "border-zinc-700",
       glow: "group-hover:shadow-[0_0_50px_rgba(255,255,255,0.15)]",
@@ -87,7 +101,7 @@ export default function PurchasePage() {
 
   const handleFinalCheckout = async () => {
     if (!formData.name || !formData.email || !formData.phone) {
-      alert("必須項目をすべて入力してください。");
+      alert("Please fill in all required fields. / 必須項目をすべて入力してください。");
       return;
     }
 
@@ -110,12 +124,12 @@ export default function PurchasePage() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert("Failed to initiate checkout.");
+        alert("Failed to initiate checkout. / 決済セッションの作成に失敗しました。");
         setLoading(false);
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred during checkout.");
+      alert("An error occurred during checkout. / 決済処理中にエラーが発生しました。");
       setLoading(false);
     }
   };
@@ -179,10 +193,13 @@ export default function PurchasePage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-[11px] tracking-[0.3em] uppercase text-white/40 max-w-lg mx-auto leading-relaxed"
+            className="text-[10px] tracking-[0.25em] uppercase text-white/40 max-w-xl mx-auto leading-relaxed font-light"
           >
-            HXCのネットワークへ参加するには、物理カードの発行が必要です。
-            Phase 01 発行枠には「初期参加証」として限定称号が付与されます。
+            HXCのネットワークへ参加するには、物理カードの発行が必要です。<br />
+            Phase 01 発行枠には「初期参加証」として限定称号が付与されます。<br />
+            <span className="text-[9px] text-white/25 mt-2 block tracking-[0.2em] font-normal uppercase">
+              To join the HXC network, a physical card must be issued. Phase 01 slots include an exclusive &quot;Genesis&quot; title as initial proof.
+            </span>
           </motion.p>
         </header>
 
@@ -264,7 +281,7 @@ export default function PurchasePage() {
                   <div className="space-y-6 pt-6 border-t border-white/5">
                     {isSelected && tier.options.length > 1 && (
                       <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-500">
-                        <span className="text-[9px] uppercase tracking-[0.3em] text-white/20">Select Variant</span>
+                        <span className="text-[9px] uppercase tracking-[0.3em] text-white/20">Select Variant / バリアントの選択</span>
                         <div className="space-y-2">
                           {tier.options.map((opt) => (
                             <div
@@ -313,7 +330,7 @@ export default function PurchasePage() {
             >
               <div className="text-center md:text-left space-y-1">
                 <span className="text-[9px] uppercase tracking-[0.4em] text-white/30 block">
-                  Finalize Selection
+                  Finalize Selection / 選択の決定
                 </span>
                 <div className="flex items-center gap-4">
                   <span className="text-xl font-extralight tracking-[0.2em] text-white uppercase">
@@ -330,7 +347,7 @@ export default function PurchasePage() {
                   disabled={loading}
                   className="w-full md:w-auto px-10 py-4 bg-white text-black hover:bg-[#d0d0d0] transition-all duration-500 font-bold tracking-[0.3em] text-[10px] uppercase flex items-center justify-center gap-4 group disabled:opacity-50 disabled:cursor-wait"
                 >
-                  {loading ? "Redirecting..." : "Purchase Issuance"}
+                  {loading ? "Redirecting... / 接続中..." : "Purchase Issuance / 発行申請"}
                   {!loading && <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />}
                 </button>
               </div>
@@ -352,11 +369,14 @@ export default function PurchasePage() {
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-azure-500 to-rose-500" />
                 
                 <header className="mb-10 text-center space-y-2">
-                  <h2 className="text-xl tracking-[0.4em] uppercase font-light text-white">Application</h2>
-                  <p className="text-[10px] tracking-widest text-azure-400 font-bold">申し込み者情報の入力</p>
-                  <p className="text-[9px] text-white/30 pt-4 leading-relaxed">
+                  <h2 className="text-xl tracking-[0.4em] uppercase font-light text-white">Application / 申請</h2>
+                  <p className="text-[10px] tracking-widest text-azure-400 font-bold">ENTER DETAILS / 申し込み者情報の入力</p>
+                  <p className="text-[9px] text-white/30 pt-4 leading-relaxed font-light">
                     物理カードに刻印される基本的な情報を入力してください。<br/>
-                    この後の決済画面でも、再度情報の確認が行われます。
+                    この後の決済画面でも、再度情報の確認が行われます。<br/>
+                    <span className="text-[8px] text-white/20 mt-2 block tracking-wider font-normal uppercase">
+                      Please enter the details to be printed on your physical card. Information will be reviewed again before payment.
+                    </span>
                   </p>
                 </header>
 
@@ -365,9 +385,9 @@ export default function PurchasePage() {
                     <div className="space-y-1">
                       <label className="text-[8px] uppercase tracking-widest text-white/40">氏名 / Name</label>
                       <input 
-                        placeholder="例：佐々木 大輔" value={formData.name}
+                        placeholder="例：佐々木 大輔 / Daisuke Sasaki" value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs outline-none focus:border-azure-500 transition-all text-white"
+                        className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs outline-none focus:border-azure-500 transition-all text-white placeholder:text-white/20"
                       />
                     </div>
                     <div className="space-y-1">
@@ -375,7 +395,7 @@ export default function PurchasePage() {
                       <input 
                         placeholder="ササキ ダイスケ" value={formData.handle}
                         onChange={(e) => setFormData({ ...formData, handle: e.target.value })}
-                        className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs outline-none focus:border-azure-500 transition-all text-white"
+                        className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs outline-none focus:border-azure-500 transition-all text-white placeholder:text-white/20"
                       />
                     </div>
                   </div>
@@ -383,18 +403,18 @@ export default function PurchasePage() {
                   <div className="space-y-1">
                     <label className="text-[8px] uppercase tracking-widest text-white/40">電話番号 / Phone</label>
                     <input 
-                      placeholder="09012345678" value={formData.phone}
+                      placeholder="09012345678 / e.g. +819012345678" value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs outline-none focus:border-azure-500 transition-all text-white"
+                      className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs outline-none focus:border-azure-500 transition-all text-white placeholder:text-white/20"
                     />
                   </div>
 
                   <div className="space-y-1">
                     <label className="text-[8px] uppercase tracking-widest text-white/40">メールアドレス / Email</label>
                     <input 
-                      type="email" placeholder="your@email.com" value={formData.email}
+                      type="email" placeholder="your@email.com / e.g. alex@example.com" value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs outline-none focus:border-azure-500 transition-all text-white"
+                      className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs outline-none focus:border-azure-500 transition-all text-white placeholder:text-white/20"
                     />
                   </div>
 
@@ -404,13 +424,13 @@ export default function PurchasePage() {
                       disabled={loading}
                       className="w-full py-5 bg-white text-black font-bold text-[10px] tracking-[0.6em] uppercase hover:bg-azure-50 transition-all"
                     >
-                      {loading ? "Redirecting..." : "Go to Payment"}
+                      {loading ? "Redirecting... / 接続中..." : "Go to Payment / 決済へ進む"}
                     </button>
                     <button 
                       onClick={() => setShowForm(false)}
                       className="w-full py-4 border border-white/10 text-[8px] tracking-[0.4em] uppercase text-white/30 hover:text-white transition-all"
                     >
-                      Cancel
+                      Cancel / キャンセル
                     </button>
                   </div>
                 </div>
@@ -420,9 +440,12 @@ export default function PurchasePage() {
         </AnimatePresence>
         
         <div className="mt-40 text-center space-y-4">
-          <p className="text-[11px] tracking-[0.3em] text-white/40 uppercase leading-relaxed max-w-lg mx-auto font-light">
+          <p className="text-[10px] leading-relaxed tracking-[0.2em] text-white/40 uppercase max-w-xl mx-auto font-light">
             決済完了後、通常二週間前後での発行となります。<br />
-            厳格な審査と検品を経て、貴方の元へ届けられます。
+            厳格な審査と検品を経て、貴方の元へ届けられます。<br />
+            <span className="text-[9px] text-white/25 mt-2 block tracking-widest leading-relaxed">
+              Delivery takes approximately two weeks post-checkout. All cards undergo rigorous inspection prior to secure shipment.
+            </span>
           </p>
         </div>
 

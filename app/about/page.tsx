@@ -45,7 +45,7 @@ export default function AboutLP() {
             </h1>
             <p className="text-[12px] tracking-[0.2em] text-white/40 max-w-2xl mx-auto leading-loose uppercase">
               紙の名刺を渡す時代は終わった。<br />
-              これは、あなたの存在（アイデンティティ）を<br className="md:hidden" />同期するための「儀式」である。
+              これは、あなたの存在（アイデンティティ）を<br className="md:hidden" />同期するための「共鳴」である。
             </p>
           </motion.div>
         </header>
