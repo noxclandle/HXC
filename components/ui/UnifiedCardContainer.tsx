@@ -72,10 +72,10 @@ export default function UnifiedCardContainer({
       )}
 
       {/* Scaled Content Wrapper */}
-      <div className={`w-full flex justify-center origin-center lg:origin-top transition-transform duration-500 relative z-20 min-h-[260px] flex items-center
+      <div className={`w-full flex justify-center origin-center transition-transform duration-500 relative z-20 flex items-center
         ${orientation === 'horizontal' 
-          ? 'scale-[0.8] xs:scale-[0.9] sm:scale-100 lg:scale-100' 
-          : 'scale-[0.7] xs:scale-[0.8] sm:scale-90 lg:scale-100'
+          ? 'scale-[0.65] xs:scale-[0.75] sm:scale-[0.85] lg:scale-100 h-[185px] xs:h-[214px] sm:h-[242px] lg:h-[285px]' 
+          : 'scale-[0.55] xs:scale-[0.65] sm:scale-[0.75] lg:scale-100 h-[248px] xs:h-[293px] sm:h-[338px] lg:h-[450px]'
         }
       `}>
         {children}
@@ -83,7 +83,7 @@ export default function UnifiedCardContainer({
 
       {/* Label */}
       {previewLabel && (
-        <div className="text-center mt-[-10%] lg:mt-4 pb-2 flex flex-col items-center gap-1">
+        <div className="text-center mt-2 lg:mt-4 pb-2 flex flex-col items-center gap-1">
            <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">{previewLabel}</p>
         </div>
       )}

@@ -7,28 +7,44 @@ import Link from "next/link";
 export default function TermsPage() {
   const sections = [
     {
-      title: "第1条（適用） / Article 1 (Application)",
-      content: "本規約は、Hexa Relation（以下「当組織」）が提供するサービス（以下「本サービス」）の利用条件を定めるものです。利用者は本規約に従って本サービスを利用するものとします。 / These terms define the conditions for using the services provided by Hexa Relation. Users must comply with these terms when using our services."
+      title: "第1条（適用および目的） / Article 1 (Purpose & Application)",
+      content: "本利用規約（以下「本規約」）は、Hexa Relation（以下「当組織」）が運営・提供するデジタル名刺システム「Hexa Card」およびそれに関連するウェブサービス、アセットストア、Relation Token経済圏（以下総称して「本サービス」）の利用条件を定めるものです。本サービスの利用者（以下「ユーザー」）は、本サービスに登録または利用した時点で、本規約のすべての条項に同意したものとみなされます。 / These terms govern the use of the \"Hexa Card\" digital identity system, assets store, and related services. By accessing or using the services, users agree to be bound by all these terms."
     },
     {
-      title: "第2条（利用登録） / Article 2 (Registration)",
-      content: "本サービスの利用には、当組織が指定する方法による登録が必要です. 登録にあたっては、真実かつ正確な情報を提供する必要があります。 / Registration via our designated method is required to use the service. You must provide true and accurate information during registration."
+      title: "第2条（定義） / Article 2 (Definitions)",
+      content: "本規約において使用する用語の定義は以下の通りとします。(1)「物理カード（Hexa Card）」：当組織が発行するNFCチップ内蔵の物理的カード。(2)「公開プロフィール」：ユーザーが設定し、物理カードのタップまたはQRコードを通じて第三者に公開する自己紹介情報。(3)「Relation Token（RT）」：サービス内でカスタマイズ用アセットの解禁等に使用できるポイント。(4)「アセット」：フレーム、背景、オーラ、エフェクト、サウンド等のデジタル装飾データ。 / Defines key terms including Physical Card, Public Profile, Relation Token (RT), and Digital Assets (frames, background, sound, etc.) within the system."
     },
     {
-      title: "第3条（物理カードの取り扱い） / Article 3 (Physical Card Usage)",
-      content: "本サービスに関連して発行される物理カードは、登録された利用者本人のみが使用できるものとします。カードの紛失、盗難による損害について当組織は一切の責任を負いません。 / Physical cards issued for the service are for the exclusive use of the registered individual. We are not liable for any damages resulting from lost or stolen cards."
+      title: "第3条（アカウント登録とアイデンティティの紐付け） / Article 3 (Account & Identity Sync)",
+      content: "利用登録は、物理カードのUIDと当組織が発行した正規のシリアルコードを所持する本人のみが申請できるものとします。登録情報は常に真実、正確、最新のものでなければなりません。1つの物理カードに対して登録できるアカウントは1つのみとし、第三者へのアカウント売買、譲渡、または不正な紐付けを禁止します。 / Registration requires a valid card UID and serial. Only one account can be bound to each card. Transfer or sale of accounts is strictly prohibited."
     },
     {
-      title: "第4条（禁止事項） / Article 4 (Prohibited Acts)",
-      content: "利用者は、本サービスの利用にあたり、法令または公序良俗に違反する行為、本サービスの運営を妨害する行為、他者へのなりすまし行為等を行ってはなりません。 / Users must not engage in illegal acts, disrupt service operations, or impersonate others while using the service."
+      title: "第4条（物理カードの管理と自己責任） / Article 4 (Physical Card Management)",
+      content: "ユーザーは自己の責任において物理カードおよびログイン情報を厳重に管理するものとします。カードの紛失、盗難、または第三者による不正使用（NFCタップによるなりすましアクセス等）によってユーザーに生じた損害について、当組織は一切の責任を負いません。紛失時は直ちにアカウントの無効化処理、または再発行（有償）の手続きを行ってください。 / Users are solely responsible for managing their physical card and login credentials. We assume no liability for unauthorized access or usage due to lost or stolen cards."
     },
     {
-      title: "第5条（サービスの停止・変更） / Article 5 (Service Suspension/Change)",
-      content: "当組織は、保守作業、システム障害、その他不可抗力により、利用者に事前通知することなく本サービスの提供を停止または中断することができるものとします。 / We may suspend or interrupt services without prior notice due to maintenance, system failure, or other force majeure events."
+      title: "第5条（Relation Token（RT）および有料決済） / Article 5 (Relation Tokens & Payments)",
+      content: "Relation Token（RT）は、本サービス内でのみ使用できるポイントであり、換金、返金、またはユーザー間での譲渡はできません。決済システムはStripe等を通じて処理され、購入が確定した決済および消費されたRTについて、当組織の重大な過失がある場合を除き、いかなる場合もキャンセルや払い戻しは行わないものとします。 / RT points are non-refundable and non-transferable. Financial transactions are processed via Stripe and cannot be cancelled or refunded once confirmed."
     },
     {
-      title: "第6条（免責事項） / Article 6 (Disclaimer)",
-      content: "当組織は、本サービスに起因して利用者に生じた損害について、当組織の故意または重過失による場合を除き、一切の責任を負いません。 / We are not liable for any damages arising from the service, except in cases of intentional misconduct or gross negligence."
+      title: "第6条（アセットの利用許諾と知的財産権） / Article 6 (Assets & Intellectual Property)",
+      content: "本サービス内のすべてのアセット、画像、デザイン、音楽、ソースコードに関する知的財産権は、当組織またはライセンス提供者に帰属します。ユーザーに対し、本サービス内でのデジタル名刺の装飾目的においてのみ非独占的な利用を許諾するものとし、二次配布、改変、リバースエンジニアリング、または商標登録などの行為を固く禁じます。 / All property rights of assets, code, and graphics belong to Hexa Relation. Users are granted a non-exclusive license to decorate their card profiles within the system."
+    },
+    {
+      title: "第7条（禁止事項） / Article 7 (Prohibited Activities)",
+      content: "ユーザーは本サービスにおいて、以下の行為を行ってはなりません。(1) 法令または公序良俗に違反する情報の公開。(2) 他のユーザー、または当組織の活動を妨害・誹謗中傷する行為。(3) 物理カードの不正なクローン複製や、APIへの不正リクエスト。(4) なりすまし行為、および虚偽情報の登録。(5) その他、当組織が不適切と判断する行為。 / Prohibits unlawful acts, system abuse (cloning cards, calling APIs directly), registration of false information, and harassment."
+    },
+    {
+      title: "第8条（アカウントの削除・退会およびカードの無効化） / Article 8 (Deletion & Card Revocation)",
+      content: "ユーザーが本サービスの退会（アカウント削除）を申請した場合、当組織は個人情報保護の観点からアカウントを完全に消去します。これに伴い、紐付けられていた物理カードは「永久無効化（Dead）」ステータスとなり、以後いかなるアカウントにも再登録・再使用することはできなくなります。 / Account deletion completely purges personal records. The bound card will be permanently invalidated (Dead) and cannot be reused or rebound."
+    },
+    {
+      title: "第9条（免責事項・サービスの停止） / Article 9 (Disclaimer & Suspensions)",
+      content: "当組織は、定期保守、サーバー障害、通信環境の悪化、天災地変等の不可抗力により、ユーザーに通知することなく本サービスの全部または一部を停止・中断できるものとします。本サービスの利用、または利用不能によってユーザーに生じた不利益・損害に対し、当組織は一切の責任を負いません。 / We reserve the right to suspend operations for maintenance or due to server issues without notice. We are not liable for any losses incurred during such downtime."
+    },
+    {
+      title: "第10条（規約の改定および準拠法） / Article 10 (Amendments & Jurisdiction)",
+      content: "当組織は必要と判断した際、ユーザーの事前承諾なしに本規約を改定できるものとします。規約改定後にユーザーが本サービスを利用した時点で、改定後の規約に同意したものとみなします。本規約は日本法を準拠法とし、本サービスに関する紛争については、当組織の本拠所在地を管轄する裁判所を第一審の専属的合意管轄裁判所とします。 / These terms may be revised without prior consent. Revised terms take effect upon usage. Any legal disputes shall be governed by Japanese law under our local court jurisdiction."
     }
   ];
 

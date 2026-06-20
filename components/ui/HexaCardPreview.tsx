@@ -260,7 +260,7 @@ export default function HexaCardPreview({
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
              {[...Array(15)].map((_, i) => (
-               <motion.div key={i} initial={{ y: -20, rotate: 0 }} animate={{ y: 500, rotate: 360, x: [0, 30, -30, 0] }} transition={{ duration: 8 + Math.random() * 8, repeat: Infinity, delay: i * 0.8 }} className="absolute text-white/80 text-[14px] drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]" style={{ left: `${Math.random()*100}%` }}>❀</motion.div>
+               <motion.div key={i} initial={{ y: -20, rotate: 0 }} animate={{ y: 500, rotate: 360, x: [0, 30, -30, 0] }} transition={{ duration: 8 + Math.random() * 8, repeat: Infinity, delay: i * 0.8 }} className="absolute text-white/80 text-[14px]" style={{ left: `${Math.random()*100}%` }}>❀</motion.div>
              ))}
           </div>
         );
@@ -268,7 +268,7 @@ export default function HexaCardPreview({
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
              {[...Array(15)].map((_, i) => (
-               <motion.div key={i} initial={{ y: -20, rotate: 0 }} animate={{ y: 500, rotate: 720, x: [0, 50, -50, 0] }} transition={{ duration: 10 + Math.random() * 10, repeat: Infinity, delay: i * 1.2 }} className="absolute text-rose-300/60 text-[16px] drop-shadow-[0_0_8px_rgba(244,114,182,0.3)]" style={{ left: `${Math.random()*100}%` }}>🌸</motion.div>
+               <motion.div key={i} initial={{ y: -20, rotate: 0 }} animate={{ y: 500, rotate: 720, x: [0, 50, -50, 0] }} transition={{ duration: 10 + Math.random() * 10, repeat: Infinity, delay: i * 1.2 }} className="absolute text-rose-300/60 text-[16px]" style={{ left: `${Math.random()*100}%` }}>🌸</motion.div>
              ))}
           </div>
         );
@@ -276,7 +276,7 @@ export default function HexaCardPreview({
         return (
           <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
              {[...Array(8)].map((_, i) => (
-               <motion.div key={i} initial={{ y: -20, rotate: 0, opacity: 0 }} animate={{ y: 500, rotate: [0, 45, -45, 0], x: [0, 40, -40, 0], opacity: [0, 0.6, 0] }} transition={{ duration: 12 + Math.random() * 8, repeat: Infinity, delay: i * 2 }} className="absolute text-white/50 text-[20px] drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]" style={{ left: `${Math.random()*100}%` }}>🪶</motion.div>
+               <motion.div key={i} initial={{ y: -20, rotate: 0, opacity: 0 }} animate={{ y: 500, rotate: [0, 45, -45, 0], x: [0, 40, -40, 0], opacity: [0, 0.6, 0] }} transition={{ duration: 12 + Math.random() * 8, repeat: Infinity, delay: i * 2 }} className="absolute text-white/50 text-[20px]" style={{ left: `${Math.random()*100}%` }}>🪶</motion.div>
              ))}
           </div>
         );
@@ -478,7 +478,7 @@ export default function HexaCardPreview({
 
   return (
     <div 
-      className={`relative cursor-pointer transition-all duration-700 ease-in-out ${isVertical ? "w-[120px] h-[190px] sm:w-full sm:h-auto sm:max-w-[320px] sm:aspect-[1/1.58]" : "w-[240px] h-[152px] sm:w-full sm:h-auto sm:max-w-[min(450px,90vw)] sm:aspect-[1.58/1]"}`}
+      className={`relative cursor-pointer transition-all duration-700 ease-in-out shrink-0 ${isVertical ? "w-[285px] h-[450px]" : "w-[450px] h-[285px]"}`}
       style={{ perspective: "2500px" }}
       onMouseMove={(e) => {
         const rect = e.currentTarget.getBoundingClientRect();
