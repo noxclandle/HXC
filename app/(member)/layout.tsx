@@ -22,7 +22,7 @@ export default function MemberLayout({
            />
         </Link>
       </nav>
-      <main className="pb-24">{children}</main>
+      <main>{children}</main>
       <HubErrorBoundary>
         <ResidentAgent />
         <HiddenRTMonitor />

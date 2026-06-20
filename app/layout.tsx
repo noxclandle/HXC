@@ -54,7 +54,6 @@ export const viewport: Viewport = {
 import ConnectionInteraction from "@/components/ui/ConnectionInteraction";
 import NextAuthProvider from "@/components/providers/NextAuthProvider";
 import { ConnectionToastProvider } from "@/components/ui/ConnectionToast";
-import Footer from "@/components/ui/Footer";
 
 export default function RootLayout({
   children,
@@ -105,7 +104,27 @@ export default function RootLayout({
                   "url": "https://virtual-business-card.hexa-relation.com/purchase",
                   "priceCurrency": "JPY",
                   "price": "3000",
-                  "availability": "https://schema.org/InStock"
+                  "availability": "https://schema.org/InStock",
+                  "shippingDetails": {
+                    "@type": "OfferShippingDetails",
+                    "shippingRate": {
+                      "@type": "MonetaryAmount",
+                      "value": 0,
+                      "currency": "JPY"
+                    },
+                    "shippingDestination": {
+                      "@type": "DefinedRegion",
+                      "addressCountry": "JP"
+                    }
+                  },
+                  "hasMerchantReturnPolicy": {
+                    "@type": "MerchantReturnPolicy",
+                    "applicableCountry": "JP",
+                    "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnPeriod",
+                    "merchantReturnDays": 7,
+                    "returnMethod": "https://schema.org/ReturnByMail",
+                    "returnFees": "https://schema.org/ReturnFeesCustomerResponsibility"
+                  }
                 }
               }
             ])
@@ -120,7 +139,6 @@ export default function RootLayout({
               <main className="flex-grow">
                 {children}
               </main>
-              <Footer />
             </div>
           </ConnectionToastProvider>
         </NextAuthProvider>

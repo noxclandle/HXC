@@ -7,24 +7,28 @@ import Link from "next/link";
 export default function PrivacyPage() {
   const sections = [
     {
-      title: "1. 個人情報の取得 / Collection of Personal Information",
-      content: "当組織は、本サービスの提供にあたり、氏名、メールアドレス、配送先住所、決済情報等の個人情報を適正な手段により取得します。 / We collect personal information such as name, email address, shipping address, and payment information through appropriate means for the provision of our services."
+      title: "1. 個人情報の定義と取得範囲 / Definition & Scope of Personal Information",
+      content: "当組織は、本サービスにおいて以下の個人情報およびデータを適正かつ公正な手段によって取得します。(1) 氏名、メールアドレス、電話番号、パスワード。(2) 物理カード配送時の宛先情報（郵便番号、住所、受取人氏名）。(3) 決済取引データ（クレジットカード情報はStripeを介してトークン化され、当組織のサーバーには直接保存されません）。(4) 公開プロフィール用データ（役職、会社名、SNSリンク、ポートフォリオ、肖像写真データ）。 / We collect identifiers, contact details, shipping addresses, payment details (tokenized via Stripe), and profile details including portraits and SNS links."
     },
     {
-      title: "2. 利用目的 / Purpose of Use",
-      content: "取得した個人情報は、商品の発送、お問い合わせ対応、本人確認、および本サービスの維持・改善の目的で利用します。 / Collected information will be used for product shipping, customer support, identity verification, and maintaining or improving our services."
+      title: "2. 利用目的の特定 / Specific Purposes of Data Use",
+      content: "取得した個人情報は、以下の目的でのみ利用します。目的外での利用は行いません。(1) 物理カードの配送および管理、アフターサービス。(2) ユーザーアカウントの識別、およびNFCタップ時のプロフィール表示制御。(3) お問い合わせへの対応、本人確認。(4) Relation Token（RT）の管理、ゲーム・カスタマイズ機能の処理。(5) システム障害対応やセキュリティ強化のためのシステムログ解析。 / Used only for card shipping, identity sync, customer support, token/assets management, and system security analysis."
     },
     {
-      title: "3. 第三者提供の禁止 / Prohibition of Third-Party Disclosure",
-      content: "当組織は、法令に基づく場合を除き、利用者の同意なく個人情報を第三者に提供することはありません。ただし、配送や決済等の業務委託先を除きます。 / We do not provide personal information to third parties without consent, except as required by law or for delegated operations such as shipping and payment processing."
+      title: "3. 第三者委託と共同利用の管理 / Third-Party Delegation & Joint Usage",
+      content: "当組織は、法令に基づく場合を除き、利用者の同意なく個人情報を第三者に提供・開示することはありません。ただし、配送業務委託会社（ヤマト運輸・郵便局等）への発送先開示、および決済代行会社（Stripe）への情報共有など、サービスの履行に必要な範囲において、十分なセキュリティ基準を満たす委託先に対して最小限のデータを預託する場合があります。 / No third-party disclosure except as required by law or necessary for operations such as card logistics and payment processing under strict NDA."
     },
     {
-      title: "4. 安全管理措置 / Security Measures",
-      content: "当組織は、個人情報の漏洩、滅失の防止のため、適切なセキュリティ対策を講じ、個人情報を厳重に管理します。 / We implement appropriate security measures to prevent leakage or loss, and strictly manage personal information."
+      title: "4. 安全管理措置（データベースとセキュリティ） / Data Security Measures",
+      content: "当組織は、個人情報の漏洩、滅失、または毀損の防止のため、以下の安全管理措置を講じます。(1) データベース（Neon/Vercel Postgres）へのアクセス権限の最小化制限。(2) 通信の暗号化（SSL/TLS）。(3) クライアント写真データの自動縮小・最適化処理による容量制限と過負荷防止。(4) セキュリティパッチの定期適用と監査ログの記録。 / Implements databases access restrictions, SSL/TLS, image resizing policies to prevent data overload, and regular system audits."
     },
     {
-      title: "5. 開示・訂正・削除 / Disclosure, Correction, and Deletion",
-      content: "利用者は、自己の個人情報の開示、訂正、削除を請求することができます。請求があった場合は、本人確認の上、速やかに対応いたします。 / Users may request disclosure, correction, or deletion of their personal information. We will respond promptly after verifying your identity."
+      title: "5. 自己データの開示・訂正・削除（退会と物理カードの処理） / User Rights & Account Purge",
+      content: "ユーザーは、アカウントの管理画面から自己のプロフィール情報をいつでも開示・訂正・削除できます。また、個人情報保護法に基づく退会（アカウント削除）を請求した場合、当組織は個人特定情報を完全にデータベースから物理的消去します。この際、セキュリティと悪用防止の観点から、紐付けられていた物理カードのUIDは永久に無効化（Dead）処理され、再利用は不可能となります。 / Users have full rights to access, edit, or purge their data. Account deletion destroys all personal records, while permanently invalidating the associated physical card."
+    },
+    {
+      title: "6. お問い合わせ窓口 / Privacy Inquiries",
+      content: "個人情報の取り扱いに関する開示請求、ご意見、または苦情は、本ウェブサイトのコンタクトフォーム（または support@hexa-relation.com）よりご連絡ください。本人確認の上、合理的な期間内に適切に対応いたします。 / Contact us via our support email or contact form for any data inquiries or deletion requests."
     }
   ];
 

@@ -38,6 +38,16 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
   const [isResonating, setIsResonating] = useState(false);
   const [showRTPurchase, setShowRTPurchase] = useState(showPurchaseFromUrl);
   const [confirmingAsset, setConfirmingAsset] = useState<Asset | null>(null);
+  const [showRightScrollIndicator, setShowRightScrollIndicator] = useState(true);
+  const [showLeftScrollIndicator, setShowLeftScrollIndicator] = useState(false);
+
+  const handleCategoryScroll = (e: any) => {
+    const target = e.currentTarget;
+    const scrollLeft = target.scrollLeft;
+    const maxScroll = target.scrollWidth - target.clientWidth;
+    setShowLeftScrollIndicator(scrollLeft > 10);
+    setShowRightScrollIndicator(scrollLeft < maxScroll - 10);
+  };
   
   const defaultAlign = {
     company: "center",
@@ -251,7 +261,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
 
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-16 items-stretch lg:items-start flex-1 min-h-0">
         {/* Top Area: Fixed Preview Block on Mobile, Left Column on Desktop */}
-        <div className="w-full lg:w-5/12 shrink-0 bg-void pb-2 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[210px] lg:h-auto flex items-center justify-center lg:sticky lg:top-32 z-30">
+        <div className="w-full lg:w-5/12 shrink-0 bg-void pb-2 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-auto flex items-center justify-center lg:sticky lg:top-32 z-30">
            <UnifiedCardContainer 
              orientation={equipped.orientation}
              onOrientationChange={(o) => setEquipped((prev: any) => ({ ...prev, orientation: o }))}
@@ -261,7 +271,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
              isUpdating={isResonating}
            >
               <motion.div
-                className="w-full flex justify-center"
+                className="flex justify-center shrink-0"
                 animate={isResonating ? { 
                   scale: [1, 0.98, 1],
                   filter: ["blur(0px)", "blur(4px)", "blur(0px)"],
@@ -276,8 +286,8 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
            </UnifiedCardContainer>
         </div>
 
-        {/* Bottom Area: Scrollable Items & Navigation on Mobile, Right Column on Desktop */}
-        <div className="w-full lg:w-7/12 flex flex-col min-h-0 flex-1 overflow-y-auto lg:overflow-visible no-scrollbar">
+        {/* Bottom Area: Fixed Navigation & Scrollable Items on Mobile, Right Column on Desktop */}
+        <div className="w-full lg:w-7/12 flex flex-col min-h-0 flex-1 lg:overflow-visible no-scrollbar">
            {/* RT Purchase Section (Inside scrollable container on mobile) */}
            <AnimatePresence>
              {showRTPurchase && (
@@ -329,14 +339,24 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
              )}
            </AnimatePresence>
 
-           <div className="flex flex-col gap-4 relative">
+            <div className="flex flex-col gap-4 relative flex-1 min-h-0">
               {/* Category Navigation Wrapper with Left/Right Fades to visually indicate horizontal scroll */}
               <div className="relative w-full -mx-4 px-4 lg:mx-0 lg:px-0 z-20">
                  {/* Left Fade Overlay */}
                  <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-void via-void/80 to-transparent pointer-events-none z-30 lg:hidden" />
 
+                 {/* Left Scroll Indicator Arrow */}
+                 {showLeftScrollIndicator && (
+                   <div className="absolute left-1 top-1/2 -translate-y-1/2 z-40 text-azure-400 opacity-60 pointer-events-none lg:hidden">
+                     <ChevronRight size={14} className="rotate-180 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                   </div>
+                 )}
+
                  {/* Category Navigation (Horizontal swipe menu, sticky to top of scroll container) */}
-                 <div className="flex overflow-x-auto lg:flex-wrap no-scrollbar justify-start lg:justify-start border-b border-white/10 sticky top-0 bg-void pt-2 pb-0 gap-x-2">
+                 <div 
+                   onScroll={handleCategoryScroll}
+                   className="flex overflow-x-auto lg:flex-wrap no-scrollbar justify-start lg:justify-start border-b border-white/10 sticky top-0 bg-void pt-2 pb-0 gap-x-2"
+                 >
                    {CATEGORIES.map((cat) => {
                      const Icon = getCategoryIcon(cat.id);
                      const isActive = activeCategory === cat.id;
@@ -363,10 +383,21 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
 
                  {/* Right Fade Overlay */}
                  <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-void via-void/80 to-transparent pointer-events-none z-30 lg:hidden" />
+
+                 {/* Right Scroll Indicator Arrow */}
+                 {showRightScrollIndicator && (
+                   <motion.div 
+                     animate={{ x: [0, 4, 0] }}
+                     transition={{ repeat: Infinity, duration: 1.5 }}
+                     className="absolute right-1 top-1/2 -translate-y-1/2 z-40 text-azure-400 opacity-60 pointer-events-none lg:hidden"
+                   >
+                     <ChevronRight size={14} className="drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                   </motion.div>
+                 )}
               </div>
 
               {/* Items List Container */}
-              <div className="space-y-4 lg:max-h-[680px] lg:overflow-y-auto pr-2 lg:pr-4 custom-scrollbar pb-24">
+              <div className="space-y-4 flex-1 min-h-0 overflow-y-auto lg:max-h-[680px] pr-2 lg:pr-4 custom-scrollbar pb-24">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeCategory}
