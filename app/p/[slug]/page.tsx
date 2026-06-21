@@ -11,12 +11,18 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.slug);
+  const conditions: any[] = [
+    { handle_name: params.slug }
+  ];
+
+  if (isUuid) {
+    conditions.push({ id: params.slug });
+  }
+
   const user = await prisma.user.findFirst({
     where: { 
-      OR: [
-        { handle_name: params.slug },
-        { id: params.slug } // IDでアクセスされた場合のフォールバック
-      ]
+      OR: conditions
     },
     select: { name: true, handle_name: true, role: true, ai_config: true, photo_url: true }
   });
