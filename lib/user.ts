@@ -121,19 +121,20 @@ export async function getUserStatus(email: string | null | undefined) {
 }
 
 export async function getPublicProfile(slug: string) {
+  const decodedSlug = decodeURIComponent(slug);
   // UUID形式かどうかを判定する正規表現
-  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decodedSlug);
 
   const conditions: any[] = [
-    { handle_name: { equals: slug, mode: "insensitive" as const } },
-    { name: { equals: slug.replace(/-/g, " "), mode: "insensitive" as const } },
+    { handle_name: { equals: decodedSlug, mode: "insensitive" as const } },
+    { name: { equals: decodedSlug.replace(/-/g, " "), mode: "insensitive" as const } },
   ];
 
   if (isUuid) {
-    conditions.push({ id: slug });
+    conditions.push({ id: decodedSlug });
   }
 
-  if (slug === "architect") {
+  if (decodedSlug === "architect") {
     conditions.push({ email: "str1yf5x@gmail.com" });
   }
 

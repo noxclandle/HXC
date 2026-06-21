@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
   try {
-    const slug = params.slug;
+    const slug = decodeURIComponent(params.slug);
 
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
     const conditions: any[] = [
