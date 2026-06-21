@@ -43,6 +43,7 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
     },
     { label: "アセット大典", path: "/admin/items", icon: <BookOpen size={18}/>, desc: "称号・フレーム等の獲得条件管理" },
     { label: "カード中央台帳", path: "/admin/registry", icon: <Layers size={18}/>, desc: "物理カードの登録 & ペアリング" },
+    { label: "LP 管理簿", path: "/admin/lps", icon: <Layers size={18}/>, desc: "各種LP・特設ページのリンク管理" },
     { label: "発行・登録手順", path: "/admin/onboarding", icon: <ShieldCheck size={18}/>, desc: "新規ユーザー・カード発行プロトコル" },
     { label: "システム構成", path: "/admin/config", icon: <Database size={18}/>, desc: "価格設定 & 内部パラメータ" },
     { label: "セキュリティ司令室", path: "/admin/security", icon: <ShieldCheck size={18}/>, desc: "レートリミット & 不正アクセス監視" },
