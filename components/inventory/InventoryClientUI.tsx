@@ -208,7 +208,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
   };
 
   return (
-    <div className="max-w-7xl mx-auto pt-20 lg:pt-32 px-4 lg:px-6 pb-4 lg:pb-32 text-moonlight overflow-hidden h-[calc(100dvh-80px)] lg:h-auto flex flex-col lg:block">
+    <div className="max-w-7xl mx-auto pt-14 lg:pt-32 px-4 lg:px-6 pb-4 lg:pb-32 text-moonlight overflow-hidden h-[calc(100dvh-80px)] lg:h-auto flex flex-col lg:block">
       <style>{`
         .no-scrollbar::-webkit-scrollbar {
           display: none;
@@ -269,6 +269,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
              onTextColorChange={(c) => { const next = { ...equipped, textColor: c }; setEquipped(next); handleCommit(next); }}
              previewLabel={previewAsset ? `Previewing: ${previewAsset.name}` : "Live Preview / ライブプレビュー"}
              isUpdating={isResonating}
+             compact={true}
            >
               <motion.div
                 className="flex justify-center shrink-0"

@@ -12,6 +12,7 @@ interface UnifiedCardContainerProps {
   showControls?: boolean;
   previewLabel?: string;
   isUpdating?: boolean;
+  compact?: boolean;
 }
 
 /**
@@ -26,10 +27,11 @@ export default function UnifiedCardContainer({
   onTextColorChange,
   showControls = true,
   previewLabel = "Live Preview / ライブプレビュー",
-  isUpdating = false
+  isUpdating = false,
+  compact = false
 }: UnifiedCardContainerProps) {
   return (
-    <div className={`w-full py-4 lg:py-8 bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-visible group flex flex-col items-center transition-all duration-500 ${isUpdating ? 'opacity-30' : 'opacity-100'}`}>
+    <div className={`w-full ${compact ? 'py-1 lg:py-8' : 'py-4 lg:py-8'} bg-white/[0.01] lg:bg-white/[0.02] lg:border lg:border-white/5 shadow-2xl relative overflow-visible group flex flex-col items-center transition-all duration-500 ${isUpdating ? 'opacity-30' : 'opacity-100'}`}>
       
       {/* Controls Overlay */}
       {showControls && (
@@ -74,8 +76,12 @@ export default function UnifiedCardContainer({
       {/* Scaled Content Wrapper */}
       <div className={`w-full flex justify-center origin-center transition-transform duration-500 relative z-20 flex items-center
         ${orientation === 'horizontal' 
-          ? 'scale-[0.65] xs:scale-[0.75] sm:scale-[0.85] lg:scale-100 h-[185px] xs:h-[214px] sm:h-[242px] lg:h-[285px]' 
-          : 'scale-[0.55] xs:scale-[0.65] sm:scale-[0.75] lg:scale-100 h-[248px] xs:h-[293px] sm:h-[338px] lg:h-[450px]'
+          ? (compact 
+              ? 'scale-[0.5] xs:scale-[0.6] sm:scale-[0.7] lg:scale-100 h-[140px] xs:h-[170px] sm:h-[200px] lg:h-[285px]'
+              : 'scale-[0.65] xs:scale-[0.75] sm:scale-[0.85] lg:scale-100 h-[185px] xs:h-[214px] sm:h-[242px] lg:h-[285px]')
+          : (compact
+              ? 'scale-[0.4] xs:scale-[0.5] sm:scale-[0.6] lg:scale-100 h-[180px] xs:h-[225px] sm:h-[270px] lg:h-[450px]'
+              : 'scale-[0.55] xs:scale-[0.65] sm:scale-[0.75] lg:scale-100 h-[248px] xs:h-[293px] sm:h-[338px] lg:h-[450px]')
         }
       `}>
         {children}
@@ -83,7 +89,7 @@ export default function UnifiedCardContainer({
 
       {/* Label */}
       {previewLabel && (
-        <div className="text-center mt-2 lg:mt-4 pb-2 flex flex-col items-center gap-1">
+        <div className={`text-center ${compact ? 'mt-1 pb-1' : 'mt-2 lg:mt-4 pb-2'} flex flex-col items-center gap-1`}>
            <p className="text-[7px] tracking-[0.3em] uppercase opacity-20 font-bold">{previewLabel}</p>
         </div>
       )}

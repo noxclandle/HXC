@@ -330,7 +330,7 @@ export default function ProfileEditPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto pt-20 lg:pt-32 px-4 lg:px-6 pb-24 relative text-moonlight">
+    <div className="max-w-7xl mx-auto pt-14 lg:pt-32 px-4 lg:px-6 pb-24 relative text-moonlight">
       <header className="mb-8 lg:mb-16 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
         <div className="space-y-4 w-full lg:w-auto">
           <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.2em] lg:tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity mb-4 lg:mb-8 text-white">
@@ -356,11 +356,12 @@ export default function ProfileEditPage() {
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-20 items-start">
         {/* Preview Container */}
-        <div className="w-full lg:w-5/12 sticky top-0 lg:top-32 z-50 order-1 lg:order-none bg-void/95 backdrop-blur-lg pb-1 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-[38vh] lg:h-auto flex items-center justify-center">
+        <div className="w-full lg:w-5/12 relative lg:sticky lg:top-32 z-30 order-1 lg:order-none pb-4 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-auto flex items-center justify-center">
            <UnifiedCardContainer 
              orientation={formData.orientation}
              onOrientationChange={updateOrientation}
              previewLabel="Live Preview / ライブプレビュー"
+             compact={true}
            >
                 <HexaCardPreview 
                   {...mapUserToCardProps(formData, formData.orientation, equipped)}
@@ -369,7 +370,6 @@ export default function ProfileEditPage() {
         </div>
 
         <div className="w-full lg:w-7/12 order-2 lg:order-none space-y-12 lg:space-y-16">
-           <div className="lg:hidden h-[38vh]" />
 
            <form onSubmit={(e) => e.preventDefault()} className="space-y-16">
               <section className="space-y-10 p-4 lg:p-0">
