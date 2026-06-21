@@ -22,19 +22,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
   // Portfolio Links
   const portfolioLinks = data.portfolio_links || [];
 
-  // Local Memo (Observation Log) State
-  const [memo, setMemo] = useState("");
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedMemo = localStorage.getItem(`hxc_memo_${data.id}`);
-      if (savedMemo) setMemo(savedMemo);
-    }
-  }, [data.id]);
 
-  const handleSaveMemo = (val: string) => {
-    setMemo(val);
-    localStorage.setItem(`hxc_memo_${data.id}`, val);
-  };
 
   // Message Form State
   const [messageForm, setMessageForm] = useState({ name: "", company: "", content: "" });
@@ -206,70 +194,52 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
         </motion.div>
       </div>
 
-      {/* Observation Log & Messaging Section */}
+      {/* Messaging Section */}
       <section className="relative z-10 w-full max-w-lg mx-auto py-24 px-6 space-y-24 border-t border-white/5">
-         {/* Observation Log (Local Only) */}
-         <div className="space-y-8">
-            <header className="flex items-center gap-4">
-               <Edit3 className="text-azure-400" size={18} />
-               <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-white">Observation Log</h3>
-               <span className="text-[8px] tracking-[0.2em] uppercase opacity-20 ml-auto">Local Archive Only</span>
-            </header>
-            <p className="text-[9px] tracking-widest text-white/30 leading-relaxed uppercase">
-              この人物に関するあなた専用のメモです。サーバーには送信されず、この端末にのみ保存されます。
-            </p>
-            <textarea 
-              value={memo}
-              onChange={(e) => handleSaveMemo(e.target.value)}
-              placeholder="MEMO..."
-              className="w-full bg-white/[0.02] border border-white/10 p-6 text-xs tracking-widest outline-none focus:border-azure-500/50 transition-all h-32 resize-none text-white font-sans uppercase"
-            />
-         </div>
-
          {/* Identity Contact (Message to Owner) */}
          <div className="space-y-8">
             <header className="flex items-center gap-4">
                <MessageSquare className="text-rose-400" size={18} />
-               <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-white">Transmit Message</h3>
-               <span className="text-[8px] tracking-[0.2em] uppercase opacity-20 ml-auto">Secure Channel</span>
+               <h3 className="text-[11px] tracking-[0.2em] lg:tracking-[0.4em] uppercase font-bold text-white">Transmit Message / メッセージ送信</h3>
+               <span className="text-[8px] tracking-[0.2em] uppercase opacity-20 ml-auto">Secure Channel / 暗号化通信</span>
             </header>
             
             {messageSent ? (
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="p-12 border border-emerald-500/20 bg-emerald-500/5 text-center space-y-4">
                  <CheckCircle2 size={32} className="mx-auto text-emerald-400" />
-                 <p className="text-[10px] tracking-[0.3em] uppercase text-emerald-400 font-bold">Transmission Complete</p>
-                 <p className="text-[8px] tracking-widest text-white/40 uppercase">メッセージを送信しました。管理局にて精査されます。</p>
+                 <p className="text-[10px] tracking-[0.3em] uppercase text-emerald-400 font-bold">Transmission Complete / 送信完了</p>
+                 <p className="text-[8px] tracking-widest text-white/40 uppercase">メッセージを送信しました。相手に届くまでお待ちください。</p>
               </motion.div>
             ) : (
               <form onSubmit={handleSendMessage} className="space-y-6">
                  <div className="grid grid-cols-2 gap-4">
                     <input 
                       required
-                      placeholder="NAME / お名前"
+                      placeholder="NAME / お名前 (必須)"
                       value={messageForm.name}
                       onChange={(e) => setMessageForm({...messageForm, name: e.target.value})}
-                      className="bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-white/30 text-white uppercase"
+                      className="bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-white/30 text-white"
                     />
                     <input 
-                      placeholder="COMPANY / 社名 (OPTIONAL)"
+                      placeholder="COMPANY / 社名・組織名"
                       value={messageForm.company}
                       onChange={(e) => setMessageForm({...messageForm, company: e.target.value})}
-                      className="bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-white/30 text-white uppercase"
+                      className="bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-white/30 text-white"
                     />
                  </div>
                  <textarea 
                    required
                    rows={4}
-                   placeholder="YOUR MESSAGE..."
+                   placeholder="YOUR MESSAGE / メッセージ内容を入力してください... (必須)"
                    value={messageForm.content}
                    onChange={(e) => setMessageForm({...messageForm, content: e.target.value})}
-                   className="w-full bg-white/[0.02] border border-white/10 p-6 text-[10px] tracking-widest outline-none focus:border-white/30 transition-all resize-none text-white font-sans uppercase"
+                   className="w-full bg-white/[0.02] border border-white/10 p-6 text-[10px] tracking-widest outline-none focus:border-white/30 transition-all resize-none text-white font-sans"
                  />
                  <button 
                    disabled={sendingMessage}
-                   className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.5em] uppercase hover:bg-zinc-200 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+                   className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.3em] lg:tracking-[0.5em] uppercase hover:bg-zinc-200 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
                  >
-                   {sendingMessage ? <Loader2 size={16} className="animate-spin" /> : <><Send size={14} /> Transmit Identity Message</>}
+                   {sendingMessage ? <Loader2 size={16} className="animate-spin" /> : <><Send size={14} /> Transmit Message / メッセージを送信する</>}
                  </button>
               </form>
             )}
@@ -318,8 +288,14 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
               </div>
             ))}
          </div>
-         <div className="text-center py-20 bg-azure-500/[0.02] border border-azure-500/10 backdrop-blur-sm relative overflow-hidden">
-            <Link href="/purchase" className="inline-flex items-center gap-6 px-16 py-6 bg-white text-void font-bold text-[11px] tracking-[1.2em] uppercase hover:bg-azure-50 transition-all shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:scale-105 active:scale-95 group">Order Your Identity / カードを申し込む <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" /></Link>
+         <div className="text-center py-12 lg:py-20 bg-azure-500/[0.02] border border-azure-500/10 backdrop-blur-sm relative overflow-hidden px-4">
+            <Link 
+              href="/purchase" 
+              className="inline-flex items-center justify-center gap-3 w-full max-w-md py-5 bg-white text-void font-semibold text-[10px] lg:text-[11px] tracking-[0.2em] lg:tracking-[0.4em] uppercase hover:bg-zinc-200 transition-all shadow-[0_0_40px_rgba(255,255,255,0.05)] hover:scale-[1.02] active:scale-[0.98] group"
+            >
+              Order Your Identity / カードを申し込む 
+              <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
+            </Link>
          </div>
       </section>
     </main>
