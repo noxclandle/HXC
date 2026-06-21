@@ -11,13 +11,14 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.slug);
+  const decodedSlug = decodeURIComponent(params.slug);
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decodedSlug);
   const conditions: any[] = [
-    { handle_name: params.slug }
+    { handle_name: decodedSlug }
   ];
 
   if (isUuid) {
-    conditions.push({ id: params.slug });
+    conditions.push({ id: decodedSlug });
   }
 
   const user = await prisma.user.findFirst({
@@ -68,13 +69,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PublicProfilePage({ params }: Props) {
+  const decodedSlug = decodeURIComponent(params.slug);
   // 1. クローラー判定
   const reqHeaders = headers();
   const userAgent = reqHeaders.get('user-agent') || '';
   const isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(userAgent);
 
   // 2. サーバーサイドでプロフィール情報をフェッチ
-  const profileData = await getPublicProfile(params.slug);
+  const profileData = await getPublicProfile(decodedSlug);
   
   if (!profileData) {
     notFound();
@@ -119,7 +121,7 @@ export default async function PublicProfilePage({ params }: Props) {
         <ProfileClientUI data={profileData} isOwner={false} />
       ) : (
         // 通常ユーザーには、高級感のある「アンヴェイル（開封）」演出を体験させる
-        <PublicProfileClient slug={params.slug} />
+        <PublicProfileClient slug={decodedSlug} />
       )}
     </>
   );
