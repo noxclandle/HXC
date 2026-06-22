@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Book, Sparkles, Trophy, Music2, Volume2, VolumeX, Shield, Bell, HelpCircle, ChevronRight, Zap, Smartphone } from "lucide-react";
+import { X, Book, Sparkles, Trophy, Music2, Volume2, VolumeX, Shield, Bell, HelpCircle, ChevronRight, Zap, Smartphone, Mail } from "lucide-react";
 import Link from "next/link";
 import { ambientManager } from "@/lib/audio/ambient";
 import { useToast } from "@/components/ui/ConnectionToast";
@@ -290,6 +290,17 @@ export default function ResidentAgent() {
                          <div className="flex items-center gap-3">
                             <Trophy size={14} className="opacity-40 group-hover:opacity-100 transition-opacity" />
                             <span className="text-[9px] tracking-[0.2em] uppercase">Shop & Items / アイテム・装備</span>
+                         </div>
+                         <ChevronRight size={14} className="opacity-20"/>
+                      </Link>
+
+                      <Link href="/hub/messages" onClick={() => setIsOpen(false)} className="w-full p-4 bg-white/5 border border-white/10 flex items-center justify-between group transition-all hover:border-white/30">
+                         <div className="flex items-center gap-3">
+                            <Mail size={14} className="opacity-40 group-hover:opacity-100 transition-opacity text-emerald-400" />
+                            <span className="text-[9px] tracking-[0.2em] uppercase">Mailbox / 受信メッセージ</span>
+                            {unreadMessages > 0 && (
+                              <span className="bg-azure-500 text-white text-[7px] px-1.5 py-0.5 rounded-full font-bold animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.6)]">{unreadMessages}</span>
+                            )}
                          </div>
                          <ChevronRight size={14} className="opacity-20"/>
                       </Link>
