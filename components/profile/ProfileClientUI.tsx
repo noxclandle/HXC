@@ -247,13 +247,14 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
       </section>
 
       {/* Digital QR Exchange Section */}
-      <section className="relative z-10 w-full max-w-lg mx-auto py-24 px-6 border-t border-white/5 flex flex-col items-center space-y-12">
-         <div className="text-center space-y-4">
+      {isOwner && (
+        <section className="relative z-10 w-full max-w-lg mx-auto py-24 px-6 border-t border-white/5 flex flex-col items-center space-y-12">
+          <div className="text-center space-y-4">
             <h3 className="text-[10px] tracking-[0.5em] uppercase font-bold text-azure-400">Digital Handshake</h3>
             <p className="text-[8px] tracking-[0.2em] uppercase opacity-40">物理カードがない場合は、このQRを読み取ってください</p>
-         </div>
-         
-         <div className="p-6 bg-white border border-white/10 shadow-[0_0_50px_rgba(59,130,246,0.2)] rounded-xl relative group">
+          </div>
+          
+          <div className="p-6 bg-white border border-white/10 shadow-[0_0_50px_rgba(59,130,246,0.2)] rounded-xl relative group">
             <div className="absolute inset-[-10px] border border-azure-500/20 rounded-2xl animate-pulse" />
             <QRCodeSVG 
               value={typeof window !== "undefined" ? window.location.href : `https://virtual-business-card.hexa-relation.com/p/${data.handle_name || data.id}`}
@@ -266,29 +267,121 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white border-2 border-void flex items-center justify-center rounded-sm">
                <QrCode size={16} className="text-void" />
             </div>
-         </div>
+          </div>
 
-         <p className="text-[7px] tracking-[0.4em] uppercase opacity-20 italic">Encrypted via Hexa System</p>
-      </section>
+          <p className="text-[7px] tracking-[0.4em] uppercase opacity-20 italic">Encrypted via Hexa System</p>
+        </section>
+      )}
 
       {/* Feature section */}
-      <section className="relative z-10 w-full max-w-5xl py-48 px-6 border-t border-white/5 space-y-32">
-         <div className="text-center space-y-12">
+      {!isOwner && (
+        <section className="relative z-10 w-full max-w-5xl py-48 px-6 border-t border-white/5 space-y-32">
+          <div className="text-center space-y-12">
             <h2 className="text-3xl md:text-5xl tracking-[0.2em] font-extralight uppercase text-white leading-tight">あなたも、次世代の<br />デジタル名刺を<br />始めてみませんか？</h2>
-         </div>
-         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 px-6">
-            {[
-              { title: "Physical Sync", desc: "物理カードとデジタルが1:1で同調。タップ一つで相手の記憶に刻まれます。" },
-              { title: "Total Control", desc: "デザイン、配置、ロゴ、自画像。すべてをあなたの意志で調律可能。" },
-              { title: "Star Chart", desc: "繋がった人脈は「星座」として記録され、あなたの影響力を可視化します。" },
-            ].map((f, i) => (
-              <div key={i} className="space-y-4 p-8 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all group text-white">
-                 <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-white/80">{f.title}</h3>
-                 <p className="text-[9px] tracking-widest leading-loose opacity-40 uppercase">{f.desc}</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
+            {/* Card 1: Touch Resonance / NFC連携と共鳴 */}
+            <div className="space-y-6 p-6 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-300 group text-white rounded-lg flex flex-col justify-between">
+              <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/30 transition-colors">
+                {/* Smartphone silhouette */}
+                <div className="absolute right-12 w-14 h-24 border border-white/10 rounded-lg flex items-center justify-center bg-zinc-950/80 transition-all group-hover:border-white/30">
+                  <div className="w-1.5 h-1.5 bg-white/20 rounded-full absolute top-1.5" />
+                  <div className="w-8 h-12 bg-white/[0.02] border border-white/5 rounded flex flex-col justify-center items-center">
+                    <Smartphone size={12} className="text-white/30 group-hover:text-azure-400 transition-colors duration-300" />
+                  </div>
+                </div>
+                
+                {/* NFC Card hovering */}
+                <div className="absolute left-12 w-16 h-10 bg-white/5 border border-white/20 rounded-md shadow-lg transition-all duration-500 transform group-hover:translate-x-6 group-hover:rotate-12 flex items-center justify-center backdrop-blur-sm z-10">
+                  <div className="text-[6px] tracking-widest text-white/50 uppercase font-mono font-bold">HEXA</div>
+                </div>
+
+                {/* Ripple animation */}
+                <div className="absolute left-[110px] w-12 h-12 flex items-center justify-center">
+                  <div className="absolute w-8 h-8 rounded-full border border-azure-500/40 animate-ping opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute w-12 h-12 rounded-full border border-azure-400/20 animate-pulse" />
+                </div>
               </div>
-            ))}
-         </div>
-         <div className="text-center py-12 lg:py-20 bg-azure-500/[0.02] border border-azure-500/10 backdrop-blur-sm relative overflow-hidden px-4">
+
+              <div className="space-y-2">
+                <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-azure-400 flex flex-wrap items-center gap-1">
+                  Touch Resonance <span className="text-[9px] text-white/60 font-normal">/ NFC連携と共鳴</span>
+                </h3>
+                <p className="text-[9px] tracking-widest leading-loose opacity-50">
+                  物理カードをスマートフォンの背面にかざすだけで、瞬時にあなたのデジタルポートフォリオを展開。相手の記憶に深く刻み込みます。事前のアプリインストールは一切不要です。
+                </p>
+              </div>
+            </div>
+
+            {/* Card 2: Aesthetic Architect / 3万通りの意匠 */}
+            <div className="space-y-6 p-6 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-300 group text-white rounded-lg flex flex-col justify-between">
+              <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/30 transition-colors">
+                <div className="relative w-24 h-24 flex items-center justify-center">
+                  {/* Frame layer (top) */}
+                  <div className="absolute w-20 h-12 border border-azure-400 bg-azure-950/20 rounded transform -rotate-12 -translate-y-4 group-hover:-translate-y-8 group-hover:scale-105 transition-all duration-300 flex items-center justify-center shadow-lg">
+                    <Layers size={10} className="text-azure-400 animate-pulse" />
+                  </div>
+                  
+                  {/* Core Design layer (middle) */}
+                  <div className="absolute w-20 h-12 border border-white/20 bg-zinc-900/60 rounded transform -rotate-12 group-hover:scale-100 transition-all duration-300 flex items-center justify-center">
+                    <Sparkles size={10} className="text-white/60" />
+                  </div>
+                  
+                  {/* Base structure layer (bottom) */}
+                  <div className="absolute w-20 h-12 border border-dashed border-white/10 bg-void rounded transform -rotate-12 translate-y-4 group-hover:translate-y-8 transition-all duration-300 flex items-center justify-center opacity-60">
+                    <span className="text-[6px] text-white/20 font-mono">BASE</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-azure-400 flex flex-wrap items-center gap-1">
+                  Aesthetic Architect <span className="text-[9px] text-white/60 font-normal">/ 3万通りの意匠</span>
+                </h3>
+                <p className="text-[9px] tracking-widest leading-loose opacity-50">
+                  レイアウト、フレーム、背面エフェクト、オーラ光彩。あなたという存在を表現するために、数万通りのデザインシステムから直感的に構築可能。
+                </p>
+              </div>
+            </div>
+
+            {/* Card 3: Stealth Identity / 匿名性と存在の保護 */}
+            <div className="space-y-6 p-6 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-300 group text-white rounded-lg flex flex-col justify-between">
+              <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/30 transition-colors">
+                {/* Left Side: Public Profile (Alias) */}
+                <div className="w-1/2 h-full border-r border-white/5 flex flex-col items-center justify-center p-3 relative bg-azure-500/[0.01]">
+                  <div className="w-8 h-8 rounded-full bg-azure-500/10 border border-azure-500/20 flex items-center justify-center mb-1.5">
+                    <Sparkles size={12} className="text-azure-400" />
+                  </div>
+                  <div className="text-[8px] font-bold tracking-wider text-azure-400">ALIAS NAME</div>
+                  <div className="text-[6px] tracking-widest text-white/30 uppercase mt-0.5">Public Persona</div>
+                </div>
+
+                {/* Right Side: Private Info (Lock/Shield) */}
+                <div className="w-1/2 h-full flex flex-col items-center justify-center p-3 relative">
+                  <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-1.5 group-hover:bg-zinc-800 transition-colors duration-300">
+                    <ShieldCheck size={12} className="text-white/60 group-hover:text-white transition-colors duration-300" />
+                  </div>
+                  <div className="text-[8px] font-bold tracking-wider text-white/70">SECURED DATA</div>
+                  <div className="text-[6px] tracking-widest text-white/30 uppercase mt-0.5">Personal Info</div>
+                </div>
+                
+                {/* Animated separation barrier */}
+                <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-gradient-to-b from-transparent via-azure-500/30 to-transparent" />
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-azure-400 flex flex-wrap items-center gap-1">
+                  Stealth Identity <span className="text-[9px] text-white/60 font-normal">/ 匿名性と存在の保護</span>
+                </h3>
+                <p className="text-[9px] tracking-widest leading-loose opacity-50">
+                  本名や連絡先を安全に保護。ネットの活動名（Alias）やポートフォリオを主体とし、真に繋がった相手にだけメッセージや連絡先を安全に開示します。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center py-12 lg:py-20 bg-azure-500/[0.02] border border-azure-500/10 backdrop-blur-sm relative overflow-hidden px-4">
             <Link 
               href="/purchase" 
               className="inline-flex items-center justify-center gap-3 w-full max-w-md py-5 bg-white text-void font-semibold text-[10px] lg:text-[11px] tracking-[0.2em] lg:tracking-[0.4em] uppercase hover:bg-zinc-200 transition-all shadow-[0_0_40px_rgba(255,255,255,0.05)] hover:scale-[1.02] active:scale-[0.98] group"
@@ -296,8 +389,9 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
               Order Your Identity / カードを申し込む 
               <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
             </Link>
-         </div>
-      </section>
+          </div>
+        </section>
+      )}
     </main>
   );
 }
