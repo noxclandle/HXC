@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Camera, Book, ShieldCheck, ChevronRight, Newspaper, Sparkles, Smartphone, HelpCircle } from "lucide-react";
+import { Camera, Book, ShieldCheck, ChevronRight, Newspaper, Sparkles, Smartphone, HelpCircle, Mail, X } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,6 +29,7 @@ export default function HubClientUI({
   const [selectedNews, setSelectedNews] = useState<any>(null);
   const [mounted, setMounted] = useState(false);
   const [isTarotOpen, setIsTarotOpen] = useState(false);
+  const [bonusPromptDismissed, setBonusPromptDismissed] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -204,7 +205,7 @@ export default function HubClientUI({
             bio: realStats?.profile?.bio
           }} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-12">
              <Link href="/scan" className="group p-8 border border-azure-500/20 bg-azure-500/[0.03] hover:bg-azure-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-azure-500/40" />
                 <div>
@@ -220,6 +221,21 @@ export default function HubClientUI({
                    <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-bronze-300 group-hover:opacity-100">名刺帳 / Library</p>
                 </div>
                 <Book size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
+             </Link>
+             <Link href="/hub/messages" className="group p-8 border border-emerald-500/20 bg-emerald-500/[0.03] hover:bg-emerald-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500/40" />
+                <div className="flex flex-col justify-between h-full items-start">
+                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100 flex items-center gap-2">
+                     Mailbox
+                     {realStats?.unread_messages > 0 && (
+                       <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-[8px] font-bold leading-none text-white bg-azure-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.6)]">
+                         {realStats.unread_messages}
+                       </span>
+                     )}
+                   </h2>
+                   <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-emerald-300 group-hover:opacity-100">受信ボックス / Inbox</p>
+                </div>
+                <Mail size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
              </Link>
           </div>
 
@@ -278,7 +294,7 @@ export default function HubClientUI({
 
         {/* Floating Daily Bonus Prompt */}
         <AnimatePresence>
-          {isBonusAvailable && (
+          {isBonusAvailable && !bonusPromptDismissed && (
             <motion.div 
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -287,7 +303,20 @@ export default function HubClientUI({
             >
               <div className="bg-void/95 backdrop-blur-md border border-azure-500/30 shadow-[0_8px_32px_rgba(59,130,246,0.2)] p-3.5 rounded-2xl relative overflow-hidden group">
                  <div className="absolute inset-0 bg-azure-500/5 animate-pulse pointer-events-none" />
-                 <button onClick={() => setIsTarotOpen(true)} className="relative z-10 text-left w-full">
+                 
+                 {/* Close Button */}
+                 <button 
+                   onClick={(e) => {
+                     e.stopPropagation();
+                     setBonusPromptDismissed(true);
+                   }}
+                   className="absolute top-2 right-2 z-20 p-1 text-white/40 hover:text-white hover:bg-white/5 rounded-full transition-all"
+                   title="Dismiss / 閉じる"
+                 >
+                   <X size={10} />
+                 </button>
+
+                 <button onClick={() => setIsTarotOpen(true)} className="relative z-10 text-left w-full pr-4">
                     <div className="flex items-center gap-2 mb-1.5">
                       <Sparkles size={11} className="text-azure-400" />
                       <span className="text-[8px] tracking-[0.2em] font-bold uppercase text-azure-400">Daily Resonance</span>

@@ -148,33 +148,33 @@ export default function HexaCardPreview({
     if (!mounted) return null;
     switch (aura) {
       case "WhiteMist":
-        return <motion.div animate={{ opacity: [0.2, 0.5, 0.2], scale: [1, 1.2, 1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-[-60px] bg-white/30 blur-[60px] rounded-full z-0" />;
+        return <motion.div animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.05, 1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-[-15px] bg-white/20 blur-[15px] rounded-lg z-0" />;
       case "AzureFlame":
-        return <motion.div animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.4, 1] }} transition={{ duration: 3, repeat: Infinity }} className="absolute inset-[-80px] bg-azure-500/40 blur-[80px] rounded-full z-0" />;
+        return <motion.div animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.08, 1] }} transition={{ duration: 3, repeat: Infinity }} className="absolute inset-[-18px] bg-azure-500/30 blur-[20px] rounded-lg z-0" />;
       case "GoldenHalo":
-        return <motion.div animate={{ opacity: [0.4, 0.8, 0.4], rotate: 360, scale: [1, 1.1, 1] }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="absolute inset-[-100px] border-[20px] border-amber-500/30 blur-[40px] rounded-full z-0" />;
+        return <motion.div animate={{ opacity: [0.5, 0.8, 0.5], rotate: 360, scale: [1, 1.03, 1] }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="absolute inset-[-15px] border-[6px] border-amber-500/20 blur-[10px] rounded-lg z-0" />;
       case "VioletHaze":
-        return <motion.div animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.3, 1] }} transition={{ duration: 5, repeat: Infinity }} className="absolute inset-[-70px] bg-purple-500/40 blur-[70px] rounded-full z-0" />;
+        return <motion.div animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.06, 1] }} transition={{ duration: 5, repeat: Infinity }} className="absolute inset-[-16px] bg-purple-500/30 blur-[18px] rounded-lg z-0" />;
       case "EmeraldDust":
         return (
-          <div className="absolute inset-[-60px] z-0 pointer-events-none">
-             {[...Array(25)].map((_, i) => (
-               <motion.div key={i} animate={{ y: [0, -40, 0], x: [0, (Math.random()-0.5)*40, 0], opacity: [0, 0.6, 0] }} transition={{ duration: 2 + Math.random() * 2, repeat: Infinity, delay: i * 0.1 }} className="absolute w-1.5 h-1.5 bg-emerald-400 rounded-full blur-[1px]" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }} />
+          <div className="absolute inset-[-15px] z-0 pointer-events-none rounded-lg overflow-hidden">
+             {[...Array(15)].map((_, i) => (
+                <motion.div key={i} animate={{ y: [0, -15, 0], x: [0, (Math.random()-0.5)*15, 0], opacity: [0, 0.8, 0] }} transition={{ duration: 2 + Math.random() * 2, repeat: Infinity, delay: i * 0.15 }} className="absolute w-1 h-1 bg-emerald-400 rounded-full blur-[0.5px]" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }} />
              ))}
-             <motion.div animate={{ opacity: [0.1, 0.3, 0.1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-0 bg-emerald-500/20 blur-[60px] rounded-full" />
+             <motion.div animate={{ opacity: [0.15, 0.35, 0.15] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-0 bg-emerald-500/15 blur-[15px] rounded-lg" />
           </div>
         );
       case "CrimsonFlare":
-        return <motion.div animate={{ scale: [1, 1.8, 1], opacity: [0.3, 0.7, 0.3] }} transition={{ duration: 0.8, repeat: Infinity }} className="absolute inset-[-90px] bg-rose-600/40 blur-[90px] rounded-full z-0" />;
+        return <motion.div animate={{ scale: [1, 1.1, 1], opacity: [0.4, 0.8, 0.4] }} transition={{ duration: 0.8, repeat: Infinity }} className="absolute inset-[-20px] bg-rose-600/30 blur-[22px] rounded-lg z-0" />;
       case "VoidEclipse":
-        return <div className="absolute inset-[-120px] bg-black blur-[100px] opacity-90 z-0 shadow-[0_0_100px_rgba(255,255,255,0.1)]" />;
+        return <div className="absolute inset-[-25px] bg-black blur-[25px] opacity-95 z-0 shadow-[0_0_25px_rgba(255,255,255,0.05)] rounded-lg" />;
       case "PrismGlow":
-        return <motion.div animate={{ rotate: 360, scale: [1, 1.2, 1] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} className="absolute inset-[-110px] bg-[conic-gradient(from_0deg,red,orange,yellow,green,blue,indigo,violet,red)] opacity-40 blur-[80px] rounded-full z-0" />;
+        return <motion.div animate={{ rotate: 360, scale: [1, 1.05, 1] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} className="absolute inset-[-22px] bg-[conic-gradient(from_0deg,red,orange,yellow,green,blue,indigo,violet,red)] opacity-30 blur-[20px] rounded-lg z-0" />;
       case "CyberGrid":
         return (
-          <div className="absolute inset-[-50px] z-0 overflow-hidden opacity-30">
-             <div className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f6_2px,transparent_2px),linear-gradient(to_bottom,#3b82f6_2px,transparent_2px)] bg-[size:15px_15px] blur-[2px]" />
-             <motion.div animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 2, repeat: Infinity }} className="absolute inset-0 bg-azure-500/10 blur-[40px]" />
+          <div className="absolute inset-[-12px] z-0 overflow-hidden opacity-30 rounded-lg">
+             <div className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f6_2px,transparent_2px),linear-gradient(to_bottom,#3b82f6_2px,transparent_2px)] bg-[size:10px_10px] blur-[1px]" />
+             <motion.div animate={{ opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 2, repeat: Infinity }} className="absolute inset-0 bg-azure-500/15 blur-[10px] rounded-lg" />
           </div>
         );
       default: return null;
@@ -195,21 +195,21 @@ export default function HexaCardPreview({
       case "Emerald": return "border-[2px] border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.5)]";
       case "Platinum": return "border-[4px] border-slate-300 shadow-2xl ring-1 ring-white/20";
       case "Crimson": return "border-[3px] border-rose-700 shadow-[0_0_30px_rgba(190,18,60,0.5)]";
-      case "Obsidian": return "border-[2px] border-white/10 shadow-2xl ring-1 ring-white/5 bg-black";
+      case "Obsidian": return "border-[2px] border-white/10 shadow-2xl ring-1 ring-white/5";
       case "Neon": return "border-[2px] border-azure-400 shadow-[0_0_20px_rgba(59,130,246,0.5)] ring-1 ring-azure-300/30";
-      case "Gothic": return "border-[3px] border-stone-800 shadow-2xl ring-1 ring-red-900/20 bg-[#050505]";
-      case "Void": return "border-[5px] border-black shadow-[0_0_40px_rgba(255,255,255,0.05)] bg-black";
-      case "ImperialGold": return "border-[6px] border-amber-500 shadow-[0_0_50px_rgba(245,158,11,0.3)] bg-[#050505]";
-      case "Glass": return "border-[2px] border-white/20 shadow-xl bg-white/5 backdrop-blur-md";
-      case "Titanium": return "border-[3px] border-slate-500 shadow-lg bg-zinc-900";
-      case "Marble": return "border-[4px] border-slate-200 shadow-2xl bg-white/90 ring-1 ring-black/5";
-      case "PrismLine": return "border-[2px] border-white/40 shadow-[0_0_15px_rgba(255,255,255,0.5)] bg-gradient-to-tr from-rose-500/10 via-azure-500/10 to-emerald-500/10";
-      case "CarbonFiber": return "border-[2px] border-zinc-700 shadow-lg bg-black";
-      case "Linen": return "border-[1px] border-stone-300 shadow-sm bg-[#faf9f6]";
-      case "Opal": return "border-[3px] border-indigo-100 shadow-[0_0_30px_rgba(199,210,254,0.4)] bg-white/80";
-      case "Iron": return "border-[3px] border-zinc-600 shadow-inner bg-zinc-800";
-      case "Copper": return "border-[2px] border-orange-800 shadow-xl bg-[#2a1a15]";
-      case "Velvet": return "border-[5px] border-rose-900 shadow-2xl bg-[#1a0505]";
+      case "Gothic": return "border-[3px] border-stone-800 shadow-2xl ring-1 ring-red-900/20";
+      case "Void": return "border-[5px] border-black shadow-[0_0_40px_rgba(255,255,255,0.05)]";
+      case "ImperialGold": return "border-[6px] border-amber-500 shadow-[0_0_50px_rgba(245,158,11,0.3)]";
+      case "Glass": return "border-[2px] border-white/20 shadow-xl";
+      case "Titanium": return "border-[3px] border-slate-500 shadow-lg";
+      case "Marble": return "border-[4px] border-slate-200 shadow-2xl ring-1 ring-black/5";
+      case "PrismLine": return "border-[2px] border-white/40 shadow-[0_0_15px_rgba(255,255,255,0.5)]";
+      case "CarbonFiber": return "border-[2px] border-zinc-700 shadow-lg";
+      case "Linen": return "border-[1px] border-stone-300 shadow-sm";
+      case "Opal": return "border-[3px] border-indigo-100 shadow-[0_0_30px_rgba(199,210,254,0.4)]";
+      case "Iron": return "border-[3px] border-zinc-600 shadow-inner";
+      case "Copper": return "border-[2px] border-orange-800 shadow-xl";
+      case "Velvet": return "border-[5px] border-rose-900 shadow-2xl";
       default: return "border-white/10";
     }
   };
@@ -508,7 +508,7 @@ export default function HexaCardPreview({
         <motion.div style={{ opacity: glowOpacity, rotateY: 90, backfaceVisibility: "hidden" }} className="absolute inset-0 bg-white/10 blur-3xl z-20 pointer-events-none" />
 
         <div 
-          className={`absolute inset-0 overflow-hidden border ${getFrameStyle()} ${getFontStyle()}`}
+          className={`absolute inset-0 overflow-hidden border bg-zinc-950 ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
           <div className={`absolute inset-0 ${getBackgroundStyle()} -z-30`} />
@@ -584,7 +584,7 @@ export default function HexaCardPreview({
         </div>
 
         <div 
-          className={`absolute inset-0 flex flex-col justify-between items-center text-center border overflow-hidden ${getFrameStyle()} ${getFontStyle()}`}
+          className={`absolute inset-0 flex flex-col justify-between items-center text-center border overflow-hidden bg-zinc-950 ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
         >
           <div className={`absolute inset-0 ${getBackgroundStyle()} -z-30`} />
