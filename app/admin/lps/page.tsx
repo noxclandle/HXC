@@ -23,6 +23,14 @@ export default async function AdminLpsPage() {
       lastUpdated: "2026/06/21",
     },
     {
+      title: "Game-Style LP Service / ゲーム風LP・ポートフォリオ制作",
+      path: "/lp/game-style",
+      description: "ステータス画面UI、クエストログ経歴、装備スロット型実績などのギミックを駆使した「ゲーム風LP・ポートフォリオ」の受託制作サービス告知ページ。",
+      status: "Active / 公開中",
+      target: "クリエイター・VTuber・インディー開発・企業向け",
+      lastUpdated: "2026/06/22",
+    },
+    {
       title: "Core Showcase / 機能紹介",
       path: "/features",
       description: "アセットの着せ替え、AI-OCR名刺スキャン、NFC連携、連絡先書き出しなどシステムコア機能を技術的・視覚的に紹介するページ。",
