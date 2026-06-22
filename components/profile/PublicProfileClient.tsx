@@ -92,10 +92,10 @@ function ProfileSkeleton() {
  * 公開プロフィールページ
  * データ受信後の「アンヴェイル（開示）」演出を管理
  */
-export default function PublicProfileClient({ slug }: { slug: string }) {
+export default function PublicProfileClient({ slug, initialData }: { slug: string, initialData?: any }) {
   const { data: session } = useSession();
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<any>(initialData || null);
+  const [loading, setLoading] = useState(!initialData);
   const [isOpened, setIsOpened] = useState(false);
   const [showUI, setShowUI] = useState(false);
 
@@ -104,6 +104,7 @@ export default function PublicProfileClient({ slug }: { slug: string }) {
   }, [session, data]);
 
   useEffect(() => {
+    if (data) return; // Skip client-side fetch if server already provided data
     let mounted = true;
     fetch(`/api/profile/${slug}`)
       .then((res) => res.ok ? res.json() : null)
@@ -117,9 +118,7 @@ export default function PublicProfileClient({ slug }: { slug: string }) {
               navigator.vibrate([20, 30, 20]);
             }
           }
-          setTimeout(() => {
-            setLoading(false);
-          }, 800);
+          setLoading(false);
         }
       })
       .catch(() => {
@@ -131,16 +130,34 @@ export default function PublicProfileClient({ slug }: { slug: string }) {
     return () => {
       mounted = false;
     };
-  }, [slug]);
+  }, [slug, data]);
 
   const handleOpen = () => {
     setIsOpened(true);
-    // アンヴェイル演出（2.5秒）の後にUIを表示
-    setTimeout(() => setShowUI(true), 2500);
+    // アンヴェイル演出（1.2秒）の後にUIを表示
+    setTimeout(() => setShowUI(true), 1200);
   };
 
   return (
     <main className="min-h-screen bg-void relative overflow-hidden">
+      {/* Owner View / Guest Preview Toggle Banner */}
+      {isOwner && (
+        <div className="bg-azure-950/80 border-b border-azure-500/20 text-center py-2.5 relative z-[9999] text-[10px] tracking-[0.15em] text-azure-400 backdrop-blur-sm flex justify-center items-center gap-2">
+          <span>👑 あなたはオーナーとしてこのページを閲覧しています。</span>
+          <a href="?preview=visitor" className="underline hover:text-white font-bold ml-1">
+            ゲストとしての見え方を確認する
+          </a>
+        </div>
+      )}
+      {session?.user?.id === data?.id && typeof window !== "undefined" && window.location.search.includes("preview=visitor") && (
+        <div className="bg-zinc-950/90 border-b border-white/10 text-center py-2.5 relative z-[9999] text-[10px] tracking-[0.15em] text-white/70 backdrop-blur-sm flex justify-center items-center gap-2">
+          <span>👀 ゲストプレビュー表示中。</span>
+          <a href="?" className="underline text-azure-400 hover:text-azure-300 font-bold ml-1">
+            オーナー表示に戻す
+          </a>
+        </div>
+      )}
+
       <AnimatePresence mode="wait">
         {loading ? (
           <motion.div key="loader" exit={{ opacity: 0, scale: 1.1 }} transition={{ duration: 1 }}>
@@ -243,7 +260,7 @@ export default function PublicProfileClient({ slug }: { slug: string }) {
                 <motion.div
                   initial={{ scale: 0.5, opacity: 0 }}
                   animate={{ scale: 10, opacity: 0 }}
-                  transition={{ duration: 2, ease: "easeIn" }}
+                  transition={{ duration: 1.2, ease: "easeIn" }}
                 >
                   <GeometricAngel level={50} mood="excited" size={240} />
                 </motion.div>
@@ -251,7 +268,7 @@ export default function PublicProfileClient({ slug }: { slug: string }) {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5, duration: 1 }}
+                  transition={{ delay: 0.2, duration: 0.8 }}
                   className="mt-8 text-center"
                 >
                   <p className="text-[10px] tracking-[0.6em] uppercase text-white/60 font-light">
@@ -266,7 +283,7 @@ export default function PublicProfileClient({ slug }: { slug: string }) {
                 <motion.div 
                   initial={{ top: "0%", opacity: 0 }}
                   animate={{ top: ["0%", "100%"], opacity: [0, 1, 0] }}
-                  transition={{ duration: 2, ease: "easeInOut" }}
+                  transition={{ duration: 1.2, ease: "easeInOut" }}
                   className="absolute left-0 right-0 h-[1px] bg-white/40 shadow-[0_0_20px_rgba(255,255,255,0.5)] pointer-events-none"
                 />
               </motion.div>
