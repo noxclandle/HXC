@@ -31,6 +31,14 @@ export default async function AdminLpsPage() {
       lastUpdated: "2026/06/22",
     },
     {
+      title: "Next-Gen Creator LP / クリエイター・配信者向け特化LP",
+      path: "/lp/creator",
+      description: "フリーランスやVTuber、ストリーマーを対象にした、本名秘匿・アセットカスタマイズ・36,000通りの組合せを推し出した次世代デジタル名刺訴求LP。",
+      status: "Active / 公開中",
+      target: "VTuber・配信者・フリーランス・クリエイター向け",
+      lastUpdated: "2026/06/22",
+    },
+    {
       title: "Core Showcase / 機能紹介",
       path: "/features",
       description: "アセットの着せ替え、AI-OCR名刺スキャン、NFC連携、連絡先書き出しなどシステムコア機能を技術的・視覚的に紹介するページ。",
