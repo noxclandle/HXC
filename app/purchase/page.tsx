@@ -137,7 +137,7 @@ export default function PurchasePage() {
   const selectedTierData = tiers.find(t => t.id === selection.tier);
 
   return (
-    <div className="min-h-screen bg-black text-[#e0e0e0] font-sans selection:bg-white/10 pt-32 px-6 pb-40">
+    <div className="min-h-screen bg-black text-[#e0e0e0] font-sans selection:bg-white/10 pt-32 px-6 pb-40 overflow-x-hidden">
       {/* Background elements for Gothic feel */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20">
         <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-white/5 blur-[120px] rounded-full" />
