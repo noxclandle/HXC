@@ -121,7 +121,7 @@ export default async function PublicProfilePage({ params }: Props) {
         <ProfileClientUI data={profileData} isOwner={false} />
       ) : (
         // 通常ユーザーには、高級感のある「アンヴェイル（開封）」演出を体験させる
-        <PublicProfileClient slug={decodedSlug} />
+        <PublicProfileClient slug={decodedSlug} initialData={profileData} />
       )}
     </>
   );
