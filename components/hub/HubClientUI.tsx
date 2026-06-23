@@ -322,7 +322,7 @@ export default function HubClientUI({
                    <X size={10} />
                  </button>
 
-                 <button onClick={() => setIsTarotOpen(true)} className="relative z-10 text-left w-full pr-4">
+                 <div onClick={() => setIsTarotOpen(true)} className="relative z-10 text-left w-full pr-4 cursor-pointer">
                     <div className="flex items-center gap-2 mb-1.5">
                       <Sparkles size={11} className="text-azure-400" />
                       <span className="text-[8px] tracking-[0.2em] font-bold uppercase text-azure-400">Daily Resonance</span>
@@ -331,7 +331,7 @@ export default function HubClientUI({
                     <div className="text-[8px] font-bold tracking-[0.3em] uppercase text-white bg-white/10 text-center py-1.5 hover:bg-white/20 transition-colors rounded-full border border-white/5">
                       Receive Blessing / 啓示を受ける
                     </div>
-                 </button>
+                 </div>
               </div>
             </motion.div>
           )}

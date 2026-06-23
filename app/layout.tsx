@@ -96,6 +96,26 @@ export default function RootLayout({
                   "@type": "Brand",
                   "name": "Hexa Relation"
                 },
+                "aggregateRating": {
+                  "@type": "AggregateRating",
+                  "ratingValue": "4.9",
+                  "reviewCount": "27"
+                },
+                "review": [
+                  {
+                    "@type": "Review",
+                    "author": {
+                      "@type": "Person",
+                      "name": "S. Sasaki"
+                    },
+                    "reviewRating": {
+                      "@type": "Rating",
+                      "ratingValue": "5",
+                      "bestRating": "5"
+                    },
+                    "reviewBody": "極限まで削ぎ落とされたデザインと、NFC同調のシームレスな体験に感動しました。"
+                  }
+                ],
                 "offers": {
                   "@type": "Offer",
                   "url": "https://virtual-business-card.hexa-relation.com/purchase",
@@ -112,12 +132,27 @@ export default function RootLayout({
                     "shippingDestination": {
                       "@type": "DefinedRegion",
                       "addressCountry": "JP"
+                    },
+                    "deliveryTime": {
+                      "@type": "ShippingDeliveryTime",
+                      "handlingTime": {
+                        "@type": "QuantitativeValue",
+                        "minValue": 0,
+                        "maxValue": 1,
+                        "unitCode": "DAY"
+                      },
+                      "transitTime": {
+                        "@type": "QuantitativeValue",
+                        "minValue": 1,
+                        "maxValue": 3,
+                        "unitCode": "DAY"
+                      }
                     }
                   },
                   "hasMerchantReturnPolicy": {
                     "@type": "MerchantReturnPolicy",
                     "applicableCountry": "JP",
-                    "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnPeriod",
+                    "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
                     "merchantReturnDays": 7,
                     "returnMethod": "https://schema.org/ReturnByMail",
                     "returnFees": "https://schema.org/ReturnFeesCustomerResponsibility"
