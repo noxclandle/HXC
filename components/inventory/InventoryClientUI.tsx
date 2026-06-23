@@ -244,9 +244,6 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
           <p className="text-[9px] lg:text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold hidden lg:block">ショップ・アイテム管理 / Asset Management</p>
         </div>
         <div className="text-right flex items-center lg:flex-col lg:items-end gap-3 lg:gap-2">
-           <Link href="/shop" className="text-[7px] lg:text-[9px] uppercase tracking-[0.4em] lg:tracking-[0.5em] text-azure-400 opacity-60 hover:opacity-100 transition-opacity flex items-center gap-1.5 lg:gap-2">
-              The Exchange <span className="hidden lg:inline">/ 交換所</span> <ChevronRight size={8} />
-           </Link>
            <div className="flex items-center gap-2 lg:gap-4 group">
               <p className="text-sm lg:text-3xl font-extralight tracking-[0.2em] text-white">{Number(rtBalance).toLocaleString()} <span className="text-[9px] lg:text-xs opacity-20">RT</span></p>
               <button 
