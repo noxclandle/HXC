@@ -43,6 +43,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${displayName}`,
     description: profile.bio || `${displayName} のデジタルアイデンティティ / Digital Identity for ${displayName}.`,
+    alternates: {
+      canonical: `https://virtual-business-card.hexa-relation.com/p/${encodeURIComponent(decodedSlug)}`,
+    },
     robots: {
       index: isOfficial,
       follow: true,
