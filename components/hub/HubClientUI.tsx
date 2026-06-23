@@ -171,15 +171,6 @@ export default function HubClientUI({
                  <Link href="/charge" className="px-2 py-1 border border-azure-500/30 bg-azure-500/5 text-azure-400 text-[7px] tracking-[0.2em] font-bold uppercase hover:bg-azure-500/10 transition-all">
                     Purchase / 購入
                  </Link>
-                 <Link href="/guide" className="p-1.5 border border-white/10 bg-white/5 text-white/40 hover:text-white transition-all ml-2" title="System Guide">
-                    <Book size={12} />
-                 </Link>
-                  <Link href="/hub/messages" className="p-1.5 border border-white/10 bg-white/5 text-white/40 hover:text-white transition-all ml-2 relative" title="Mailbox / 受信ボックス">
-                     <Mail size={12} className={realStats?.unread_messages > 0 ? "text-emerald-400" : ""} />
-                     {realStats?.unread_messages > 0 && (
-                       <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-azure-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
-                     )}
-                  </Link>
               </div>
               <div className="mt-2 flex justify-start md:justify-end items-center gap-2 opacity-40">
                  <span className="text-[7px] uppercase tracking-widest font-bold">Total EXP / 累計経験値</span>
@@ -228,20 +219,15 @@ export default function HubClientUI({
                 </div>
                 <Book size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
              </Link>
-             <Link href="/hub/messages" className="group p-8 border border-emerald-500/20 bg-emerald-500/[0.03] hover:bg-emerald-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500/40" />
+             <Link href="/guide" className="group p-8 border border-purple-500/20 bg-purple-500/[0.03] hover:bg-purple-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-purple-500/40" />
                 <div className="flex flex-col justify-between h-full items-start">
                    <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100 flex items-center gap-2">
-                     Mailbox
-                     {realStats?.unread_messages > 0 && (
-                       <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-[8px] font-bold leading-none text-white bg-azure-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.6)]">
-                         {realStats.unread_messages}
-                       </span>
-                     )}
+                     System Guide
                    </h2>
-                   <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-emerald-300 group-hover:opacity-100">受信ボックス / Inbox</p>
+                   <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-purple-300 group-hover:opacity-100">アプリの使い方 / Guide</p>
                 </div>
-                <Mail size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
+                <HelpCircle size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
              </Link>
           </div>
 
@@ -285,17 +271,7 @@ export default function HubClientUI({
               <MonthlyReport stats={realStats} />
            </div>
 
-           <Link href="/guide" className="group flex items-center justify-between p-6 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all">
-              <div className="flex items-center gap-4">
-                 <HelpCircle size={20} className="opacity-20 group-hover:opacity-100 group-hover:text-azure-400 transition-all" />
-                 <div>
-                    <p className="text-[10px] tracking-[0.3em] uppercase font-bold text-white/80">System Guide</p>
-                    <p className="text-[7px] tracking-[0.1em] uppercase opacity-30 mt-0.5">How to utilize Hexa Relation</p>
-                 </div>
-              </div>
-              <ChevronRight size={14} className="opacity-10 group-hover:opacity-100 transition-all" />
-           </Link>
-          </aside>
+           </aside>
         </div>
 
         {/* Floating Daily Bonus Prompt */}
@@ -322,14 +298,14 @@ export default function HubClientUI({
                    <X size={10} />
                  </button>
 
-                 <div onClick={() => setIsTarotOpen(true)} className="relative z-10 text-left w-full pr-4 cursor-pointer">
+                 <div onClick={handleConnection} className="relative z-10 text-left w-full pr-4 cursor-pointer">
                     <div className="flex items-center gap-2 mb-1.5">
                       <Sparkles size={11} className="text-azure-400" />
                       <span className="text-[8px] tracking-[0.2em] font-bold uppercase text-azure-400">Daily Resonance</span>
                     </div>
-                    <p className="text-[7.5px] tracking-wider opacity-60 uppercase mb-3 leading-relaxed font-sans">境界が安定しています。<br/>本日の共鳴（ボーナス）を受け取りますか？</p>
+                    <p className="text-[7.5px] tracking-wider opacity-60 uppercase mb-3 leading-relaxed font-sans">本日の共鳴（ボーナス）を受け取りますか？</p>
                     <div className="text-[8px] font-bold tracking-[0.3em] uppercase text-white bg-white/10 text-center py-1.5 hover:bg-white/20 transition-colors rounded-full border border-white/5">
-                      Receive Blessing / 啓示を受ける
+                      Receive Bonus / ボーナスを受け取る
                     </div>
                  </div>
               </div>
