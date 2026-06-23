@@ -33,6 +33,8 @@ export default function ConnectionInteraction() {
           case "Shadow Trace": setCurrentStyle({ color: "#111111", shape: "square" }); break;
           case "Prism Trace": setCurrentStyle({ color: "rgba(255,255,255,0.8)", shape: "hex" }); break;
           case "Void Trace": setCurrentStyle({ color: "#000000", shape: "square" }); break;
+          case "Nebula Trace": setCurrentStyle({ color: "#a855f7", shape: "hex" }); break;
+          case "Solar Trace": setCurrentStyle({ color: "#f97316", shape: "square" }); break;
           default: setCurrentStyle({ color: "#FFFFFF", shape: "hex" });
         }
       }

@@ -43,6 +43,17 @@ export function playConnectionSound(type: string = "resonance") {
     createOscillator(800, 0.02, 0.8, "sine");
     return;
   }
+  if (id === "ether") {
+    createOscillator(987.77, 0.08, 2.2); // B5
+    createOscillator(1479.98, 0.06, 1.8); // F#6
+    createOscillator(1975.53, 0.04, 1.5); // B6
+    return;
+  }
+  if (id === "pulse") {
+    createOscillator(330, 0.1, 0.5, "triangle");
+    createOscillator(660, 0.05, 0.3, "triangle");
+    return;
+  }
   if (id === "click") {
     createOscillator(1200, 0.1, 0.1, "square");
     return;

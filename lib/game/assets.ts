@@ -45,6 +45,8 @@ export const ASSETS: Asset[] = [
   { id: "Void", name: "Void Shell", type: "frame", rarity: "mythic", description: "全ての光を吸収する深層の枠。 / Light-absorbing void shell.", unlocked: false },
   { id: "ImperialGold", name: "Imperial Gold", type: "frame", rarity: "mythic", description: "圧倒的な威厳。頂点の黄金。 / Majestic imperial gold.", unlocked: false },
   { id: "Opal", name: "Opal Glow", type: "frame", rarity: "mythic", description: "乳白色の神秘的な輝き。 / Mystical opalescent glow.", unlocked: false },
+  { id: "NebulaSteel", name: "Nebula Steel", type: "frame", rarity: "legendary", description: "星雲の残光を宿すチタン合金のフレーム。 / Titanium alloy rim carrying the afterglow of nebula.", unlocked: false },
+  { id: "GildedRose", name: "Gilded Rose", type: "frame", rarity: "legendary", description: "金箔とピンクゴールドが交錯する細工枠。 / Ornate frame crafted with fine gold leaf and rose gold.", unlocked: false },
 
   // --- Backgrounds ---
   { id: "Default", name: "Solid Void", type: "background", rarity: "common", description: "標準のボイド背景。 / Standard solid void.", unlocked: true },
@@ -73,6 +75,8 @@ export const ASSETS: Asset[] = [
   { id: "Circuit", name: "Logical Flow", type: "background", rarity: "epic", description: "論理回路の鼓動。 / Logical circuit board pulse.", unlocked: false },
   { id: "PrismFractal", name: "Prism Fractal", type: "background", rarity: "mythic", description: "七色に屈折する光の幾何学。 / Prismatic light geometry.", unlocked: false },
   { id: "CosmicVoid", name: "Deep Space", type: "background", rarity: "mythic", description: "星なき宇宙の深淵。 / Starless deep space void.", unlocked: false },
+  { id: "GoldenHour", name: "Golden Hour", type: "background", rarity: "legendary", description: "黄昏の静寂と微細な金粉が舞う背景。 / Silent twilight background shimmering with micro-gold dust.", unlocked: false },
+  { id: "MonochromeCyber", name: "Monochrome Cyber", type: "background", rarity: "legendary", description: "モノトーンのグリッドと走査線が浮かぶ仮想空間。 / Virtual monochrome space with grids and subtle scanlines.", unlocked: false },
 
   // --- Effects ---
   { id: "None", name: "Clean", type: "effect", rarity: "common", description: "追加効果なし。純粋な情報の提示。 / No effect. Pure information.", unlocked: true },
@@ -104,6 +108,8 @@ export const ASSETS: Asset[] = [
   { id: "PrismGlowEffect", name: "Prism Glow", type: "effect", rarity: "mythic", description: "屈折する光の粒子。 / Refracted light particles.", unlocked: false },
   { id: "RealityTear", name: "Reality Tear", type: "effect", rarity: "mythic", description: "空間の裂け目。 / A tear in space-time.", unlocked: false },
   { id: "Halo", name: "Celestial Halo", type: "effect", rarity: "mythic", description: "降り注ぐ天光。 / Descending celestial light.", unlocked: false },
+  { id: "CherryPetals", name: "Cherry Petals", type: "effect", rarity: "legendary", description: "幻想的なピンクの花弁がゆっくりと舞い落ちる。 / Ethereal pink petals slowly drifting in the air.", unlocked: false },
+  { id: "BinaryCascade", name: "Binary Cascade", type: "effect", rarity: "legendary", description: "仮想空間から降り注ぐ微細なデータコード。 / Subtle binary data streams cascading down.", unlocked: false },
 
   // --- Auras ---
   { id: "None", name: "No Aura", type: "aura", rarity: "common", description: "静寂。オーラを纏わない。 / Silence. No aura.", unlocked: true },
@@ -119,6 +125,8 @@ export const ASSETS: Asset[] = [
   { id: "CyberGrid", name: "Cyber Grid", type: "aura", rarity: "epic", description: "電子の格子が漂う。 / Floating electronic grid.", unlocked: false },
   { id: "VoidEclipse", name: "Void Eclipse", type: "aura", rarity: "mythic", description: "光を飲み込むボイドのオーラ。 / Light-swallowing void eclipse.", unlocked: false },
   { id: "PrismGlow", name: "Prism Glow", type: "aura", rarity: "mythic", description: "全波長を網羅する究極の輝き。 / Ultimate prismatic glow.", unlocked: false },
+  { id: "StellarWind", name: "Stellar Wind", type: "aura", rarity: "legendary", description: "境界から吹き出す、星屑のような淡い輝き。 / Stardust-like soft glow blowing from the card boundaries.", unlocked: false },
+  { id: "AbyssalEcho", name: "Abyssal Echo", type: "aura", rarity: "legendary", description: "深海から響く、蒼く穏やかな波動。 / Gentle blue echo expanding from the deep ocean.", unlocked: false },
 
   // --- Interactions (Formerly Pointers) ---
   { id: "Pure White Hex", name: "Standard Hex", type: "pointer", rarity: "common", description: "標準的な白い六角形の残響。 / Standard white hex trace.", unlocked: true },
@@ -133,7 +141,9 @@ export const ASSETS: Asset[] = [
   { id: "Crimson Trace", name: "Crimson Square", type: "pointer", rarity: "epic", description: "消えない残り火の四角形。 / Everlasting crimson square trace.", unlocked: false },
   { id: "Shadow Trace", name: "Void Square", type: "pointer", rarity: "epic", description: "空間を塗りつぶす漆黒の四角形。 / Space-filling void square trace.", unlocked: false },
   { id: "Prism Trace", name: "Prism Hex", type: "pointer", rarity: "mythic", description: "七色に屈折する究極の六角形。 / Ultimate prismatic hex trace.", unlocked: false },
-  { id: "Void Trace", name: "Reality Tear", type: "pointer", rarity: "mythic", description: "空間を切り裂く特異点。 / Space-tearing singularity trace.", unlocked: false },
+  { id: "Void Trace", name: "Reality Tear", type: "pointer", rarity: "mythic", description: "空間を切り裂く特異点. / Space-tearing singularity trace.", unlocked: false },
+  { id: "Nebula Trace", name: "Nebula Trace", type: "pointer", rarity: "legendary", description: "タップ時に星雲の残響が弾ける演出。 / Purplish nebula echo bursting upon touch.", unlocked: false },
+  { id: "Solar Trace", name: "Solar Trace", type: "pointer", rarity: "legendary", description: "太陽の閃光が弾ける演出。 / Orange solar spark bursting upon touch.", unlocked: false },
 
   // --- Sounds ---
   { id: "resonance", name: "Resonance", type: "sound", rarity: "common", description: "標準的な共鳴音。 / Standard resonance sound.", unlocked: true },
@@ -149,6 +159,8 @@ export const ASSETS: Asset[] = [
   { id: "heaven", name: "Angelic Choir", type: "sound", rarity: "epic", description: "天界の歌声の一節。 / A snippet of angelic choir.", unlocked: false },
   { id: "void", name: "Deep Resonance", type: "sound", rarity: "mythic", description: "深層からの呼び声。 / Call from the deep resonance.", unlocked: false },
   { id: "omega", name: "Eternal Chord", type: "sound", rarity: "mythic", description: "世界の終焉と始まりの音。 / Eternal chord of beginning and end.", unlocked: false },
+  { id: "ether", name: "Ether Chime", type: "sound", rarity: "legendary", description: "高次元のエーテル波を感じさせる、澄み渡った高音。 / Shimmering high-frequency chime of ethereal origin.", unlocked: false },
+  { id: "pulse", name: "Pulse Echo", type: "sound", rarity: "legendary", description: "規則正しく鼓動する、知的な電子脈動の残響。 / Intelligent electronic pulse echo beating rhythmically.", unlocked: false },
 
   // --- Titles ---
   { id: "ASSOCIATE", name: "ASSOCIATE", type: "title", rarity: "common", description: "初期称号。 / Initial title.", unlocked: true },
@@ -167,7 +179,9 @@ export const ASSETS: Asset[] = [
   { id: "Mastermind", name: "Mastermind", type: "title", rarity: "mythic", description: "運営責任者。 / Operational mastermind.", unlocked: false },
   { id: "Manager", name: "Manager", type: "title", rarity: "mythic", description: "実務管理者。 / Practical manager.", unlocked: false },
   { id: "APEX", name: "APEX", type: "title", rarity: "mythic", description: "頂点のアイデンティティ。 / The apex of identity.", unlocked: false },
-  { id: "Fixer", name: "Fixer", type: "title", rarity: "mythic", description: "創造主。 / The creator.", unlocked: false }
+  { id: "Fixer", name: "Fixer", type: "title", rarity: "mythic", description: "創造主。 / The creator.", unlocked: false },
+  { id: "HERETIC", name: "HERETIC", type: "title", rarity: "legendary", description: "固定された概念を覆し、新たな可能性を切り拓く者。 / One who subverts fixed concepts and carves new paths.", unlocked: false },
+  { id: "NEXUS", name: "NEXUS", type: "title", rarity: "legendary", description: "あらゆる接続の中心に位置する、究極の連結点。 / The ultimate junction residing at the center of all connections.", unlocked: false }
 ];
 
 export const getRarityStyles = (rarity: string) => {
