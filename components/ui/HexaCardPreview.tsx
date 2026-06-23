@@ -511,7 +511,7 @@ export default function HexaCardPreview({
           className={`absolute inset-0 overflow-hidden border bg-zinc-950 ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
-          <div className={`absolute inset-0 ${getBackgroundStyle()} -z-30`} />
+          <div className={`absolute inset-0 ${getBackgroundStyle()} z-0`} />
 
           {isVertical ? (
             <div className="h-full p-6 md:p-10 relative overflow-hidden">
@@ -587,7 +587,7 @@ export default function HexaCardPreview({
           className={`absolute inset-0 flex flex-col justify-between items-center text-center border overflow-hidden bg-zinc-950 ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
         >
-          <div className={`absolute inset-0 ${getBackgroundStyle()} -z-30`} />
+          <div className={`absolute inset-0 ${getBackgroundStyle()} z-0`} />
 
           {isVertical ? (
             <div className="h-full p-10 md:p-16 flex flex-col justify-between items-center w-full absolute inset-0">
