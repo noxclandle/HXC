@@ -32,6 +32,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: item.title,
     description: summary,
+    alternates: {
+      canonical: `https://virtual-business-card.hexa-relation.com/news/${params.id}`,
+    },
     openGraph: {
       title: `${item.title} | Hexa Card`,
       description: summary,
