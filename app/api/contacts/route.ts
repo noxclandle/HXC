@@ -38,7 +38,13 @@ export async function POST(req: NextRequest) {
     });
 
     // Discord Notification
-    await sendDiscordNotification(`【HXC監視局】新規問い合わせを受信。名前: ${name}, 件名: ${subject || "なし"}`);
+    await sendDiscordNotification(
+      `【HXC監視局】新規問い合わせを受信。\n` +
+      `■ 名前: ${name}\n` +
+      `■ メールアドレス: ${email}\n` +
+      `■ 件名: ${subject || "なし"}\n` +
+      `■ 本文:\n${message}`
+    );
 
     return NextResponse.json({ success: true, id: inquiry.id });
   } catch (error) {
