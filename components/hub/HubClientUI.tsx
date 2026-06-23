@@ -174,6 +174,12 @@ export default function HubClientUI({
                  <Link href="/guide" className="p-1.5 border border-white/10 bg-white/5 text-white/40 hover:text-white transition-all ml-2" title="System Guide">
                     <Book size={12} />
                  </Link>
+                  <Link href="/hub/messages" className="p-1.5 border border-white/10 bg-white/5 text-white/40 hover:text-white transition-all ml-2 relative" title="Mailbox / 受信ボックス">
+                     <Mail size={12} className={realStats?.unread_messages > 0 ? "text-emerald-400" : ""} />
+                     {realStats?.unread_messages > 0 && (
+                       <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-azure-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
+                     )}
+                  </Link>
               </div>
               <div className="mt-2 flex justify-start md:justify-end items-center gap-2 opacity-40">
                  <span className="text-[7px] uppercase tracking-widest font-bold">Total EXP / 累計経験値</span>
