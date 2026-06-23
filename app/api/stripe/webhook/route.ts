@@ -45,7 +45,12 @@ export async function POST(req: NextRequest) {
             `Stripe RT Purchase (Session: ${session.id})`
           );
           
-          await sendDiscordNotification(`【HXC監視局】RTチャージを検知。ユーザーID: ${userId}, 付与RT: ${rtAmount}`);
+          const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { name: true, email: true }
+          });
+          const userIdentifier = user ? `${user.name || "不明"} (${user.email || "メールなし"})` : "不明";
+          await sendDiscordNotification(`【HXC監視局】RTチャージを検知。ユーザー: ${userIdentifier} (ID: ${userId}), 付与RT: ${rtAmount}`);
           console.log(`Successfully granted ${rtAmount} RT to user ${userId} via executeRTTransaction`);
         }
         return NextResponse.json({ received: true });
@@ -95,7 +100,15 @@ export async function POST(req: NextRequest) {
         });
         
         // Discord Notification
-        await sendDiscordNotification(`【HXC監視局】新規注文を検知。プラン: ${tier}, バリアント: ${variant}, 顧客: ${customerName}\n配送先: ${shippingAddress.postal_code || ""} ${shippingAddress.state || ""}${shippingAddress.city || ""}${shippingAddress.line1 || ""}`);
+        await sendDiscordNotification(
+          `【HXC監視局】新規注文を検知。\n` +
+          `■ プラン: ${tier}\n` +
+          `■ バリアント: ${variant || "なし"}\n` +
+          `■ 顧客氏名: ${customerName}\n` +
+          `■ 顧客メール: ${customerEmail}\n` +
+          `■ 顧客電話: ${customerPhone}\n` +
+          `■ 配送先: ${shippingAddress.postal_code || ""} ${shippingAddress.state || ""}${shippingAddress.city || ""}${shippingAddress.line1 || ""} ${shippingAddress.line2 || ""}`
+        );
       } catch (mailError) {
         console.error("Failed to send admin mail:", mailError);
       }
