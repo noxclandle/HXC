@@ -177,6 +177,10 @@ export default function HexaCardPreview({
              <motion.div animate={{ opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 2, repeat: Infinity }} className="absolute inset-0 bg-azure-500/15 blur-[10px] rounded-lg" />
           </div>
         );
+      case "StellarWind":
+        return <motion.div animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.05, 1] }} transition={{ duration: 6, repeat: Infinity }} className="absolute inset-[-18px] bg-gradient-to-r from-amber-500/20 to-purple-500/20 blur-[18px] rounded-lg z-0" />;
+      case "AbyssalEcho":
+        return <motion.div animate={{ scale: [1, 1.08, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-[-20px] bg-sky-900/30 border-2 border-sky-400/10 blur-[15px] rounded-lg z-0" />;
       default: return null;
     }
   };
@@ -210,6 +214,8 @@ export default function HexaCardPreview({
       case "Iron": return "border-[3px] border-zinc-600 shadow-inner";
       case "Copper": return "border-[2px] border-orange-800 shadow-xl";
       case "Velvet": return "border-[5px] border-rose-900 shadow-2xl";
+      case "NebulaSteel": return "border-[3px] border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.4)]";
+      case "GildedRose": return "border-[4px] border-rose-300 shadow-[0_0_25px_rgba(244,114,182,0.3)] ring-1 ring-amber-400/20";
       default: return "border-white/10";
     }
   };
@@ -241,6 +247,8 @@ export default function HexaCardPreview({
       case "Circuit": return "bg-[#020202] bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:40px_40px] after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03),transparent)]";
       case "MorningMist": return "bg-[#e6e6e6] bg-gradient-to-b from-white/20 to-transparent";
       case "RoseQuartzBG": return "bg-[#fff0f5] bg-[radial-gradient(circle_at_50%_50%,rgba(255,182,193,0.3),transparent)]";
+      case "GoldenHour": return "bg-gradient-to-tr from-[#1a1408] via-[#2d220d] to-[#120e06] before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_30%_30%,rgba(217,119,6,0.15),transparent)] before:opacity-80";
+      case "MonochromeCyber": return "bg-[#080808] bg-[linear-gradient(to_right,#ffffff0c_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0c_1px,transparent_1px)] bg-[size:16px_16px] before:absolute before:inset-0 before:bg-gradient-to-b before:from-transparent before:via-white/5 before:to-transparent";
       default: return "bg-black";
     }
   };
@@ -427,6 +435,22 @@ export default function HexaCardPreview({
         return (
           <div className="absolute inset-0 pointer-events-none z-50 flex items-center justify-center">
              <motion.div animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 4, repeat: Infinity }} className="w-64 h-64 border border-white/20 rounded-full blur-xl" />
+          </div>
+        );
+      case "CherryPetals":
+        return (
+          <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
+             {[...Array(12)].map((_, i) => (
+               <motion.div key={i} initial={{ y: -20, rotate: 0 }} animate={{ y: 500, rotate: 360, x: [0, 40, -40, 0] }} transition={{ duration: 12 + Math.random() * 8, repeat: Infinity, delay: i * 1.5 }} className="absolute text-rose-200/50 text-[12px]" style={{ left: `${Math.random()*100}%` }}>🌸</motion.div>
+             ))}
+          </div>
+        );
+      case "BinaryCascade":
+        return (
+          <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden opacity-30">
+             {[...Array(15)].map((_, i) => (
+               <motion.div key={i} initial={{ y: -20 }} animate={{ y: 500 }} transition={{ duration: 3 + Math.random() * 2, repeat: Infinity, delay: Math.random() * 3 }} className="absolute text-[8px] font-mono text-emerald-400/70" style={{ left: `${Math.random()*100}%` }}>{Math.random() > 0.5 ? '0' : '1'}</motion.div>
+             ))}
           </div>
         );
       default: return null;
