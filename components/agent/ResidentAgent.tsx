@@ -4,12 +4,14 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Book, Sparkles, Trophy, Music2, Volume2, VolumeX, Shield, Bell, HelpCircle, ChevronRight, Zap, Smartphone, Mail } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ambientManager } from "@/lib/audio/ambient";
 import { useToast } from "@/components/ui/ConnectionToast";
 import GeometricAngel from "@/components/ui/GeometricAngel";
 import TarotModal from "@/components/ui/TarotModal";
 
 export default function ResidentAgent() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"portal" | "notices" | "help">("portal");
   const [hasDaily, setHasDaily] = useState(false);
@@ -293,49 +295,6 @@ export default function ResidentAgent() {
                          </div>
                          <ChevronRight size={14} className="opacity-20"/>
                       </Link>
-
-                      <Link href="/hub/messages" onClick={() => setIsOpen(false)} className="w-full p-4 bg-white/5 border border-white/10 flex items-center justify-between group transition-all hover:border-white/30">
-                         <div className="flex items-center gap-3">
-                            <Mail size={14} className="opacity-40 group-hover:opacity-100 transition-opacity text-emerald-400" />
-                            <span className="text-[9px] tracking-[0.2em] uppercase">Mailbox / 受信メッセージ</span>
-                            {unreadMessages > 0 && (
-                              <span className="bg-azure-500 text-white text-[7px] px-1.5 py-0.5 rounded-full font-bold animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.6)]">{unreadMessages}</span>
-                            )}
-                         </div>
-                         <ChevronRight size={14} className="opacity-20"/>
-                      </Link>
-
-                      <button 
-                        onClick={() => setIsTarotOpen(true)} 
-                        className="w-full p-4 bg-white/5 border border-white/10 flex items-center justify-between group transition-all hover:border-white/30 text-left"
-                      >
-                         <div className="flex items-center gap-3">
-                            <Sparkles size={14} className="opacity-40 group-hover:opacity-100 transition-opacity text-azure-400" />
-                            <span className="text-[9px] tracking-[0.2em] uppercase">Tarot / 境界の神託（ワンオラクル）</span>
-                         </div>
-                         <ChevronRight size={14} className="opacity-20"/>
-                      </button>
-                    </div>
-
-                    <div className="space-y-3">
-                      <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">BGM Control</p>
-                      <div className="flex gap-2">
-                        {[
-                          { id: "space", icon: Zap, label: "Space" },
-                          { id: "rain", icon: Volume2, label: "Rain" },
-                        ].map((btn) => (
-                          <button 
-                            key={btn.id}
-                            onClick={() => toggleAmbient(btn.id as any)}
-                            className={`flex-1 p-3 border text-[8px] tracking-widest uppercase transition-all flex items-center justify-center gap-2 ${ambientMode === btn.id ? "bg-azure-500/20 border-azure-500 text-azure-400" : "bg-white/5 border-white/5 opacity-40 hover:opacity-100"}`}
-                          >
-                            <btn.icon size={12}/> {btn.label}
-                          </button>
-                        ))}
-                        <button onClick={() => { ambientManager.setVolume(0); setAmbientMode("off"); }} className="p-3 bg-white/5 border border-white/5 opacity-40 hover:opacity-100 transition-all">
-                          <VolumeX size={12}/>
-                        </button>
-                      </div>
                     </div>
                   </motion.div>
                 )}
@@ -395,13 +354,22 @@ export default function ResidentAgent() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.8, x: 20 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
-            className="absolute bottom-full right-0 mb-4 bg-void/90 backdrop-blur-md border border-azure-500/30 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl text-left pointer-events-none"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (hasUnreadMessages) {
+                router.push("/hub/messages");
+              } else if (latestNews) {
+                setSelectedNews(latestNews);
+                markAsRead();
+              }
+            }}
+            className="absolute bottom-full right-0 mb-4 bg-void/90 backdrop-blur-md border border-azure-500/30 p-3 rounded-tr-xl rounded-bl-xl max-w-[140px] shadow-2xl text-left pointer-events-auto cursor-pointer hover:border-azure-400 transition-all"
           >
              <p className="text-[7px] uppercase tracking-[0.2em] text-azure-400 font-bold mb-1 italic">
                {hasUnreadMessages ? "Observation Report" : "Message Received"}
              </p>
              <p className="text-[9px] leading-tight text-white/80 line-clamp-2 font-medium">
-               {hasUnreadMessages ? `観測局より報告：未読メッセージが ${unreadMessages} 件あります。` : latestNews?.title}
+               {hasUnreadMessages ? `観測局より報告：未読メッセージが ${unreadMessages} 件あります。（タップして読む）` : `${latestNews?.title} （タップして読む）`}
              </p>
           </motion.div>
         )}
