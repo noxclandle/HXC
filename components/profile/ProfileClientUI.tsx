@@ -235,6 +235,10 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                    onChange={(e) => setMessageForm({...messageForm, content: e.target.value})}
                    className="w-full bg-white/[0.02] border border-white/10 p-6 text-[10px] tracking-widest outline-none focus:border-white/30 transition-all resize-none text-white font-sans"
                  />
+                 <p className="text-[8px] tracking-[0.1em] opacity-30 leading-relaxed text-left">
+                     * If you require a response, please include your email address or contact details within the message. <br />
+                     ※返信をご希望の場合は、メッセージ本文内にご自身の連絡先（メールアドレス等）をご記載ください。
+                 </p>
                  <button 
                    disabled={sendingMessage}
                    className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.3em] lg:tracking-[0.5em] uppercase hover:bg-zinc-200 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
