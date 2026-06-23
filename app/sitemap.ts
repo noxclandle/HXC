@@ -93,7 +93,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const users = await prisma.user.findMany({
       where: {
         handle_name: { not: null },
-        role: { in: ['admin', 'architect'] }
+        role: { in: ['admin', 'architect', 'fixer', 'mastermind', 'manager'] }
       },
       select: {
         handle_name: true,

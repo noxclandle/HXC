@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const isOfficial = user.role === 'admin' || user.role === 'architect' || user.handle_name === 'architect';
+  const isOfficial = ['admin', 'architect', 'fixer', 'mastermind', 'manager'].includes(user.role) || user.handle_name === 'architect';
   const aiConfig = (user.ai_config as any) || {};
   const profile = aiConfig.profile || {};
   const title = profile.title ? `${profile.title} | ` : "";
@@ -82,7 +82,7 @@ export default async function PublicProfilePage({ params }: Props) {
     notFound();
   }
 
-  const isOfficial = profileData.role === 'admin' || profileData.role === 'architect' || profileData.handle_name === 'architect';
+  const isOfficial = ['admin', 'architect', 'fixer', 'mastermind', 'manager'].includes(profileData.role) || profileData.handle_name === 'architect';
 
   // 構造化データ（JSON-LD）用オブジェクトの生成
   const jsonLd = {
