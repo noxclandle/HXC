@@ -18,6 +18,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
   const [showReport, setShowReport] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [reporting, setReporting] = useState(false);
+  const profileName = data?.name || "MEMBER";
 
   // Portfolio Links
   const portfolioLinks = data.portfolio_links || [];
@@ -200,7 +201,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
          <div className="space-y-8">
             <header className="flex items-center gap-4">
                <MessageSquare className="text-rose-400" size={18} />
-               <h3 className="text-[11px] tracking-[0.2em] lg:tracking-[0.4em] uppercase font-bold text-white">Transmit Message / メッセージ送信</h3>
+               <h3 className="text-[11px] tracking-[0.2em] lg:tracking-[0.4em] uppercase font-bold text-white">Transmit Message to {profileName} / {profileName} にメッセージを送信</h3>
                <span className="text-[8px] tracking-[0.2em] uppercase opacity-20 ml-auto">Secure Channel / 暗号化通信</span>
             </header>
             
@@ -245,7 +246,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                    disabled={sendingMessage}
                    className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.3em] lg:tracking-[0.5em] uppercase hover:bg-zinc-200 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
                  >
-                   {sendingMessage ? <Loader2 size={16} className="animate-spin" /> : <><Send size={14} /> Transmit Message / メッセージを送信する</>}
+                   {sendingMessage ? <Loader2 size={16} className="animate-spin" /> : <><Send size={14} /> Transmit Message to {profileName} / {profileName} にメッセージを送信する</>}
                  </button>
               </form>
             )}
