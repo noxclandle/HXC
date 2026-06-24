@@ -33,7 +33,6 @@ export default function MemberGuidePage() {
     {
       title: "NFC Exchange / デジタル名刺を渡す",
       icon: <Smartphone className="text-purple-400" />,
-      image: "/nfc_greeting_guide.jpg",
       diagram: <NfcDiagram />,
       content: (
         <div className="space-y-4 text-[10px] leading-relaxed tracking-wider">
@@ -114,19 +113,9 @@ export default function MemberGuidePage() {
             viewport={{ once: true }}
             className="flex flex-col border border-white/5 bg-white/[0.01] hover:bg-white/[0.02] transition-all group overflow-hidden"
           >
-            {/* Visual Diagram or Image */}
-            <div className="w-full animate-fade-in">
-               {s.image ? (
-                 <div className="w-full h-44 overflow-hidden relative bg-void border-b border-white/5 flex items-center justify-center">
-                   <img 
-                     src={s.image} 
-                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                     alt={s.title} 
-                   />
-                 </div>
-               ) : (
-                 s.diagram
-               )}
+            {/* Visual Diagram */}
+            <div className="w-full">
+               {s.diagram}
             </div>
  
             <div className="p-8 space-y-4">
