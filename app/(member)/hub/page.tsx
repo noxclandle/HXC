@@ -25,17 +25,31 @@ function HubSkeleton() {
   );
 }
 
+let cachedNews: any = null;
+let cachedNewsExpiry = 0;
+
 async function HubLoader() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) redirect("/login");
 
   const [stats, news] = await Promise.all([
     getUserStatus(session.user.email),
-    prisma.announcement.findMany({
-      where: { is_published: true },
-      orderBy: { created_at: "desc" },
-      take: 1
-    })
+    (async () => {
+      const now = Date.now();
+      if (cachedNews && now < cachedNewsExpiry) {
+        return cachedNews;
+      }
+      const announcements = await prisma.announcement.findMany({
+        where: { is_published: true },
+        orderBy: { created_at: "desc" },
+        take: 1
+      });
+      if (announcements) {
+        cachedNews = announcements;
+        cachedNewsExpiry = now + 60000; // Cache for 1 min
+      }
+      return announcements;
+    })()
   ]);
 
   if (!stats) redirect("/activate");

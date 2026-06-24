@@ -1,44 +1,66 @@
 import { prisma } from "@/lib/prisma";
 
+let cachedAssetPrices: any = null;
+let cachedAssetPricesExpiry = 0;
+
 export async function getUserStatus(email: string | null | undefined) {
   if (!email) return null;
   const normalizedEmail = email.toLowerCase();
 
-  const user = await prisma.user.findUnique({
-    where: { email: normalizedEmail },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      rank: true,
-      rt_balance: true,
-      exp: true,
-      unlocked_titles: true,
-      owned_assets: true,
-      handle_name: true,
-      logo_url: true,
-      photo_url: true,
-      link_website: true,
-      phone: true,
-      ai_config: true,
-      equipped_assets: true,
-      link_x: true,
-      link_instagram: true,
-      link_line: true,
-      link_facebook: true,
-      portfolio_links: true,
-      last_daily_at: true,
-      last_read_news_at: true,
-      card: {
-        select: { uid: true }
+  const [user, assetPricesConfig] = await Promise.all([
+    prisma.user.findUnique({
+      where: { email: normalizedEmail },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        rank: true,
+        rt_balance: true,
+        exp: true,
+        unlocked_titles: true,
+        owned_assets: true,
+        handle_name: true,
+        logo_url: true,
+        photo_url: true,
+        link_website: true,
+        phone: true,
+        ai_config: true,
+        equipped_assets: true,
+        link_x: true,
+        link_instagram: true,
+        link_line: true,
+        link_facebook: true,
+        portfolio_links: true,
+        last_daily_at: true,
+        last_read_news_at: true,
+        card: {
+          select: { uid: true }
+        }
       }
-    }
-  });
+    }),
+    (async () => {
+      const now = Date.now();
+      if (cachedAssetPrices && now < cachedAssetPricesExpiry) {
+        return cachedAssetPrices;
+      }
+      const config = await prisma.systemConfig.findUnique({
+        where: { key: 'asset_prices' }
+      });
+      if (config) {
+        cachedAssetPrices = config;
+        cachedAssetPricesExpiry = now + 60000; // Cache for 1 min
+      }
+      return config;
+    })()
+  ]);
 
   if (!user) return null;
 
-  // Fixer (Go Fukui) check - Extremely robust
+  const unreadCount = await prisma.cardMessage.count({
+    where: { target_user_id: user.id, is_read: false }
+  });
+
   const userEmail = user.email?.toLowerCase() || "";
   const userName = user.name || "";
   const isFixer = user.role === "fixer" || 
@@ -46,18 +68,13 @@ export async function getUserStatus(email: string | null | undefined) {
                    userName.includes("Fukui") ||
                    userEmail.includes("str1yf5x");
   
-  // All available titles in the system
   const allTitles = ["ASSOCIATE", "Observer", "Collector", "Messenger", "Connector", "Strategist", "Tech Lead", "Void Voyager", "Headhunter", "Gilded Soul", "The Sovereign", "Mastermind", "Architect", "Chief Officer", "APEX", "Fixer", "HERETIC", "NEXUS"];
-  
   const titles = isFixer ? allTitles : (Array.isArray(user.unlocked_titles) ? user.unlocked_titles : ["ASSOCIATE"]);
 
   const ownedAssets = isFixer
     ? ["Obsidian", "Silver", "Gold", "Sakura", "RoseGold", "PearlWhite", "Moonlight", "Grace", "Silk", "Emerald", "Platinum", "Dynamic", "Crimson", "Void", "ImperialGold", "NebulaSteel", "GildedRose", "Default", "PastelSakura", "PearlVeil", "SilkSheet", "GraceGradient", "CrystalGlass", "Carbon", "BrushedMetal", "MonochromeGrid", "Stardust", "RoyalGold", "Nebula", "SilkBlur", "DigitalFlow", "PrismFractal", "GoldenHour", "MonochromeCyber", "None", "Sparkle", "FallingFlowers", "Feathers", "Bubbles", "Ribbons", "Glitch", "Petals", "Snow", "Aethereal", "Scanline", "Interference", "Dust", "Aurora", "Singularity", "CherryPetals", "BinaryCascade", "WhiteMist", "AzureFlame", "GoldenHalo", "VioletHaze", "EmeraldDust", "CrimsonFlare", "VoidEclipse", "PrismGlow", "CyberGrid", "StellarWind", "AbyssalEcho", "Pure White Hex", "Azure Trace", "Emerald Trace", "Ruby Trace", "Gold Trace", "Violet Trace", "Crimson Trace", "Shadow Trace", "Prism Trace", "Void Trace", "Nebula Trace", "Solar Trace", "resonance", "click", "wind", "water", "silver", "crystal", "deep", "heaven", "void", "omega", "ether", "pulse"]
     : (Array.isArray(user.owned_assets) ? user.owned_assets : []);
-  
-  const assetPricesConfig = await prisma.systemConfig.findUnique({
-    where: { key: 'asset_prices' }
-  });
+
   const assetPrices = assetPricesConfig?.value || {};
 
   const aiConfig = (user.ai_config as any) || {};
@@ -79,9 +96,7 @@ export async function getUserStatus(email: string | null | undefined) {
     rt_balance: user.rt_balance.toString(),
     exp: isFixer ? "10000" : user.exp.toString(),
     exp_max: isFixer ? "10000" : "1000", // EXPの上限表示用
-    unread_messages: await prisma.cardMessage.count({
-      where: { target_user_id: user.id, is_read: false }
-    }),
+    unread_messages: unreadCount,
     portfolio_links: user.portfolio_links || [],
     rank: isFixer ? "Fixer" : user.rank,
     role: isFixer ? "fixer" : user.role, // Force role to fixer in UI

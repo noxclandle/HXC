@@ -316,7 +316,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                   Touch Resonance <span className="text-[9px] text-white/60 font-normal">/ NFC連携と共鳴</span>
                 </h3>
                 <p className="text-[9px] tracking-widest leading-loose opacity-50">
-                  物理カードをスマートフォンの背面にかざすだけで、瞬時にあなたのデジタルポートフォリオを展開。相手の記憶に深く刻み込みます。事前のアプリインストールは一切不要です。
+                  Instant digital portfolio access by tapping the physical card against a smartphone. No app installation required. / 物理カードをかざすだけで、瞬時にデジタルポートフォリオを展開。アプリ不要で即座に繋がります。
                 </p>
               </div>
             </div>
@@ -347,7 +347,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                   Aesthetic Architect <span className="text-[9px] text-white/60 font-normal">/ 3万通りの意匠</span>
                 </h3>
                 <p className="text-[9px] tracking-widest leading-loose opacity-50">
-                  レイアウト、フレーム、背面エフェクト、オーラ光彩。あなたという存在を表現するために、数万通りのデザインシステムから直感的に構築可能。
+                  Easily configure layout, frame, background effect, and glow. Express your identity with over 36,000 design combinations. / レイアウトやエフェクトを直感的に構築。数万通りのデザインシステムで自分らしさを表現。
                 </p>
               </div>
             </div>
@@ -382,7 +382,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                   Stealth Identity <span className="text-[9px] text-white/60 font-normal">/ 匿名性と存在の保護</span>
                 </h3>
                 <p className="text-[9px] tracking-widest leading-loose opacity-50">
-                  本名や連絡先を安全に保護。ネットの活動名（Alias）やポートフォリオを主体とし、真に繋がった相手にだけメッセージや連絡先を安全に開示します。
+                  Safeguard your real name and contact info. Highlight your alias or portfolio, and securely share data only with those you trust. / 本名を保護し、活動名や実績を主体に開示。信頼できる相手にだけ情報を安全に共有します。
                 </p>
               </div>
             </div>

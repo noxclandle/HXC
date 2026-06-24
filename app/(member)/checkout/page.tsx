@@ -5,8 +5,8 @@ import { Lock, CreditCard, ShieldCheck, Zap } from "lucide-react";
 
 export default function CheckoutPage() {
   const items = [
-    { name: "Alias Contract", desc: "偽名の結界（別名名刺機能）の解放", price: "¥2,000", id: "alias" },
-    { name: "Black Tier Sublimation", desc: "ブラックカード保有者への昇華権利", price: "¥10,000", id: "black" },
+    { name: "Alias Contract", desc: "Alias Barrier (Unlock alternative profile/alias feature) / 偽名の結界（別名名刺機能）の解放", price: "¥2,000", id: "alias" },
+    { name: "Black Tier Sublimation", desc: "Black Tier Sublimation (Upgrade right to premium black card membership) / ブラックカード保有者への昇華権利", price: "¥10,000", id: "black" },
   ];
 
   return (

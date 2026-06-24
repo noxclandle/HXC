@@ -16,7 +16,7 @@ export default function MonthlyReport({ stats }: { stats?: any }) {
     month: currentMonth,
     newConnections: stats?.monthly_connections || 0,
     topTag: stats?.top_tag || "Unknown",
-    summary: stats?.monthly_summary || "今月はデータの蓄積フェーズです。カード交換を重ねることで、ここに詳細な分析が表示されます。"
+    summary: stats?.monthly_summary || "This month is in data accumulation phase. More card exchanges will trigger detailed reports here. / 今月はデータの蓄積フェーズです。カード交換を重ねることで詳細な分析が表示されます。"
   };
 
   return (
