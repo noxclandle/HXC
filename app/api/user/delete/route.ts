@@ -32,6 +32,11 @@ export async function POST(req: NextRequest) {
       }
 
       // 2. 関連データの削除 (CASCADE設定がない場合は手動)
+      await tx.cardMessage.deleteMany({ where: { target_user_id: userId } });
+      await tx.auditLog.updateMany({
+        where: { user_id: userId },
+        data: { user_id: null }
+      });
       await tx.deviceBinding.deleteMany({ where: { user_id: userId } });
       await tx.chatMessage.deleteMany({ where: { user_id: userId } });
       await tx.contact.deleteMany({ where: { owner_id: userId } });
