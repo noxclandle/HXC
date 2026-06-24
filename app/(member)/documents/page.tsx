@@ -57,14 +57,14 @@ export default function DocumentManager() {
 
       if (res.ok) {
         setSaveStatus("saved");
-        showToast("資料を更新しました", "success");
+        showToast("Documents updated successfully / 資料を更新しました", "success");
         setTimeout(() => setSaveStatus("idle"), 2000);
       } else {
         throw new Error("Save failed");
       }
     } catch (e) {
       setSaveStatus("error");
-      showToast("保存に失敗しました", "error");
+      showToast("Failed to save changes / 保存に失敗しました", "error");
     }
   };
 
@@ -96,7 +96,7 @@ export default function DocumentManager() {
          <div className="p-6 bg-azure-500/5 border border-azure-500/20 flex gap-4 items-start">
             <Info size={16} className="text-azure-400 shrink-0 mt-1" />
             <p className="text-[10px] tracking-widest leading-relaxed text-white/60 uppercase">
-              ここで登録した資料(PDF等)のURLや実績サイトは、あなたの名刺(QRコード)を読み取った相手の画面に即座に表示されます。オンライン商談前に素早く切り替えることが可能です。
+              Registered documents (PDFs, URLs) will be instantly visible to others who scan your card (QR code). You can quickly update links before online meetings. / ここで登録した資料(PDF等)のURLや実績サイトは、あなたの名刺(QRコード)を読み取った相手の画面に即座に表示されます。商談前に素早く切り替えることが可能です。
             </p>
          </div>
 
@@ -125,7 +125,7 @@ export default function DocumentManager() {
                             type="text" value={link.title} 
                             onChange={(e) => updateLink(index, "title", e.target.value)}
                             className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs tracking-widest focus:border-azure-400 outline-none text-white" 
-                            placeholder="例：会社案内 / プロジェクト提案書" 
+                            placeholder="e.g. Company Brochure / 会社案内" 
                           />
                        </div>
                        <div className="space-y-2">

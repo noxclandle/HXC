@@ -103,7 +103,7 @@ export default function ScanPage() {
           <motion.div key="idle" className="flex flex-col items-center p-12 w-full max-w-sm">
             <header className="text-center mb-16 space-y-2">
               <h2 className="text-xl tracking-[0.6em] uppercase font-light">Scan Card</h2>
-              <p className="text-[9px] tracking-[0.4em] opacity-30 uppercase font-bold text-azure-400">名刺をスキャンする</p>
+              <p className="text-[9px] tracking-[0.4em] opacity-30 uppercase font-bold text-azure-400">OCR Scan / 名刺をスキャンする</p>
             </header>
 
             {/* Visual Guide (紙名刺の電子化) */}
@@ -155,8 +155,7 @@ export default function ScanPage() {
                 onChange={handleCapture}
               />
               <p className="text-[10px] tracking-widest opacity-40 leading-relaxed uppercase">
-                相手の「紙の名刺」をカメラで撮影し、<br />
-                AIが自動的にデジタル名刺帳へ保存します。
+                {"Capture the other party's \"paper business card\" with the camera, and AI will automatically save it to your digital library. / 相手の「紙の名刺」をカメラで撮影し、AIが自動的にデジタル名刺帳へ保存します。"}
               </p>
               <button 
                 type="button"

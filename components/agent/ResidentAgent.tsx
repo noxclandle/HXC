@@ -167,11 +167,11 @@ export default function ResidentAgent() {
   };
 
   const helpItems = [
-    { q: "RT（Relation Token）とは？", a: "あなたの活動エネルギーであり、通貨です。アイテムの解禁や、高度な機能（AI分析等）の維持に使用されます。毎日ログインするか、名刺交換（スキャン）を成功させることで増加します。" },
-    { q: "EXPとランクの関係は？", a: "RTを獲得するたびにEXP（経験値）が蓄積され、あなたの天使が進化します。ランクが上がると、解禁できるアイテムや権限が増えていきます。" },
-    { q: "名刺の保存が反映されない", a: "編集画面で「Commit」を押さなくても自動保存されますが、確実に保存したい場合は、右上のSyncing表示が完了するまでお待ちください。電波が悪い場合はオフラインキャッシュ機能をご利用ください。" },
-    { q: "物理カードの再発行・紛失", a: "管理者に問い合わせを行うか、設定画面からSoul-Linkを一時停止してください。" },
-    { q: "管理パネルに入れない", a: "管理者権限が必要です。権限をお持ちの場合は、一度サインアウトしてから再度サインインし、Gate（入口）からアクセスしてください。" },
+    { q: "What is RT (Relation Token)? / RT（Relation Token）とは？", a: "It is your activity energy and currency. Used for unlocking items and AI analysis. Increases via daily resonance or successful card scanning. / あなたの活動エネルギーであり、通貨です。アイテムの解禁やAI分析に使用されます。デイリーログインやスキャン成功で獲得できます。" },
+    { q: "Relation between EXP & Rank? / EXPとランクの関係は？", a: "Earning RT increases EXP, evolving your Resonance Angel. Higher ranks unlock more items and permissions. / RT獲得でEXPが溜まり、共鳴の天使が進化します。ランク上昇により、解禁されるアイテムや権限が増えます。" },
+    { q: "Edits are not saving? / 名刺の保存が反映されない", a: "Edits autosave, but wait for the 'Syncing' indicator in the top right to complete. Use offline caching when connection is weak. / プロフィール編集は自動保存されますが、右上のSyncing完了をお待ちください。通信不良時はオフラインキャッシュを利用してください。" },
+    { q: "Reissuing physical card or loss? / 物理カードの再発行・紛失", a: "Contact administrators, or suspend Soul-Link from Settings. / 管理者に問い合わせるか、設定画面からSoul-Linkを一時停止してください。" },
+    { q: "Cannot access Admin Panel? / 管理パネルに入れない", a: "Administrator privileges are required. If authorized, sign out and sign back in, then access via the Gate. / 管理者権限が必要です。一度サインアウトして再ログイン後、ゲートからアクセスしてください。" },
   ];
 
   return (

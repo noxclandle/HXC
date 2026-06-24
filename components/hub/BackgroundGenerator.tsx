@@ -79,8 +79,7 @@ export default function BackgroundGenerator({ userSlug }: { userSlug: string }) 
           </Link>
           <h1 className="text-3xl tracking-[0.4em] uppercase font-light mb-4">Virtual Background</h1>
           <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase leading-relaxed">
-            オンライン商談やネット面談で使用できる、QRコード付きのバーチャル背景を生成します。<br />
-            画面越しに名刺と資料を相手に即座に配ることが可能です。
+            Generates a virtual background with a QR code for online meetings and interviews. You can instantly share your business card and documents through the screen. / オンライン商談や面談で使用できる、QRコード付きのバーチャル背景を生成します。画面越しに名刺と資料を相手に即座に配ることが可能です。
           </p>
         </header>
 
@@ -108,10 +107,10 @@ export default function BackgroundGenerator({ userSlug }: { userSlug: string }) 
               <div className="space-y-4">
                  <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-azure-400">使い方 / How to use</h3>
                  <ul className="text-[9px] tracking-widest text-white/40 space-y-3 leading-relaxed uppercase">
-                    <li>1. 下の「背景を生成・保存」ボタンを押してください。</li>
-                    <li>2. 保存された画像をZoomやGoogle Meetの背景に設定します。</li>
-                    <li>3. オンライン商談中、相手に「画面のQRをスマホで撮ってください」と伝えます。</li>
-                    <li>4. 相手は即座にあなたの名刺と、設定した資料にアクセスできます。</li>
+                    <li>{"1. Press the \"Generate & Save\" button below. / 下のボタンを押して背景を生成・保存します。"}</li>
+                    <li>2. Set the saved image as your background in Zoom or Google Meet. / 保存された画像をZoomやGoogle Meetの背景に設定します。</li>
+                    <li>3. During online meetings, ask the other party to scan the QR code on your screen. / 商談中、相手に画面のQRをスキャンするよう伝えます。</li>
+                    <li>4. The other party can instantly view your business card and shared documents. / 相手は即座にあなたの名刺と設定した資料にアクセスできます。</li>
                  </ul>
               </div>
 
@@ -120,7 +119,7 @@ export default function BackgroundGenerator({ userSlug }: { userSlug: string }) 
                 disabled={generating}
                 className="w-full py-6 bg-white text-void font-bold text-[11px] tracking-[1em] uppercase flex items-center justify-center gap-4 hover:bg-azure-50 transition-all disabled:opacity-50"
               >
-                {generating ? "Generating..." : <><Download size={16} /> 生成して保存</>}
+                {generating ? "Generating..." : <><Download size={16} /> Generate & Save / 生成して保存</>}
               </button>
            </div>
 

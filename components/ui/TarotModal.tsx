@@ -254,7 +254,7 @@ export default function TarotModal({ isOpen, onClose, mode, onSuccess }: TarotMo
             </span>
           </div>
           <h2 className="text-lg md:text-xl tracking-[0.2em] font-light text-white uppercase">
-            {mode === "daily" ? "境界の啓示" : "ワンオラクル"}
+            {mode === "daily" ? "Revelation from Void / 境界の啓示" : "One Oracle / ワンオラクル"}
           </h2>
         </header>
 
@@ -275,14 +275,14 @@ export default function TarotModal({ isOpen, onClose, mode, onSuccess }: TarotMo
             >
               <p className="text-xs leading-relaxed tracking-widest text-white/60 font-sans">
                 {mode === "daily"
-                  ? "本日分の同調データを境界から取得します。3枚の裏伏せられたカードから1枚を選択し、共鳴（RTの受け取り）を完了してください。"
-                  : "静寂を保ち、意識を境界へと接続してください。今の貴方に必要な神託が、1枚のカードを通じて示されます。"}
+                  ? "Retrieve today's alignment data. Select one of the three face-down cards to complete resonance and claim RT. / 本日分の同調データを境界から取得します。3枚の裏伏せられたカードから1枚を選択し、共鳴（RTの受け取り）を完了してください。"
+                  : "Keep calm and connect your awareness to the Void. The oracle you need will be shown through a single card. / 静寂を保ち、意識を境界へと接続してください。今の貴方に必要な神託が、1枚のカードを通じて示されます。"}
               </p>
               <button
                 onClick={startReading}
                 className="px-8 py-3 bg-azure-500/10 hover:bg-azure-500/20 text-azure-400 border border-azure-500/30 text-[10px] tracking-[0.4em] uppercase font-bold rounded-full transition-all hover:scale-105"
               >
-                {mode === "daily" ? "啓示を受け取る" : "占いを開始する"}
+                {mode === "daily" ? "Receive Revelation / 啓示を受け取る" : "Start Oracle / 占いを開始する"}
               </button>
             </motion.div>
           )}
@@ -380,7 +380,7 @@ export default function TarotModal({ isOpen, onClose, mode, onSuccess }: TarotMo
                 </div>
 
                 <h3 className="text-sm font-light tracking-[0.2em] text-white">
-                  {drawnCard.jpName} <span className="opacity-40">({isUpright ? "正位置" : "逆位置"})</span>
+                  {drawnCard.jpName} <span className="opacity-40">({isUpright ? "Upright / 正位置" : "Reversed / 逆位置"})</span>
                 </h3>
                 <p className="text-[8px] tracking-[0.3em] uppercase text-azure-400 font-bold mt-1">
                   {isUpright ? drawnCard.upright.meaning : drawnCard.reversed.meaning}
