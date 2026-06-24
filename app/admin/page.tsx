@@ -17,7 +17,7 @@ export default async function AdminDashboardPage() {
 
   // サーバーサイドで全統計データを取りきる
   const [activeUsers, issuedCards, totalCP, reportCount] = await Promise.all([
-    prisma.user.count({ where: { role: "member" } }),
+    prisma.user.count(),
     prisma.card.count({ where: { status: "active" } }),
     prisma.user.aggregate({ _sum: { rt_balance: true } }),
     prisma.report.count({ where: { status: "pending" } })
