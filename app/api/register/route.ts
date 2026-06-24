@@ -64,7 +64,19 @@ export async function POST(req: NextRequest) {
           phone: phone, // 電話番号を追加
           handle_name: handle || name, // フリガナ/ハンドル名をセット
           role: "member",
-          rank: "Member" // Initiateを廃止し、最初から対等な会員として登録
+          rank: "Member", // Initiateを廃止し、最初から対等な会員として登録
+          rt_balance: 3000, // 新規購入特典の3,000 RTを付与
+          exp: 3000 // 3,000 EXPを付与
+        }
+      });
+
+      // 2.5 新規購入特典のトランザクション履歴を記録
+      await tx.rTTransaction.create({
+        data: {
+          user_id: user.id,
+          amount: 3000,
+          type: "earn",
+          description: "Initial Activation Bonus / 新規購入特典"
         }
       });
 
