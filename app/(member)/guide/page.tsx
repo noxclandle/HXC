@@ -33,8 +33,59 @@ export default function MemberGuidePage() {
     {
       title: "NFC Exchange / デジタル名刺を渡す",
       icon: <Smartphone className="text-purple-400" />,
+      image: "/nfc_greeting_guide.jpg",
       diagram: <NfcDiagram />,
-      content: "あなたのカードを相手のスマホにポンと当てるだけで、あなたの情報が相手の画面にパッと表示されます。相手がアプリを入れていなくても大丈夫です。"
+      content: (
+        <div className="space-y-4 text-[10px] leading-relaxed tracking-wider">
+          <p className="opacity-75">
+            HXCカードは、スマートフォンのNFCリーダーにかざすだけでデジタルプロフィールを瞬時に共有します。相手がアプリを導入していなくても受け取ることができます。
+          </p>
+          
+          <div className="border-l-2 border-azure-500/30 pl-3 space-y-1 bg-white/[0.01] p-3 border-r border-t border-b border-transparent hover:border-white/5 transition-all">
+            <span className="text-[8px] tracking-[0.2em] font-bold text-azure-400 block uppercase">Protocol: Greeting & Gesture / 挨拶と作法</span>
+            <p className="text-[9px] opacity-75 leading-relaxed">
+              紙の名刺交換とは異なる新しいスマートな所作です。会話の中で相手へ敬意と配慮を込めながら、
+              <span className="text-white font-bold font-sans">「デジタル名刺なのですが、スマートフォンにかざしてもよろしいでしょうか？」</span>
+              と一言添えてタッチを提示すると、相手も安心して驚きと共鳴を受け取ることができます。
+            </p>
+          </div>
+
+          <div className="border-l-2 border-azure-500/30 pl-3 space-y-1 bg-white/[0.01] p-3 border-r border-t border-b border-transparent hover:border-white/5 transition-all">
+            <span className="text-[8px] tracking-[0.2em] font-bold text-azure-400 block uppercase">Observation: NFC Alignment / 読み取り位置</span>
+            <p className="text-[9px] opacity-75 leading-relaxed">
+              スマートフォンは機種によってNFCリーダーの位置が異なります。相手の端末に合わせてスマートに案内しましょう。
+            </p>
+            <div className="grid grid-cols-2 gap-4 text-[8px] mt-2 pt-2 border-t border-white/5">
+              <div>
+                <span className="text-white font-bold block mb-1">■ iPhone (iOS)</span>
+                <span className="opacity-65">端末の<span className="text-azure-300 font-bold">最上部（インカメラ付近の背面または前面）</span>にカードの上部を近づけると即座に反応します。</span>
+              </div>
+              <div>
+                <span className="text-white font-bold block mb-1">■ Android</span>
+                <span className="opacity-65">多くの機種は<span className="text-azure-300 font-bold">背面中央（おサイフケータイマーク付近）</span>にアンテナがあります。真ん中に当てるよう促してください。</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-l-2 border-azure-500/30 pl-3 space-y-2 bg-white/[0.01] p-3 border-r border-t border-b border-transparent hover:border-white/5 transition-all">
+            <span className="text-[8px] tracking-[0.2em] font-bold text-azure-400 block uppercase">Features: Shared Identity / プロフィールの活用機能</span>
+            <ul className="space-y-1.5 text-[9px] opacity-75 list-disc pl-4">
+              <li>
+                <strong className="text-white font-bold">vCard 直接保存:</strong> 
+                プロフィールの右上にある「連絡先保存」ボタンを相手にタップしてもらうことで、相手のスマホの電話帳にあなたの情報（名前・電話番号・メールアドレス）を直接ワンタップで保存できます。
+              </li>
+              <li>
+                <strong className="text-white font-bold">カードの「裏面」切り替え:</strong> 
+                画面上のデジタル名刺をタップすると、カードがフリップして「裏面」が表示されます。SNSリンクや自己紹介文が美しく格納されています。
+              </li>
+              <li>
+                <strong className="text-white font-bold">メールフォーム機能:</strong> 
+                プロフィールの最下部にはメールフォームが備わっており、相手がそこからメッセージを送信すると、あなたへダイレクトに連絡が入るよう設計されています。
+              </li>
+            </ul>
+          </div>
+        </div>
+      )
     }
   ];
 
@@ -52,7 +103,7 @@ export default function MemberGuidePage() {
         </h1>
         <p className="text-xs tracking-widest opacity-40 uppercase">How to utilize the Hexa Relation System / システム利用ガイド</p>
       </header>
-
+ 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {sections.map((s, i) => (
           <motion.section 
@@ -63,11 +114,21 @@ export default function MemberGuidePage() {
             viewport={{ once: true }}
             className="flex flex-col border border-white/5 bg-white/[0.01] hover:bg-white/[0.02] transition-all group overflow-hidden"
           >
-            {/* Visual Diagram */}
-            <div className="w-full">
-               {s.diagram}
+            {/* Visual Diagram or Image */}
+            <div className="w-full animate-fade-in">
+               {s.image ? (
+                 <div className="w-full h-44 overflow-hidden relative bg-void border-b border-white/5 flex items-center justify-center">
+                   <img 
+                     src={s.image} 
+                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                     alt={s.title} 
+                   />
+                 </div>
+               ) : (
+                 s.diagram
+               )}
             </div>
-
+ 
             <div className="p-8 space-y-4">
                <div className="flex items-center gap-4">
                   <div className="p-2 bg-white/5 border border-white/10">
@@ -75,9 +136,9 @@ export default function MemberGuidePage() {
                   </div>
                   <h2 className="text-[10px] tracking-[0.3em] font-bold uppercase">{s.title}</h2>
                </div>
-               <p className="text-[11px] leading-relaxed tracking-widest opacity-60 text-white/80">
+               <div className="text-[11px] leading-relaxed tracking-widest opacity-60 text-white/80">
                   {s.content}
-               </p>
+               </div>
             </div>
           </motion.section>
         ))}
