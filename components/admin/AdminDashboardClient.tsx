@@ -51,10 +51,33 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
     { label: "データバックアップ", path: "/api/admin/backup/export", icon: <Layers size={18}/>, desc: "全データのJSONエクスポート" },
   ];
 
+  const categories = [
+    {
+      id: "identity",
+      title: "Identity & Access / 身元と権限",
+      paths: ["/admin/users", "/admin/reports", "/admin/onboarding"]
+    },
+    {
+      id: "assets",
+      title: "Assets & Codex / 資産と大典",
+      paths: ["/admin/registry", "/admin/items", "/admin/lps"]
+    },
+    {
+      id: "system",
+      title: "System & Config / システムと構成",
+      paths: ["/admin/news", "/admin/config", "/api/admin/backup/export"]
+    },
+    {
+      id: "security",
+      title: "Security & Audit / 保安と監査",
+      paths: ["/admin/security", "/admin/logs"]
+    }
+  ];
+
   return (
     <>
       {/* Main Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
         {statCards.map((s, i) => (
           <motion.div 
             key={i} 
@@ -74,21 +97,53 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
         ))}
       </div>
 
-      {/* Control Hub Navigation */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-        {adminLinks.map((link) => (
-          <Link 
-            key={link.path} href={link.path} 
-            className="p-8 border border-white/10 bg-white/[0.03] hover:border-azure-500/40 hover:bg-azure-500/[0.02] transition-all group relative overflow-hidden"
-          >
-             <div className="mb-4 text-azure-400 opacity-40 group-hover:opacity-100 transition-opacity">{link.icon}</div>
-             <p className="text-[11px] tracking-[0.4em] uppercase mb-2 text-white font-bold">{link.label}</p>
-             <p className="text-[8px] opacity-20 uppercase tracking-widest leading-relaxed mb-6">{link.desc}</p>
-             <div className="flex items-center gap-2 text-[7px] uppercase tracking-[0.3em] opacity-0 group-hover:opacity-100 transition-all text-azure-400 font-bold">
-                Access Archives <ArrowRight size={10} />
-             </div>
-          </Link>
-        ))}
+      {/* Control Hub Categorized Navigation */}
+      <div className="space-y-16 mb-16">
+        {categories.map((cat, catIdx) => {
+          const links = adminLinks.filter(l => cat.paths.includes(l.path));
+          return (
+            <div key={cat.id} className="space-y-6">
+              <div className="flex items-center gap-4 border-b border-white/5 pb-3">
+                <span className="w-1.5 h-1.5 bg-azure-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"></span>
+                <h2 className="text-[11px] tracking-[0.3em] uppercase text-white font-bold font-mono">
+                  {cat.title}
+                </h2>
+                <span className="text-[8px] text-azure-400/40 tracking-[0.25em] font-mono ml-auto">
+                  [ {links.length.toString().padStart(2, '0')} MODULES ]
+                </span>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {links.map((link, linkIdx) => (
+                  <motion.div
+                    key={link.path}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: (catIdx * 0.08) + (linkIdx * 0.04) }}
+                  >
+                    <Link 
+                      href={link.path} 
+                      className="flex flex-col p-8 border border-white/10 bg-white/[0.02] hover:border-azure-500/40 hover:bg-azure-500/[0.02] transition-all group relative overflow-hidden h-full min-h-[170px]"
+                    >
+                      <div className="mb-4 text-azure-400 opacity-40 group-hover:opacity-100 transition-opacity">
+                        {link.icon}
+                      </div>
+                      <p className="text-[11px] tracking-[0.4em] uppercase mb-2 text-white font-bold">
+                        {link.label}
+                      </p>
+                      <p className="text-[8px] opacity-25 uppercase tracking-widest leading-relaxed mb-6">
+                        {link.desc}
+                      </p>
+                      <div className="mt-auto flex items-center gap-2 text-[7px] uppercase tracking-[0.3em] opacity-0 group-hover:opacity-100 transition-all text-azure-400 font-bold">
+                        Access Archives <ArrowRight size={10} />
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </>
   );
