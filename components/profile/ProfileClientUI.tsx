@@ -42,6 +42,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
     try {
       const res = await fetch("/api/card/message", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sender_name: messageForm.name,
           sender_company: messageForm.company,
@@ -52,9 +53,15 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
       if (res.ok) {
         setMessageSent(true);
         setMessageForm({ name: "", company: "", content: "" });
+      } else {
+        alert("Failed to transmit message. Please try again. / 送信に失敗しました。再度お試しください。");
       }
-    } catch (e) { console.error(e); }
-    finally { setSendingMessage(false); }
+    } catch (e) {
+      console.error(e);
+      alert("Network error. Please try again. / 通信エラーが発生しました。再度お試しください。");
+    } finally {
+      setSendingMessage(false);
+    }
   };
 
   const soulLinkAttempted = useRef(false);
@@ -96,14 +103,22 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
     try {
       const res = await fetch("/api/report", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ targetUserId: data.id, reason: reportReason })
       });
       if (res.ok) {
-        alert("Report submitted.");
+        alert("Report submitted. Thank you for your feedback. / 通報を受け付けました。ご協力ありがとうございます。");
         setShowReport(false);
+        setReportReason("");
+      } else {
+        alert("Failed to submit report. Please try again. / 通報の送信に失敗しました。再度お試しください。");
       }
-    } catch (e) { console.error(e); }
-    finally { setReporting(false); }
+    } catch (e) {
+      console.error(e);
+      alert("Network error. Please try again. / 通信エラーが発生しました。再度お試しください。");
+    } finally {
+      setReporting(false);
+    }
   };
 
   const defaultAlign = "center";
@@ -118,12 +133,18 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
       {isOwner && <ResidentAgent />}
 
       {/* Brand Top Link */}
-      <div className="fixed top-6 left-6 md:top-8 md:left-8 z-50">
+      <div className="fixed top-6 left-6 md:top-8 md:left-8 z-50 flex items-center gap-2.5">
         <Link 
           href="/" 
           className="flex items-center gap-2 text-[9px] tracking-[0.4em] uppercase font-bold text-white/60 hover:text-white hover:border-white/20 transition-all bg-void/60 backdrop-blur-md border border-white/10 px-3.5 py-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
         >
           ← Hexa Card
+        </Link>
+        <Link 
+          href="/login" 
+          className="flex items-center gap-2 text-[9px] tracking-[0.4em] uppercase font-bold text-azure-400/80 hover:text-azure-400 hover:border-azure-500/30 transition-all bg-void/60 backdrop-blur-md border border-white/10 px-3.5 py-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
+        >
+          Login
         </Link>
       </div>
 
@@ -135,7 +156,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
 
       <AnimatePresence>
         {showReport && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-void/90 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-void/95 z-[100] flex items-center justify-center p-6">
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className="max-w-md w-full bg-[#0a0a0a] border border-white/10 p-8 space-y-6">
                <h3 className="text-sm tracking-[0.4em] uppercase font-bold text-white">Report Identity</h3>
                <textarea 

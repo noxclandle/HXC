@@ -183,13 +183,20 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
             onClick={handleOpen}
           >
             {/* Brand Top Link on Envelope Screen */}
-            <div className="fixed top-6 left-6 md:top-8 md:left-8 z-[60]">
+            <div className="fixed top-6 left-6 md:top-8 md:left-8 z-[60] flex items-center gap-2.5">
               <Link 
                 href="/" 
                 onClick={(e) => e.stopPropagation()}
                 className="flex items-center gap-2 text-[9px] tracking-[0.4em] uppercase font-bold text-white/60 hover:text-white hover:border-white/20 transition-all bg-void/60 backdrop-blur-md border border-white/10 px-3.5 py-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
               >
                 ← Hexa Card
+              </Link>
+              <Link 
+                href="/login" 
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-2 text-[9px] tracking-[0.4em] uppercase font-bold text-azure-400/80 hover:text-azure-400 hover:border-azure-500/30 transition-all bg-void/60 backdrop-blur-md border border-white/10 px-3.5 py-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
+              >
+                Login
               </Link>
             </div>
 
