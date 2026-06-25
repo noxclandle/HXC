@@ -208,7 +208,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
   };
 
   return (
-    <div className="max-w-7xl mx-auto pt-14 lg:pt-32 px-4 lg:px-6 pb-4 lg:pb-32 text-moonlight overflow-hidden h-[calc(100dvh-80px)] lg:h-auto flex flex-col lg:block">
+    <div className="max-w-7xl mx-auto pt-14 lg:pt-32 px-4 lg:px-6 pb-24 lg:pb-32 text-moonlight flex flex-col lg:block">
       <style>{`
         .no-scrollbar::-webkit-scrollbar {
           display: none;
@@ -218,12 +218,13 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
           scrollbar-width: none;
         }
         @keyframes hxc-marquee {
-          0%, 100% { transform: translateX(0); }
-          50% { transform: translateX(-40%); }
+          0%, 15% { transform: translateX(0); }
+          45%, 55% { transform: translateX(-40%); }
+          85%, 100% { transform: translateX(0); }
         }
         .animate-hxc-marquee {
           display: inline-block;
-          animation: hxc-marquee 8s ease-in-out infinite;
+          animation: hxc-marquee 12s ease-in-out infinite;
         }
       `}</style>
       <ConfirmationModal 
@@ -256,7 +257,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
         </div>
       </header>
 
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-16 items-stretch lg:items-start flex-1 min-h-0">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-16 items-stretch lg:items-start lg:flex-1 lg:min-h-0">
         {/* Top Area: Fixed Preview Block on Mobile, Left Column on Desktop */}
         <div className="w-full lg:w-5/12 shrink-0 bg-void pb-2 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-auto flex items-center justify-center lg:sticky lg:top-32 z-30">
            <UnifiedCardContainer 
@@ -284,8 +285,8 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
            </UnifiedCardContainer>
         </div>
 
-        {/* Bottom Area: Fixed Navigation & Scrollable Items on Mobile, Right Column on Desktop */}
-        <div className="w-full lg:w-7/12 flex flex-col min-h-0 flex-1 lg:overflow-visible no-scrollbar">
+        {/* Bottom Area: Navigation & Items List */}
+        <div className="w-full lg:w-7/12 flex flex-col lg:min-h-0 lg:flex-1 lg:overflow-visible no-scrollbar">
            {/* RT Purchase Section (Inside scrollable container on mobile) */}
            <AnimatePresence>
              {showRTPurchase && (
@@ -395,7 +396,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
               </div>
 
               {/* Items List Container */}
-              <div className="space-y-4 flex-1 min-h-0 overflow-y-auto lg:max-h-[680px] pr-2 lg:pr-4 custom-scrollbar pb-24">
+              <div className="space-y-4 lg:flex-1 lg:min-h-0 lg:overflow-y-auto lg:max-h-[680px] pr-2 lg:pr-4 custom-scrollbar pb-24">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeCategory}
@@ -436,7 +437,11 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                                     </h3>
                                     <span className={`text-[6px] lg:text-[7px] w-fit px-2 py-0.5 border uppercase tracking-widest font-bold ${getRarityStyles(asset.rarity)} opacity-90`}>{asset.rarity}</span>
                                   </div>
-                                  <p className="text-[8px] lg:text-[9px] tracking-widest opacity-60 uppercase leading-relaxed max-w-[200px] lg:max-w-md line-clamp-1 lg:line-clamp-none text-white">{asset.description}</p>
+                                  <div className="w-full max-w-[160px] xs:max-w-[200px] sm:max-w-xs lg:max-w-md overflow-hidden whitespace-nowrap">
+                                    <span className={`text-[8px] lg:text-[9px] tracking-widest opacity-60 uppercase leading-relaxed text-white inline-block whitespace-nowrap ${asset.description && asset.description.length > 20 ? "animate-hxc-marquee" : ""}`}>
+                                      {asset.description}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
 
