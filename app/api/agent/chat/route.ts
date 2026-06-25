@@ -37,14 +37,14 @@ export async function POST(req: NextRequest) {
       select: { name: true, notes: true, handle_name: true, ai_tags: true }
     });
 
-    // 2. Gemini APIの準備
-    const isProduction = process.env.NODE_ENV === "production";
+    // 2. Gemini APIの準備 (APIキーが設定されていない場合は無料のシミュレーションモード)
+    const hasApiKey = !!process.env.GOOGLE_API_KEY;
     
-    if (isProduction) {
-      // 本番環境ではGemini APIを叩かず、簡易的なRAGシミュレーションで応答する
+    if (!hasApiKey) {
+      // APIキーがない場合はGemini APIを叩かず、簡易的なRAGシミュレーションで応答する
       const query = prompt.toLowerCase();
       let aiResponse = "";
-
+ 
       if (query.includes("誰") || query.includes("教え")) {
         const match = contacts.find(c => query.includes(c.name?.toLowerCase()));
         if (match) {
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       } else {
         aiResponse = "深層の知能があなたの問いを受け取りました。あなたの築き上げた人脈（星座）から最適な解を導き出します。現在は静寂のモード（Simulation Mode）で稼働中です。";
       }
-
+ 
       return NextResponse.json({ text: aiResponse });
     }
 

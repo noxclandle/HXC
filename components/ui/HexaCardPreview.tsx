@@ -1,11 +1,11 @@
 "use client";
-
+ 
 import Image from "next/image";
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { Rotate3d, Building2, User, Phone, Mail, Instagram, Facebook, Twitter, MessageCircle, Globe } from "lucide-react";
 import { playConnectionSound } from "@/lib/audio/resonance";
-
+ 
 export type Alignment = "left" | "center" | "right";
 
 export interface HexaCardProps {
@@ -121,8 +121,11 @@ export default function HexaCardPreview({
   const [isFlipped, setIsFlipped] = useState(false);
   const [isRotating, setIsRotating] = useState(false);
   
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
+  // Spring physical movement mapping
+  const xDrag = useMotionValue(0);
+  const yDrag = useMotionValue(0);
+  const x = useSpring(xDrag, { stiffness: 150, damping: 20 });
+  const y = useSpring(yDrag, { stiffness: 150, damping: 20 });
 
   const rotateX = useTransform(y, [-100, 100], [10, -10]);
   const rotateY = useTransform(x, [-100, 100], [-10, 10]);
@@ -130,12 +133,55 @@ export default function HexaCardPreview({
   const glowOpacity = useTransform(x, [-100, 100], [0.2, 0.4]);
   const finalRotateY = useTransform(rotateY, (val) => isFlipped ? val + 180 : val);
 
+  // Touch tracking for mobile
+  const touchStartRef = useRef({ x: 0, y: 0 });
+  const hasDraggedRef = useRef(false);
+
   const handleFlip = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('a')) return;
+    if (hasDraggedRef.current) {
+      hasDraggedRef.current = false;
+      return;
+    }
     setIsRotating(true);
     setIsFlipped(!isFlipped);
     if (sound) playConnectionSound(sound);
     setTimeout(() => setIsRotating(false), 800);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    const touch = e.touches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+    hasDraggedRef.current = false;
+
+    const touchX = touch.clientX - (rect.left + rect.width / 2);
+    const touchY = touch.clientY - (rect.top + rect.height / 2);
+    xDrag.set(Math.max(-rect.width/2, Math.min(rect.width/2, touchX)));
+    yDrag.set(Math.max(-rect.height/2, Math.min(rect.height/2, touchY)));
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    const touch = e.touches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+
+    // Check if dragging distance is significant enough to cancel the flip click
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = touch.clientY - touchStartRef.current.y;
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    if (distance > 10) {
+      hasDraggedRef.current = true;
+    }
+
+    const touchX = touch.clientX - (rect.left + rect.width / 2);
+    const touchY = touch.clientY - (rect.top + rect.height / 2);
+    xDrag.set(Math.max(-rect.width/2, Math.min(rect.width/2, touchX)));
+    yDrag.set(Math.max(-rect.height/2, Math.min(rect.height/2, touchY)));
+  };
+
+  const handleTouchEnd = () => {
+    xDrag.set(0);
+    yDrag.set(0);
   };
 
   const [mounted, setMounted] = useState(false);
@@ -595,10 +641,13 @@ export default function HexaCardPreview({
       style={{ perspective: "2500px" }}
       onMouseMove={(e) => {
         const rect = e.currentTarget.getBoundingClientRect();
-        x.set(e.clientX - (rect.left + rect.width / 2));
-        y.set(e.clientY - (rect.top + rect.height / 2));
+        xDrag.set(e.clientX - (rect.left + rect.width / 2));
+        yDrag.set(e.clientY - (rect.top + rect.height / 2));
       }}
-      onMouseLeave={() => { x.set(0); y.set(0); }}
+      onMouseLeave={() => { xDrag.set(0); yDrag.set(0); }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       onClick={handleFlip}
     >
       <motion.div
