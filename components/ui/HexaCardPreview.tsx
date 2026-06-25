@@ -194,39 +194,39 @@ export default function HexaCardPreview({
     if (!mounted) return null;
     switch (aura) {
       case "WhiteMist":
-        return <motion.div animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.05, 1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-[-15px] bg-white/20 blur-[15px] rounded-lg z-0" />;
+        return <motion.div animate={{ opacity: [0.4, 0.8, 0.4], scale: [1, 1.04, 1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute w-[115%] aspect-square bg-white/35 blur-[30px] rounded-full z-0" />;
       case "AzureFlame":
-        return <motion.div animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.08, 1] }} transition={{ duration: 3, repeat: Infinity }} className="absolute inset-[-18px] bg-azure-500/30 blur-[20px] rounded-lg z-0" />;
+        return <motion.div animate={{ opacity: [0.5, 0.85, 0.5], scale: [1, 1.05, 1] }} transition={{ duration: 3, repeat: Infinity }} className="absolute w-[115%] aspect-square bg-azure-500/40 blur-[35px] rounded-full z-0" />;
       case "GoldenHalo":
-        return <motion.div animate={{ opacity: [0.5, 0.8, 0.5], rotate: 360, scale: [1, 1.03, 1] }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="absolute inset-[-15px] border-[6px] border-amber-500/20 blur-[10px] rounded-lg z-0" />;
+        return <motion.div animate={{ opacity: [0.5, 0.8, 0.5], scale: [1, 1.03, 1] }} transition={{ duration: 5, repeat: Infinity }} className="absolute w-[115%] aspect-square bg-amber-500/35 blur-[25px] border border-amber-400/20 rounded-full z-0" />;
       case "VioletHaze":
-        return <motion.div animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.06, 1] }} transition={{ duration: 5, repeat: Infinity }} className="absolute inset-[-16px] bg-purple-500/30 blur-[18px] rounded-lg z-0" />;
+        return <motion.div animate={{ opacity: [0.5, 0.8, 0.5], scale: [1, 1.04, 1] }} transition={{ duration: 5, repeat: Infinity }} className="absolute w-[115%] aspect-square bg-purple-500/40 blur-[30px] rounded-full z-0" />;
       case "EmeraldDust":
         return (
-          <div className="absolute inset-[-15px] z-0 pointer-events-none rounded-lg overflow-hidden">
+          <div className="absolute w-[115%] aspect-square z-0 pointer-events-none rounded-full overflow-hidden flex items-center justify-center">
              {[...Array(15)].map((_, i) => (
-                <motion.div key={i} animate={{ y: [0, -15, 0], x: [0, (Math.random()-0.5)*15, 0], opacity: [0, 0.8, 0] }} transition={{ duration: 2 + Math.random() * 2, repeat: Infinity, delay: i * 0.15 }} className="absolute w-1 h-1 bg-emerald-400 rounded-full blur-[0.5px]" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }} />
+                <motion.div key={i} animate={{ y: [30, -30, 30], x: [0, (Math.random()-0.5)*30, 0], opacity: [0, 0.8, 0] }} transition={{ duration: 2 + Math.random() * 2, repeat: Infinity, delay: i * 0.15 }} className="absolute w-1.5 h-1.5 bg-emerald-400 rounded-full blur-[0.5px]" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }} />
              ))}
-             <motion.div animate={{ opacity: [0.15, 0.35, 0.15] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-0 bg-emerald-500/15 blur-[15px] rounded-lg" />
+             <motion.div animate={{ opacity: [0.25, 0.5, 0.25] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-0 bg-emerald-500/25 blur-[30px] rounded-full" />
           </div>
         );
       case "CrimsonFlare":
-        return <motion.div animate={{ scale: [1, 1.1, 1], opacity: [0.4, 0.8, 0.4] }} transition={{ duration: 0.8, repeat: Infinity }} className="absolute inset-[-20px] bg-rose-600/30 blur-[22px] rounded-lg z-0" />;
+        return <motion.div animate={{ scale: [1, 1.06, 1], opacity: [0.5, 0.9, 0.5] }} transition={{ duration: 1.2, repeat: Infinity }} className="absolute w-[118%] aspect-square bg-rose-600/45 blur-[35px] rounded-full z-0" />;
       case "VoidEclipse":
-        return <div className="absolute inset-[-25px] bg-black blur-[25px] opacity-95 z-0 shadow-[0_0_25px_rgba(255,255,255,0.05)] rounded-lg" />;
+        return <div className="absolute w-[120%] aspect-square bg-black border border-white/10 blur-[20px] opacity-95 z-0 shadow-[0_0_30px_rgba(255,255,255,0.08)] rounded-full" />;
       case "PrismGlow":
-        return <motion.div animate={{ rotate: 360, scale: [1, 1.05, 1] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} className="absolute inset-[-22px] bg-[conic-gradient(from_0deg,red,orange,yellow,green,blue,indigo,violet,red)] opacity-30 blur-[20px] rounded-lg z-0" />;
+        return <motion.div animate={{ rotate: 360, scale: [1, 1.03, 1] }} transition={{ duration: 12, repeat: Infinity, ease: "linear" }} className="absolute w-[118%] aspect-square bg-[conic-gradient(from_0deg,red,orange,yellow,green,blue,indigo,violet,red)] opacity-40 blur-[30px] rounded-full z-0" />;
       case "CyberGrid":
         return (
-          <div className="absolute inset-[-12px] z-0 overflow-hidden opacity-30 rounded-lg">
+          <div className="absolute w-[115%] aspect-square z-0 overflow-hidden opacity-40 rounded-full border border-azure-500/20">
              <div className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f6_2px,transparent_2px),linear-gradient(to_bottom,#3b82f6_2px,transparent_2px)] bg-[size:10px_10px] blur-[1px]" />
-             <motion.div animate={{ opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 2, repeat: Infinity }} className="absolute inset-0 bg-azure-500/15 blur-[10px] rounded-lg" />
+             <motion.div animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 2, repeat: Infinity }} className="absolute inset-0 bg-azure-500/20 blur-[15px] rounded-full" />
           </div>
         );
       case "StellarWind":
-        return <motion.div animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.05, 1] }} transition={{ duration: 6, repeat: Infinity }} className="absolute inset-[-18px] bg-gradient-to-r from-amber-500/20 to-purple-500/20 blur-[18px] rounded-lg z-0" />;
+        return <motion.div animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.04, 1] }} transition={{ duration: 6, repeat: Infinity }} className="absolute w-[115%] aspect-square bg-gradient-to-tr from-amber-500/25 to-purple-500/25 blur-[30px] rounded-full z-0" />;
       case "AbyssalEcho":
-        return <motion.div animate={{ scale: [1, 1.08, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-[-20px] bg-sky-900/30 border-2 border-sky-400/10 blur-[15px] rounded-lg z-0" />;
+        return <motion.div animate={{ scale: [1, 1.05, 1], opacity: [0.4, 0.7, 0.4] }} transition={{ duration: 4, repeat: Infinity }} className="absolute w-[115%] aspect-square bg-sky-900/40 border-2 border-sky-400/20 blur-[25px] rounded-full z-0" />;
       default: return null;
     }
   };
