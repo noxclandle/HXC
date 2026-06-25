@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 import { z } from "zod";
+import { clearNewsCache } from "@/lib/news-cache";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +47,9 @@ export async function POST(req: NextRequest) {
         details: { id: announcement.id, title: announcement.title }
       }
     });
+
+    // Clear public news cache
+    clearNewsCache();
 
     return NextResponse.json({ success: true, announcement });
 

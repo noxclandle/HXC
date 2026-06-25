@@ -3,11 +3,23 @@ import { prisma } from "@/lib/prisma";
 let cachedAssetPrices: any = null;
 let cachedAssetPricesExpiry = 0;
 
+interface CachedProfile {
+  data: any;
+  expiry: number;
+}
+
+const profileCache = new Map<string, CachedProfile>();
+
+export function clearProfileCache(slug: string) {
+  const normalized = slug.toLowerCase();
+  profileCache.delete(normalized);
+}
+
 export async function getUserStatus(email: string | null | undefined) {
   if (!email) return null;
   const normalizedEmail = email.toLowerCase();
 
-  const [user, assetPricesConfig] = await Promise.all([
+  const [user, assetPricesConfig, unreadCount] = await Promise.all([
     prisma.user.findUnique({
       where: { email: normalizedEmail },
       select: {
@@ -52,14 +64,13 @@ export async function getUserStatus(email: string | null | undefined) {
         cachedAssetPricesExpiry = now + 60000; // Cache for 1 min
       }
       return config;
-    })()
+    })(),
+    prisma.cardMessage.count({
+      where: { target_user: { email: normalizedEmail }, is_read: false }
+    })
   ]);
 
   if (!user) return null;
-
-  const unreadCount = await prisma.cardMessage.count({
-    where: { target_user_id: user.id, is_read: false }
-  });
 
   const userEmail = user.email?.toLowerCase() || "";
   const userName = user.name || "";
@@ -137,6 +148,14 @@ export async function getUserStatus(email: string | null | undefined) {
 
 export async function getPublicProfile(slug: string) {
   const decodedSlug = decodeURIComponent(slug);
+  const normalizedSlug = decodedSlug.toLowerCase();
+  const now = Date.now();
+
+  const cached = profileCache.get(normalizedSlug);
+  if (cached && now < cached.expiry) {
+    return cached.data;
+  }
+
   // UUID形式かどうかを判定する正規表現
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decodedSlug);
 
@@ -186,7 +205,7 @@ export async function getPublicProfile(slug: string) {
   const aiConfig = (user.ai_config as any) || {};
   const profile = aiConfig.profile || {};
 
-  return {
+  const result = {
     id: user.id,
     name: user.name,
     handle_name: user.handle_name,
@@ -212,4 +231,18 @@ export async function getPublicProfile(slug: string) {
       contact_email: profile.contact_email || user.email || ""
     }
   };
+
+  // Cache public profile for 30 seconds to speed up scan load times
+  profileCache.set(normalizedSlug, {
+    data: result,
+    expiry: now + 30000
+  });
+
+  // Also cache by ID to allow invalidation by ID
+  profileCache.set(user.id.toLowerCase(), {
+    data: result,
+    expiry: now + 30000
+  });
+
+  return result;
 }

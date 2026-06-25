@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
 import PublicProfileClient from "@/components/profile/PublicProfileClient";
 import ProfileClientUI from "@/components/profile/ProfileClientUI";
 import { getPublicProfile } from "@/lib/user";
@@ -12,21 +11,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const decodedSlug = decodeURIComponent(params.slug);
-  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decodedSlug);
-  const conditions: any[] = [
-    { handle_name: decodedSlug }
-  ];
-
-  if (isUuid) {
-    conditions.push({ id: decodedSlug });
-  }
-
-  const user = await prisma.user.findFirst({
-    where: { 
-      OR: conditions
-    },
-    select: { name: true, handle_name: true, role: true, ai_config: true, photo_url: true }
-  });
+  const user = await getPublicProfile(decodedSlug);
 
   if (!user) {
     return {
@@ -35,8 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const isOfficial = ['admin', 'architect', 'fixer', 'mastermind', 'manager'].includes(user.role) || user.handle_name === 'architect';
-  const aiConfig = (user.ai_config as any) || {};
-  const profile = aiConfig.profile || {};
+  const profile = user.profile || {};
   const title = profile.title ? `${profile.title} | ` : "";
   const displayName = user.name || user.handle_name || "MEMBER";
 
