@@ -168,10 +168,10 @@ export default function LandingPage() {
             </p>
             <div className="flex gap-6 items-center justify-center pt-2">
               <Link 
-                href="/activate"
+                href="/guide"
                 className="text-[9px] tracking-[0.3em] uppercase text-white/40 hover:text-white transition-colors font-bold"
               >
-                Activate / カードの有効化
+                Guide / 使い方ガイド
               </Link>
               <span className="text-white/10">|</span>
               <a 
