@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import PublicProfileClient from "@/components/profile/PublicProfileClient";
 import ProfileClientUI from "@/components/profile/ProfileClientUI";
-import { getPublicProfile } from "@/lib/user";
+import { getPublicProfile, getCachedProfile } from "@/lib/user";
 import { headers } from 'next/headers';
 
 interface Props {
@@ -11,7 +11,29 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const decodedSlug = decodeURIComponent(params.slug);
-  const user = await getPublicProfile(decodedSlug);
+  
+  // 1. すでにキャッシュされていれば、DBアクセス不要のため人間でもキャッシュデータをそのまま使ってタイトルを表示する
+  let user = getCachedProfile(decodedSlug);
+
+  // 2. キャッシュにない場合、人間ならローディング画面を即座に出すため、ダミーのヘッダー情報をミリ秒で返す（SSRブロッキングを回避）
+  if (!user) {
+    const reqHeaders = headers();
+    const userAgent = reqHeaders.get('user-agent') || '';
+    const isBot = /bot|googlebot|crawler|spider|robot|crawling|facebookexternalhit|twitterbot/i.test(userAgent);
+
+    if (!isBot) {
+      return {
+        title: "Hexa Card",
+        description: "アイデンティティを同期する次世代スマート名刺。",
+        alternates: {
+          canonical: `https://virtual-business-card.hexa-relation.com/p/${encodeURIComponent(decodedSlug)}`,
+        },
+      };
+    }
+
+    // クローラー（bot）であればブロッキングしてPrismaから最新のSEOメタデータを生成する
+    user = await getPublicProfile(decodedSlug);
+  }
 
   if (!user) {
     return {

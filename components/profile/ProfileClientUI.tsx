@@ -20,6 +20,12 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
   const [reporting, setReporting] = useState(false);
   const profileName = data?.name || "MEMBER";
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && data?.name) {
+      document.title = data.name;
+    }
+  }, [data]);
+
   // Portfolio Links
   const portfolioLinks = data.portfolio_links || [];
 
