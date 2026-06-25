@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import GeometricAngel from "@/components/ui/GeometricAngel";
 import { useSession } from "next-auth/react";
 import { ChevronDown } from "lucide-react";
+import Link from "next/link";
 
 /**
  * 高級感のあるロード画面（スケルトン）
@@ -181,6 +182,17 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
             className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-void bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.12)_0%,transparent_70%)] cursor-pointer"
             onClick={handleOpen}
           >
+            {/* Brand Top Link on Envelope Screen */}
+            <div className="fixed top-6 left-6 md:top-8 md:left-8 z-[60]">
+              <Link 
+                href="/" 
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-2 text-[9px] tracking-[0.4em] uppercase font-bold text-white/60 hover:text-white hover:border-white/20 transition-all bg-void/60 backdrop-blur-md border border-white/10 px-3.5 py-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
+              >
+                ← Hexa Card
+              </Link>
+            </div>
+
             <motion.div
               animate={{ 
                 y: [0, -6, 0]
