@@ -1,9 +1,14 @@
-"use client";
-
 import { ShieldCheck, Zap, CreditCard, Smartphone, Share2, Code, Sparkles, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import Footer from "@/components/ui/Footer";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://virtual-business-card.hexa-relation.com",
+  },
+};
 
 /**
  * 究極の Safari 最適化 (Pure Static Edition)
