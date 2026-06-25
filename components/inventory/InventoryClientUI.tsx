@@ -208,7 +208,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
   };
 
   return (
-    <div className="max-w-7xl mx-auto pt-14 lg:pt-32 px-4 lg:px-6 pb-24 lg:pb-32 text-moonlight flex flex-col lg:block">
+    <div className="max-w-7xl mx-auto pt-3 lg:pt-32 px-4 lg:px-6 pb-3 lg:pb-32 text-moonlight overflow-hidden h-[calc(100dvh-60px)] lg:h-auto flex flex-col lg:block">
       <style>{`
         .no-scrollbar::-webkit-scrollbar {
           display: none;
@@ -257,7 +257,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
         </div>
       </header>
 
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-16 items-stretch lg:items-start lg:flex-1 lg:min-h-0">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-16 items-stretch lg:items-start flex-1 min-h-0">
         {/* Top Area: Fixed Preview Block on Mobile, Left Column on Desktop */}
         <div className="w-full lg:w-5/12 shrink-0 bg-void pb-2 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-auto flex items-center justify-center lg:sticky lg:top-32 z-30">
            <UnifiedCardContainer 
@@ -285,8 +285,8 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
            </UnifiedCardContainer>
         </div>
 
-        {/* Bottom Area: Navigation & Items List */}
-        <div className="w-full lg:w-7/12 flex flex-col lg:min-h-0 lg:flex-1 lg:overflow-visible no-scrollbar">
+        {/* Bottom Area: Fixed Navigation & Scrollable Items on Mobile */}
+        <div className="w-full lg:w-7/12 flex flex-col min-h-0 flex-1 lg:overflow-visible no-scrollbar">
            {/* RT Purchase Section (Inside scrollable container on mobile) */}
            <AnimatePresence>
              {showRTPurchase && (
@@ -338,7 +338,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
              )}
            </AnimatePresence>
 
-            <div className="flex flex-col gap-4 relative flex-1 min-h-0">
+             <div className="flex flex-col gap-2.5 lg:gap-4 relative flex-1 min-h-0">
               {/* Category Navigation Wrapper with Left/Right Fades to visually indicate horizontal scroll */}
               <div className="relative w-full -mx-4 px-4 lg:mx-0 lg:px-0 z-20">
                  {/* Left Fade Overlay */}
@@ -396,7 +396,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
               </div>
 
               {/* Items List Container */}
-              <div className="space-y-4 lg:flex-1 lg:min-h-0 lg:overflow-y-auto lg:max-h-[680px] pr-2 lg:pr-4 custom-scrollbar pb-24">
+              <div className="space-y-3 lg:space-y-4 flex-1 min-h-0 overflow-y-auto lg:max-h-[680px] pr-2 lg:pr-4 custom-scrollbar pb-16">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeCategory}
