@@ -15,6 +15,17 @@ export function clearProfileCache(slug: string) {
   profileCache.delete(normalized);
 }
 
+export function getCachedProfile(slug: string) {
+  const decodedSlug = decodeURIComponent(slug);
+  const normalizedSlug = decodedSlug.toLowerCase();
+  const now = Date.now();
+  const cached = profileCache.get(normalizedSlug);
+  if (cached && now < cached.expiry) {
+    return cached.data;
+  }
+  return null;
+}
+
 export async function getUserStatus(email: string | null | undefined) {
   if (!email) return null;
   const normalizedEmail = email.toLowerCase();
