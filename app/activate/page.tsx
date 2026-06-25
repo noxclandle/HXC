@@ -31,6 +31,37 @@ export default function ActivateInstructionPage() {
               <p className="text-[10px] opacity-40 leading-relaxed tracking-wider font-sans">
                 スマートフォンのNFC読み取り部分に Hexa Card をかざしてください。自動的にあなた専用の登録URL（アクティベーション画面）が開きます。
               </p>
+              
+              {/* NFC Alignment Guide */}
+              <div className="grid grid-cols-2 gap-4 mt-4 max-w-xs">
+                {/* iPhone Spot */}
+                <div className="flex flex-col items-center p-3 bg-white/[0.01] border border-white/5 rounded-sm">
+                  <svg className="w-10 h-14 text-azure-400" viewBox="0 0 40 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="6" y="6" width="28" height="48" rx="4" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+                    <rect x="7.5" y="7.5" width="25" height="45" rx="3" fill="rgba(255,255,255,0.01)" stroke="rgba(255,255,255,0.03)" strokeWidth="0.6" />
+                    <rect x="15" y="9" width="10" height="2" rx="1" fill="rgba(255,255,255,0.2)" />
+                    <path d="M 14,6 L 26,6" stroke="#60a5fa" strokeWidth="1.2" strokeLinecap="round" />
+                    <circle cx="20" cy="6" r="4" stroke="#60a5fa" strokeWidth="0.6" strokeDasharray="1.5 1.5" />
+                    <circle cx="20" cy="6" r="8" stroke="rgba(96,165,250,0.4)" strokeWidth="0.5" />
+                    <circle cx="20" cy="6" r="2" fill="#60a5fa" />
+                  </svg>
+                  <span className="text-[8px] text-white/60 font-bold mt-1.5">iPhone: 上端にタッチ</span>
+                </div>
+                {/* Android Spot */}
+                <div className="flex flex-col items-center p-3 bg-white/[0.01] border border-white/5 rounded-sm">
+                  <svg className="w-10 h-14 text-azure-400" viewBox="0 0 40 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="6" y="6" width="28" height="48" rx="4" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+                    <rect x="9" y="9" width="5" height="10" rx="1" fill="rgba(0,0,0,0.3)" stroke="rgba(255,255,255,0.1)" strokeWidth="0.6" />
+                    <circle cx="11.5" cy="11.5" r="1" fill="rgba(255,255,255,0.3)" />
+                    <circle cx="11.5" cy="16.5" r="1" fill="rgba(255,255,255,0.3)" />
+                    <rect x="15" y="25" width="10" height="10" rx="1" stroke="rgba(96,165,250,0.25)" strokeWidth="0.6" strokeDasharray="1.5 1" />
+                    <circle cx="20" cy="30" r="4" stroke="#60a5fa" strokeWidth="0.6" strokeDasharray="1.5 1.5" />
+                    <circle cx="20" cy="30" r="8" stroke="rgba(96,165,250,0.4)" strokeWidth="0.5" />
+                    <circle cx="20" cy="30" r="2" fill="#60a5fa" />
+                  </svg>
+                  <span className="text-[8px] text-white/60 font-bold mt-1.5">Android: 背面中央</span>
+                </div>
+              </div>
             </div>
           </div>
 
