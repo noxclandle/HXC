@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCachedNews, setCachedNews } from "@/lib/news-cache";
 
 export const dynamic = "force-dynamic";
 
@@ -8,6 +9,11 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   try {
+    const cached = getCachedNews();
+    if (cached !== null) {
+      return NextResponse.json(cached);
+    }
+
     const announcements = await prisma.announcement.findMany({
       where: { is_published: true },
       orderBy: { created_at: "desc" },
@@ -18,6 +24,8 @@ export async function GET() {
         created_at: true,
       }
     });
+
+    setCachedNews(announcements);
 
     return NextResponse.json(announcements);
   } catch (error: any) {

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
+import { clearProfileCache } from "@/lib/user";
 
 export const dynamic = "force-dynamic";
 
@@ -104,6 +105,17 @@ export async function POST(req: NextRequest) {
         }
       });
     });
+
+    // キャッシュをクリアして即時反映させる
+    if (session.user.id) {
+      clearProfileCache(session.user.id);
+    }
+    if (currentUser.handle_name) {
+      clearProfileCache(currentUser.handle_name);
+    }
+    if (reading) {
+      clearProfileCache(reading);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
