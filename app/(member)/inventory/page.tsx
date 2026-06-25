@@ -13,7 +13,7 @@ async function InventoryLoader() {
   if (!session?.user?.email) redirect("/login");
 
   const stats = await getUserStatus(session.user.email);
-  if (!stats) redirect("/activate");
+  if (!stats) redirect("/guide");
 
   return (
     <HubErrorBoundary>

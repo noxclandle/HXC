@@ -52,7 +52,7 @@ async function HubLoader() {
     })()
   ]);
 
-  if (!stats) redirect("/activate");
+  if (!stats) redirect("/guide");
 
   const serializedNews = news[0] ? {
     id: news[0].id,
