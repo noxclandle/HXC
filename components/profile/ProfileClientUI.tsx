@@ -117,6 +117,16 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
       <ConnectionInteraction />
       {isOwner && <ResidentAgent />}
 
+      {/* Brand Top Link */}
+      <div className="fixed top-6 left-6 md:top-8 md:left-8 z-50">
+        <Link 
+          href="/" 
+          className="flex items-center gap-2 text-[9px] tracking-[0.4em] uppercase font-bold text-white/60 hover:text-white hover:border-white/20 transition-all bg-void/60 backdrop-blur-md border border-white/10 px-3.5 py-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
+        >
+          ← Hexa Card
+        </Link>
+      </div>
+
       {!isOwner && (
         <button onClick={() => setShowReport(true)} className="fixed top-8 right-8 z-50 p-3 border border-white/5 bg-white/[0.02] text-white/20 hover:text-rose-500 hover:border-rose-500/20 transition-all group" title="Report Identity">
            <AlertCircle size={16} />
@@ -394,13 +404,20 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
             </div>
           </div>
 
-          <div className="text-center py-12 lg:py-20 bg-azure-500/[0.02] border border-azure-500/10 backdrop-blur-sm relative overflow-hidden px-4">
+          <div className="text-center py-12 lg:py-20 bg-azure-500/[0.02] border border-azure-500/10 backdrop-blur-sm relative overflow-hidden px-4 flex flex-col items-center gap-6">
             <Link 
               href="/purchase" 
               className="inline-flex items-center justify-center gap-3 w-full max-w-md py-5 bg-white text-void font-semibold text-[10px] lg:text-[11px] tracking-[0.2em] lg:tracking-[0.4em] uppercase hover:bg-zinc-200 transition-all shadow-[0_0_40px_rgba(255,255,255,0.05)] hover:scale-[1.02] active:scale-[0.98] group"
             >
               Order Your Identity / カードを申し込む 
               <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
+            </Link>
+
+            <Link 
+              href="/" 
+              className="inline-flex items-center gap-2 text-[9px] tracking-[0.3em] uppercase font-bold text-white/40 hover:text-white transition-colors"
+            >
+              ← Visit Official Site / 公式サイトトップへ
             </Link>
           </div>
         </section>
