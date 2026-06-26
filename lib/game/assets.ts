@@ -1,7 +1,7 @@
 export interface Asset {
   id: string;
   name: string;
-  type: "frame" | "sound" | "effect" | "angel" | "title" | "pointer" | "background" | "fontFamily" | "aura";
+  type: "frame" | "sound" | "effect" | "angel" | "title" | "pointer" | "background" | "fontFamily" | "aura" | "zoom_bg";
   rarity: "common" | "rare" | "epic" | "legendary" | "mythic";
   description: string;
   unlocked: boolean;
@@ -15,6 +15,7 @@ export const CATEGORIES = [
   { id: "title", name: "称号", sub: "称号" },
   { id: "pointer", name: "クリック演出", sub: "クリック演出" },
   { id: "sound", name: "音響", sub: "音響" },
+  { id: "zoom_bg", name: "商談用背景", sub: "商談用背景" },
 ];
 
 export const ASSETS: Asset[] = [
@@ -186,7 +187,14 @@ export const ASSETS: Asset[] = [
   { id: "APEX", name: "APEX", type: "title", rarity: "mythic", description: "頂点のアイデンティティ。 / The apex of identity.", unlocked: false },
   { id: "Fixer", name: "Fixer", type: "title", rarity: "mythic", description: "創造主。 / The creator.", unlocked: false },
   { id: "HERETIC", name: "HERETIC", type: "title", rarity: "legendary", description: "固定された概念を覆し、新たな可能性を切り拓く者。 / One who subverts fixed concepts and carves new paths.", unlocked: false },
-  { id: "NEXUS", name: "NEXUS", type: "title", rarity: "legendary", description: "あらゆる接続の中心に位置する、究極の連結点。 / The ultimate junction residing at the center of all connections.", unlocked: false }
+  { id: "NEXUS", name: "NEXUS", type: "title", rarity: "legendary", description: "あらゆる接続の中心に位置する、究極の連結点。 / The ultimate junction residing at the center of all connections.", unlocked: false },
+
+  // --- Virtual Background Designs ---
+  { id: "ZoomBgDefault", name: "Solid Void", type: "zoom_bg", rarity: "common", description: "ボイド・ミニマル。標準的な闇と微細なヘックスの背景。 / Minimal Solid Void Zoom background.", unlocked: true },
+  { id: "ZoomBgCyber", name: "Cyber Grid", type: "zoom_bg", rarity: "rare", description: "サイバーグリッド。電子のラインが走る未来的な商談背景。 / Futuristic grid-patterned virtual background.", unlocked: false },
+  { id: "ZoomBgGold", name: "Imperial Gold", type: "zoom_bg", rarity: "epic", description: "インペリアルゴールド。上品な金枠で格式高い印象を与える背景。 / Luxurious gold-bordered virtual background.", unlocked: false },
+  { id: "ZoomBgPrism", name: "Prism Fractal", type: "zoom_bg", rarity: "mythic", description: "プリズムフラクタル。幻想的な虹色の光彩が差し込む背景。 / Prismatic light virtual background.", unlocked: false },
+  { id: "ZoomBgNebula", name: "Nebula Drift", type: "zoom_bg", rarity: "legendary", description: "ネブラドリフト。静かに流れる星雲の色彩を纏う背景。 / Cosmic nebula virtual background.", unlocked: false }
 ];
 
 export const getRarityStyles = (rarity: string) => {
