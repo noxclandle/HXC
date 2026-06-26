@@ -193,50 +193,63 @@ export default function HexaCardPreview({
   const getAuraLayer = () => {
     if (!mounted) return null;
     switch (aura) {
-      // --- Common Auras ---
+      // --- Common Auras (Subtle, single-layer slow animation) ---
       case "DimGlow":
         return (
           <motion.div
-            animate={{ opacity: [0.35, 0.6, 0.35] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-[-12px] bg-white/20 blur-[15px] rounded-xl z-0"
+            animate={{ opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-[-12px] bg-white/15 blur-[12px] rounded-xl z-0"
           />
         );
       case "ShadowBorder":
         return (
-          <div className="absolute inset-[-8px] bg-black/75 blur-[12px] border border-white/10 rounded-xl z-0" />
+          <div className="absolute inset-[-8px] bg-black/70 blur-[10px] border border-white/5 rounded-xl z-0" />
         );
       case "Pulse":
         return (
           <motion.div
-            animate={{ opacity: [0.3, 0.75, 0.3], scale: [1.0, 1.015, 1.0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-[-16px] bg-azure-500/25 blur-[18px] rounded-xl z-0"
+            animate={{ opacity: [0.25, 0.65, 0.25] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-[-16px] bg-azure-500/20 blur-[15px] rounded-xl z-0"
           />
         );
-      // --- Rare Auras ---
+
+      // --- Rare Auras (Breathing, scaling, multi-attribute / simple particles) ---
       case "WhiteMist":
         return (
           <motion.div
-            animate={{ opacity: [0.4, 0.8, 0.4], scale: [1.0, 1.02, 1.0] }}
-            transition={{ duration: 5, repeat: Infinity }}
-            className="absolute inset-[-20px] bg-white/30 blur-[25px] rounded-xl z-0"
+            animate={{ 
+              opacity: [0.4, 0.75, 0.4], 
+              scale: [1.0, 1.025, 1.0],
+              filter: ["blur(22px)", "blur(28px)", "blur(22px)"]
+            }}
+            transition={{ duration: 5.5, repeat: Infinity }}
+            className="absolute inset-[-20px] bg-white/25 rounded-xl z-0"
           />
         );
       case "AzureFlame":
         return (
           <motion.div
-            animate={{ opacity: [0.45, 0.85, 0.45], scale: [1.0, 1.03, 1.0] }}
-            transition={{ duration: 3.5, repeat: Infinity }}
+            animate={{ 
+              opacity: [0.45, 0.85, 0.45], 
+              scale: [1.0, 1.035, 1.0],
+              y: [-3, 3, -3]
+            }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
             className="absolute inset-[-24px] bg-gradient-to-r from-azure-600/35 via-cyan-500/40 to-blue-600/35 blur-[25px] rounded-xl z-0"
           />
         );
       case "VioletHaze":
         return (
           <motion.div
-            animate={{ opacity: [0.45, 0.8, 0.45], scale: [1.0, 1.02, 1.0] }}
-            transition={{ duration: 5, repeat: Infinity }}
-            className="absolute inset-[-20px] bg-purple-500/35 blur-[22px] rounded-xl z-0"
+            animate={{ 
+              opacity: [0.45, 0.75, 0.45], 
+              scale: [1.0, 1.02, 1.0],
+              rotate: [-2, 2, -2]
+            }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-[-20px] bg-purple-500/30 blur-[22px] rounded-xl z-0"
           />
         );
       case "EmeraldDust":
@@ -246,14 +259,14 @@ export default function HexaCardPreview({
                 <motion.div
                   key={i}
                   animate={{
-                    y: [20, -20, 20],
+                    y: [20, -25, 20],
                     x: [0, (Math.random() - 0.5) * 20, 0],
-                    opacity: [0, 0.8, 0]
+                    opacity: [0, 0.85, 0]
                   }}
                   transition={{
                     duration: 3 + Math.random() * 2,
                     repeat: Infinity,
-                    delay: i * 0.2
+                    delay: i * 0.25
                   }}
                   className="absolute w-1.5 h-1.5 bg-emerald-400 rounded-full blur-[0.5px]"
                   style={{
@@ -263,33 +276,85 @@ export default function HexaCardPreview({
                 />
              ))}
              <motion.div
-               animate={{ opacity: [0.3, 0.6, 0.3] }}
-               transition={{ duration: 4, repeat: Infinity }}
-               className="absolute inset-0 bg-emerald-500/30 blur-[20px] rounded-xl"
+               animate={{ opacity: [0.3, 0.55, 0.3], scale: [1, 1.02, 1] }}
+               transition={{ duration: 4.5, repeat: Infinity }}
+               className="absolute inset-0 bg-emerald-500/25 blur-[20px] rounded-xl"
              />
           </div>
         );
-      // --- Epic Auras ---
+      case "SakuraRemembrance":
+        return (
+          <div className="absolute inset-[-24px] z-0 rounded-xl overflow-hidden pointer-events-none">
+             <motion.div
+               animate={{ opacity: [0.35, 0.65, 0.35], scale: [1.0, 1.02, 1.0] }}
+               transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+               className="absolute inset-0 bg-rose-400/25 blur-[22px]"
+             />
+             {[...Array(8)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  animate={{
+                    y: [30, -30],
+                    x: [0, (Math.random() - 0.5) * 25, 0],
+                    rotate: [0, 360],
+                    opacity: [0, 0.75, 0]
+                  }}
+                  transition={{ duration: 5 + Math.random() * 3, repeat: Infinity, delay: i * 0.4 }}
+                  className="absolute text-[11px]"
+                  style={{
+                    left: `${15 + Math.random() * 70}%`,
+                    top: `${80 - Math.random() * 60}%`,
+                  }}
+                >
+                  🌸
+                </motion.div>
+             ))}
+          </div>
+        );
+
+      // --- Epic Auras (Active borders, dynamic grids / neon runs) ---
       case "GoldenHalo":
         return (
-          <motion.div
-            animate={{ opacity: [0.5, 0.85, 0.5], scale: [1.0, 1.015, 1.0] }}
-            transition={{ duration: 5, repeat: Infinity }}
-            className="absolute inset-[-16px] bg-amber-500/30 blur-[20px] border border-amber-400/30 rounded-xl z-0"
-          />
+          <div className="absolute inset-[-16px] z-0 rounded-xl">
+             <motion.div
+               animate={{ opacity: [0.45, 0.8, 0.45], scale: [1.0, 1.015, 1.0] }}
+               transition={{ duration: 4, repeat: Infinity }}
+               className="absolute inset-0 bg-amber-500/25 blur-[20px] border border-amber-400/20 rounded-xl"
+             />
+             {[...Array(4)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  animate={{ opacity: [0.2, 0.9, 0.2], scale: [0.5, 1.2, 0.5] }}
+                  transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.6 }}
+                  className="absolute w-1 h-1 bg-amber-200 rounded-full"
+                  style={{
+                    left: `${25 + i * 15}%`,
+                    top: `${10 + Math.random() * 80}%`,
+                    boxShadow: "0 0 6px #f59e0b"
+                  }}
+                />
+             ))}
+          </div>
         );
       case "CrimsonFlare":
         return (
           <motion.div
-            animate={{ scale: [1.0, 1.04, 1.0], opacity: [0.45, 0.85, 0.45] }}
-            transition={{ duration: 2.0, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-[-24px] bg-rose-600/40 blur-[25px] rounded-xl z-0"
+            animate={{ 
+              scale: [1.0, 1.045, 0.975, 1.035, 1.0], 
+              opacity: [0.4, 0.85, 0.3, 0.75, 0.4] 
+            }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-[-24px] bg-rose-600/35 blur-[25px] rounded-xl z-0"
           />
         );
       case "CyberGrid":
         return (
           <div className="absolute inset-[-20px] z-0 overflow-hidden opacity-50 rounded-xl border border-azure-500/20">
-             <div className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f6_1.5px,transparent_1.5px),linear-gradient(to_bottom,#3b82f6_1.5px,transparent_1.5px)] bg-[size:8px_8px] blur-[0.5px]" />
+             <motion.div 
+               animate={{ backgroundPosition: ["0px 0px", "16px 16px"] }}
+               transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+               className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f6_1.5px,transparent_1.5px),linear-gradient(to_bottom,#3b82f6_1.5px,transparent_1.5px)] bg-[size:8px_8px] blur-[0.5px]" 
+             />
              <motion.div
                animate={{ opacity: [0.25, 0.6, 0.25] }}
                transition={{ duration: 2.5, repeat: Infinity }}
@@ -297,38 +362,86 @@ export default function HexaCardPreview({
              />
           </div>
         );
-      // --- Mythic Auras ---
+      case "HolyChamber":
+        return (
+          <div className="absolute inset-[-16px] z-0 rounded-xl overflow-hidden flex items-center justify-center pointer-events-none">
+             <motion.div
+               animate={{ rotate: 360 }}
+               transition={{ duration: 4.5, repeat: Infinity, ease: "linear" }}
+               className="absolute w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_40%,#ffffff_50%,transparent_60%)] opacity-85 blur-[2px]"
+             />
+             <div className="absolute inset-[2px] bg-zinc-950/90 rounded-xl" />
+             <motion.div
+               animate={{ opacity: [0.35, 0.65, 0.35] }}
+               transition={{ duration: 3, repeat: Infinity }}
+               className="absolute inset-0 bg-white/10 blur-[12px]"
+             />
+          </div>
+        );
+
+      // --- Mythic Auras (Conic gradient rotation, gravity lensing, distortion) ---
       case "VoidEclipse":
         return (
-          <div className="absolute inset-[-20px] bg-black border border-white/20 blur-[15px] opacity-95 z-0 shadow-[0_0_25px_rgba(255,255,255,0.15)] rounded-xl" />
+          <motion.div 
+            animate={{ scale: [0.99, 1.015, 0.99] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-[-20px] bg-black border border-white/20 blur-[15px] opacity-95 z-0 shadow-[0_0_25px_rgba(255,255,255,0.15)] rounded-xl" 
+          />
         );
       case "PrismGlow":
         return (
-          <motion.div
-            animate={{ opacity: [0.45, 0.7, 0.45] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-[-24px] bg-[conic-gradient(from_0deg,red,orange,yellow,green,blue,indigo,violet,red)] opacity-55 blur-[25px] rounded-xl z-0"
-          />
+          <div className="absolute inset-[-24px] z-0 rounded-xl overflow-hidden flex items-center justify-center">
+             <motion.div
+               animate={{ rotate: 360, scale: [0.97, 1.03, 0.97] }}
+               transition={{ 
+                 rotate: { duration: 9, repeat: Infinity, ease: "linear" },
+                 scale: { duration: 4.5, repeat: Infinity, ease: "easeInOut" }
+               }}
+               className="absolute w-[200%] h-[200%] bg-[conic-gradient(from_0deg,red,orange,yellow,green,blue,indigo,violet,red)] opacity-50 blur-[25px]"
+             />
+          </div>
         );
-      // --- Legendary Auras ---
+      case "SingularityCore":
+        return (
+          <div className="absolute inset-[-24px] z-0 rounded-xl flex items-center justify-center pointer-events-none">
+             <motion.div
+               animate={{ 
+                 scale: [0.97, 1.04, 0.97],
+                 rotate: [0, 360]
+               }}
+               transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+               className="absolute inset-0 bg-[conic-gradient(from_0deg,rgba(0,0,0,0.95)_35%,rgba(59,130,246,0.55)_50%,rgba(0,0,0,0.95)_65%)] blur-[12px] rounded-xl"
+             />
+             <motion.div
+               animate={{ scale: [1.02, 0.98, 1.02] }}
+               transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+               className="absolute inset-0 bg-blue-950/20 border border-azure-500/25 blur-[20px] rounded-xl"
+             />
+          </div>
+        );
+
+      // --- Legendary Auras (Ultimate multi-layer particle wind / orbiting grids) ---
       case "StellarWind":
         return (
-          <div className="absolute inset-[-24px] z-0 rounded-xl overflow-hidden">
+          <div className="absolute inset-[-24px] z-0 rounded-xl overflow-hidden pointer-events-none">
              <motion.div
-               animate={{ opacity: [0.4, 0.75, 0.4], scale: [1.0, 1.02, 1.0] }}
+               animate={{ 
+                 opacity: [0.35, 0.7, 0.35], 
+                 scale: [1.0, 1.02, 1.0]
+               }}
                transition={{ duration: 5, repeat: Infinity }}
-               className="absolute inset-0 bg-gradient-to-tr from-amber-500/30 to-purple-600/30 blur-[25px]"
+               className="absolute inset-0 bg-gradient-to-tr from-amber-500/25 to-purple-600/25 blur-[25px]"
              />
-             {[...Array(8)].map((_, i) => (
+             {[...Array(12)].map((_, i) => (
                 <motion.div
                   key={i}
                   animate={{
-                    scale: [0, 1.2, 0],
-                    opacity: [0, 0.8, 0],
-                    x: [0, (Math.random() - 0.5) * 40, 0],
-                    y: [0, (Math.random() - 0.5) * 40, 0]
+                    scale: [0, 1.1, 0],
+                    opacity: [0, 0.9, 0],
+                    x: [0, (Math.random() - 0.5) * 50, 0],
+                    y: [0, (Math.random() - 0.5) * 50, 0]
                   }}
-                  transition={{ duration: 4 + Math.random() * 3, repeat: Infinity, delay: i * 0.5 }}
+                  transition={{ duration: 3.5 + Math.random() * 2.5, repeat: Infinity, delay: i * 0.4 }}
                   className="absolute w-1 h-1 bg-white rounded-full"
                   style={{
                     left: `${20 + Math.random() * 60}%`,
@@ -343,15 +456,79 @@ export default function HexaCardPreview({
         return (
           <div className="absolute inset-[-20px] z-0 rounded-xl">
              <motion.div
-               animate={{ scale: [1.0, 1.04, 1.0], opacity: [0.45, 0.8, 0.45] }}
+               animate={{ scale: [1.0, 1.05, 1.0], opacity: [0.4, 0.75, 0.4] }}
                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-               className="absolute inset-0 bg-sky-900/35 border-2 border-sky-400/20 blur-[20px] rounded-xl"
+               className="absolute inset-0 bg-sky-900/30 border-2 border-sky-400/15 blur-[20px] rounded-xl"
              />
              <motion.div
-               animate={{ scale: [1.02, 1.06, 1.02], opacity: [0.25, 0.55, 0.25] }}
-               transition={{ duration: 4, repeat: Infinity, delay: 1, ease: "easeInOut" }}
+               animate={{ scale: [1.02, 1.08, 1.02], opacity: [0.2, 0.5, 0.2] }}
+               transition={{ duration: 4, repeat: Infinity, delay: 1.3, ease: "easeInOut" }}
                className="absolute inset-0 bg-sky-500/10 blur-[15px] rounded-xl"
              />
+             <motion.div
+               animate={{ scale: [1.04, 1.12, 1.04], opacity: [0.1, 0.3, 0.1] }}
+               transition={{ duration: 4, repeat: Infinity, delay: 2.6, ease: "easeInOut" }}
+               className="absolute inset-0 bg-sky-400/5 blur-[10px] rounded-xl"
+             />
+          </div>
+        );
+      case "QuantumEntanglement":
+        return (
+          <div className="absolute inset-[-24px] z-0 rounded-xl overflow-hidden pointer-events-none">
+             <motion.div
+               animate={{ opacity: [0.4, 0.75, 0.4], scale: [1, 1.03, 1] }}
+               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+               className="absolute inset-0 bg-gradient-to-r from-blue-600/25 via-purple-600/15 to-cyan-600/25 blur-[25px]"
+             />
+             {[...Array(12)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  animate={{
+                    opacity: [0.1, 0.9, 0.1],
+                    scale: [0.5, 1.3, 0.5]
+                  }}
+                  transition={{
+                    duration: 2 + Math.random() * 2,
+                    repeat: Infinity,
+                    delay: i * 0.3
+                  }}
+                  className="absolute w-1.5 h-1.5 rounded-full bg-cyan-400 blur-[0.2px]"
+                  style={{
+                    left: `${15 + Math.random() * 70}%`,
+                    top: `${15 + Math.random() * 70}%`,
+                    boxShadow: "0 0 8px rgba(34, 211, 238, 0.7)"
+                  }}
+                />
+             ))}
+          </div>
+        );
+      case "NebulaDrift":
+        return (
+          <div className="absolute inset-[-28px] z-0 rounded-xl overflow-hidden pointer-events-none">
+             <motion.div
+               animate={{ 
+                 rotate: [0, 360],
+                 scale: [0.93, 1.03, 0.93]
+               }}
+               transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
+               className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(219,39,119,0.3)_0%,rgba(79,70,229,0.3)_50%,transparent_100%)] blur-[25px]"
+             />
+             {[...Array(6)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  animate={{
+                    opacity: [0.2, 0.8, 0.2],
+                    scale: [0.8, 1.2, 0.8]
+                  }}
+                  transition={{ duration: 3.5 + i * 0.9, repeat: Infinity }}
+                  className="absolute w-2 h-2 rounded-full bg-pink-300 blur-[0.5px]"
+                  style={{
+                    left: `${30 + Math.random() * 40}%`,
+                    top: `${30 + Math.random() * 40}%`,
+                    boxShadow: "0 0 10px rgba(244, 114, 182, 0.7)"
+                  }}
+                />
+             ))}
           </div>
         );
       default: return null;
