@@ -1237,7 +1237,7 @@ export default function HexaCardPreview({
         <div 
           className="absolute inset-0 pointer-events-none overflow-visible flex items-center justify-center"
           style={{ 
-            transform: 'translateZ(-50px)',
+            transform: isFlipped ? 'translateZ(50px)' : 'translateZ(-50px)',
             clipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 1% 1%, 1% 99%, 99% 99%, 99% 1%, 1% 1%)',
             WebkitClipPath: 'polygon(-1000% -1000%, -1000% 2000%, 2000% 2000%, 2000% -1000%, -1000% -1000%, 1% 1%, 1% 99%, 99% 99%, 99% 1%, 1% 1%)'
           }}
