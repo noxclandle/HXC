@@ -231,6 +231,12 @@ export default function HubClientUI({
              </Link>
           </div>
 
+          {/* Interactive Presentation Suite */}
+          <div className="mb-6 opacity-30 px-2 text-[9px] tracking-[0.4em] uppercase font-bold text-white flex justify-between items-center">
+             <p>Online Presentation Tools / オンライン商談・配布資料</p>
+             <p className="text-[7px] tracking-[0.2em] text-azure-400">Interactive Suite</p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
              <Link href="/hub/background" className="group p-8 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all flex items-center justify-between relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-azure-500/20" />

@@ -93,11 +93,23 @@ export default function DocumentManager() {
       </header>
 
       <div className="space-y-8">
-         <div className="p-6 bg-azure-500/5 border border-azure-500/20 flex gap-4 items-start">
-            <Info size={16} className="text-azure-400 shrink-0 mt-1" />
-            <p className="text-[10px] tracking-widest leading-relaxed text-white/60 uppercase">
-              Registered documents (PDFs, URLs) will be instantly visible to others who scan your card (QR code). You can quickly update links before online meetings. / ここで登録した資料(PDF等)のURLや実績サイトは、あなたの名刺(QRコード)を読み取った相手の画面に即座に表示されます。商談前に素早く切り替えることが可能です。
-            </p>
+         <div className="p-6 bg-azure-500/5 border border-azure-500/20 flex flex-col gap-4 items-start">
+            <div className="flex gap-4 items-start">
+              <Info size={16} className="text-azure-400 shrink-0 mt-1" />
+              <p className="text-[10px] tracking-widest leading-relaxed text-white/60 uppercase">
+                Registered documents (PDFs, URLs) will be instantly visible to others who scan your card (QR code). You can quickly update links before online meetings. / ここで登録した資料(PDF等)のURLや実績サイトは、あなたの名刺(QRコード)を読み取った相手の画面に即座に表示されます。商談前に素早く切り替えることが可能です。
+              </p>
+            </div>
+            
+            <div className="pt-4 border-t border-white/5 w-full flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <span className="text-[8px] tracking-[0.2em] text-white/30 uppercase">For Zoom & Meet Online presentations / オンライン会議用の背景生成</span>
+              <Link 
+                href="/hub/background" 
+                className="text-[9px] tracking-[0.3em] text-azure-400 hover:text-azure-300 transition-colors uppercase font-bold w-fit"
+              >
+                Generate Virtual Background / バーチャル背景を生成 →
+              </Link>
+            </div>
          </div>
 
          <div className="space-y-6">

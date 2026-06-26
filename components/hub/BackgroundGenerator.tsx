@@ -112,6 +112,18 @@ export default function BackgroundGenerator({ userSlug }: { userSlug: string }) 
                     <li>3. During online meetings, ask the other party to scan the QR code on your screen. / 商談中、相手に画面のQRをスキャンするよう伝えます。</li>
                     <li>4. The other party can instantly view your business card and shared documents. / 相手は即座にあなたの名刺と設定した資料にアクセスできます。</li>
                  </ul>
+
+                 <div className="pt-4 mt-4 border-t border-white/5 flex flex-col gap-2">
+                    <p className="text-[8px] tracking-[0.2em] text-white/30 uppercase leading-relaxed">
+                      Documents shown upon scanning can be managed here / スキャンした相手に表示される配布資料の編集はこちら
+                    </p>
+                    <Link 
+                      href="/documents" 
+                      className="text-[9px] tracking-[0.3em] text-azure-400 hover:text-azure-300 transition-colors uppercase font-bold flex items-center gap-1.5 w-fit"
+                    >
+                      Configure Shared Documents / 配布資料を編集する →
+                    </Link>
+                 </div>
               </div>
 
               <button 
