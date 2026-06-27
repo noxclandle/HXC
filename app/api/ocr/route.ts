@@ -30,10 +30,21 @@ export async function POST(req: NextRequest) {
     
     const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
     const phoneMatch = text.match(/0[0-9]{1,4}-?[0-9]{1,4}-?[0-9]{3,4}/);
+    
+    // 日本語の住所と思われる行を抽出する簡易ロジック
+    const addressLine = lines.find(l => 
+      l.includes("都") || 
+      l.includes("道") || 
+      l.includes("府") || 
+      l.includes("県") || 
+      l.includes("市") || 
+      l.includes("区") || 
+      l.includes("〒")
+    ) || "";
 
     // 名前は通常1行目か2行目に来ることが多いという仮説
     const name = lines[0] || "Unknown";
-    const role = lines[1] || "The Observer";
+    const role = lines[1] || "Member";
 
     return NextResponse.json({
       name,
@@ -41,7 +52,7 @@ export async function POST(req: NextRequest) {
       role,
       email: emailMatch ? emailMatch[0] : "",
       phone: phoneMatch ? phoneMatch[0] : "",
-      address: "",
+      address: addressLine,
       notes: "Deciphered via local resonance. No external AI used."
     });
 

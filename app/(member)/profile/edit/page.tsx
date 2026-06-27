@@ -123,6 +123,7 @@ export default function ProfileEditPage() {
     bio: "",
     phone: "",
     email: "",
+    address: "",
     logoUrl: "",
     faceUrl: "",
     link_x: "",
@@ -162,6 +163,7 @@ export default function ProfileEditPage() {
             bio: data.profile?.bio || "",
             phone: data.profile?.phone || "",
             email: data.profile?.contact_email || "",
+            address: data.profile?.address || "",
             logoUrl: data.logo_url || "",
             faceUrl: data.photo_url || "",
             link_x: data.profile?.link_x || "",
@@ -407,14 +409,18 @@ export default function ProfileEditPage() {
                         <ScaleButtons field="company" />
                       </div>
                    </div>
-                   <div className="space-y-3">
-                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Title / 肩書き</label>
-                      <input type="text" value={formData.title} onChange={(e) => updateField('title', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="CEO, Designer, etc." />
-                      <div className="flex items-center">
-                        <AlignButtons field="title" />
-                        <ScaleButtons field="title" />
-                      </div>
-                   </div>
+                    <div className="space-y-3">
+                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Title / 肩書き</label>
+                       <input type="text" value={formData.title} onChange={(e) => updateField('title', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="CEO, Designer, etc." />
+                       <div className="flex items-center">
+                         <AlignButtons field="title" />
+                         <ScaleButtons field="title" />
+                       </div>
+                    </div>
+                    <div className="space-y-3 md:col-span-2">
+                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Company Location / 会社の所在地</label>
+                       <input type="text" value={formData.address} onChange={(e) => updateField('address', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="東京都港区南青山..." />
+                    </div>
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Phone / 電話番号</label>
                       <input type="text" value={formData.phone} onChange={(e) => updateField('phone', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="000-0000-0000" />
