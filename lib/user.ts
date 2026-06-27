@@ -48,6 +48,7 @@ export async function getUserStatus(email: string | null | undefined) {
         photo_url: true,
         link_website: true,
         phone: true,
+        address: true,
         ai_config: true,
         equipped_assets: true,
         link_x: true,
@@ -153,6 +154,7 @@ export async function getUserStatus(email: string | null | undefined) {
       link_line: user.link_line || "",
       link_facebook: user.link_facebook || "",
       phone: user.phone || "",
+      address: user.address || "",
       contact_email: profile.contact_email || ""
     }
   };
@@ -240,6 +242,7 @@ export async function getPublicProfile(slug: string) {
       title: profile.title || "",
       bio: profile.bio || "",
       website: user.link_website || "",
+      address: user.address || "",
       contact_email: profile.contact_email || user.email || ""
     }
   };

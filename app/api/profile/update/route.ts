@@ -18,6 +18,7 @@ const profileUpdateSchema = z.object({
   logo_url: z.string().optional().or(z.literal("")),
   phone: z.string().optional().or(z.literal("")),
   email: z.string().optional().or(z.literal("")),
+  address: z.string().optional().or(z.literal("")),
   link_x: z.string().optional().or(z.literal("")),
   link_instagram: z.string().optional().or(z.literal("")),
   link_line: z.string().optional().or(z.literal("")),
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
 
     const { 
       name, reading, title, website, bio, company, photo_url, logo_url, 
-      phone, email, link_x, link_instagram, link_line, link_facebook,
+      phone, email, address, link_x, link_instagram, link_line, link_facebook,
       portfolio_links, equipped_assets
     } = result.data;
 
@@ -77,6 +78,7 @@ export async function POST(req: NextRequest) {
           photo_url: finalPhotoUrl,
           logo_url: finalLogoUrl,
           phone: phone,
+          address: address,
           portfolio_links: portfolio_links,
           // 装備情報をマージ
           equipped_assets: equipped_assets ? {

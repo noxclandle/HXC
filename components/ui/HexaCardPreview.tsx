@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { Rotate3d, Building2, User, Phone, Mail, Instagram, Facebook, Twitter, MessageCircle, Globe } from "lucide-react";
+import { Rotate3d, Building2, User, Phone, Mail, Instagram, Facebook, Twitter, MessageCircle, Globe, MapPin } from "lucide-react";
 import { playConnectionSound } from "@/lib/audio/resonance";
  
 export type Alignment = "left" | "center" | "right";
@@ -15,6 +15,7 @@ export interface HexaCardProps {
   title?: string;
   phone?: string;
   email?: string;
+  address?: string;
   bio?: string;
   logoUrl?: string;
   faceUrl?: string;
@@ -74,6 +75,7 @@ export function mapUserToCardProps(
     title: safeProfile.title || user.title || "",
     phone: safeProfile.phone || user.phone || "",
     email: safeProfile.contact_email || user.email || user.contact_email || "",
+    address: user.address || safeProfile.address || "",
     logoUrl: user.logo_url || user.logoUrl || "",
     faceUrl: user.photo_url || user.faceUrl || "",
     bio: safeProfile.bio || user.bio || "",
@@ -109,7 +111,7 @@ export function mapUserToCardProps(
 }
 
 export default function HexaCardPreview({
-  name, reading, company, title, phone, email, bio, logoUrl, faceUrl,
+  name, reading, company, title, phone, email, address, bio, logoUrl, faceUrl,
   orientation = "horizontal",
   alignName = "center", alignReading = "center", alignCompany = "center",
   alignTitle = "center", alignPhone = "center", alignEmail = "center",
@@ -1328,6 +1330,7 @@ export default function HexaCardPreview({
 
                {/* Footer: Contact Info */}
                <div className={`absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10 space-y-3 md:space-y-4 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} flex flex-col z-10 ${textStyle}`}>
+                  {address && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><MapPin size={11} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.15em] truncate max-w-full">{address}</span></div>}
                   {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={11} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.2em]">{phone}</span></div>}
                   {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={11} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span></div>}
                </div>
@@ -1358,6 +1361,7 @@ export default function HexaCardPreview({
               {/* Footer: Contact Info */}
               <footer className={`absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10 flex flex-col z-10`}>
                 <div className={`flex flex-col gap-2 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} w-full ${textStyle}`}>
+                   {address && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><MapPin size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest truncate">{address}</span></div>}
                    {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest">{phone}</span></div>}
                    {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest uppercase truncate">{email}</span></div>}
                 </div>
