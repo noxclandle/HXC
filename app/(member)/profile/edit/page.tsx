@@ -236,6 +236,13 @@ export default function ProfileEditPage() {
       ...prev,
       [key]: { ...prev[key], [field]: align }
     }));
+    setEquipped((prev: any) => ({
+      ...prev,
+      [key]: {
+        ...(prev[key] || {}),
+        [field]: align
+      }
+    }));
   };
 
   const updateOrientation = (orientation: "horizontal" | "vertical") => {
@@ -311,7 +318,7 @@ export default function ProfileEditPage() {
   const AlignButtons = ({ field }: { field: keyof typeof defaultAlign }) => (
     <div className="flex gap-1 p-1 bg-white/5 border border-white/10 w-fit">
        {['left', 'center', 'right'].map((align) => (
-         <button key={align} type="button" onClick={() => updateAlign(field, align as Alignment)} className={`p-1.5 transition-all ${currentAligns[field] === align ? 'bg-white/10 text-white' : 'opacity-20 hover:opacity-100'}`}>
+         <button key={align} type="button" onClick={() => updateAlign(field, align as Alignment)} className={`p-1.5 transition-all ${currentAligns[field] === align ? 'bg-azure-600 text-white' : 'opacity-30 hover:opacity-100'}`}>
            {align === 'left' ? <AlignLeft size={12}/> : align === 'center' ? <AlignCenter size={12}/> : <AlignRight size={12}/>}
          </button>
        ))}

@@ -170,35 +170,36 @@ export default function ScanPage() {
 
         {status === "confirm_step2" && (
           <motion.div key="confirm_step2" className="flex flex-col items-center p-12 text-center space-y-8">
-            <h2 className="text-sm tracking-[0.4em] uppercase font-light">Deepen Connection</h2>
+            <h2 className="text-sm tracking-[0.4em] uppercase font-light">Step 2: Confirm Image</h2>
             <p className="text-[10px] tracking-widest opacity-40 leading-relaxed uppercase">
-              The image is prepared. <br />Do you wish to permeate the boundary?
+              The image has been captured. <br />Do you want to proceed with the scan?
+              <span className="block mt-2 text-[9px] lowercase opacity-50">画像の撮影が完了しました。スキャン処理に進みますか？</span>
             </p>
             <button 
               onClick={proceedToStep3} 
               className="w-full py-5 border border-moonlight/40 text-[10px] tracking-[0.6em] uppercase hover:bg-white/5 transition-all"
             >
-              Authorize Permeation
+              Confirm and Proceed
             </button>
-            <button onClick={() => setStatus("idle")} className="text-[8px] opacity-20 uppercase tracking-[0.4em]">Abort Connection</button>
+            <button onClick={() => setStatus("idle")} className="text-[8px] opacity-20 uppercase tracking-[0.4em]">Cancel</button>
           </motion.div>
         )}
 
         {status === "confirm_step3" && (
           <motion.div key="confirm_step3" className="flex flex-col items-center p-12 text-center space-y-8">
-            <h2 className="text-sm tracking-[0.4em] uppercase font-bold text-moonlight">Authorize Finality</h2>
-            <p className="text-[10px] tracking-widest opacity-60 leading-relaxed uppercase italic">
-              &quot;To observe is to change the system.&quot; <br />
-              This action will consume resonance tokens/API credits.
+            <h2 className="text-sm tracking-[0.4em] uppercase font-bold text-moonlight">Step 3: Run AI Scan</h2>
+            <p className="text-[10px] tracking-widest opacity-60 leading-relaxed uppercase">
+              This action will request the AI to scan the card and consume 1 token.
+              <span className="block mt-2 text-[9px] lowercase opacity-50 text-amber-500/80">AI解析を実行します。この操作は1トークンを消費します。</span>
             </p>
             <div className="w-16 h-[1px] bg-moonlight/20 mx-auto" />
             <button 
               onClick={startProcessing} 
               className="w-full py-5 bg-moonlight text-void text-[11px] font-bold tracking-[0.8em] uppercase shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-105 transition-all"
             >
-              Start Scan
+              Start Scan / 実行
             </button>
-            <button onClick={() => setStatus("idle")} className="text-[8px] opacity-20 uppercase tracking-[0.4em]">Withdraw</button>
+            <button onClick={() => setStatus("idle")} className="text-[8px] opacity-20 uppercase tracking-[0.4em]">Cancel</button>
           </motion.div>
         )}
 
@@ -228,8 +229,8 @@ export default function ScanPage() {
                <Loader2 className="animate-spin opacity-20 text-white" size={32} />
             </div>
             <div className="text-center space-y-4">
-              <h2 className="text-[10px] tracking-[0.5em] uppercase text-azure-400 font-bold">Extracting Identity</h2>
-              <p className="text-[8px] tracking-[0.3em] uppercase opacity-30 italic">Permeating the boundary of the physical card...</p>
+              <h2 className="text-[10px] tracking-[0.5em] uppercase text-azure-400 font-bold">Scanning Card...</h2>
+              <p className="text-[8px] tracking-[0.3em] uppercase opacity-30">AI is extracting contact details... / 情報抽出中...</p>
             </div>
           </motion.div>
         )}

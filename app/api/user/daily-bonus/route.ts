@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     // 既に今日受け取っているかチェック (JST基準)
     if (lastDaily && lastDaily.toDateString() === now.toDateString()) {
-      return NextResponse.json({ success: false, message: "光は既にあなたの中にあります。" });
+      return NextResponse.json({ success: false, message: "本日のボーナスは受領済みです。" });
     }
 
     // RTとEXPを付与 (新バランス)
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       session.user.id,
       bonusRT,
       "earn",
-      "Daily Boundary Light"
+      "Daily Login Bonus"
     );
 
     // 受領日時を更新
@@ -45,6 +45,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, amount: bonusRT });
   } catch (error) {
-    return NextResponse.json({ error: "Boundary connection unstable." }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error." }, { status: 500 });
   }
 }

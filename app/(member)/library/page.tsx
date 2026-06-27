@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, User, Mail, Phone, MapPin, Calendar, ArrowLeft, Filter, MoreVertical, Trash2 } from "lucide-react";
+import { Search, User, Mail, Phone, MapPin, Calendar, ArrowLeft, Filter, MoreVertical, Trash2, Camera } from "lucide-react";
 import Link from "next/link";
 
 interface Contact {
@@ -62,6 +62,26 @@ export default function LibraryPage() {
       </header>
 
       <main className="max-w-6xl mx-auto">
+        {/* Scan Card Panel */}
+        <div className="mb-10 p-6 border border-azure-500/10 bg-azure-500/[0.01] flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+           <div className="absolute top-0 left-0 w-1 h-full bg-azure-500/20" />
+           <div className="flex-1">
+              <h2 className="text-sm tracking-[0.3em] uppercase font-bold text-white mb-2 flex items-center gap-2">
+                 <Camera size={14} className="text-azure-400" /> Scan Card / 名刺スキャン
+              </h2>
+              <p className="text-[9px] tracking-wider text-white/40 leading-relaxed">
+                 ここにかざしたスキャンカードは、このカメラで受け取った名刺を撮影するだけでデータ登録が行えます。<br />
+                 <span className="opacity-40 text-[7px]">The Scan Card placed here registers data simply by capturing the received card with this camera.</span>
+              </p>
+           </div>
+           <Link 
+              href="/scan" 
+              className="px-6 py-3 border border-azure-500/30 bg-azure-500/5 hover:bg-azure-500/10 text-azure-300 text-[9px] tracking-[0.3em] font-bold uppercase transition-all duration-300 shrink-0 self-stretch md:self-auto text-center"
+           >
+              Open Camera / カメラ起動
+           </Link>
+        </div>
+
         {loading ? (
           <div className="py-24 text-center">
             <div className="w-8 h-8 border-2 border-white/5 border-t-white/40 rounded-full animate-spin mx-auto mb-4" />
