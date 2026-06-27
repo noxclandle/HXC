@@ -8,40 +8,23 @@ import Image from "next/image";
 import { playConnectionSound } from "@/lib/audio/resonance";
 
 export default function ScanPage() {
-  const [status, setStatus] = useState<"idle" | "scanning" | "processing" | "confirm" | "confirm_step2" | "confirm_step3">("idle");
+  const [status, setStatus] = useState<"idle" | "processing" | "confirm">("idle");
   const [scannedData, setScannedData] = useState<any>(null);
   const [aiInsight, setAiInsight] = useState<string | null>(null);
-  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const router = useRouter();
 
-  const handleCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setPendingFile(file);
-    setStatus("confirm_step2"); // 1段階目 (ファイル選択) 完了
-  };
 
-  const proceedToStep3 = () => {
-    try {
-      playConnectionSound("resonance");
-    } catch (e) {
-      console.warn("Audio connection sound blocked:", e);
-    }
-    setStatus("confirm_step3"); // 2段階目
-  };
-
-  const startProcessing = async () => {
-    if (!pendingFile) return;
     try {
       playConnectionSound("silver");
-    } catch (e) {
-      console.warn("Audio silver sound blocked:", e);
-    }
-    setStatus("processing"); // 3段階目 (最終承認) -> 処理開始
+    } catch (err) {}
     
-    // APIへ画像を送信
+    setStatus("processing"); // すぐに解析中画面へ
+
     const formData = new FormData();
-    formData.append("image", pendingFile);
+    formData.append("image", file);
 
     try {
       const res = await fetch("/api/ocr", {
@@ -58,7 +41,7 @@ export default function ScanPage() {
         }
         setStatus("confirm");
       } else {
-        alert("Failed to read the card soul. Please try again.");
+        alert("Failed to read the card. Please try again.");
         setStatus("idle");
       }
     } catch (err) {
@@ -176,69 +159,7 @@ export default function ScanPage() {
           </motion.div>
         )}
 
-        {status === "confirm_step2" && (
-          <motion.div key="confirm_step2" className="flex flex-col items-center p-12 text-center space-y-8">
-            <h2 className="text-sm tracking-[0.4em] uppercase font-light">Step 2: Confirm Image</h2>
-            <p className="text-[10px] tracking-widest opacity-40 leading-relaxed uppercase">
-              The image has been captured. <br />Do you want to proceed with the scan?
-              <span className="block mt-2 text-[9px] lowercase opacity-50">画像の撮影が完了しました。スキャン処理に進みますか？</span>
-            </p>
-            <button 
-              type="button"
-              onClick={proceedToStep3} 
-              className="w-full py-5 border border-moonlight/40 text-[10px] tracking-[0.6em] uppercase hover:bg-white/5 transition-all cursor-pointer z-50"
-            >
-              Confirm and Proceed
-            </button>
-            <button 
-              type="button"
-              onClick={() => setStatus("idle")} 
-              className="text-[8px] opacity-20 uppercase tracking-[0.4em] cursor-pointer z-50"
-            >
-              Cancel
-            </button>
-          </motion.div>
-        )}
 
-        {status === "confirm_step3" && (
-          <motion.div key="confirm_step3" className="flex flex-col items-center p-12 text-center space-y-8">
-            <h2 className="text-sm tracking-[0.4em] uppercase font-bold text-moonlight">Step 3: Run AI Scan</h2>
-            <p className="text-[10px] tracking-widest opacity-60 leading-relaxed uppercase">
-              This action will request the AI to scan the card and consume 1 token.
-              <span className="block mt-2 text-[9px] lowercase opacity-50 text-amber-500/80">AI解析を実行します。この操作は1トークンを消費します。</span>
-            </p>
-            <div className="w-16 h-[1px] bg-moonlight/20 mx-auto" />
-            <button 
-              type="button"
-              onClick={startProcessing} 
-              className="w-full py-5 bg-moonlight text-void text-[11px] font-bold tracking-[0.8em] uppercase shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-105 transition-all cursor-pointer z-50"
-            >
-              Start Scan / 実行
-            </button>
-            <button 
-              type="button"
-              onClick={() => setStatus("idle")} 
-              className="text-[8px] opacity-20 uppercase tracking-[0.4em] cursor-pointer z-50"
-            >
-              Cancel
-            </button>
-          </motion.div>
-        )}
-
-        {status === "scanning" && (
-          <motion.div key="scanning" className="fixed inset-0 bg-black overflow-hidden flex flex-col items-center justify-center">
-             {/* Simulated Camera Feed */}
-             <div className="absolute inset-0 bg-white/5 animate-pulse" />
-             <motion.div 
-               animate={{ y: ["-10vh", "110vh"] }}
-               transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-               className="w-full h-px bg-moonlight shadow-[0_0_20px_white] absolute z-10"
-             />
-             <div className="relative z-20 text-center">
-                <p className="text-[10px] tracking-[0.5em] uppercase opacity-60">Processing Card...</p>
-             </div>
-          </motion.div>
-        )}
 
         {status === "processing" && (
           <motion.div key="processing" className="flex flex-col items-center space-y-12 relative">
