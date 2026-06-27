@@ -144,6 +144,10 @@ export default function ProfileEditPage() {
     scaleName: "standard",
     scaleTitle: "standard",
     scaleCompany: "standard",
+    scaleReading: "standard",
+    scalePhone: "standard",
+    scaleEmail: "standard",
+    scaleAddress: "standard",
     sound: "resonance"
   });
 
@@ -196,7 +200,11 @@ export default function ProfileEditPage() {
             ...data.equipped,
             scaleName: data.equipped.scaleName || "standard",
             scaleTitle: data.equipped.scaleTitle || "standard",
-            scaleCompany: data.equipped.scaleCompany || "standard"
+            scaleCompany: data.equipped.scaleCompany || "standard",
+            scaleReading: data.equipped.scaleReading || "standard",
+            scalePhone: data.equipped.scalePhone || "standard",
+            scaleEmail: data.equipped.scaleEmail || "standard",
+            scaleAddress: data.equipped.scaleAddress || "standard"
           }));
         }
       } catch (e) { console.error(e); }
@@ -251,8 +259,14 @@ export default function ProfileEditPage() {
     setFormData(prev => ({ ...prev, orientation }));
   };
 
-  const updateScale = (field: "name" | "title" | "company", scale: string) => {
-    const key = field === "name" ? "scaleName" : field === "title" ? "scaleTitle" : "scaleCompany";
+  const updateScale = (field: "name" | "title" | "company" | "reading" | "phone" | "email" | "address", scale: string) => {
+    const key = 
+      field === "name" ? "scaleName" : 
+      field === "title" ? "scaleTitle" : 
+      field === "company" ? "scaleCompany" : 
+      field === "reading" ? "scaleReading" : 
+      field === "phone" ? "scalePhone" : 
+      field === "email" ? "scaleEmail" : "scaleAddress";
     setEquipped((prev: any) => ({ ...prev, [key]: scale }));
   };
 
@@ -327,8 +341,14 @@ export default function ProfileEditPage() {
     </div>
   );
 
-  const ScaleButtons = ({ field }: { field: "name" | "title" | "company" }) => {
-    const key = field === "name" ? "scaleName" : field === "title" ? "scaleTitle" : "scaleCompany";
+  const ScaleButtons = ({ field }: { field: "name" | "title" | "company" | "reading" | "phone" | "email" | "address" }) => {
+    const key = 
+      field === "name" ? "scaleName" : 
+      field === "title" ? "scaleTitle" : 
+      field === "company" ? "scaleCompany" :
+      field === "reading" ? "scaleReading" :
+      field === "phone" ? "scalePhone" :
+      field === "email" ? "scaleEmail" : "scaleAddress";
     return (
       <div className="flex gap-1 p-1 bg-white/5 border border-white/10 w-fit ml-auto">
          {['standard', 'impact', 'maximum'].map((s) => (
@@ -399,7 +419,10 @@ export default function ProfileEditPage() {
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Reading / ふりがな</label>
                       <input type="text" value={formData.reading} onChange={(e) => updateField('reading', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="ひらがな または 英数字" />
-                      <AlignButtons field="reading" />
+                      <div className="flex items-center">
+                        <AlignButtons field="reading" />
+                        <ScaleButtons field="reading" />
+                      </div>
                    </div>
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Company / 所属企業</label>
@@ -420,16 +443,23 @@ export default function ProfileEditPage() {
                     <div className="space-y-3 md:col-span-2">
                        <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Company Location / 会社の所在地</label>
                        <input type="text" value={formData.address} onChange={(e) => updateField('address', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="東京都港区南青山..." />
+                       <ScaleButtons field="address" />
                     </div>
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Phone / 電話番号</label>
                       <input type="text" value={formData.phone} onChange={(e) => updateField('phone', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="000-0000-0000" />
-                      <AlignButtons field="phone" />
+                      <div className="flex items-center">
+                        <AlignButtons field="phone" />
+                        <ScaleButtons field="phone" />
+                      </div>
                    </div>
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Email / 公開メールアドレス</label>
                       <input type="text" value={formData.email} onChange={(e) => updateField('email', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="contact@example.com" />
-                      <AlignButtons field="email" />
+                      <div className="flex items-center">
+                        <AlignButtons field="email" />
+                        <ScaleButtons field="email" />
+                      </div>
                    </div>
                 </div>
               </section>

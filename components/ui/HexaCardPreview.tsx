@@ -35,6 +35,10 @@ export interface HexaCardProps {
   scaleName?: "standard" | "impact" | "maximum";
   scaleTitle?: "standard" | "impact" | "maximum";
   scaleCompany?: "standard" | "impact" | "maximum";
+  scaleReading?: "standard" | "impact" | "maximum";
+  scalePhone?: "standard" | "impact" | "maximum";
+  scaleEmail?: "standard" | "impact" | "maximum";
+  scaleAddress?: "standard" | "impact" | "maximum";
   sound?: string;
   link_hp?: string;
   link_x?: string;
@@ -98,6 +102,10 @@ export function mapUserToCardProps(
     scaleName: safeEquipped.scaleName || "standard",
     scaleTitle: safeEquipped.scaleTitle || "standard",
     scaleCompany: safeEquipped.scaleCompany || "standard",
+    scaleReading: safeEquipped.scaleReading || "standard",
+    scalePhone: safeEquipped.scalePhone || "standard",
+    scaleEmail: safeEquipped.scaleEmail || "standard",
+    scaleAddress: safeEquipped.scaleAddress || "standard",
     
     // Orientation & Alignments
     orientation: orientation,
@@ -118,6 +126,7 @@ export default function HexaCardPreview({
   frame = "Obsidian", background = "Default", effect = "None", aura = "None",
   fontFamily = "Standard", textColor = "white",
   scaleName = "standard", scaleTitle = "standard", scaleCompany = "standard",
+  scaleReading = "standard", scalePhone = "standard", scaleEmail = "standard", scaleAddress = "standard",
   sound = "resonance", link_hp, link_x, link_instagram, link_line, link_facebook
 }: HexaCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -1233,19 +1242,27 @@ export default function HexaCardPreview({
     return "items-center text-center self-center";
   };
 
-  const getFieldScale = (field: "name" | "title" | "company", isVertical: boolean) => {
-    const scale = field === "name" ? scaleName : field === "title" ? scaleTitle : scaleCompany;
+  const getFieldScale = (field: "name" | "title" | "company" | "reading" | "phone" | "email" | "address", isVertical: boolean) => {
+    let scale = "standard";
+    if (field === "name") scale = scaleName;
+    else if (field === "title") scale = scaleTitle;
+    else if (field === "company") scale = scaleCompany;
+    else if (field === "reading") scale = scaleReading || "standard";
+    else if (field === "phone") scale = scalePhone || "standard";
+    else if (field === "email") scale = scaleEmail || "standard";
+    else if (field === "address") scale = scaleAddress || "standard";
+
     const base = isVertical ? 1.0 : 0.9;
     const maps = {
       standard: base,
       impact: base * 1.2,
       maximum: base * 1.5,
     };
-    return maps[scale] || base;
+    return maps[scale as "standard" | "impact" | "maximum"] || base;
   };
 
-  const getDynamicFontSize = (text: string, baseSize: number, field: "name" | "company", isVertical: boolean) => {
-    const scale = getFieldScale(field === "name" ? "name" : "company", isVertical);
+  const getDynamicFontSize = (text: string, baseSize: number, field: "name" | "title" | "company" | "reading" | "phone" | "email" | "address", isVertical: boolean) => {
+    const scale = getFieldScale(field, isVertical);
     const limit = field === "name" ? 10 : 20;
     if (text.length > limit) {
       const reduction = Math.max(0.6, 1 - (text.length - limit) * 0.03);
@@ -1314,8 +1331,8 @@ export default function HexaCardPreview({
                   <div className="relative w-full flex justify-center items-center">
                     {/* Elements floating strictly above the name */}
                     <div className="absolute bottom-[100%] mb-4 w-full flex flex-col items-center justify-end">
-                       {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full mb-3 ${getAlignClass(alignTitle)} pointer-events-auto`} style={{ fontSize: `${getFieldScale('title', true) * 11}px` }}>{title}</p>}
-                       {reading && <p className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase truncate w-full ${getAlignClass(alignReading)} pointer-events-auto`} style={{ fontSize: `${getDynamicFontSize(reading, 11, "name", true)}px` }}>{reading}</p>}
+                       {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full mb-3 ${getAlignClass(alignTitle)} pointer-events-auto`} style={{ fontSize: `${getDynamicFontSize(title, 11, "title", true)}px` }}>{title}</p>}
+                       {reading && <p className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase truncate w-full ${getAlignClass(alignReading)} pointer-events-auto`} style={{ fontSize: `${getDynamicFontSize(reading, 11, "reading", true)}px` }}>{reading}</p>}
                     </div>
                     
                     {/* The Name Itself (Dead Center Anchor) */}
@@ -1329,10 +1346,10 @@ export default function HexaCardPreview({
                </div>
 
                {/* Footer: Contact Info */}
-               <div className={`absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10 space-y-3 md:space-y-4 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} flex flex-col z-10 ${textStyle}`}>
-                  {address && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><MapPin size={11} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.15em] truncate max-w-full">{address}</span></div>}
-                  {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={11} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.2em]">{phone}</span></div>}
-                  {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={11} /><span className="font-mono text-[11px] md:text-[13px] tracking-[0.1em] uppercase truncate max-w-full">{email}</span></div>}
+               <div className={`absolute bottom-4 left-6 right-6 md:bottom-6 md:left-10 md:right-10 space-y-2 md:space-y-3 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} flex flex-col z-10 ${textStyle}`}>
+                  {address && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><MapPin size={11} /><span className="font-mono tracking-[0.15em] truncate max-w-full" style={{ fontSize: `${getDynamicFontSize(address, 12, "address", true)}px` }}>{address}</span></div>}
+                  {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={11} /><span className="font-mono tracking-[0.2em]" style={{ fontSize: `${getDynamicFontSize(phone, 12, "phone", true)}px` }}>{phone}</span></div>}
+                  {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={11} /><span className="font-mono tracking-[0.1em] uppercase truncate max-w-full" style={{ fontSize: `${getDynamicFontSize(email, 12, "email", true)}px` }}>{email}</span></div>}
                </div>
             </div>
           ) : (
@@ -1350,8 +1367,8 @@ export default function HexaCardPreview({
                  <div className="relative w-full flex justify-center items-center">
                    {/* Elements floating strictly above the name */}
                    <div className="absolute bottom-[100%] mb-3 w-full flex flex-col items-center justify-end">
-                      {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full mb-2.5 ${getAlignClass(alignTitle)} pointer-events-auto`} style={{ fontSize: `${getFieldScale('title', false) * 10}px` }}>{title}</p>}
-                      {reading && <span className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase w-full ${getAlignClass(alignReading)} pointer-events-auto`} style={{ fontSize: `${getDynamicFontSize(reading, 9, "name", false)}px` }}>{reading}</span>}
+                      {title && <p className={`tracking-[0.4em] uppercase ${textMutedStyle} font-bold w-full mb-2.5 ${getAlignClass(alignTitle)} pointer-events-auto`} style={{ fontSize: `${getDynamicFontSize(title, 10, "title", false)}px` }}>{title}</p>}
+                      {reading && <span className={`tracking-[0.3em] ${textAzureStyle} font-bold uppercase w-full ${getAlignClass(alignReading)} pointer-events-auto`} style={{ fontSize: `${getDynamicFontSize(reading, 9, "reading", false)}px` }}>{reading}</span>}
                    </div>
                    {/* The Name Itself (Dead Center) */}
                    <h2 className={`tracking-[0.15em] uppercase font-light ${textStyle} whitespace-nowrap overflow-hidden text-ellipsis w-full ${getAlignClass(alignName)} pointer-events-auto leading-none`} style={{ fontSize: `${getDynamicFontSize(name, 28, "name", false)}px` }}>{name}</h2>
@@ -1359,11 +1376,11 @@ export default function HexaCardPreview({
               </div>
 
               {/* Footer: Contact Info */}
-              <footer className={`absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10 flex flex-col z-10`}>
-                <div className={`flex flex-col gap-2 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} w-full ${textStyle}`}>
-                   {address && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><MapPin size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest truncate">{address}</span></div>}
-                   {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest">{phone}</span></div>}
-                   {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={10} /><span className="font-mono text-[11px] md:text-[14px] tracking-widest uppercase truncate">{email}</span></div>}
+              <footer className={`absolute bottom-4 left-6 right-6 md:bottom-6 md:left-10 md:right-10 flex flex-col z-10`}>
+                <div className={`flex flex-col gap-1.5 ${textColor === 'black' ? 'opacity-60' : 'opacity-40'} w-full ${textStyle}`}>
+                   {address && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><MapPin size={10} /><span className="font-mono tracking-widest truncate" style={{ fontSize: `${getDynamicFontSize(address, 12, "address", false)}px` }}>{address}</span></div>}
+                   {phone && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignPhone)}`}><Phone size={10} /><span className="font-mono tracking-widest" style={{ fontSize: `${getDynamicFontSize(phone, 12, "phone", false)}px` }}>{phone}</span></div>}
+                   {email && <div className={`flex items-center gap-2.5 w-full ${getAlignClass(alignEmail)}`}><Mail size={10} /><span className="font-mono tracking-widest uppercase truncate" style={{ fontSize: `${getDynamicFontSize(email, 12, "email", false)}px` }}>{email}</span></div>}
                 </div>
               </footer>
             </div>
