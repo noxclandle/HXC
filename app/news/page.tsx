@@ -30,7 +30,7 @@ export default function PublicNewsPage() {
           <h1 className="text-3xl tracking-[0.5em] uppercase font-extralight mb-4 flex items-center gap-4">
             <Newspaper className="text-azure-400" size={28} /> Intel & News
           </h1>
-          <p className="text-xs tracking-widest text-azure-400 opacity-40 uppercase">System Updates / Boundary Declarations</p>
+          <p className="text-xs tracking-widest text-azure-400 opacity-40 uppercase">System Updates / Announcements</p>
         </header>
 
         {loading ? (

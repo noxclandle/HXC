@@ -62,6 +62,7 @@ export default function HubClientUI({
   useEffect(() => {
     const handleUpdate = () => fetchData();
     window.addEventListener("hxc-assets-updated", handleUpdate);
+    fetchData();
     return () => window.removeEventListener("hxc-assets-updated", handleUpdate);
   }, [fetchData]);
 
@@ -202,15 +203,7 @@ export default function HubClientUI({
             bio: realStats?.profile?.bio
           }} />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-12">
-             <Link href="/scan" className="group p-8 border border-azure-500/20 bg-azure-500/[0.03] hover:bg-azure-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-azure-500/40" />
-                <div>
-                   <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100">Scan Card</h2>
-                   <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-azure-300 group-hover:opacity-100">名刺スキャン / OCR Scan</p>
-                </div>
-                <Camera size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
-             </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
              <Link href="/library" className="group p-8 border border-bronze-500/20 bg-bronze-500/[0.03] hover:bg-bronze-500/[0.06] transition-all flex items-center justify-between relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-bronze-500/40" />
                 <div>

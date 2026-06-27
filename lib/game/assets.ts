@@ -192,7 +192,13 @@ export const ASSETS: Asset[] = [
   // --- Virtual Background Designs ---
   { id: "ZoomBgDefault", name: "Solid Void", type: "zoom_bg", rarity: "common", description: "ボイド・ミニマル。標準的な闇と微細なヘックスの背景。 / Minimal Solid Void Zoom background.", unlocked: true },
   { id: "ZoomBgCyber", name: "Cyber Grid", type: "zoom_bg", rarity: "rare", description: "サイバーグリッド。電子のラインが走る未来的な商談背景。 / Futuristic grid-patterned virtual background.", unlocked: false },
+  { id: "ZoomBgSlate", name: "Tactile Slate", type: "zoom_bg", rarity: "rare", description: "静かなスレートの質感。構造的な境界線が知的存在感を演出する背景。 / Structural slate texture representing quiet intellect.", unlocked: false },
+  { id: "ZoomBgWashi", name: "Washi Amber", type: "zoom_bg", rarity: "rare", description: "繊維が光を透過する和紙の風合い。温かみと調和を観測する背景。 / Textured Japanese washi paper that transmits soft light.", unlocked: false },
+  { id: "ZoomBgMist", name: "Mist Shadow", type: "zoom_bg", rarity: "rare", description: "輪郭を穏やかに曖昧にする朝霧の階調。対話の空間に静寂をもたらす背景。 / A gentle monochrome mist gradient that softly blurs boundaries.", unlocked: false },
   { id: "ZoomBgGold", name: "Imperial Gold", type: "zoom_bg", rarity: "epic", description: "インペリアルゴールド。上品な金枠で格式高い印象を与える背景。 / Luxurious gold-bordered virtual background.", unlocked: false },
+  { id: "ZoomBgMattePlates", name: "Matte Obsidian", type: "zoom_bg", rarity: "epic", description: "光を透過させないマットブラックの重なり。強固なアイデンティティを示す背景。 / Structured matte black plates representing a firm identity.", unlocked: false },
+  { id: "ZoomBgBronze", name: "Linear Bronze", type: "zoom_bg", rarity: "epic", description: "ヘアライン加工された青銅の輝きと極細の二重境界線が格式を表現する背景。 / Brushed bronze surface with double ultra-thin structural borders.", unlocked: false },
+  { id: "ZoomBgDawn", name: "Dawn Resonance", type: "zoom_bg", rarity: "epic", description: "暗紺から昇る黎明のグラデーションと金糸の境界線が新たな共鳴を促す背景。 / A quiet dawn gradient with subtle gold-threaded borders.", unlocked: false },
   { id: "ZoomBgPrism", name: "Prism Fractal", type: "zoom_bg", rarity: "mythic", description: "プリズムフラクタル。幻想的な虹色の光彩が差し込む背景。 / Prismatic light virtual background.", unlocked: false },
   { id: "ZoomBgNebula", name: "Nebula Drift", type: "zoom_bg", rarity: "legendary", description: "ネブラドリフト。静かに流れる星雲の色彩を纏う背景。 / Cosmic nebula virtual background.", unlocked: false }
 ];

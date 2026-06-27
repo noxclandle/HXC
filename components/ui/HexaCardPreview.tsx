@@ -133,6 +133,10 @@ export default function HexaCardPreview({
   const glowOpacity = useTransform(x, [-100, 100], [0.2, 0.4]);
   const finalRotateY = useTransform(rotateY, (val) => isFlipped ? val + 180 : val);
 
+  const glareX = useTransform(x, [-225, 225], [-150, 150]);
+  const glareY = useTransform(y, [-142, 142], [-100, 100]);
+  const glareOpacity = useTransform(x, [-225, 225], [0.15, 0.4]);
+
   // Touch tracking for mobile
   const touchStartRef = useRef({ x: 0, y: 0 });
   const hasDraggedRef = useRef(false);
@@ -509,18 +513,35 @@ export default function HexaCardPreview({
       // --- Mythic Auras (Conic gradient rotation, gravity lensing, distortion, eclipse) ---
       case "VoidEclipse":
         return (
-          <div className="absolute inset-[-20px] z-0 rounded-xl flex items-center justify-center pointer-events-none">
+          <div className="absolute inset-[-30px] z-0 rounded-xl flex items-center justify-center pointer-events-none">
+             {/* Outer solar flares (scaling rings) */}
+             <motion.div
+               animate={{ scale: [1, 2.2], opacity: [0.65, 0] }}
+               transition={{ duration: 3.5, repeat: Infinity, ease: "easeOut" }}
+               className="absolute w-[120%] h-[120%] border-2 border-white/35 rounded-xl blur-[2px]"
+             />
+             <motion.div
+               animate={{ scale: [1, 2.2], opacity: [0.45, 0] }}
+               transition={{ duration: 3.5, repeat: Infinity, ease: "easeOut", delay: 1.75 }}
+               className="absolute w-[120%] h-[120%] border-2 border-white/15 rounded-xl blur-[4px]"
+             />
              {/* Shimmering solar silver/white corona */}
              <motion.div
                animate={{ rotate: 360 }}
-               transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-               className="absolute w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_38%,rgba(255,255,255,0.8)_50%,transparent_62%)] opacity-85 blur-[12px]"
+               transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+               className="absolute w-[220%] h-[220%] bg-[conic-gradient(from_0deg,transparent_35%,rgba(255,255,255,0.9)_50%,transparent_65%)] opacity-95 blur-[10px]"
+             />
+             {/* Secondary opposing corona */}
+             <motion.div
+               animate={{ rotate: -360 }}
+               transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
+               className="absolute w-[200%] h-[200%] bg-[conic-gradient(from_180deg,transparent_40%,rgba(168,85,247,0.4)_50%,transparent_60%)] opacity-75 blur-[15px]"
              />
              {/* Inner Void Shell (Eclipse core) */}
              <motion.div 
-               animate={{ scale: [0.99, 1.015, 0.99] }}
-               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-               className="absolute inset-[4px] bg-black border border-white/20 blur-[15px] opacity-95 shadow-[0_0_30px_rgba(255,255,255,0.22)] rounded-xl" 
+               animate={{ scale: [0.98, 1.02, 0.98] }}
+               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+               className="absolute inset-[10px] bg-black border border-white/30 blur-[18px] opacity-95 shadow-[0_0_35px_rgba(255,255,255,0.3)] rounded-xl" 
              />
           </div>
         );
@@ -529,37 +550,54 @@ export default function HexaCardPreview({
           <div className="absolute inset-[-24px] z-0 rounded-xl overflow-hidden flex items-center justify-center">
              {/* CW Color Spectrum Rotation */}
              <motion.div
-               animate={{ rotate: 360, scale: [0.96, 1.04, 0.96] }}
+               animate={{ rotate: 360, scale: [0.95, 1.05, 0.95] }}
                transition={{ 
-                 rotate: { duration: 8.5, repeat: Infinity, ease: "linear" },
-                 scale: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                 rotate: { duration: 7, repeat: Infinity, ease: "linear" },
+                 scale: { duration: 3, repeat: Infinity, ease: "easeInOut" }
                }}
-               className="absolute w-[200%] h-[200%] bg-[conic-gradient(from_0deg,red,orange,yellow,green,blue,indigo,violet,red)] opacity-45 blur-[25px]"
+               className="absolute w-[200%] h-[200%] bg-[conic-gradient(from_0deg,#ff007f,#ff7f00,#ffff00,#00ff7f,#00ffff,#007fff,#7f00ff,#ff007f)] opacity-55 blur-[22px]"
              />
              {/* CCW Shifting Counter-Spectrum */}
              <motion.div
-               animate={{ rotate: [360, 0], scale: [1.02, 0.96, 1.02] }}
+               animate={{ rotate: [360, 0], scale: [1.03, 0.95, 1.03] }}
                transition={{ 
-                 rotate: { duration: 11, repeat: Infinity, ease: "linear" },
-                 scale: { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
+                 rotate: { duration: 9, repeat: Infinity, ease: "linear" },
+                 scale: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
                }}
-               className="absolute w-[200%] h-[200%] bg-[conic-gradient(from_180deg,violet,indigo,blue,green,yellow,orange,red,violet)] opacity-35 blur-[20px]"
+               className="absolute w-[200%] h-[200%] bg-[conic-gradient(from_180deg,#7f00ff,#007fff,#00ffff,#00ff7f,#ffff00,#ff7f00,#ff007f,#7f00ff)] opacity-45 blur-[18px]"
              />
              {/* Prism reflection particles */}
-             {[...Array(6)].map((_, i) => (
+             {[...Array(8)].map((_, i) => (
                 <motion.div
                   key={i}
                   animate={{ 
-                    opacity: [0.1, 0.85, 0.1],
-                    scale: [0.4, 1.1, 0.4],
-                    backgroundColor: ["#3b82f6", "#ec4899", "#10b981", "#3b82f6"]
+                    opacity: [0.1, 0.9, 0.1],
+                    scale: [0.4, 1.2, 0.4],
+                    backgroundColor: ["#3b82f6", "#ec4899", "#10b981", "#ff7f00", "#3b82f6"]
                   }}
-                  transition={{ duration: 3.2, repeat: Infinity, delay: i * 0.5, ease: "easeInOut" }}
-                  className="absolute w-1.5 h-1.5 rounded-full"
+                  transition={{ duration: 2.5 + i * 0.3, repeat: Infinity, delay: i * 0.3, ease: "easeInOut" }}
+                  className="absolute w-2 h-2 rounded-full"
                   style={{
-                    left: `${15 + (i * 14) % 70}%`,
-                    top: `${15 + (i * 13) % 70}%`,
-                    boxShadow: "0 0 8px currentColor"
+                    left: `${10 + (i * 12) % 80}%`,
+                    top: `${10 + (i * 11) % 80}%`,
+                    boxShadow: "0 0 10px currentColor"
+                  }}
+                />
+             ))}
+             {/* Glistening stars */}
+             {[...Array(12)].map((_, i) => (
+                <motion.div
+                  key={`star-${i}`}
+                  animate={{ 
+                    opacity: [0, 0.95, 0],
+                    scale: [0.2, 1.3, 0.2],
+                    rotate: [0, 180]
+                  }}
+                  transition={{ duration: 1.8 + Math.random() * 2, repeat: Infinity, delay: i * 0.3, ease: "easeInOut" }}
+                  className="absolute w-2.5 h-2.5 bg-white rounded-full blur-[0.2px] shadow-[0_0_15px_#fff]"
+                  style={{
+                    left: `${Math.random()*90 + 5}%`,
+                    top: `${Math.random()*90 + 5}%`
                   }}
                 />
              ))}
@@ -568,38 +606,45 @@ export default function HexaCardPreview({
       case "SingularityCore":
         return (
           <div className="absolute inset-[-24px] z-0 rounded-xl flex items-center justify-center pointer-events-none">
+             {/* Pulsing event horizon boundary ring */}
+             <motion.div
+               animate={{ scale: [1.02, 1.06, 1.02], opacity: [0.3, 0.7, 0.3] }}
+               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+               className="absolute inset-[10px] border border-purple-500/40 rounded-xl blur-[1px] shadow-[0_0_20px_rgba(168,85,247,0.4)]"
+             />
              {/* Rotating Gravitational Lens core */}
              <motion.div
                animate={{ 
-                 scale: [0.97, 1.04, 0.97],
+                 scale: [0.96, 1.05, 0.96],
                  rotate: [0, 360]
                }}
                transition={{ 
-                 scale: { duration: 6, repeat: Infinity, ease: "easeInOut" },
-                 rotate: { duration: 6, repeat: Infinity, ease: "linear" }
+                 scale: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+                 rotate: { duration: 5, repeat: Infinity, ease: "linear" }
                }}
-               className="absolute inset-0 bg-[conic-gradient(from_0deg,rgba(0,0,0,0.98)_30%,rgba(168,85,247,0.65)_50%,rgba(0,0,0,0.98)_70%)] blur-[14px] rounded-xl"
+               className="absolute inset-0 bg-[conic-gradient(from_0deg,rgba(0,0,0,0.98)_30%,rgba(168,85,247,0.7)_50%,rgba(0,0,0,0.98)_70%)] blur-[12px] rounded-xl"
              />
              {/* Lensing Distortion rings */}
              <motion.div
-               animate={{ scale: [1.03, 0.97, 1.03], rotate: [360, 0] }}
+               animate={{ scale: [1.04, 0.96, 1.04], rotate: [360, 0] }}
                transition={{ 
-                 scale: { duration: 4.8, repeat: Infinity, ease: "easeInOut" },
-                 rotate: { duration: 8, repeat: Infinity, ease: "linear" }
+                 scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                 rotate: { duration: 7, repeat: Infinity, ease: "linear" }
                }}
-               className="absolute inset-[4px] bg-[conic-gradient(from_180deg,rgba(0,0,0,0.95)_35%,rgba(59,130,246,0.6)_50%,rgba(0,0,0,0.95)_65%)] border border-azure-500/20 blur-[20px] rounded-xl"
+               className="absolute inset-[4px] bg-[conic-gradient(from_180deg,rgba(0,0,0,0.95)_35%,rgba(59,130,246,0.65)_50%,rgba(0,0,0,0.95)_65%)] border border-azure-500/30 blur-[18px] rounded-xl"
              />
-             {/* Captured star elements falling into singularity */}
-             {[...Array(6)].map((_, i) => (
+             {/* Captured star elements falling into singularity with swirling motion */}
+             {[...Array(12)].map((_, i) => (
                 <motion.div
                   key={i}
                   animate={{ 
-                    scale: [0.8, 0, 0.8],
-                    opacity: [0.9, 0, 0.9],
-                    x: [Math.cos(i) * 40, 0, Math.cos(i) * 40],
-                    y: [Math.sin(i) * 40, 0, Math.sin(i) * 40]
+                    scale: [0.8, 0],
+                    opacity: [1, 0],
+                    rotate: [0, 360],
+                    x: [Math.cos(i * (Math.PI / 6)) * 60, 0],
+                    y: [Math.sin(i * (Math.PI / 6)) * 60, 0]
                   }}
-                  transition={{ duration: 4, repeat: Infinity, delay: i * 0.6, ease: "easeIn" }}
+                  transition={{ duration: 3 + Math.random() * 2, repeat: Infinity, delay: i * 0.3, ease: "easeIn" }}
                   className="absolute w-1 h-1 bg-white rounded-full"
                   style={{
                     left: "50%",
@@ -826,15 +871,15 @@ export default function HexaCardPreview({
       case "Obsidian": return "border-[2px] border-white/10 shadow-2xl ring-1 ring-white/5";
       case "Neon": return "border-[2px] border-azure-400 shadow-[0_0_20px_rgba(59,130,246,0.5)] ring-1 ring-azure-300/30";
       case "Gothic": return "border-[3px] border-stone-800 shadow-2xl ring-1 ring-red-900/20";
-      case "Void": return "border-[5px] border-black shadow-[0_0_40px_rgba(255,255,255,0.05)]";
-      case "ImperialGold": return "border-[6px] border-amber-500 shadow-[0_0_50px_rgba(245,158,11,0.3)]";
+      case "Void": return "border-[5px] border-black shadow-[0_0_50px_rgba(0,0,0,0.95),0_0_30px_rgba(168,85,247,0.3),inset_0_0_20px_rgba(0,0,0,0.9)] ring-1 ring-zinc-800/60";
+      case "ImperialGold": return "border-[5px] border-transparent shadow-[0_0_40px_rgba(251,191,36,0.45),inset_0_0_15px_rgba(251,191,36,0.3)] bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-500 ring-2 ring-yellow-400/30";
       case "Glass": return "border-[2px] border-white/20 shadow-xl";
       case "Titanium": return "border-[3px] border-slate-500 shadow-lg";
       case "Marble": return "border-[4px] border-slate-200 shadow-2xl ring-1 ring-black/5";
       case "PrismLine": return "border-[2px] border-white/40 shadow-[0_0_15px_rgba(255,255,255,0.5)]";
       case "CarbonFiber": return "border-[2px] border-zinc-700 shadow-lg";
       case "Linen": return "border-[1px] border-stone-300 shadow-sm";
-      case "Opal": return "border-[3px] border-indigo-100 shadow-[0_0_30px_rgba(199,210,254,0.4)]";
+      case "Opal": return "border-[3px] border-transparent shadow-[0_0_35px_rgba(255,255,255,0.7),0_0_20px_rgba(168,85,247,0.4)] ring-1 ring-white/60 bg-gradient-to-tr from-rose-200 via-azure-200 to-emerald-100";
       case "Iron": return "border-[3px] border-zinc-600 shadow-inner";
       case "Copper": return "border-[2px] border-orange-800 shadow-xl";
       case "Velvet": return "border-[5px] border-rose-900 shadow-2xl";
@@ -860,14 +905,14 @@ export default function HexaCardPreview({
       case "Nebula": return "bg-[#050510] bg-[radial-gradient(circle_at_20%_20%,rgba(139,92,246,0.3),transparent_60%),radial-gradient(circle_at_80%_80%,rgba(59,130,246,0.3),transparent_60%)]";
       case "SilkBlur": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:via-transparent before:to-white/5 before:blur-[60px]";
       case "DigitalFlow": return "bg-[#010101] bg-[linear-gradient(rgba(59,130,246,0.1)_1px,transparent_1px)] bg-[size:100%_4px] opacity-100";
-      case "PrismFractal": return "bg-black before:absolute before:inset-0 before:bg-gradient-to-tr before:from-rose-500/20 before:via-azure-500/20 before:to-emerald-500/20 opacity-100";
+      case "PrismFractal": return "bg-[#04010a] bg-[linear-gradient(135deg,rgba(244,63,94,0.15)_0%,rgba(59,130,246,0.15)_50%,rgba(168,85,247,0.15)_100%)] before:absolute before:inset-0 before:bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] before:bg-[size:30px_30px] after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03),transparent)] animate-pulse";
       case "InkWash": return "bg-[#f5f5f5] bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.1),transparent)] before:absolute before:inset-0 before:bg-[url('https://www.transparenttextures.com/patterns/rice-paper.png')]";
       case "SandDune": return "bg-[#d2b48c] bg-[linear-gradient(135deg,#c19a6b_25%,transparent_25%),linear-gradient(225deg,#c19a6b_25%,transparent_25%)] bg-[size:50px_50px]";
       case "DeepOcean": return "bg-[#000033] bg-[radial-gradient(circle_at_center,rgba(0,102,204,0.2),transparent)]";
       case "Paper": return "bg-[#fdfcf0] before:absolute before:inset-0 before:bg-[url('https://www.transparenttextures.com/patterns/handmade-paper.png')]";
       case "NightCity": return "bg-[#050505] bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.05),transparent)] after:absolute after:inset-0 after:bg-[linear-gradient(to_bottom,transparent_90%,rgba(59,130,246,0.1))]";
       case "Slate": return "bg-zinc-800 before:absolute before:inset-0 before:bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]";
-      case "CosmicVoid": return "bg-black after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02),transparent)]";
+      case "CosmicVoid": return "bg-black before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.04)_0%,transparent_80%)] after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_20%_30%,rgba(255,255,255,0.01)_0%,transparent_50%)] animate-[pulse_10s_infinite]";
       case "Circuit": return "bg-[#020202] bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:40px_40px] after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03),transparent)]";
       case "MorningMist": return "bg-[#e6e6e6] bg-gradient-to-b from-white/20 to-transparent";
       case "RoseQuartzBG": return "bg-[#fff0f5] bg-[radial-gradient(circle_at_50%_50%,rgba(255,182,193,0.3),transparent)]";
@@ -1245,12 +1290,11 @@ export default function HexaCardPreview({
            {getAuraLayer()}
         </div>
 
-        <motion.div style={{ opacity: glowOpacity, rotateY: 90, backfaceVisibility: "hidden" }} className="absolute inset-0 bg-white/10 blur-3xl z-20 pointer-events-none" />
-
         <div 
           className={`absolute inset-0 overflow-hidden border bg-zinc-950 ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", zIndex: isFlipped ? 0 : 1 }}
         >
+          <div className="absolute inset-0 bg-zinc-950 z-0" />
           <div className={`absolute inset-0 ${getBackgroundStyle()} z-0`} />
 
           {isVertical ? (
@@ -1321,12 +1365,24 @@ export default function HexaCardPreview({
             </div>
           )}
           {getEffectLayer()}
+          
+          {/* spec-glare layer (moving specular highlight) */}
+          <motion.div 
+            style={{ 
+              x: glareX, 
+              y: glareY, 
+              opacity: glareOpacity, 
+              background: "linear-gradient(135deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0) 70%)"
+            }} 
+            className="absolute inset-[-50%] z-20 pointer-events-none blur-xl" 
+          />
         </div>
 
         <div 
           className={`absolute inset-0 flex flex-col justify-between items-center text-center border overflow-hidden bg-zinc-950 ${getFrameStyle()} ${getFontStyle()}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)", zIndex: isFlipped ? 1 : 0 }}
         >
+          <div className="absolute inset-0 bg-zinc-950 z-0" />
           <div className={`absolute inset-0 ${getBackgroundStyle()} z-0`} />
 
           {isVertical ? (
@@ -1374,6 +1430,15 @@ export default function HexaCardPreview({
             </div>
           )}
           {getEffectLayer()}
+          <motion.div 
+            style={{ 
+              x: glareX, 
+              y: glareY, 
+              opacity: glareOpacity, 
+              background: "linear-gradient(135deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0) 70%)"
+            }} 
+            className="absolute inset-[-50%] z-20 pointer-events-none blur-xl" 
+          />
         </div>
       </motion.div>
     </div>

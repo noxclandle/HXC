@@ -36,8 +36,8 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   // API Caching Strategy: Stale-While-Revalidate
-  // Cache /api/profile/ (Public Profiles) and /api/user/status (Owner Data)
-  if (url.pathname.startsWith('/api/profile/') || url.pathname === '/api/user/status') {
+  // Cache /api/profile/ (Public Profiles)
+  if (url.pathname.startsWith('/api/profile/')) {
     event.respondWith(
       caches.open(CACHE_NAME).then((cache) => {
         return cache.match(request).then((response) => {

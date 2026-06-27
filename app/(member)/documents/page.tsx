@@ -16,6 +16,7 @@ export default function DocumentManager() {
   const [equippedZoomBg, setEquippedZoomBg] = useState("ZoomBgDefault");
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [isLoaded, setIsLoaded] = useState(false);
+  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -35,6 +36,45 @@ export default function DocumentManager() {
     };
     if (session) fetchInitialData();
   }, [session]);
+
+  const handleFileUpload = async (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingIndex(index);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("type", "document");
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error("Upload failed / アップロードに失敗しました");
+      }
+
+      const data = await res.json();
+      if (data.success && data.url) {
+        updateLink(index, "url", data.url);
+        // If Title is empty, auto-populate it with file name (without extension)
+        if (!links[index].title) {
+          const fileNameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+          updateLink(index, "title", fileNameWithoutExt);
+        }
+        showToast("File uploaded successfully / ファイルを登録しました", "success");
+      } else {
+        throw new Error(data.error || "Upload failed / アップロードに失敗しました");
+      }
+    } catch (err: any) {
+      console.error(err);
+      showToast(err.message || "Upload failed / アップロードに失敗しました", "error");
+    } finally {
+      setUploadingIndex(null);
+    }
+  };
 
   const addLink = () => setLinks(prev => [...prev, { title: "", url: "" }]);
   const removeLink = (index: number) => setLinks(prev => prev.filter((_, i) => i !== index));
@@ -143,17 +183,36 @@ export default function DocumentManager() {
                               placeholder="e.g. Company Brochure / 会社案内" 
                             />
                          </div>
-                         <div className="space-y-2">
-                            <label className="flex items-center gap-2 text-[7px] tracking-[0.3em] uppercase opacity-40 font-bold">
-                               <LinkIcon size={10} /> URL (PDF or Web)
-                            </label>
-                            <input 
-                              type="text" value={link.url} 
-                              onChange={(e) => updateLink(index, "url", e.target.value)}
-                              className="w-full bg-white/[0.03] border border-white/10 p-4 text-xs tracking-widest focus:border-azure-400 outline-none text-white rounded-sm" 
-                              placeholder="https://..." 
-                            />
-                         </div>
+                          <div className="space-y-2">
+                             <label className="flex items-center gap-2 text-[7px] tracking-[0.3em] uppercase opacity-40 font-bold">
+                                <LinkIcon size={10} /> URL (PDF or Web) / またはファイルの読み込み
+                             </label>
+                             <div className="flex gap-2">
+                               <input 
+                                 type="text" value={link.url} 
+                                 onChange={(e) => updateLink(index, "url", e.target.value)}
+                                 className="flex-1 bg-white/[0.03] border border-white/10 p-4 text-xs tracking-widest focus:border-azure-400 outline-none text-white rounded-sm" 
+                                 placeholder="https://..." 
+                               />
+                               <label className="cursor-pointer px-4 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-2 rounded-sm text-[9px] uppercase tracking-widest whitespace-nowrap min-w-[120px]">
+                                 {uploadingIndex === index ? (
+                                   <Loader2 size={12} className="animate-spin text-azure-400" />
+                                 ) : (
+                                   <>
+                                     <Upload size={12} className="text-white/60" />
+                                     <span>Upload / 選択</span>
+                                   </>
+                                 )}
+                                 <input 
+                                   type="file" 
+                                   className="hidden" 
+                                   accept="application/pdf,image/*"
+                                   onChange={(e) => handleFileUpload(index, e)} 
+                                   disabled={uploadingIndex !== null}
+                                 />
+                               </label>
+                             </div>
+                          </div>
                       </div>
                    </motion.div>
                  ))}

@@ -45,6 +45,31 @@ export default function BackgroundGenerator({
       ctx.strokeStyle = "#22d3ee";
       ctx.lineWidth = 6;
       ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+    } else if (equippedZoomBg === "ZoomBgSlate") {
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.08)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+      // Clean vertical accent line
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.25)";
+      ctx.beginPath(); ctx.moveTo(60, 40); ctx.lineTo(60, canvas.height - 40); ctx.stroke();
+    } else if (equippedZoomBg === "ZoomBgWashi") {
+      ctx.fillStyle = "#18140f";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Draw quiet amber glow at boundaries
+      ctx.strokeStyle = "rgba(217, 119, 6, 0.12)";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+    } else if (equippedZoomBg === "ZoomBgMist") {
+      const grad = ctx.createLinearGradient(0, canvas.height, 0, 0);
+      grad.addColorStop(0, "#08070b");
+      grad.addColorStop(1, "#1e1b29");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
     } else if (equippedZoomBg === "ZoomBgGold") {
       ctx.fillStyle = "#1c150c";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -55,6 +80,39 @@ export default function BackgroundGenerator({
       ctx.strokeStyle = "#fbbf24";
       ctx.lineWidth = 1.5;
       ctx.strokeRect(48, 48, canvas.width - 96, canvas.height - 96);
+    } else if (equippedZoomBg === "ZoomBgMattePlates") {
+      ctx.fillStyle = "#0c0a09";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = "rgba(120, 113, 108, 0.15)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+      // Small dots at corners
+      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+      ctx.fillRect(38, 38, 4, 4);
+      ctx.fillRect(canvas.width - 42, 38, 4, 4);
+      ctx.fillRect(38, canvas.height - 42, 4, 4);
+      ctx.fillRect(canvas.width - 42, canvas.height - 42, 4, 4);
+    } else if (equippedZoomBg === "ZoomBgBronze") {
+      ctx.fillStyle = "#140e0a";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Double thin borders
+      ctx.strokeStyle = "rgba(180, 83, 9, 0.18)";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+      ctx.strokeStyle = "rgba(251, 191, 36, 0.08)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(46, 46, canvas.width - 92, canvas.height - 92);
+    } else if (equippedZoomBg === "ZoomBgDawn") {
+      const grad = ctx.createLinearGradient(0, canvas.height, canvas.width, 0);
+      grad.addColorStop(0, "#02000a");
+      grad.addColorStop(0.5, "#0b0c24");
+      grad.addColorStop(1, "#181335");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Gold-threaded boundary line
+      ctx.strokeStyle = "rgba(217, 119, 6, 0.15)";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
     } else if (equippedZoomBg === "ZoomBgPrism") {
       ctx.fillStyle = "#090514";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -140,8 +198,20 @@ export default function BackgroundGenerator({
     switch (equippedZoomBg) {
       case "ZoomBgCyber":
         return "bg-[#030712] border-cyan-500/30";
+      case "ZoomBgSlate":
+        return "bg-[#0f172a] border-slate-500/20";
+      case "ZoomBgWashi":
+        return "bg-[#18140f] border-amber-500/20";
+      case "ZoomBgMist":
+        return "bg-[#0d0b13] border-violet-500/20";
       case "ZoomBgGold":
         return "bg-[#1c150c] border-amber-500/30";
+      case "ZoomBgMattePlates":
+        return "bg-[#0c0a09] border-stone-500/20";
+      case "ZoomBgBronze":
+        return "bg-[#140e0a] border-amber-700/20";
+      case "ZoomBgDawn":
+        return "bg-[#060416] border-orange-500/20";
       case "ZoomBgPrism":
         return "bg-[#090514] border-purple-500/30";
       case "ZoomBgNebula":
@@ -163,6 +233,21 @@ export default function BackgroundGenerator({
          {equippedZoomBg === "ZoomBgCyber" && (
            <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.03)_1px,transparent_1px),linear-gradient(to_right,rgba(34,211,238,0.03)_1px,transparent_1px)] bg-[size:20px_20px]" />
          )}
+
+         {/* Slate Vertical Accent */}
+         {equippedZoomBg === "ZoomBgSlate" && (
+           <div className="absolute top-2 bottom-2 left-3 w-[1px] bg-slate-500/30" />
+         )}
+
+         {/* Washi Amber Glow */}
+         {equippedZoomBg === "ZoomBgWashi" && (
+           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_60%,rgba(217,119,6,0.03)_100%)]" />
+         )}
+
+         {/* Mist Shadow Fade */}
+         {equippedZoomBg === "ZoomBgMist" && (
+           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
+         )}
          
          {/* Default Hex Pattern */}
          {equippedZoomBg === "ZoomBgDefault" && (
@@ -177,6 +262,26 @@ export default function BackgroundGenerator({
          {/* Gold Inner Frame */}
          {equippedZoomBg === "ZoomBgGold" && (
            <div className="absolute inset-2 border border-amber-500/10 rounded" />
+         )}
+
+         {/* Matte Obsidian Plate Dots */}
+         {equippedZoomBg === "ZoomBgMattePlates" && (
+           <>
+             <div className="absolute top-1 left-1 w-1 h-1 bg-white/40 rounded-full" />
+             <div className="absolute top-1 right-1 w-1 h-1 bg-white/40 rounded-full" />
+             <div className="absolute bottom-1 left-1 w-1 h-1 bg-white/40 rounded-full" />
+             <div className="absolute bottom-1 right-1 w-1 h-1 bg-white/40 rounded-full" />
+           </>
+         )}
+
+         {/* Bronze Double Border */}
+         {equippedZoomBg === "ZoomBgBronze" && (
+           <div className="absolute inset-1 border border-amber-900/10 rounded" />
+         )}
+
+         {/* Dawn Sunrise Light */}
+         {equippedZoomBg === "ZoomBgDawn" && (
+           <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(217,119,6,0.08)_0%,transparent_70%)]" />
          )}
 
          <Camera size={28} className="opacity-10 z-10" />

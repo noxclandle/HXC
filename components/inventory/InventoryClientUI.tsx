@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Music, Sparkles, UserCheck, Lock, Wallet, Trophy, ArrowLeft, MousePointer2, Smartphone, Layout, Palette, Eye, Zap, Gem, Loader2, ChevronRight } from "lucide-react";
+import { Shield, Music, Sparkles, UserCheck, Lock, Wallet, Trophy, ArrowLeft, MousePointer2, Smartphone, Layout, Palette, Eye, Zap, Gem, Loader2, ChevronRight, Camera } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import HexaCardPreview, { mapUserToCardProps } from "@/components/ui/HexaCardPreview";
 import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import { useSession } from "next-auth/react";
@@ -18,6 +19,26 @@ const RT_PACKS = [
   { id: "rt_medium", price: 5000, rt: 11000, label: "11,000 ポイント", description: "推奨パック。広範なカスタマイズを可能にします。", popular: true },
   { id: "rt_large", price: 10000, rt: 23000, label: "23,000 ポイント", description: "最大限の補充。すべてのアイテムを揃える方に。" },
 ];
+
+const getPointerStyle = (id: string) => {
+  switch (id) {
+    case "Azure Trace": return { color: "#3B82F6", shape: "hex" };
+    case "Emerald Trace": return { color: "#10B981", shape: "hex" };
+    case "Ruby Trace": return { color: "#F43F5E", shape: "square" };
+    case "Gold Trace": return { color: "#F59E0B", shape: "hex" };
+    case "Violet Trace": return { color: "#8B5CF6", shape: "hex" };
+    case "Crimson Trace": return { color: "#EF4444", shape: "square" };
+    case "Shadow Trace": return { color: "#111111", shape: "square" };
+    case "Prism Trace": return { color: "rgba(255, 255, 255, 0.8)", shape: "hex" };
+    case "Void Trace": return { color: "#000000", shape: "square" };
+    case "Nebula Trace": return { color: "#a855f7", shape: "hex" };
+    case "Solar Trace": return { color: "#f97316", shape: "square" };
+    case "Dot": return { color: "#FFFFFF", shape: "circle" };
+    case "Ring": return { color: "#FFFFFF", shape: "ring" };
+    case "Cross": return { color: "#FFFFFF", shape: "cross" };
+    default: return { color: "#FFFFFF", shape: "hex" };
+  }
+};
 
 export default function InventoryClientUI({ initialStats }: { initialStats: any }) {
   const { data: session, status } = useSession();
@@ -40,6 +61,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
   const [confirmingAsset, setConfirmingAsset] = useState<Asset | null>(null);
   const [showRightScrollIndicator, setShowRightScrollIndicator] = useState(true);
   const [showLeftScrollIndicator, setShowLeftScrollIndicator] = useState(false);
+  const [localPulses, setLocalPulses] = useState<{ id: number; x: number; y: number; color: string; shape: string }[]>([]);
 
   const handleCategoryScroll = (e: any) => {
     const target = e.currentTarget;
@@ -69,6 +91,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
     pointer: "Pure White Hex",
     angel: "Sentinel",
     aura: "None",
+    zoom_bg: "ZoomBgDefault",
     orientation: "horizontal",
     hAlign: defaultAlign,
     vAlign: defaultAlign,
@@ -76,10 +99,6 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
   });
 
   const [profile, setProfile] = useState<any>(initialStats);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const fetchData = useCallback(async () => {
     try {
@@ -95,6 +114,11 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
       }
     } catch (e) { console.error(e); }
   }, []);
+
+  useEffect(() => {
+    setMounted(true);
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
     const handleUpdate = () => fetchData();
@@ -172,6 +196,11 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
     setIsResonating(true);
     setPreviewAsset(asset);
     if (asset.type === "sound") playConnectionSound(asset.id);
+    if (asset.type === "pointer") {
+      const style = getPointerStyle(asset.id);
+      const id = Date.now() + Math.random();
+      setLocalPulses(prev => [...prev.slice(-6), { id, x: 225, y: 126, ...style }]);
+    }
     setTimeout(() => setIsResonating(false), 600);
   };
 
@@ -203,6 +232,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
       case "title": return Trophy;
       case "pointer": return MousePointer2;
       case "sound": return Music;
+      case "zoom_bg": return Camera;
       default: return Shield;
     }
   };
@@ -261,27 +291,321 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
         {/* Top Area: Fixed Preview Block on Mobile, Left Column on Desktop */}
         <div className="w-full lg:w-5/12 shrink-0 bg-void pb-2 lg:pb-0 -mx-4 lg:mx-0 px-4 lg:px-0 border-b border-white/10 lg:border-none h-auto flex items-center justify-center lg:sticky lg:top-32 z-30">
            <UnifiedCardContainer 
-             orientation={equipped.orientation}
+             orientation={
+               activeCategory === "zoom_bg" || 
+               activeCategory === "sound" || 
+               activeCategory === "pointer" || 
+               activeCategory === "title" 
+                 ? "horizontal" 
+                 : equipped.orientation
+             }
              onOrientationChange={(o) => setEquipped((prev: any) => ({ ...prev, orientation: o }))}
              textColor={equipped.textColor}
              onTextColorChange={(c) => { const next = { ...equipped, textColor: c }; setEquipped(next); handleCommit(next); }}
              previewLabel={previewAsset ? `Previewing: ${previewAsset.name}` : "Live Preview / ライブプレビュー"}
              isUpdating={isResonating}
              compact={true}
+             showControls={
+               activeCategory !== "zoom_bg" && 
+               activeCategory !== "sound" && 
+               activeCategory !== "pointer" && 
+               activeCategory !== "title"
+             }
            >
-              <motion.div
-                className="flex justify-center shrink-0"
-                animate={isResonating ? { 
-                  scale: [1, 0.98, 1],
-                  filter: ["blur(0px)", "blur(4px)", "blur(0px)"],
-                  opacity: [1, 0.5, 1]
-                } : {}}
-                transition={{ duration: 0.6, ease: "easeInOut" }}
-              >
-                <HexaCardPreview 
-                  {...mapUserToCardProps(profile, equipped.orientation, currentPreview)}
-                />
-              </motion.div>
+              {activeCategory === "zoom_bg" ? (
+                <motion.div
+                  className="w-[450px] h-[253px] border flex items-center justify-center relative overflow-hidden group rounded-lg shadow-2xl transition-all"
+                  style={{
+                    backgroundColor: 
+                      currentPreview.zoom_bg === "ZoomBgCyber" ? "#030712" :
+                      currentPreview.zoom_bg === "ZoomBgSlate" ? "#0f172a" :
+                      currentPreview.zoom_bg === "ZoomBgWashi" ? "#18140f" :
+                      currentPreview.zoom_bg === "ZoomBgMist" ? "#0d0b13" :
+                      currentPreview.zoom_bg === "ZoomBgGold" ? "#1c150c" :
+                      currentPreview.zoom_bg === "ZoomBgMattePlates" ? "#0c0a09" :
+                      currentPreview.zoom_bg === "ZoomBgBronze" ? "#140e0a" :
+                      currentPreview.zoom_bg === "ZoomBgDawn" ? "#060416" :
+                      currentPreview.zoom_bg === "ZoomBgPrism" ? "#090514" :
+                      currentPreview.zoom_bg === "ZoomBgNebula" ? "#02020f" : "#020202",
+                    borderColor: 
+                      currentPreview.zoom_bg === "ZoomBgCyber" ? "rgba(34, 211, 238, 0.3)" :
+                      currentPreview.zoom_bg === "ZoomBgSlate" ? "rgba(148, 163, 184, 0.25)" :
+                      currentPreview.zoom_bg === "ZoomBgWashi" ? "rgba(217, 119, 6, 0.25)" :
+                      currentPreview.zoom_bg === "ZoomBgMist" ? "rgba(168, 85, 247, 0.25)" :
+                      currentPreview.zoom_bg === "ZoomBgGold" ? "rgba(245, 158, 11, 0.3)" :
+                      currentPreview.zoom_bg === "ZoomBgMattePlates" ? "rgba(120, 113, 108, 0.25)" :
+                      currentPreview.zoom_bg === "ZoomBgBronze" ? "rgba(180, 83, 9, 0.25)" :
+                      currentPreview.zoom_bg === "ZoomBgDawn" ? "rgba(217, 119, 6, 0.25)" :
+                      currentPreview.zoom_bg === "ZoomBgPrism" ? "rgba(168, 85, 247, 0.3)" :
+                      currentPreview.zoom_bg === "ZoomBgNebula" ? "rgba(99, 102, 241, 0.3)" : "rgba(255, 255, 255, 0.1)",
+                  }}
+                  animate={isResonating ? { 
+                    scale: [1, 0.98, 1],
+                    filter: ["blur(0px)", "blur(4px)", "blur(0px)"],
+                    opacity: [1, 0.5, 1]
+                  } : {}}
+                  transition={{ duration: 0.6, ease: "easeInOut" }}
+                >
+                  {/* Cyber Grid Pattern */}
+                  {currentPreview.zoom_bg === "ZoomBgCyber" && (
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.03)_1px,transparent_1px),linear-gradient(to_right,rgba(34,211,238,0.03)_1px,transparent_1px)] bg-[size:20px_20px]" />
+                  )}
+
+                  {/* Slate Vertical Accent */}
+                  {currentPreview.zoom_bg === "ZoomBgSlate" && (
+                    <div className="absolute top-2 bottom-2 left-3 w-[1px] bg-slate-500/30" />
+                  )}
+
+                  {/* Washi Amber Glow */}
+                  {currentPreview.zoom_bg === "ZoomBgWashi" && (
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_60%,rgba(217,119,6,0.03)_100%)]" />
+                  )}
+
+                  {/* Mist Shadow Fade */}
+                  {currentPreview.zoom_bg === "ZoomBgMist" && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
+                  )}
+                  
+                  {/* Default Hex Pattern */}
+                  {currentPreview.zoom_bg === "ZoomBgDefault" && (
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:30px_30px]" />
+                  )}
+
+                  {/* Nebula Glow */}
+                  {currentPreview.zoom_bg === "ZoomBgNebula" && (
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(168,85,247,0.12)_0%,rgba(45,212,191,0.08)_50%,transparent_100%)] animate-pulse" style={{ animationDuration: '6s' }} />
+                  )}
+
+                  {/* Gold Inner Frame */}
+                  {currentPreview.zoom_bg === "ZoomBgGold" && (
+                    <div className="absolute inset-2 border border-amber-500/10 rounded" />
+                  )}
+
+                  {/* Matte Obsidian Plate Dots */}
+                  {currentPreview.zoom_bg === "ZoomBgMattePlates" && (
+                    <>
+                      <div className="absolute top-1 left-1 w-1 h-1 bg-white/40 rounded-full" />
+                      <div className="absolute top-1 right-1 w-1 h-1 bg-white/40 rounded-full" />
+                      <div className="absolute bottom-1 left-1 w-1 h-1 bg-white/40 rounded-full" />
+                      <div className="absolute bottom-1 right-1 w-1 h-1 bg-white/40 rounded-full" />
+                    </>
+                  )}
+
+                  {/* Bronze Double Border */}
+                  {currentPreview.zoom_bg === "ZoomBgBronze" && (
+                    <div className="absolute inset-1 border border-amber-900/10 rounded" />
+                  )}
+
+                  {/* Dawn Sunrise Light */}
+                  {currentPreview.zoom_bg === "ZoomBgDawn" && (
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(217,119,6,0.08)_0%,transparent_70%)]" />
+                  )}
+
+                  <Camera size={48} className="opacity-10 z-10 text-white" />
+                  
+                  {/* QR Code Area at Top Right */}
+                  <div className="absolute top-4 right-4 p-1.5 bg-white z-10 shadow-[0_0_15px_rgba(255,255,255,0.15)] rounded-sm">
+                     <QRCodeSVG 
+                       value={
+                         typeof window !== "undefined" 
+                           ? `${window.location.origin}/p/${profile?.slug || ""}` 
+                           : `https://virtual-business-card.hexa-relation.com/p/${profile?.slug || ""}`
+                       } 
+                       size={56} 
+                     />
+                  </div>
+
+                  {/* Brand Text at Bottom Left */}
+                  <div className="absolute bottom-4 left-4 text-[8px] tracking-[6px] text-white/20 uppercase font-bold z-10">
+                    HEXA RELATION
+                  </div>
+
+                  <div className="absolute bottom-4 right-4 text-[7px] tracking-[2px] opacity-20 uppercase font-bold z-10">
+                    Preview
+                  </div>
+                </motion.div>
+              ) : activeCategory === "sound" ? (
+                <motion.div
+                  onClick={() => {
+                    const soundId = currentPreview.sound;
+                    playConnectionSound(soundId);
+                    setIsResonating(true);
+                    setTimeout(() => setIsResonating(false), 500);
+                  }}
+                  className="w-[450px] h-[253px] bg-[#020202] border border-white/5 relative overflow-hidden flex flex-col items-center justify-center cursor-pointer group rounded-lg shadow-2xl"
+                  animate={isResonating ? { scale: [1, 0.97, 1] } : {}}
+                  transition={{ duration: 0.2 }}
+                >
+                  <motion.div 
+                    animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.25, 0.15] }}
+                    transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                    className="absolute w-40 h-40 bg-azure-500/10 rounded-full blur-2xl pointer-events-none"
+                  />
+                  {[...Array(6)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      animate={{
+                        y: [-10, -80],
+                        x: [0, (i % 2 === 0 ? 25 : -25)],
+                        opacity: [0, 0.6, 0],
+                        scale: [0.5, 1.1, 0.5]
+                      }}
+                      transition={{
+                        duration: 2.5 + i * 0.4,
+                        repeat: Infinity,
+                        delay: i * 0.4,
+                        ease: "easeOut"
+                      }}
+                      className="absolute text-azure-400 opacity-0 pointer-events-none text-xs"
+                      style={{
+                        bottom: "35%",
+                        left: `${40 + i * 5}%`
+                      }}
+                    >
+                      ♩
+                    </motion.div>
+                  ))}
+                  
+                  <motion.div
+                    animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0, 0.3] }}
+                    transition={{ repeat: Infinity, duration: 2, ease: "easeOut" }}
+                    className="absolute w-24 h-24 border border-azure-500/20 rounded-full"
+                  />
+                  <motion.div
+                    animate={{ scale: [1, 1.8, 1], opacity: [0.2, 0, 0.2] }}
+                    transition={{ repeat: Infinity, duration: 2, delay: 0.5, ease: "easeOut" }}
+                    className="absolute w-24 h-24 border border-azure-500/10 rounded-full"
+                  />
+
+                  <div className="z-10 flex flex-col items-center gap-4">
+                    <Music size={40} className="text-azure-400 animate-pulse" />
+                    <div className="text-center">
+                      <p className="text-[10px] tracking-[0.4em] uppercase text-white/40 mb-1">Equipped Sound / 共鳴音響</p>
+                      <h4 className="text-sm tracking-[0.3em] font-light text-white uppercase">
+                        {ASSETS.find(a => a.id === currentPreview.sound)?.name || currentPreview.sound}
+                      </h4>
+                      <p className="text-[7px] tracking-widest text-azure-400 uppercase mt-2 opacity-60">Tap to Resonance / クリックして試聴</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : activeCategory === "pointer" ? (
+                <div
+                  onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const clickY = e.clientY - rect.top;
+                    const id = Date.now() + Math.random();
+                    const style = getPointerStyle(currentPreview.pointer || "Pure White Hex");
+                    setLocalPulses(prev => [...prev.slice(-6), { id, x: clickX, y: clickY, ...style }]);
+                    if (currentPreview.sound) playConnectionSound(currentPreview.sound);
+                  }}
+                  className="w-[450px] h-[253px] bg-[#020202] border border-white/5 relative overflow-hidden flex flex-col items-center justify-center cursor-crosshair group rounded-lg shadow-2xl"
+                >
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.02)_0%,transparent_80%)]" />
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:20px_20px]" />
+                  
+                  <AnimatePresence>
+                    {localPulses.map((p) => {
+                      if (p.shape === "cross") {
+                        return (
+                          <motion.div
+                            key={p.id}
+                            initial={{ opacity: 0.8, scale: 0, x: p.x - 24, y: p.y - 24 }}
+                            animate={{ opacity: 0, scale: 2 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                            className="absolute w-12 h-12 flex items-center justify-center pointer-events-none"
+                          >
+                            <div className="absolute w-full h-[2px]" style={{ backgroundColor: p.color }} />
+                            <div className="absolute h-full w-[2px]" style={{ backgroundColor: p.color }} />
+                          </motion.div>
+                        );
+                      }
+                      return (
+                        <motion.div
+                          key={p.id}
+                          initial={{ opacity: 0.8, scale: 0, x: p.x - 24, y: p.y - 24, rotate: 0 }}
+                          animate={{ 
+                            opacity: 0, 
+                            scale: 2.5, 
+                            rotate: p.shape === "hex" ? 90 : 180,
+                            y: p.y - 24 - 30 
+                          }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.6, ease: "easeOut" }}
+                          className={`absolute border-2 pointer-events-none`}
+                          style={{ 
+                            borderColor: p.shape === "ring" ? p.color : "transparent",
+                            backgroundColor: p.shape !== "ring" ? p.color : "transparent",
+                            width: "48px",
+                            height: "48px",
+                            borderRadius: p.shape === "circle" || p.shape === "ring" ? "50%" : "0%",
+                            clipPath: p.shape === "hex" ? "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)" : "none"
+                          }}
+                        />
+                      );
+                    })}
+                  </AnimatePresence>
+
+                  <div className="z-10 flex flex-col items-center gap-3 pointer-events-none opacity-40 group-hover:opacity-85 transition-opacity">
+                    <MousePointer2 size={36} className="text-azure-400" />
+                    <div className="text-center">
+                      <p className="text-[10px] tracking-[0.4em] uppercase text-white/40 mb-1">Click Pad / タップテスト</p>
+                      <h4 className="text-sm tracking-[0.3em] font-light text-white uppercase">
+                        {ASSETS.find(a => a.id === currentPreview.pointer)?.name || currentPreview.pointer}
+                      </h4>
+                      <p className="text-[7px] tracking-widest text-azure-400 uppercase mt-2 opacity-60">Click anywhere to test effect / パッド内をクリック</p>
+                    </div>
+                  </div>
+                </div>
+              ) : activeCategory === "title" ? (
+                <motion.div
+                  className="w-[450px] h-[253px] bg-[#020202] border border-white/5 relative overflow-hidden flex flex-col items-center justify-center rounded-lg shadow-2xl"
+                  animate={isResonating ? { scale: [1, 0.98, 1] } : {}}
+                >
+                  <motion.div 
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+                    className="absolute w-56 h-56 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.04)_0%,transparent_70%)] pointer-events-none"
+                  />
+                  
+                  <div className="border border-white/10 bg-white/[0.01] p-6 w-[320px] text-center relative flex flex-col items-center gap-3 rounded">
+                     <div className="absolute top-2 left-2 w-2 h-2 border-t border-l border-white/20" />
+                     <div className="absolute top-2 right-2 w-2 h-2 border-t border-r border-white/20" />
+                     <div className="absolute bottom-2 left-2 w-2 h-2 border-b border-l border-white/20" />
+                     <div className="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-white/20" />
+                     
+                     <Trophy size={28} className="text-azure-400 opacity-60 animate-bounce" style={{ animationDuration: '3s' }} />
+                     
+                     <div className="space-y-1 w-full">
+                        <p className="text-[7px] tracking-[0.4em] uppercase text-white/30">Holographic Title Plaque</p>
+                        <h3 className="text-xs tracking-[0.25em] font-light text-white uppercase break-all truncate">
+                          {previewAsset && previewAsset.type === "title" ? previewAsset.name : currentPreview.title}
+                        </h3>
+                        <div className="h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent w-full my-1.5" />
+                        <div className="max-h-[60px] overflow-y-auto no-scrollbar">
+                          <p className="text-[7px] tracking-wider text-white/50 leading-relaxed uppercase">
+                            {previewAsset && previewAsset.type === "title" ? previewAsset.description : (ASSETS.find(a => a.id === currentPreview.title)?.description || "Authorized member title.")}
+                          </p>
+                        </div>
+                     </div>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  className="flex justify-center shrink-0"
+                  animate={isResonating ? { 
+                    scale: [1, 0.98, 1],
+                    filter: ["blur(0px)", "blur(4px)", "blur(0px)"],
+                    opacity: [1, 0.5, 1]
+                  } : {}}
+                  transition={{ duration: 0.6, ease: "easeInOut" }}
+                >
+                  <HexaCardPreview 
+                    {...mapUserToCardProps(profile, equipped.orientation, currentPreview)}
+                  />
+                </motion.div>
+              )}
            </UnifiedCardContainer>
         </div>
 
