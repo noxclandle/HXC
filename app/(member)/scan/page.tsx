@@ -22,13 +22,21 @@ export default function ScanPage() {
   };
 
   const proceedToStep3 = () => {
-    playConnectionSound("resonance");
+    try {
+      playConnectionSound("resonance");
+    } catch (e) {
+      console.warn("Audio connection sound blocked:", e);
+    }
     setStatus("confirm_step3"); // 2段階目
   };
 
   const startProcessing = async () => {
     if (!pendingFile) return;
-    playConnectionSound("silver");
+    try {
+      playConnectionSound("silver");
+    } catch (e) {
+      console.warn("Audio silver sound blocked:", e);
+    }
     setStatus("processing"); // 3段階目 (最終承認) -> 処理開始
     
     // APIへ画像を送信
@@ -176,12 +184,19 @@ export default function ScanPage() {
               <span className="block mt-2 text-[9px] lowercase opacity-50">画像の撮影が完了しました。スキャン処理に進みますか？</span>
             </p>
             <button 
+              type="button"
               onClick={proceedToStep3} 
-              className="w-full py-5 border border-moonlight/40 text-[10px] tracking-[0.6em] uppercase hover:bg-white/5 transition-all"
+              className="w-full py-5 border border-moonlight/40 text-[10px] tracking-[0.6em] uppercase hover:bg-white/5 transition-all cursor-pointer z-50"
             >
               Confirm and Proceed
             </button>
-            <button onClick={() => setStatus("idle")} className="text-[8px] opacity-20 uppercase tracking-[0.4em]">Cancel</button>
+            <button 
+              type="button"
+              onClick={() => setStatus("idle")} 
+              className="text-[8px] opacity-20 uppercase tracking-[0.4em] cursor-pointer z-50"
+            >
+              Cancel
+            </button>
           </motion.div>
         )}
 
@@ -194,12 +209,19 @@ export default function ScanPage() {
             </p>
             <div className="w-16 h-[1px] bg-moonlight/20 mx-auto" />
             <button 
+              type="button"
               onClick={startProcessing} 
-              className="w-full py-5 bg-moonlight text-void text-[11px] font-bold tracking-[0.8em] uppercase shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-105 transition-all"
+              className="w-full py-5 bg-moonlight text-void text-[11px] font-bold tracking-[0.8em] uppercase shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-105 transition-all cursor-pointer z-50"
             >
               Start Scan / 実行
             </button>
-            <button onClick={() => setStatus("idle")} className="text-[8px] opacity-20 uppercase tracking-[0.4em]">Cancel</button>
+            <button 
+              type="button"
+              onClick={() => setStatus("idle")} 
+              className="text-[8px] opacity-20 uppercase tracking-[0.4em] cursor-pointer z-50"
+            >
+              Cancel
+            </button>
           </motion.div>
         )}
 
