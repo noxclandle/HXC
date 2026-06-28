@@ -69,6 +69,7 @@ export default function ScanPage() {
   });
   const [aiInsight, setAiInsight] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [saveProgress, setSaveProgress] = useState(0);
   const router = useRouter();
 
   const handleCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,7 +132,20 @@ export default function ScanPage() {
   const handleArchive = async () => {
     if (!formData.name) return;
     setIsSaving(true);
-    setAiInsight("Saving contact...");
+    setSaveProgress(0);
+    setAiInsight("Saving contact... / 保存しています...");
+
+    // 保存プログレスバーをスムーズに95%まで動かすタイマー
+    const progressInterval = setInterval(() => {
+      setSaveProgress((prev) => {
+        if (prev >= 95) {
+          clearInterval(progressInterval);
+          return 95;
+        }
+        // ランダムで3〜8%ずつ増える
+        return prev + Math.floor(Math.random() * 6) + 3;
+      });
+    }, 70);
     
     try {
       const res = await fetch("/api/contacts", {
@@ -150,17 +164,21 @@ export default function ScanPage() {
       });
 
       if (res.ok) {
-        setAiInsight("Contact saved successfully.");
+        clearInterval(progressInterval);
+        setSaveProgress(100);
+        setAiInsight("Saved successfully. / 保存が完了しました。");
         try {
           playConnectionSound("resonance");
         } catch (soundErr) {}
-        setTimeout(() => router.push("/library"), 1500);
+        setTimeout(() => router.push("/library"), 1000);
       } else {
-        setAiInsight("Failed to save the contact.");
+        clearInterval(progressInterval);
+        setAiInsight("Failed to save the contact. / 保存に失敗しました。");
         setIsSaving(false);
       }
     } catch (err) {
-      setAiInsight("An error occurred while saving.");
+      clearInterval(progressInterval);
+      setAiInsight("An error occurred while saving. / エラーが発生しました。");
       console.error(err);
       setIsSaving(false);
     }
@@ -340,7 +358,7 @@ export default function ScanPage() {
                 <div className="space-y-1">
                   <label className="text-[9px] tracking-[0.2em] opacity-45 uppercase block">Email / メールアドレス</label>
                   <input 
-                    type="email" 
+                    type="text" 
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="e.g. taro.tanaka@example.com" 
@@ -355,15 +373,28 @@ export default function ScanPage() {
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     placeholder="出会った場所や、相手のメモなど" 
                     rows={3} 
-                    className="w-full bg-white/[0.02] border border-white/10 p-4 text-[11px] tracking-widest focus:border-white/30 outline-none transition-all text-white rounded-none resize-none"
+                    className="w-full bg-white/[0.02] border border-white/10 p-4 text-[11px] tracking-widest focus:border-white/30 outline-none text-white rounded-none resize-none"
                   />
                 </div>
               </div>
 
+              {/* Status & Progress Bar */}
               {aiInsight && (
-                <div className="w-full p-4 border border-white/10 bg-white/[0.02] text-center">
-                  <p className="text-[8px] uppercase tracking-[0.3em] opacity-40 mb-1">Status</p>
-                  <p className="text-[10px] tracking-[0.1em] text-white/80">{aiInsight}</p>
+                <div className="w-full p-4 border border-white/10 bg-white/[0.02] space-y-3">
+                  <div className="flex justify-between items-center text-[8px] uppercase tracking-[0.2em] opacity-60">
+                    <span>{aiInsight}</span>
+                    {isSaving && <span>{saveProgress}%</span>}
+                  </div>
+                  {isSaving && (
+                    <div className="w-full h-[2px] bg-white/5 overflow-hidden relative">
+                      <motion.div 
+                        className="absolute left-0 top-0 bottom-0 bg-azure-400"
+                        initial={{ width: "0%" }}
+                        animate={{ width: `${saveProgress}%` }}
+                        transition={{ ease: "easeInOut" }}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -376,6 +407,7 @@ export default function ScanPage() {
                   setStatus("idle");
                   setFormData({ name: "", role: "", address: "", phone: "", email: "", notes: "" });
                   setAiInsight(null);
+                  setSaveProgress(0);
                 }} 
                 className="flex-1 py-4 border border-white/10 text-[10px] uppercase tracking-widest hover:bg-white/5 active:scale-95 transition-all"
                 disabled={isSaving}
