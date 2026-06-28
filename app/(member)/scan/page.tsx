@@ -2,10 +2,61 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Loader2, ScanLine, ArrowLeft } from "lucide-react";
+import { Loader2, ScanLine, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { playConnectionSound } from "@/lib/audio/resonance";
+
+// クライアント側で画像を1000px以下にリサイズ＆圧縮するユーティリティ
+const compressImage = (file: File, maxWidth = 1000, maxHeight = 1000, quality = 0.8): Promise<Blob> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new window.Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Canvas context is null"));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error("Canvas toBlob returned null"));
+            }
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
 
 export default function ScanPage() {
   const [status, setStatus] = useState<"idle" | "processing" | "confirm">("idle");
@@ -30,61 +81,79 @@ export default function ScanPage() {
       playConnectionSound("silver");
     } catch (err) {}
     
-    setStatus("processing"); // アップロード & 解析中画面へ
-    setAiInsight("Uploading card image... / 画像をアップロード中...");
+    setStatus("processing");
+    setAiInsight("Compressing image... / 画像を最適化中...");
 
-    // 1. 画像のアップロード (Cloudflare R2)
-    const uploadData = new FormData();
-    uploadData.append("file", file);
-    uploadData.append("type", "contacts");
+    let targetFile: File | Blob = file;
 
-    let imageUrl = "";
     try {
-      const uploadRes = await fetch("/api/upload", {
-        method: "POST",
-        body: uploadData,
-      });
-      if (uploadRes.ok) {
-        const uploadResult = await uploadRes.json();
-        imageUrl = uploadResult.url;
-        setUploadedImageUrl(imageUrl);
-      }
-    } catch (err) {
-      console.error("Upload failed:", err);
+      // 1. 画像の圧縮 (10MB以上の巨大な写真を150KB前後に圧縮して転送を高速化)
+      const compressedBlob = await compressImage(file, 1000, 1000, 0.85);
+      targetFile = new File([compressedBlob], "card.jpg", { type: "image/jpeg" });
+    } catch (compressErr) {
+      console.error("Compression failed, using original file:", compressErr);
+      targetFile = file;
     }
 
-    // 2. 自動判別 (無料のサーバーサイドOCR)
-    setAiInsight("Analyzing card details... / 情報を自動判別中...");
-    const ocrData = new FormData();
-    ocrData.append("image", file);
-
     try {
-      const ocrRes = await fetch("/api/ocr", {
-        method: "POST",
-        body: ocrData,
-      });
+      // 2. 画像のアップロード (Cloudflare R2)
+      setAiInsight("Uploading card image... / 画像をアップロード中...");
+      const uploadData = new FormData();
+      uploadData.append("file", targetFile);
+      uploadData.append("type", "contacts");
 
-      if (ocrRes.ok) {
-        const ocrResult = await ocrRes.json();
-        // フォームデータを自動入力
-        setFormData({
-          name: ocrResult.name && ocrResult.name !== "Unknown" ? ocrResult.name : "",
-          role: ocrResult.role || "",
-          address: ocrResult.address || "",
-          phone: ocrResult.phone || "",
-          email: ocrResult.email || "",
-          notes: ""
+      let imageUrl = "";
+      try {
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: uploadData,
         });
-        setAiInsight("Auto-fill complete. Please verify the details.");
-      } else {
+        if (uploadRes.ok) {
+          const uploadResult = await uploadRes.json();
+          imageUrl = uploadResult.url;
+          setUploadedImageUrl(imageUrl);
+        }
+      } catch (err) {
+        console.error("Upload failed:", err);
+      }
+
+      // 3. 自動判別 (無料のサーバーサイドOCR)
+      setAiInsight("Analyzing card details... / 情報を自動判別中...");
+      const ocrData = new FormData();
+      ocrData.append("image", targetFile);
+
+      try {
+        const ocrRes = await fetch("/api/ocr", {
+          method: "POST",
+          body: ocrData,
+        });
+
+        if (ocrRes.ok) {
+          const ocrResult = await ocrRes.json();
+          // フォームデータを自動入力
+          setFormData({
+            name: ocrResult.name && ocrResult.name !== "Unknown" ? ocrResult.name : "",
+            role: ocrResult.role || "",
+            address: ocrResult.address || "",
+            phone: ocrResult.phone || "",
+            email: ocrResult.email || "",
+            notes: ""
+          });
+          setAiInsight("Auto-fill complete. Please verify the details.");
+        } else {
+          setAiInsight("Auto-fill unavailable. Please enter details manually.");
+        }
+      } catch (err) {
+        console.error("OCR failed:", err);
         setAiInsight("Auto-fill unavailable. Please enter details manually.");
       }
-    } catch (err) {
-      console.error("OCR failed:", err);
-      setAiInsight("Auto-fill unavailable. Please enter details manually.");
-    }
 
-    setStatus("confirm");
+    } catch (err) {
+      console.error("Process error:", err);
+    } finally {
+      // 何があっても必ず入力確認画面へ遷移させ、ローディング画面での永続フリーズを防止します
+      setStatus("confirm");
+    }
   };
 
   const handleArchive = async () => {
@@ -226,14 +295,14 @@ export default function ScanPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center space-y-8 z-10"
+            className="flex flex-col items-center space-y-8 z-10 p-6 text-center"
           >
             <div className="relative w-20 h-20 flex items-center justify-center">
               <Loader2 className="animate-spin text-white opacity-40" size={36} />
             </div>
             <div className="text-center space-y-2">
-              <h2 className="text-[10px] tracking-[0.5em] uppercase text-azure-400 font-bold">Uploading Image...</h2>
-              <p className="text-[8px] tracking-[0.3em] uppercase opacity-30">Uploading to secure storage / 画像保存中...</p>
+              <h2 className="text-[10px] tracking-[0.5em] uppercase text-azure-400 font-bold">Processing...</h2>
+              <p className="text-[8px] tracking-[0.3em] uppercase opacity-40 text-white/80">{aiInsight}</p>
             </div>
           </motion.div>
         )}
