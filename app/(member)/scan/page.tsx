@@ -4,10 +4,9 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ScanLine, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { playConnectionSound } from "@/lib/audio/resonance";
 
-// クライアント側で画像を1000px以下にリサイズ＆圧縮するユーティリティ
+// クライアント側で画像をリサイズ＆圧縮するユーティリティ（転送速度の向上とエラー防止）
 const compressImage = (file: File, maxWidth = 1000, maxHeight = 1000, quality = 0.8): Promise<Blob> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -60,7 +59,6 @@ const compressImage = (file: File, maxWidth = 1000, maxHeight = 1000, quality = 
 
 export default function ScanPage() {
   const [status, setStatus] = useState<"idle" | "processing" | "confirm">("idle");
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
   const [formData, setFormData] = useState({
     name: "",
     role: "",
@@ -82,12 +80,12 @@ export default function ScanPage() {
     } catch (err) {}
     
     setStatus("processing");
-    setAiInsight("Compressing image... / 画像を最適化中...");
+    setAiInsight("Optimizing image... / 画像を解析用に最適化中...");
 
     let targetFile: File | Blob = file;
 
     try {
-      // 1. 画像の圧縮 (10MB以上の巨大な写真を150KB前後に圧縮して転送を高速化)
+      // 1. 画像の圧縮（巨大な写真データを150KB前後に圧縮して転送スピードを最速化）
       const compressedBlob = await compressImage(file, 1000, 1000, 0.85);
       targetFile = new File([compressedBlob], "card.jpg", { type: "image/jpeg" });
     } catch (compressErr) {
@@ -96,62 +94,36 @@ export default function ScanPage() {
     }
 
     try {
-      // 2. 画像のアップロード (Cloudflare R2)
-      setAiInsight("Uploading card image... / 画像をアップロード中...");
-      const uploadData = new FormData();
-      uploadData.append("file", targetFile);
-      uploadData.append("type", "contacts");
-
-      let imageUrl = "";
-      try {
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: uploadData,
-        });
-        if (uploadRes.ok) {
-          const uploadResult = await uploadRes.json();
-          imageUrl = uploadResult.url;
-          setUploadedImageUrl(imageUrl);
-        }
-      } catch (err) {
-        console.error("Upload failed:", err);
-      }
-
-      // 3. 自動判別 (無料のサーバーサイドOCR)
-      setAiInsight("Analyzing card details... / 情報を自動判別中...");
+      // 2. 文字認識（無料のサーバーサイドOCRへ圧縮画像を直接送信。画像自体は保存されません）
+      setAiInsight("Extracting text details... / 文字情報を抽出中...");
       const ocrData = new FormData();
       ocrData.append("image", targetFile);
 
-      try {
-        const ocrRes = await fetch("/api/ocr", {
-          method: "POST",
-          body: ocrData,
-        });
+      const ocrRes = await fetch("/api/ocr", {
+        method: "POST",
+        body: ocrData,
+      });
 
-        if (ocrRes.ok) {
-          const ocrResult = await ocrRes.json();
-          // フォームデータを自動入力
-          setFormData({
-            name: ocrResult.name && ocrResult.name !== "Unknown" ? ocrResult.name : "",
-            role: ocrResult.role || "",
-            address: ocrResult.address || "",
-            phone: ocrResult.phone || "",
-            email: ocrResult.email || "",
-            notes: ""
-          });
-          setAiInsight("Auto-fill complete. Please verify the details.");
-        } else {
-          setAiInsight("Auto-fill unavailable. Please enter details manually.");
-        }
-      } catch (err) {
-        console.error("OCR failed:", err);
+      if (ocrRes.ok) {
+        const ocrResult = await ocrRes.json();
+        // フォームデータを自動入力
+        setFormData({
+          name: ocrResult.name && ocrResult.name !== "Unknown" ? ocrResult.name : "",
+          role: ocrResult.role || "",
+          address: ocrResult.address || "",
+          phone: ocrResult.phone || "",
+          email: ocrResult.email || "",
+          notes: ""
+        });
+        setAiInsight("Auto-fill complete. Please verify the details.");
+      } else {
         setAiInsight("Auto-fill unavailable. Please enter details manually.");
       }
-
     } catch (err) {
-      console.error("Process error:", err);
+      console.error("OCR failed:", err);
+      setAiInsight("Auto-fill unavailable. Please enter details manually.");
     } finally {
-      // 何があっても必ず入力確認画面へ遷移させ、ローディング画面での永続フリーズを防止します
+      // 何があっても必ず入力フォーム画面へ遷移させ、ローディング画面での永続フリーズを防止します
       setStatus("confirm");
     }
   };
@@ -162,11 +134,6 @@ export default function ScanPage() {
     setAiInsight("Saving contact...");
     
     try {
-      // メモ欄に撮影した名刺の画像URLをリンクとして追記
-      const finalNotes = uploadedImageUrl 
-        ? `${formData.notes}\n\n[Card Photo / 名刺画像](${uploadedImageUrl})`
-        : formData.notes;
-
       const res = await fetch("/api/contacts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -176,7 +143,7 @@ export default function ScanPage() {
           address: formData.address,
           phone: formData.phone,
           email: formData.email,
-          notes: finalNotes,
+          notes: formData.notes,
           coord_x: Math.floor(Math.random() * 100),
           coord_y: Math.floor(Math.random() * 100)
         }),
@@ -271,7 +238,7 @@ export default function ScanPage() {
                 onChange={handleCapture}
               />
               <p className="text-[9px] tracking-widest opacity-40 leading-relaxed uppercase px-2">
-                {"Take a photo of the card to upload and save it. / 名刺を撮影してアップロードし、連絡先に登録します。"}
+                {"Take a photo of the card to automatically extract and register details. / 名刺を撮影して情報を自動判別し、登録します。"}
               </p>
               <button 
                 type="button"
@@ -323,16 +290,6 @@ export default function ScanPage() {
 
             {/* Scrollable Form */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin">
-              {/* Photo Preview if uploaded */}
-              {uploadedImageUrl && (
-                <div className="space-y-2">
-                  <span className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Captured Card / 撮影した名刺</span>
-                  <div className="relative w-full aspect-[5/3] rounded-lg overflow-hidden border border-white/10 bg-black/40 shadow-inner">
-                    <Image src={uploadedImageUrl} alt="Card Preview" fill className="object-contain" />
-                  </div>
-                </div>
-              )}
-
               {/* Form Inputs */}
               <div className="space-y-4">
                 <div className="space-y-1">
@@ -417,7 +374,6 @@ export default function ScanPage() {
                 type="button"
                 onClick={() => {
                   setStatus("idle");
-                  setUploadedImageUrl("");
                   setFormData({ name: "", role: "", address: "", phone: "", email: "", notes: "" });
                   setAiInsight(null);
                 }} 
