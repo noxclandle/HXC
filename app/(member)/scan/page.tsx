@@ -91,52 +91,52 @@ export default function ScanPage() {
 
       <AnimatePresence mode="wait">
         {status === "idle" && (
-          <motion.div key="idle" className="flex flex-col items-center p-12 w-full max-w-sm">
-            <header className="text-center mb-16 space-y-2">
+          <motion.div key="idle" className="flex flex-col items-center justify-between h-full max-h-[640px] p-6 w-full max-w-sm">
+            <header className="text-center space-y-1.5">
               <h2 className="text-xl tracking-[0.6em] uppercase font-light">Scan Card</h2>
               <p className="text-[9px] tracking-[0.4em] opacity-30 uppercase font-bold text-azure-400">OCR Scan / 名刺をスキャンする</p>
             </header>
 
             {/* Visual Guide (紙名刺の電子化) */}
-            <div className="relative w-full aspect-[3/4] mb-16 flex items-center justify-center">
+            <div className="relative w-full aspect-[4/3] flex items-center justify-center scale-90">
               {/* Phone Silhouette */}
-              <div className="absolute w-48 h-80 border border-moonlight/10 bg-gothic-dark/40 rounded-[40px] shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col items-center pt-8 overflow-hidden">
-                 <div className="w-12 h-1 bg-moonlight/5 rounded-full mb-12" />
+              <div className="absolute w-36 h-56 border border-moonlight/10 bg-gothic-dark/40 rounded-[32px] shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col items-center pt-4 overflow-hidden">
+                 <div className="w-10 h-0.5 bg-moonlight/5 rounded-full mb-8" />
                  
                  {/* Simulated Camera Viewfinder */}
-                 <div className="w-32 h-48 border border-white/10 bg-black/40 rounded-xl flex items-center justify-center relative overflow-hidden">
-                    <ScanLine size={32} className="text-azure-400 opacity-20 animate-pulse" />
+                 <div className="w-24 h-32 border border-white/10 bg-black/40 rounded-lg flex items-center justify-center relative overflow-hidden">
+                    <ScanLine size={24} className="text-azure-400 opacity-20 animate-pulse" />
                     
                     {/* Simulated Paper Card in Viewfinder */}
-                    <div className="absolute inset-4 border border-white/5 bg-white/5 flex flex-col p-2 space-y-1">
-                       <div className="w-1/2 h-1 bg-white/10" />
-                       <div className="w-full h-1 bg-white/5" />
-                       <div className="w-3/4 h-1 bg-white/5" />
+                    <div className="absolute inset-3 border border-white/5 bg-white/5 flex flex-col p-1.5 space-y-1">
+                       <div className="w-1/2 h-0.5 bg-white/10" />
+                       <div className="w-full h-0.5 bg-white/5" />
+                       <div className="w-3/4 h-0.5 bg-white/5" />
                     </div>
                  </div>
 
                  {/* Labels */}
-                 <p className="mt-8 text-[7px] tracking-[0.4em] opacity-20 uppercase">Camera Viewfinder</p>
+                 <p className="mt-6 text-[6px] tracking-[0.4em] opacity-20 uppercase">Camera Viewfinder</p>
               </div>
 
               {/* Real World Paper Card (Floating) */}
               <motion.div 
                 animate={{ 
-                  y: [20, 0, 20],
-                  rotateX: [15, 0, 15],
+                  y: [15, 0, 15],
+                  rotateX: [10, 0, 10],
                   opacity: [0.6, 0.9, 0.6]
                 }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -bottom-4 -right-2 w-44 h-24 bg-white/80 backdrop-blur-sm border border-white shadow-2xl z-10 flex flex-col p-4 space-y-2"
+                className="absolute -bottom-2 -right-2 w-32 h-18 bg-white/85 backdrop-blur-sm border border-white/90 shadow-2xl z-10 flex flex-col p-3 space-y-1.5 rounded-sm"
               >
-                <div className="w-1/2 h-2 bg-black/20" />
-                <div className="w-full h-1 bg-black/10" />
-                <div className="w-3/4 h-1 bg-black/10" />
-                <div className="absolute top-2 right-2 w-6 h-6 border border-black/5" />
+                <div className="w-1/2 h-1.5 bg-black/20" />
+                <div className="w-full h-0.5 bg-black/10" />
+                <div className="w-3/4 h-0.5 bg-black/10" />
+                <div className="absolute top-1.5 right-1.5 w-4 h-4 border border-black/5" />
               </motion.div>
             </div>
 
-            <div className="space-y-6 text-center w-full relative">
+            <div className="space-y-4 text-center w-full relative pb-4">
               <input 
                 id="camera-input"
                 type="file" 
@@ -145,16 +145,16 @@ export default function ScanPage() {
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-0" 
                 onChange={handleCapture}
               />
-              <p className="text-[10px] tracking-widest opacity-40 leading-relaxed uppercase">
+              <p className="text-[9px] tracking-widest opacity-40 leading-relaxed uppercase px-2">
                 {"Capture the other party's \"paper business card\" with the camera, and AI will automatically save it to your digital library. / 相手の「紙の名刺」をカメラで撮影し、AIが自動的にデジタル名刺帳へ保存します。"}
               </p>
               <button 
                 type="button"
-                className="w-full py-6 bg-white text-void text-[12px] font-bold tracking-[1em] uppercase shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-105 transition-all active:scale-95 pointer-events-none relative z-10"
+                className="w-full py-5 bg-white text-void text-[11px] font-bold tracking-[1em] uppercase shadow-[0_0_30px_rgba(255,255,255,0.25)] hover:scale-105 transition-all active:scale-95 pointer-events-none relative z-10"
               >
                 Open Camera
               </button>
-              <button onClick={() => router.back()} className="text-[9px] opacity-20 uppercase tracking-[0.4em] hover:opacity-50 transition-opacity block w-full">Return to Home</button>
+              <button onClick={() => router.back()} className="text-[8px] opacity-20 uppercase tracking-[0.4em] hover:opacity-50 transition-opacity block w-full">Return to Home</button>
             </div>
           </motion.div>
         )}
