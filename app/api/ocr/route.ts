@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createWorker } from "tesseract.js";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export const dynamic = "force-dynamic";
 
 /**
- * 送られてきた名刺画像をTesseract.jsで解析（API不要・完全無料）
+ * 送られてきた名刺画像を解析するAPI
+ * GOOGLE_API_KEYがある場合は超高速・高精度のGemini 1.5 Flashを使用。
+ * ない場合はローカルのTesseract.jsを /tmp キャッシュフォルダ経由で使用（Vercelの読込専用エラーを防止）。
  */
 export async function POST(req: NextRequest) {
   try {
@@ -18,31 +21,71 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Tesseract.js Workerの起動
-    const worker = await createWorker('jpn+eng'); // 日本語と英語をサポート
+    // 1. Gemini APIによる超高速・高精度OCR（APIキーがある場合）
+    if (process.env.GOOGLE_API_KEY) {
+      try {
+        const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+        const prompt = `
+          Analyze this business card image and extract the following information.
+          Return ONLY a valid JSON object with these fields, no markdown formatting, no code blocks:
+          {
+            "name": "Person's name (in Japanese or English)",
+            "handle": "A short nickname or first name (5 chars max)",
+            "role": "Job title / Role",
+            "email": "Email address",
+            "phone": "Phone number",
+            "address": "Company address / Location"
+          }
+        `;
+
+        const result = await model.generateContent([
+          prompt,
+          {
+            inlineData: {
+              data: buffer.toString("base64"),
+              mimeType: file.type || "image/jpeg"
+            }
+          }
+        ]);
+
+        const text = result.response.text().trim();
+        // Remove markdown code block if present
+        const jsonText = text.replace(/^```json\s*/i, "").replace(/```$/, "").trim();
+        const parsed = JSON.parse(jsonText);
+
+        return NextResponse.json({
+          name: parsed.name || "Unknown",
+          handle: parsed.handle || (parsed.name ? parsed.name.substring(0, 5) : "User"),
+          role: parsed.role || "Member",
+          email: parsed.email || "",
+          phone: parsed.phone || "",
+          address: parsed.address || "",
+          notes: "Analyzed via Gemini 1.5 Flash."
+        });
+      } catch (geminiError) {
+        console.error("Gemini OCR failed, falling back to local OCR:", geminiError);
+      }
+    }
+
+    // 2. ローカルTesseract.jsによるフォールバック（APIキーがない場合）
+    // Vercel上の読込専用エラーを防ぐため、書き込み権限のある /tmp をキャッシュ先に指定
+    const worker = await createWorker('jpn+eng', 1, {
+      cachePath: '/tmp',
+    });
     
     const { data: { text } } = await worker.recognize(buffer);
     await worker.terminate();
 
-    // 読み取った生のテキストから情報を抽出するロジック（簡易版）
-    // AIを使わないため、正規表現や行ごとのパターンマッチングで対応
     const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    
     const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
     const phoneMatch = text.match(/0[0-9]{1,4}-?[0-9]{1,4}-?[0-9]{3,4}/);
-    
-    // 日本語の住所と思われる行を抽出する簡易ロジック
     const addressLine = lines.find(l => 
-      l.includes("都") || 
-      l.includes("道") || 
-      l.includes("府") || 
-      l.includes("県") || 
-      l.includes("市") || 
-      l.includes("区") || 
-      l.includes("〒")
+      l.includes("都") || l.includes("道") || l.includes("府") || l.includes("県") || 
+      l.includes("市") || l.includes("区") || l.includes("〒")
     ) || "";
 
-    // 名前は通常1行目か2行目に来ることが多いという仮説
     const name = lines[0] || "Unknown";
     const role = lines[1] || "Member";
 
@@ -53,11 +96,11 @@ export async function POST(req: NextRequest) {
       email: emailMatch ? emailMatch[0] : "",
       phone: phoneMatch ? phoneMatch[0] : "",
       address: addressLine,
-      notes: "Deciphered via local resonance. No external AI used."
+      notes: "Deciphered via local Tesseract.js (Fallback)."
     });
 
   } catch (error: any) {
     console.error("OCR Error:", error);
-    return NextResponse.json({ error: "Failed to decipher the card soul locally." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to scan the card." }, { status: 500 });
   }
 }
