@@ -30,36 +30,61 @@ export default function ScanPage() {
       playConnectionSound("silver");
     } catch (err) {}
     
-    setStatus("processing"); // アップロード処理中画面へ
+    setStatus("processing"); // アップロード & 解析中画面へ
+    setAiInsight("Uploading card image... / 画像をアップロード中...");
 
-    const data = new FormData();
-    data.append("file", file);
-    data.append("type", "contacts");
+    // 1. 画像のアップロード (Cloudflare R2)
+    const uploadData = new FormData();
+    uploadData.append("file", file);
+    uploadData.append("type", "contacts");
 
+    let imageUrl = "";
     try {
-      const res = await fetch("/api/upload", {
+      const uploadRes = await fetch("/api/upload", {
         method: "POST",
-        body: data,
+        body: uploadData,
       });
-
-      if (res.ok) {
-        const result = await res.json();
-        if (result.url) {
-          setUploadedImageUrl(result.url);
-          setStatus("confirm");
-        } else {
-          alert("Failed to upload the image. Entering manual mode.");
-          setStatus("confirm");
-        }
-      } else {
-        alert("Upload failed. Entering manual mode.");
-        setStatus("confirm");
+      if (uploadRes.ok) {
+        const uploadResult = await uploadRes.json();
+        imageUrl = uploadResult.url;
+        setUploadedImageUrl(imageUrl);
       }
     } catch (err) {
-      console.error("Upload error:", err);
-      alert("A network error occurred. Entering manual mode.");
-      setStatus("confirm");
+      console.error("Upload failed:", err);
     }
+
+    // 2. 自動判別 (無料のサーバーサイドOCR)
+    setAiInsight("Analyzing card details... / 情報を自動判別中...");
+    const ocrData = new FormData();
+    ocrData.append("image", file);
+
+    try {
+      const ocrRes = await fetch("/api/ocr", {
+        method: "POST",
+        body: ocrData,
+      });
+
+      if (ocrRes.ok) {
+        const ocrResult = await ocrRes.json();
+        // フォームデータを自動入力
+        setFormData({
+          name: ocrResult.name && ocrResult.name !== "Unknown" ? ocrResult.name : "",
+          role: ocrResult.role || "",
+          address: ocrResult.address || "",
+          phone: ocrResult.phone || "",
+          email: ocrResult.email || "",
+          notes: ""
+        });
+        setAiInsight("Auto-fill complete. Please verify the details.");
+      } else {
+        setAiInsight("Auto-fill unavailable. Please enter details manually.");
+      }
+    } catch (err) {
+      console.error("OCR failed:", err);
+      setAiInsight("Auto-fill unavailable. Please enter details manually.");
+    }
+
+    setStatus("confirm");
   };
 
   const handleArchive = async () => {

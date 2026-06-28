@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Tesseract from "tesseract.js";
 
 export const dynamic = "force-dynamic";
 
 /**
  * 名刺画像解析API
- * - GOOGLE_API_KEYがある場合：Gemini 1.5 Flashによる超高速・高精度解析（実用版）
- * - GOOGLE_API_KEYがない場合：デモモードとして、即座にモックデータを返却（テスト用・ハング防止）
+ * - 外部の有料API（Google等）は一切使わず、完全に自己完結した処理を行います（追加料金のリスクは永久に0円です）。
+ * - Vercel上でのデッドロックを防ぐため、Web Workerを使わないシングルスレッドモードで実行します。
  */
 export async function POST(req: NextRequest) {
   try {
@@ -20,67 +20,53 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // 1. Gemini APIによる高精度解析（APIキーがある場合）
-    if (process.env.GOOGLE_API_KEY) {
-      try {
-        const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // Tesseract.recognizeを直接呼び出し、メインスレッド内で処理（Web Workerのデッドロックを防止）
+    // キャッシュ先を書き込み可能な /tmp に指定
+    const { data: { text } } = await Tesseract.recognize(
+      buffer,
+      'jpn+eng',
+      {
+        cachePath: '/tmp',
+      }
+    );
 
-        const prompt = `
-          Analyze this business card image and extract the following information.
-          Return ONLY a valid JSON object with these fields, no markdown formatting, no code blocks:
-          {
-            "name": "Person's name (in Japanese or English)",
-            "handle": "A short nickname or first name (5 chars max)",
-            "role": "Job title / Role",
-            "email": "Email address",
-            "phone": "Phone number",
-            "address": "Company address / Location"
-          }
-        `;
+    // 取得したテキストから各項目を自動判別
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+    const phoneMatch = text.match(/0[0-9]{1,4}-?[0-9]{1,4}-?[0-9]{3,4}/);
+    const addressLine = lines.find(l => 
+      l.includes("都") || l.includes("道") || l.includes("府") || l.includes("県") || 
+      l.includes("市") || l.includes("区") || l.includes("〒")
+    ) || "";
 
-        const result = await model.generateContent([
-          prompt,
-          {
-            inlineData: {
-              data: buffer.toString("base64"),
-              mimeType: file.type || "image/jpeg"
-            }
-          }
-        ]);
+    // 名前と肩書の推測ロジック
+    let name = "";
+    let role = "";
 
-        const text = result.response.text().trim();
-        // Markdownのコードブロックが入る場合があるため除去
-        const jsonText = text.replace(/^```json\s*/i, "").replace(/```$/, "").trim();
-        const parsed = JSON.parse(jsonText);
+    if (lines.length > 0) {
+      // メール、URL、電話番号、住所などを含まない行を「名前・肩書」の候補とする
+      const cleanLines = lines.filter(l => 
+        !l.includes("@") && !l.includes("http") && !l.includes("tel") && 
+        !l.includes("fax") && !l.match(/[0-9]{3}-[0-9]{4}/) &&
+        !l.match(/^[0-9\-+() ]+$/) &&
+        !l.includes("都") && !l.includes("道") && !l.includes("府") && !l.includes("県") &&
+        l.length > 1
+      );
 
-        return NextResponse.json({
-          name: parsed.name || "Unknown",
-          handle: parsed.handle || (parsed.name ? parsed.name.substring(0, 5) : "User"),
-          role: parsed.role || "Member",
-          email: parsed.email || "",
-          phone: parsed.phone || "",
-          address: parsed.address || "",
-          notes: "Analyzed via Gemini 1.5 Flash."
-        });
-      } catch (geminiError) {
-        console.error("Gemini OCR failed:", geminiError);
-        return NextResponse.json({ error: "AI Scan failed. Please try again." }, { status: 500 });
+      if (cleanLines.length > 0) {
+        name = cleanLines[0];
+        if (cleanLines.length > 1) {
+          role = cleanLines[1];
+        }
       }
     }
 
-    // 2. デモモード（APIキーがない場合）
-    // Vercel上でのTesseract.jsのデッドロック/ハングアップを回避するため、即座にダミーデータを返却します。
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // 演出用のウェイト
-
     return NextResponse.json({
-      name: "サンプル 太郎 / Taro Sample",
-      handle: "Taro",
-      role: "代表取締役 / CEO",
-      email: "taro.sample@example.com",
-      phone: "090-1234-5678",
-      address: "東京都港区南青山 1-1-1",
-      notes: "デモモード動作中（実用にはVercelにGOOGLE_API_KEYを設定してください）"
+      name: name || "Unknown",
+      role: role || "",
+      email: emailMatch ? emailMatch[0] : "",
+      phone: phoneMatch ? phoneMatch[0] : "",
+      address: addressLine,
     });
 
   } catch (error: any) {
