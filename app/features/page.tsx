@@ -180,10 +180,8 @@ export default function FeaturesPage() {
 
   return (
     <main className="min-h-screen bg-void text-moonlight overflow-x-hidden font-sans select-none pb-24">
-      {/* Dynamic colorful bg gradient circles */}
-      <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-purple-500/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute top-[400px] right-1/4 w-[550px] h-[550px] bg-pink-500/5 blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[300px] left-1/3 w-[500px] h-[500px] bg-cyan-500/5 blur-[130px] rounded-full pointer-events-none" />
+      {/* Dynamic colorful bg gradient layer (Zero-Blur, GPU-optimized radial-gradients) */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_0%,rgba(168,85,247,0.06)_0%,transparent_50%),radial-gradient(circle_at_75%_40%,rgba(236,72,153,0.03)_0%,transparent_50%),radial-gradient(circle_at_33%_70%,rgba(6,182,212,0.03)_0%,transparent_50%)] pointer-events-none" />
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-6 flex flex-col items-center text-center overflow-hidden">
