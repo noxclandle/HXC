@@ -30,7 +30,10 @@ export async function getUserStatus(email: string | null | undefined) {
   if (!email) return null;
   const normalizedEmail = email.toLowerCase();
 
-  const [user, assetPricesConfig, unreadCount] = await Promise.all([
+  const now = new Date();
+  const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const [user, assetPricesConfig, unreadCount, totalContacts, monthlyConnections] = await Promise.all([
     prisma.user.findUnique({
       where: { email: normalizedEmail },
       select: {
@@ -79,6 +82,15 @@ export async function getUserStatus(email: string | null | undefined) {
     })(),
     prisma.cardMessage.count({
       where: { target_user: { email: normalizedEmail }, is_read: false }
+    }),
+    prisma.contact.count({
+      where: { owner: { email: normalizedEmail } }
+    }),
+    prisma.contact.count({
+      where: { 
+        owner: { email: normalizedEmail },
+        created_at: { gte: firstDayOfMonth }
+      }
     })
   ]);
 
@@ -131,6 +143,8 @@ export async function getUserStatus(email: string | null | undefined) {
     uid: user.card?.uid || "NO CARD LINKED",
     handle: user.handle_name || "", 
     slug: user.handle_name || user.id,
+    total_contacts: totalContacts,
+    monthly_connections: monthlyConnections,
     // 画像がBase64で巨大な場合、初期通信を圧迫するため、
     // ここではデータの存在有無のみを返し、実際の表示はキャッシュや別ルートで行うよう検討
     logo_url: user.logo_url && user.logo_url.length > 5000 ? "IMAGE_LARGE" : (user.logo_url || ""),
