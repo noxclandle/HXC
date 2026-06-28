@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { 
   Search, User, Mail, Phone, MapPin, Calendar, 
-  ArrowLeft, Filter, MoreVertical, Trash2, Camera, X, Edit2 
+  ArrowLeft, Filter, MoreVertical, Trash2, Camera, X, Edit2, Download 
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -46,6 +46,51 @@ export default function LibraryPage() {
     c.email?.toLowerCase().includes(search.toLowerCase()) ||
     c.handle_name?.toLowerCase().includes(search.toLowerCase())
   );
+
+  // 日本語の日付フォーマットに変換するユーティリティ
+  const formatJapaneseDate = (dateString: string) => {
+    const d = new Date(dateString);
+    return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+  };
+
+  // 全データをCSVとしてダウンロードする処理 (Excelの文字化けを防ぐBOM付き)
+  const exportToCSV = () => {
+    if (contacts.length === 0) {
+      alert("No data to export. / 出力するデータがありません。");
+      return;
+    }
+    
+    // CSVのヘッダー行
+    const headers = ["名前 (Name)", "会社名・役職 (Organization/Title)", "メールアドレス (Email)", "電話番号 (Phone)", "住所 (Address)", "メモ (Memo)", "登録日 (Registered Date)"];
+    
+    // 各行のデータを配列として作成
+    const rows = contacts.map(c => [
+      c.name,
+      c.handle_name || "",
+      c.email || "",
+      c.phone || "",
+      c.address || "",
+      c.notes || "",
+      formatJapaneseDate(c.created_at)
+    ]);
+    
+    // 値をダブルクォーテーションで囲み、カンマ区切りにする（値内部の改行やダブルクォーテーションのエスケープ対応）
+    const csvContent = [
+      headers.map(h => `"${h.replace(/"/g, '""')}"`).join(","),
+      ...rows.map(row => row.map(val => `"${val.replace(/"/g, '""')}"`).join(","))
+    ].join("\n");
+    
+    // Excelで日本語が文字化けしないようにBOM (Byte Order Mark) を追加
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `hxc_contacts_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   // 編集保存処理
   const handleSaveEdit = async () => {
@@ -119,15 +164,23 @@ export default function LibraryPage() {
             <h1 className="text-3xl md:text-5xl tracking-[0.3em] md:tracking-[0.5em] uppercase font-extralight text-white mb-2">Contacts</h1>
             <p className="text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold">名刺帳・ライブラリ</p>
           </div>
-          <div className="relative w-full md:w-80 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-azure-400 transition-colors" size={16} />
-            <input 
-              type="text" 
-              placeholder="Search Contacts..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white/[0.02] border border-white/5 p-4 pl-12 text-[11px] tracking-widest focus:border-azure-500/40 outline-none transition-all uppercase"
-            />
+          <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
+            <button 
+              onClick={exportToCSV}
+              className="flex items-center gap-2 px-5 py-3.5 border border-white/10 hover:border-white/25 hover:bg-white/[0.02] text-[9px] tracking-[0.2em] uppercase text-white/70 hover:text-white transition-all font-bold rounded-none"
+            >
+              <Download size={12} /> Export CSV / CSV出力
+            </button>
+            <div className="relative w-full md:w-80 group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-azure-400 transition-colors" size={16} />
+              <input 
+                type="text" 
+                placeholder="Search Contacts..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full bg-white/[0.02] border border-white/5 p-4 pl-12 text-[11px] tracking-widest focus:border-azure-500/40 outline-none transition-all uppercase"
+              />
+            </div>
           </div>
         </div>
       </header>
@@ -176,28 +229,32 @@ export default function LibraryPage() {
                 >
                   <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 border border-white/10 flex items-center justify-center text-[12px] opacity-45 group-hover:text-azure-400 group-hover:border-azure-500/40 transition-all uppercase font-light">
-                      {c.name[0]}
+                  <div className="flex justify-between items-center w-full">
+                    {/* 左側：組織名 ＆ 名前 */}
+                    <div className="space-y-1 pr-4 flex-1">
+                      {c.handle_name ? (
+                        <p className="text-[9px] tracking-widest text-azure-400 font-bold uppercase truncate">{c.handle_name}</p>
+                      ) : (
+                        <p className="text-[9px] tracking-widest text-white/20 uppercase">No Organization</p>
+                      )}
+                      <h3 className="text-[14px] tracking-[0.2em] uppercase text-white font-light group-hover:tracking-[0.3em] transition-all">{c.name}</h3>
                     </div>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedContact(c);
-                      }} 
-                      className="opacity-0 group-hover:opacity-40 hover:opacity-100 transition-opacity p-1"
-                    >
-                      <MoreVertical size={16} />
-                    </button>
-                  </div>
 
-                  <div className="space-y-1">
-                    {c.handle_name ? (
-                      <p className="text-[9px] tracking-widest text-azure-400 font-bold uppercase truncate">{c.handle_name}</p>
-                    ) : (
-                      <p className="text-[9px] tracking-widest text-white/20 uppercase">No Organization</p>
-                    )}
-                    <h3 className="text-[14px] tracking-[0.2em] uppercase text-white font-light group-hover:tracking-[0.3em] transition-all">{c.name}</h3>
+                    {/* 右側：登録日 ＆ メニュー */}
+                    <div className="text-right flex-shrink-0 flex flex-col items-end justify-between h-full min-h-[42px]">
+                      <span className="text-[8px] tracking-widest opacity-25 uppercase font-mono">
+                        {formatJapaneseDate(c.created_at)}
+                      </span>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedContact(c);
+                        }} 
+                        className="opacity-0 group-hover:opacity-40 hover:opacity-100 transition-opacity p-1 mt-1"
+                      >
+                        <MoreVertical size={14} />
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
               ))}
@@ -304,7 +361,7 @@ export default function LibraryPage() {
                     )}
 
                     <div className="flex items-center gap-2 text-[8px] tracking-widest opacity-25 uppercase font-mono pt-4">
-                      <Calendar size={10} /> Registered at {new Date(selectedContact.created_at).toLocaleDateString()}
+                      <Calendar size={10} /> Registered at {formatJapaneseDate(selectedContact.created_at)}
                     </div>
                   </div>
 
@@ -362,7 +419,7 @@ export default function LibraryPage() {
                       <div className="space-y-1">
                         <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Email / メールアドレス</label>
                         <input 
-                          type="email" 
+                          type="text" 
                           value={editForm.email || ""}
                           onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
                           className="w-full bg-white/[0.02] border border-white/10 px-4 py-2.5 text-[11px] tracking-widest focus:border-white/30 outline-none text-white rounded-none"
