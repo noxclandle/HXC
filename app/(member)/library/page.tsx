@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { 
   Search, User, Mail, Phone, MapPin, Calendar, 
-  ArrowLeft, Filter, MoreVertical, Trash2, Camera, X, Edit2, Download 
+  ArrowLeft, Filter, MoreVertical, Trash2, Camera, X, Edit2, Download, Smartphone 
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import ConstellationView from "@/components/ui/ConstellationView";
 
 interface Contact {
   id: string;
@@ -17,6 +18,8 @@ interface Contact {
   address?: string;
   notes?: string;
   created_at: string;
+  coord_x?: number;
+  coord_y?: number;
 }
 
 export default function LibraryPage() {
@@ -24,6 +27,10 @@ export default function LibraryPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   
+  // 表示モード & ソート状態
+  const [viewMode, setViewMode] = useState<"list" | "constellation">("list");
+  const [sortBy, setSortBy] = useState<"date_desc" | "date_asc" | "name_asc" | "org_asc">("date_desc");
+
   // モーダル表示用状態
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -41,17 +48,47 @@ export default function LibraryPage() {
       .catch(() => setLoading(false));
   }, []);
 
+  // 日本語の日付フォーマットに変換するユーティリティ
+  const formatJapaneseDate = (dateString: string) => {
+    const d = new Date(dateString);
+    return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+  };
+
+  // 検索・フィルタリングされたリスト
   const filtered = contacts.filter(c => 
     c.name.toLowerCase().includes(search.toLowerCase()) || 
     c.email?.toLowerCase().includes(search.toLowerCase()) ||
     c.handle_name?.toLowerCase().includes(search.toLowerCase())
   );
 
-  // 日本語の日付フォーマットに変換するユーティリティ
-  const formatJapaneseDate = (dateString: string) => {
-    const d = new Date(dateString);
-    return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
-  };
+  // ソート処理を適用
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === "date_desc") {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    }
+    if (sortBy === "date_asc") {
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    }
+    if (sortBy === "name_asc") {
+      return a.name.localeCompare(b.name, "ja");
+    }
+    if (sortBy === "org_asc") {
+      const orgA = a.handle_name || "";
+      const orgB = b.handle_name || "";
+      if (!orgA) return 1; // 組織名がないものは末尾へ
+      if (!orgB) return -1;
+      return orgA.localeCompare(orgB, "ja");
+    }
+    return 0;
+  });
+
+  // 星座ビュー用にデータを成形
+  const constellationContacts = filtered.map(c => ({
+    id: c.id,
+    x: c.coord_x ?? Math.floor(Math.random() * 80) + 10,
+    y: c.coord_y ?? Math.floor(Math.random() * 80) + 10,
+    handle: c.name
+  }));
 
   // 全データをCSVとしてダウンロードする処理 (Excelの文字化けを防ぐBOM付き)
   const exportToCSV = () => {
@@ -60,10 +97,7 @@ export default function LibraryPage() {
       return;
     }
     
-    // CSVのヘッダー行
     const headers = ["名前 (Name)", "会社名・役職 (Organization/Title)", "メールアドレス (Email)", "電話番号 (Phone)", "住所 (Address)", "メモ (Memo)", "登録日 (Registered Date)"];
-    
-    // 各行のデータを配列として作成
     const rows = contacts.map(c => [
       c.name,
       c.handle_name || "",
@@ -74,18 +108,42 @@ export default function LibraryPage() {
       formatJapaneseDate(c.created_at)
     ]);
     
-    // 値をダブルクォーテーションで囲み、カンマ区切りにする（値内部の改行やダブルクォーテーションのエスケープ対応）
     const csvContent = [
       headers.map(h => `"${h.replace(/"/g, '""')}"`).join(","),
       ...rows.map(row => row.map(val => `"${val.replace(/"/g, '""')}"`).join(","))
     ].join("\n");
     
-    // Excelで日本語が文字化けしないようにBOM (Byte Order Mark) を追加
     const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
     link.setAttribute("download", `hxc_contacts_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // 個人の連絡先をvCard (.vcf) 形式でスマホ・PCの連絡先アプリに書き出す処理
+  const handleDownloadVCard = (contact: Contact) => {
+    const vcard = [
+      "BEGIN:VCARD",
+      "VERSION:3.0",
+      `FN:${contact.name}`,
+      `N:${contact.name};;;;`,
+      contact.handle_name ? `ORG:${contact.handle_name}` : "",
+      contact.email ? `EMAIL;TYPE=INTERNET:${contact.email}` : "",
+      contact.phone ? `TEL;TYPE=CELL:${contact.phone}` : "",
+      contact.address ? `ADR;TYPE=WORK:;;${contact.address};;;;` : "",
+      contact.notes ? `NOTE:${contact.notes.replace(/\n/g, '\\n')}` : "",
+      "END:VCARD"
+    ].filter(Boolean).join("\n");
+
+    const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `${contact.name}.vcf`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
@@ -114,7 +172,6 @@ export default function LibraryPage() {
 
       if (res.ok) {
         const result = await res.json();
-        // ローカル状態を更新
         setContacts(prev => prev.map(c => c.id === editForm.id ? result.contact : c));
         setSelectedContact(result.contact);
         setIsEditing(false);
@@ -165,13 +222,47 @@ export default function LibraryPage() {
             <p className="text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold">名刺帳・ライブラリ</p>
           </div>
           <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
+            {/* CSV出力 */}
             <button 
               onClick={exportToCSV}
               className="flex items-center gap-2 px-5 py-3.5 border border-white/10 hover:border-white/25 hover:bg-white/[0.02] text-[9px] tracking-[0.2em] uppercase text-white/70 hover:text-white transition-all font-bold rounded-none"
             >
               <Download size={12} /> Export CSV / CSV出力
             </button>
-            <div className="relative w-full md:w-80 group">
+
+            {/* 表示切替 (リスト/星座) */}
+            <div className="flex border border-white/5 p-1 bg-white/[0.01]">
+              <button
+                onClick={() => setViewMode("list")}
+                className={`px-4 py-2 text-[9px] uppercase tracking-widest transition-all font-bold rounded-none ${viewMode === "list" ? "bg-white text-void" : "text-white/40 hover:text-white"}`}
+              >
+                List / リスト
+              </button>
+              <button
+                onClick={() => setViewMode("constellation")}
+                className={`px-4 py-2 text-[9px] uppercase tracking-widest transition-all font-bold rounded-none ${viewMode === "constellation" ? "bg-white text-void" : "text-white/40 hover:text-white"}`}
+              >
+                Constellation / 星座
+              </button>
+            </div>
+
+            {/* 並び替え */}
+            <div className="relative">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="appearance-none bg-white/[0.02] border border-white/5 px-4 py-3.5 pr-8 text-[9px] tracking-widest uppercase focus:border-azure-500/40 outline-none transition-all text-white rounded-none cursor-pointer font-bold"
+              >
+                <option value="date_desc" className="bg-void text-white">Newest / 登録日新しい順</option>
+                <option value="date_asc" className="bg-void text-white">Oldest / 登録日古い順</option>
+                <option value="name_asc" className="bg-void text-white">Name / 名前順 (A-Z)</option>
+                <option value="org_asc" className="bg-void text-white">Org / 組織名順</option>
+              </select>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 text-[8px]">▼</div>
+            </div>
+
+            {/* 検索入力 */}
+            <div className="relative w-full md:w-64 group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-azure-400 transition-colors" size={16} />
               <input 
                 type="text" 
@@ -206,19 +297,25 @@ export default function LibraryPage() {
            </Link>
         </div>
 
-        {loading ? (
+        {viewMode === "constellation" ? (
+          // --- 星座マップビュー ---
+          <ConstellationView contacts={constellationContacts} />
+        ) : loading ? (
+          // --- ローディング ---
           <div className="py-24 text-center">
             <div className="w-8 h-8 border-2 border-white/5 border-t-white/40 rounded-full animate-spin mx-auto mb-4" />
             <p className="text-[10px] tracking-[1em] uppercase opacity-20 ml-[1em]">Updating Contacts</p>
           </div>
-        ) : filtered.length === 0 ? (
+        ) : sorted.length === 0 ? (
+          // --- データなし ---
           <div className="py-24 border border-dashed border-white/5 text-center">
             <p className="text-[10px] tracking-[0.5em] uppercase opacity-20 italic">No identities found in this coordinate.</p>
           </div>
         ) : (
+          // --- 簡略化されたカード一覧リスト ---
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence>
-              {filtered.map((c, i) => (
+              {sorted.map((c, i) => (
                 <motion.div
                   key={c.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -365,8 +462,16 @@ export default function LibraryPage() {
                     </div>
                   </div>
 
+                  {/* iPhone/PCの連絡先への追加ボタン */}
+                  <button 
+                    onClick={() => handleDownloadVCard(selectedContact)}
+                    className="w-full py-4 border border-azure-500/30 bg-azure-500/5 hover:bg-azure-500/10 text-azure-300 text-[10px] uppercase tracking-[0.2em] transition-all font-bold flex items-center justify-center gap-2 mt-4"
+                  >
+                    <Smartphone size={14} /> Add to Contacts / 端末の連絡先に追加
+                  </button>
+
                   {/* Actions */}
-                  <div className="flex gap-4 pt-6 border-t border-white/5">
+                  <div className="flex gap-4 pt-4 border-t border-white/5">
                     <button 
                       onClick={() => handleDelete(selectedContact.id)}
                       className="flex-1 py-3 border border-red-500/20 text-red-400 hover:bg-red-500/5 text-[9px] uppercase tracking-widest transition-all font-bold flex items-center justify-center gap-2"
