@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createWorker } from "tesseract.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export const dynamic = "force-dynamic";
 
 /**
- * 送られてきた名刺画像を解析するAPI
- * GOOGLE_API_KEYがある場合は超高速・高精度のGemini 1.5 Flashを使用。
- * ない場合はローカルのTesseract.jsを /tmp キャッシュフォルダ経由で使用（Vercelの読込専用エラーを防止）。
+ * 名刺画像解析API
+ * - GOOGLE_API_KEYがある場合：Gemini 1.5 Flashによる超高速・高精度解析（実用版）
+ * - GOOGLE_API_KEYがない場合：デモモードとして、即座にモックデータを返却（テスト用・ハング防止）
  */
 export async function POST(req: NextRequest) {
   try {
@@ -21,7 +20,7 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // 1. Gemini APIによる超高速・高精度OCR（APIキーがある場合）
+    // 1. Gemini APIによる高精度解析（APIキーがある場合）
     if (process.env.GOOGLE_API_KEY) {
       try {
         const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
@@ -51,7 +50,7 @@ export async function POST(req: NextRequest) {
         ]);
 
         const text = result.response.text().trim();
-        // Remove markdown code block if present
+        // Markdownのコードブロックが入る場合があるため除去
         const jsonText = text.replace(/^```json\s*/i, "").replace(/```$/, "").trim();
         const parsed = JSON.parse(jsonText);
 
@@ -65,38 +64,23 @@ export async function POST(req: NextRequest) {
           notes: "Analyzed via Gemini 1.5 Flash."
         });
       } catch (geminiError) {
-        console.error("Gemini OCR failed, falling back to local OCR:", geminiError);
+        console.error("Gemini OCR failed:", geminiError);
+        return NextResponse.json({ error: "AI Scan failed. Please try again." }, { status: 500 });
       }
     }
 
-    // 2. ローカルTesseract.jsによるフォールバック（APIキーがない場合）
-    // Vercel上の読込専用エラーを防ぐため、書き込み権限のある /tmp をキャッシュ先に指定
-    const worker = await createWorker('jpn+eng', 1, {
-      cachePath: '/tmp',
-    });
-    
-    const { data: { text } } = await worker.recognize(buffer);
-    await worker.terminate();
-
-    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-    const phoneMatch = text.match(/0[0-9]{1,4}-?[0-9]{1,4}-?[0-9]{3,4}/);
-    const addressLine = lines.find(l => 
-      l.includes("都") || l.includes("道") || l.includes("府") || l.includes("県") || 
-      l.includes("市") || l.includes("区") || l.includes("〒")
-    ) || "";
-
-    const name = lines[0] || "Unknown";
-    const role = lines[1] || "Member";
+    // 2. デモモード（APIキーがない場合）
+    // Vercel上でのTesseract.jsのデッドロック/ハングアップを回避するため、即座にダミーデータを返却します。
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // 演出用のウェイト
 
     return NextResponse.json({
-      name,
-      handle: name.substring(0, 5),
-      role,
-      email: emailMatch ? emailMatch[0] : "",
-      phone: phoneMatch ? phoneMatch[0] : "",
-      address: addressLine,
-      notes: "Deciphered via local Tesseract.js (Fallback)."
+      name: "サンプル 太郎 / Taro Sample",
+      handle: "Taro",
+      role: "代表取締役 / CEO",
+      email: "taro.sample@example.com",
+      phone: "090-1234-5678",
+      address: "東京都港区南青山 1-1-1",
+      notes: "デモモード動作中（実用にはVercelにGOOGLE_API_KEYを設定してください）"
     });
 
   } catch (error: any) {
