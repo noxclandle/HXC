@@ -6,7 +6,7 @@ import {
   Users, CreditCard, Activity, Database, TrendingUp, 
   ShieldCheck, ArrowRight, Shield, BookOpen, Layers, 
   ShieldAlert, Sparkles, Search, CheckCircle, AlertTriangle, 
-  RefreshCw, Wrench, FileText
+  RefreshCw, Wrench, FileText, MessageSquare, Package
 } from "lucide-react";
 import Link from "next/link";
 
@@ -31,7 +31,13 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
   const [isFixingIntegrity, setIsFixingIntegrity] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  // Stats
+  // Daily Task States
+  const [pendingOrders, setPendingOrders] = useState(0);
+  const [pendingIncidents, setPendingIncidents] = useState(reportCount);
+  const [pendingInquiries, setPendingInquiries] = useState(0);
+  const [isUpdatingTasks, setIsUpdatingTasks] = useState(false);
+
+  // Stat Cards
   const statCards = [
     { label: "有効な ID ユニット", value: stats.activeUsers, icon: <Users size={14} />, desc: "登録ユーザー総数" },
     { label: "発行済み物理カード", value: stats.issuedCards, icon: <CreditCard size={14} />, desc: "有効化されたNFCカード" },
@@ -39,9 +45,10 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
     { label: "プロトコル完全性", value: integrity?.isHealthy ? "正常" : "要確認", icon: <ShieldCheck size={14} />, desc: "データベース整合性" },
   ];
 
-  // 1. 自動で整合性チェックを走らせる
+  // 1. 自動で整合性とタスク件数を走らせる
   useEffect(() => {
     fetchIntegrity();
+    fetchDailyTasks();
   }, []);
 
   const fetchIntegrity = async () => {
@@ -56,6 +63,34 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
       console.error(e);
     } finally {
       setIsCheckingIntegrity(false);
+    }
+  };
+
+  const fetchDailyTasks = async () => {
+    setIsUpdatingTasks(true);
+    try {
+      const [ordersRes, incidentsRes, inquiriesRes] = await Promise.all([
+        fetch("/api/admin/order/count", { cache: "no-store" }),
+        fetch("/api/admin/report/count", { cache: "no-store" }),
+        fetch("/api/admin/contacts/count", { cache: "no-store" })
+      ]);
+      
+      if (ordersRes.ok) {
+        const d = await ordersRes.json();
+        setPendingOrders(d.count);
+      }
+      if (incidentsRes.ok) {
+        const d = await incidentsRes.json();
+        setPendingIncidents(d.count);
+      }
+      if (inquiriesRes.ok) {
+        const d = await inquiriesRes.json();
+        setPendingInquiries(d.count);
+      }
+    } catch (e) {
+      console.error("Failed to fetch daily tasks:", e);
+    } finally {
+      setIsUpdatingTasks(false);
     }
   };
 
@@ -109,7 +144,7 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
       icon: (
         <div className="relative">
           <ShieldAlert size={16}/>
-          {reportCount > 0 && (
+          {pendingIncidents > 0 && (
             <span className="absolute -top-1 -right-1 flex h-1.5 w-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500"></span>
@@ -118,7 +153,7 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
         </div>
       ), 
       desc: "ユーザーからの不具合・違反報告の処理",
-      alert: reportCount > 0
+      alert: pendingIncidents > 0
     },
     { label: "システム告知", path: "/admin/news", icon: <FileText size={16}/>, desc: "全ユーザー向けお知らせの配信・編集" },
     { label: "LP 管理簿", path: "/admin/lps", icon: <Layers size={16}/>, desc: "各種LP・特設プロモーションページのリンク管理" },
@@ -134,9 +169,135 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
     { label: "データバックアップ", path: "/api/admin/backup/export", icon: <Layers size={16}/>, desc: "全データベースのJSONエクスポート（ダウンロード）" },
   ];
 
+  // デイリータスクが存在するか？
+  const hasTasks = pendingOrders > 0 || pendingIncidents > 0 || pendingInquiries > 0 || (integrity && !integrity.isHealthy);
+
   return (
-    <div className="space-y-12">
-      {/* 1. Stats Row */}
+    <div className="space-y-8">
+      
+      {/* ==================== DAILY TASK ACTION CENTER (最上部配置) ==================== */}
+      <div className="border border-white/10 bg-void/70 backdrop-blur-md p-6 rounded-2xl space-y-4 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-azure-500/[0.01] rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="flex items-center justify-between border-b border-white/5 pb-3">
+          <div className="flex items-center gap-3">
+            <span className="w-2.5 h-2.5 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.6)]"></span>
+            <h2 className="text-[11px] tracking-[0.3em] uppercase text-white font-black font-mono">Daily Task Control / デイリー業務司令部</h2>
+          </div>
+          <button 
+            onClick={() => { fetchDailyTasks(); fetchIntegrity(); }}
+            disabled={isUpdatingTasks}
+            className="text-[8px] border border-white/10 hover:border-white/30 px-2 py-1 rounded font-mono text-white/60 hover:text-white transition-all flex items-center gap-1.5 disabled:opacity-50"
+          >
+            <RefreshCw size={8} className={isUpdatingTasks ? "animate-spin" : ""} />
+            REFRESH TASKS
+          </button>
+        </div>
+
+        <AnimatePresence mode="wait">
+          {!hasTasks ? (
+            <motion.div 
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              className="p-4 bg-emerald-500/5 border border-emerald-500/15 rounded-xl flex items-center gap-3 text-emerald-400 text-[10px] font-mono leading-relaxed"
+            >
+              <CheckCircle size={16} className="text-emerald-400 flex-shrink-0" />
+              <div>
+                <p className="font-bold tracking-wider">ALL OPERATIONS SECURE / 本日のタスクは完了しています</p>
+                <p className="text-[8px] text-emerald-400/60 uppercase">No pending orders, unresolved incidents, or inquiries. System is fully operational.</p>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              className="space-y-2.5 font-mono text-xs"
+            >
+              {/* 1. Pending Orders Alert */}
+              {pendingOrders > 0 && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-azure-500/5 border border-azure-500/20 rounded-xl gap-3">
+                  <div className="flex items-start gap-3">
+                    <Package size={16} className="text-azure-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-[10px] font-bold text-white uppercase tracking-wider">Unshipped Orders / 未発送の注文あり</p>
+                      <p className="text-[8px] text-white/40 leading-relaxed">新たに {pendingOrders} 件の物理カードの注文が入っています。カードの発送作業とアクティベーションの紐付けを行ってください。</p>
+                    </div>
+                  </div>
+                  <Link 
+                    href="/admin/registry#orders" 
+                    className="self-end sm:self-center px-3 py-1.5 bg-white text-void hover:bg-zinc-200 text-[8px] font-bold tracking-widest rounded-lg flex items-center gap-1.5 transition-all flex-shrink-0"
+                  >
+                    GO TO REGISTRY <ArrowRight size={8} />
+                  </Link>
+                </div>
+              )}
+
+              {/* 2. Pending Incidents Alert */}
+              {pendingIncidents > 0 && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-rose-500/5 border border-rose-500/20 rounded-xl gap-3">
+                  <div className="flex items-start gap-3">
+                    <ShieldAlert size={16} className="text-rose-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-[10px] font-bold text-white uppercase tracking-wider">Unresolved Incidents / 未解決の通報・不具合報告あり</p>
+                      <p className="text-[8px] text-white/40 leading-relaxed">ユーザーから {pendingIncidents} 件のインシデント（通報・エラー報告）が届いています。内容を精査し、対応を行ってください。</p>
+                    </div>
+                  </div>
+                  <Link 
+                    href="/admin/reports" 
+                    className="self-end sm:self-center px-3 py-1.5 bg-rose-500 text-white hover:bg-rose-600 text-[8px] font-bold tracking-widest rounded-lg flex items-center gap-1.5 transition-all flex-shrink-0"
+                  >
+                    RESOLVE NOW <ArrowRight size={8} />
+                  </Link>
+                </div>
+              )}
+
+              {/* 3. Pending Inquiries Alert */}
+              {pendingInquiries > 0 && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-amber-500/5 border border-amber-500/20 rounded-xl gap-3">
+                  <div className="flex items-start gap-3">
+                    <MessageSquare size={16} className="text-amber-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-[10px] font-bold text-white uppercase tracking-wider">Pending Inquiries / 未対応の問い合わせあり</p>
+                      <p className="text-[8px] text-white/40 leading-relaxed">外部コンタクトフォームより {pendingInquiries} 件のメッセージが届いています。返信対応を行ってください。</p>
+                    </div>
+                  </div>
+                  <Link 
+                    href="/admin/contacts" 
+                    className="self-end sm:self-center px-3 py-1.5 bg-amber-500 text-void hover:bg-amber-400 text-[8px] font-bold tracking-widest rounded-lg flex items-center gap-1.5 transition-all flex-shrink-0"
+                  >
+                    REPLY NOW <ArrowRight size={8} />
+                  </Link>
+                </div>
+              )}
+
+              {/* 4. Database Discrepancy Alert */}
+              {integrity && !integrity.isHealthy && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-purple-500/5 border border-purple-500/25 rounded-xl gap-3">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle size={16} className="text-purple-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-[10px] font-bold text-white uppercase tracking-wider">Database Inconsistency Detected / データベース不整合検出</p>
+                      <p className="text-[8px] text-white/40 leading-relaxed">元帳の取引高の合計値とユーザーの表示残高に不一致が検出されています。残高不正を防ぐため、自動修復を実行してください。</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={handleFixIntegrity}
+                    disabled={isFixingIntegrity}
+                    className="self-end sm:self-center px-3 py-1.5 bg-purple-500 text-white hover:bg-purple-600 disabled:opacity-50 text-[8px] font-bold tracking-widest rounded-lg flex items-center gap-1.5 transition-all flex-shrink-0"
+                  >
+                    {isFixingIntegrity ? <RefreshCw size={8} className="animate-spin" /> : <Wrench size={10} />}
+                    RECONCILE NOW
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* 3. Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((s, i) => (
           <motion.div 
@@ -159,7 +320,7 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
         ))}
       </div>
 
-      {/* 2. Main Workspaces Split (常用業務 vs システム管理) */}
+      {/* 4. Main Workspaces Split (常用業務 vs システム管理) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* LEFT COLUMN: Daily Operations (常用業務) */}
