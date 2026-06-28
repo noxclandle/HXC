@@ -24,12 +24,13 @@ export async function POST(req: NextRequest) {
 
     // 1. Check eligibility and update in a single transaction
     const result = await prisma.$transaction(async (tx) => {
-      const user = await tx.user.findUnique({
-        where: { id: userId },
-        select: { last_daily_at: true, rt_balance: true }
-      });
+      // ロック付きでユーザーレコードを取得（FOR UPDATEによる同時押し不正防止）
+      const users = await tx.$queryRaw<any[]>`
+        SELECT last_daily_at, rt_balance FROM users WHERE id = ${userId}::uuid FOR UPDATE
+      `;
 
-      if (!user) throw new Error("USER_NOT_FOUND");
+      if (!users || users.length === 0) throw new Error("USER_NOT_FOUND");
+      const user = users[0];
 
       const lastDaily = user.last_daily_at ? new Date(user.last_daily_at) : null;
       

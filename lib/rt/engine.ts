@@ -23,13 +23,13 @@ export async function executeRTTransaction(
   }
 
   return await prisma.$transaction(async (tx) => {
-    // 1. 現在の残高を確認（楽観的ロックの代わりにトランザクション内で最新値を取得）
-    const currentUser = await tx.user.findUnique({
-      where: { id: userId },
-      select: { rt_balance: true }
-    });
+    // 1. 現在の残高をロック付きで取得 (FOR UPDATE による競合回避)
+    const users = await tx.$queryRaw<any[]>`
+      SELECT rt_balance FROM users WHERE id = ${userId}::uuid FOR UPDATE
+    `;
 
-    if (!currentUser) throw new Error("User not found.");
+    if (!users || users.length === 0) throw new Error("User not found.");
+    const currentUser = users[0];
 
     const newBalance = currentUser.rt_balance + amount;
 
