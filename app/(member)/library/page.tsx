@@ -7,7 +7,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import ConstellationView from "@/components/ui/ConstellationView";
 
 interface Contact {
   id: string;
@@ -18,8 +17,6 @@ interface Contact {
   address?: string;
   notes?: string;
   created_at: string;
-  coord_x?: number;
-  coord_y?: number;
 }
 
 export default function LibraryPage() {
@@ -27,8 +24,7 @@ export default function LibraryPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   
-  // 表示モード & ソート状態
-  const [viewMode, setViewMode] = useState<"list" | "constellation">("list");
+  // ソート状態のみ管理
   const [sortBy, setSortBy] = useState<"date_desc" | "date_asc" | "name_asc" | "org_asc">("date_desc");
 
   // モーダル表示用状態
@@ -81,14 +77,6 @@ export default function LibraryPage() {
     }
     return 0;
   });
-
-  // 星座ビュー用にデータを成形
-  const constellationContacts = filtered.map(c => ({
-    id: c.id,
-    x: c.coord_x ?? Math.floor(Math.random() * 80) + 10,
-    y: c.coord_y ?? Math.floor(Math.random() * 80) + 10,
-    handle: c.name
-  }));
 
   // 全データをCSVとしてダウンロードする処理 (Excelの文字化けを防ぐBOM付き)
   const exportToCSV = () => {
@@ -230,22 +218,6 @@ export default function LibraryPage() {
               <Download size={12} /> Export CSV / CSV出力
             </button>
 
-            {/* 表示切替 (リスト/星座) */}
-            <div className="flex border border-white/5 p-1 bg-white/[0.01]">
-              <button
-                onClick={() => setViewMode("list")}
-                className={`px-4 py-2 text-[9px] uppercase tracking-widest transition-all font-bold rounded-none ${viewMode === "list" ? "bg-white text-void" : "text-white/40 hover:text-white"}`}
-              >
-                List / リスト
-              </button>
-              <button
-                onClick={() => setViewMode("constellation")}
-                className={`px-4 py-2 text-[9px] uppercase tracking-widest transition-all font-bold rounded-none ${viewMode === "constellation" ? "bg-white text-void" : "text-white/40 hover:text-white"}`}
-              >
-                Constellation / 星座
-              </button>
-            </div>
-
             {/* 並び替え */}
             <div className="relative">
               <select
@@ -297,10 +269,7 @@ export default function LibraryPage() {
            </Link>
         </div>
 
-        {viewMode === "constellation" ? (
-          // --- 星座マップビュー ---
-          <ConstellationView contacts={constellationContacts} />
-        ) : loading ? (
+        {loading ? (
           // --- ローディング ---
           <div className="py-24 text-center">
             <div className="w-8 h-8 border-2 border-white/5 border-t-white/40 rounded-full animate-spin mx-auto mb-4" />
