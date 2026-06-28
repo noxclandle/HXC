@@ -1,14 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, User, Mail, Phone, MapPin, Calendar, ArrowLeft, Filter, MoreVertical, Trash2, Camera } from "lucide-react";
+import { 
+  Search, User, Mail, Phone, MapPin, Calendar, 
+  ArrowLeft, Filter, MoreVertical, Trash2, Camera, X, Edit2 
+} from "lucide-react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Contact {
   id: string;
   name: string;
-  handle_name?: string;
+  handle_name?: string; // 会社名・部署名・役職
   email?: string;
   phone?: string;
   address?: string;
@@ -20,6 +23,13 @@ export default function LibraryPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  
+  // モーダル表示用状態
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState<Contact | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetch("/api/contacts/list")
@@ -36,6 +46,67 @@ export default function LibraryPage() {
     c.email?.toLowerCase().includes(search.toLowerCase()) ||
     c.handle_name?.toLowerCase().includes(search.toLowerCase())
   );
+
+  // 編集保存処理
+  const handleSaveEdit = async () => {
+    if (!editForm || !editForm.name) return;
+    setIsSaving(true);
+
+    try {
+      const res = await fetch("/api/contacts", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editForm.id,
+          name: editForm.name,
+          role: editForm.handle_name || "",
+          email: editForm.email || "",
+          phone: editForm.phone || "",
+          address: editForm.address || "",
+          notes: editForm.notes || "",
+        }),
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        // ローカル状態を更新
+        setContacts(prev => prev.map(c => c.id === editForm.id ? result.contact : c));
+        setSelectedContact(result.contact);
+        setIsEditing(false);
+      } else {
+        alert("Failed to update contact.");
+      }
+    } catch (err) {
+      console.error("Save Error:", err);
+      alert("An error occurred while saving.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // 削除処理
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this contact? / この連絡先を削除してもよろしいですか？")) return;
+    setIsDeleting(true);
+
+    try {
+      const res = await fetch(`/api/contacts?id=${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setContacts(prev => prev.filter(c => c.id !== id));
+        setSelectedContact(null);
+      } else {
+        alert("Failed to delete contact.");
+      }
+    } catch (err) {
+      console.error("Delete Error:", err);
+      alert("An error occurred while deleting.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-void text-moonlight pt-24 pb-24 px-4 md:px-8">
@@ -100,43 +171,33 @@ export default function LibraryPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="p-6 bg-white/[0.01] border border-white/5 hover:border-white/20 transition-all group relative overflow-hidden"
+                  onClick={() => setSelectedContact(c)}
+                  className="p-6 bg-white/[0.01] border border-white/5 hover:border-white/20 transition-all group relative overflow-hidden cursor-pointer"
                 >
                   <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="w-10 h-10 border border-white/10 flex items-center justify-center text-[12px] opacity-40 group-hover:text-azure-400 group-hover:border-azure-500/40 transition-all uppercase">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="w-10 h-10 border border-white/10 flex items-center justify-center text-[12px] opacity-45 group-hover:text-azure-400 group-hover:border-azure-500/40 transition-all uppercase font-light">
                       {c.name[0]}
                     </div>
-                    <button className="opacity-0 group-hover:opacity-40 hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedContact(c);
+                      }} 
+                      className="opacity-0 group-hover:opacity-40 hover:opacity-100 transition-opacity p-1"
+                    >
                       <MoreVertical size={16} />
                     </button>
                   </div>
 
-                  <div className="space-y-4">
-                    <div>
-                      {c.handle_name && <p className="text-[8px] tracking-widest text-azure-400 font-bold uppercase mb-1">{c.handle_name}</p>}
-                      <h3 className="text-[14px] tracking-[0.2em] uppercase text-white font-light group-hover:tracking-[0.3em] transition-all">{c.name}</h3>
-                    </div>
-
-                    <div className="space-y-2 pt-4 border-t border-white/5">
-                      {c.email && (
-                        <div className="flex items-center gap-3 opacity-30 group-hover:opacity-60 transition-opacity">
-                          <Mail size={12} />
-                          <span className="text-[9px] tracking-widest truncate">{c.email}</span>
-                        </div>
-                      )}
-                      {c.phone && (
-                        <div className="flex items-center gap-3 opacity-30 group-hover:opacity-60 transition-opacity">
-                          <Phone size={12} />
-                          <span className="text-[9px] tracking-widest">{c.phone}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <p className="text-[8px] tracking-widest opacity-20 uppercase font-mono mt-4 flex items-center gap-2">
-                      <Calendar size={10} /> {new Date(c.created_at).toLocaleDateString()}
-                    </p>
+                  <div className="space-y-1">
+                    {c.handle_name ? (
+                      <p className="text-[9px] tracking-widest text-azure-400 font-bold uppercase truncate">{c.handle_name}</p>
+                    ) : (
+                      <p className="text-[9px] tracking-widest text-white/20 uppercase">No Organization</p>
+                    )}
+                    <h3 className="text-[14px] tracking-[0.2em] uppercase text-white font-light group-hover:tracking-[0.3em] transition-all">{c.name}</h3>
                   </div>
                 </motion.div>
               ))}
@@ -144,6 +205,225 @@ export default function LibraryPage() {
           </div>
         )}
       </main>
+
+      {/* 詳細 ＆ 編集モーダル */}
+      <AnimatePresence>
+        {selectedContact && (
+          <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => {
+                if (!isSaving && !isDeleting) {
+                  setSelectedContact(null);
+                  setIsEditing(false);
+                }
+              }}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+
+            {/* Modal Content */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="w-full max-w-md bg-void border border-white/10 p-6 md:p-8 relative z-10 shadow-2xl flex flex-col max-h-[85vh] overflow-y-auto"
+            >
+              {/* Close Button */}
+              <button 
+                onClick={() => {
+                  setSelectedContact(null);
+                  setIsEditing(false);
+                }}
+                className="absolute right-6 top-6 text-white/40 hover:text-white transition-colors"
+                disabled={isSaving || isDeleting}
+              >
+                <X size={18} />
+              </button>
+
+              {!isEditing ? (
+                // --- 詳細閲覧表示 (View Mode) ---
+                <div className="space-y-6 pt-4">
+                  <div>
+                    {selectedContact.handle_name ? (
+                      <p className="text-[10px] tracking-[0.2em] text-azure-400 font-bold uppercase mb-1">{selectedContact.handle_name}</p>
+                    ) : (
+                      <p className="text-[10px] tracking-[0.2em] text-white/20 uppercase mb-1">No Organization</p>
+                    )}
+                    <h2 className="text-xl tracking-[0.2em] uppercase text-white font-light">{selectedContact.name}</h2>
+                  </div>
+
+                  <div className="space-y-4 pt-6 border-t border-white/5">
+                    {selectedContact.email && (
+                      <div className="space-y-1">
+                        <span className="text-[8px] tracking-[0.2em] opacity-40 uppercase block">Email</span>
+                        <a 
+                          href={`mailto:${selectedContact.email}`} 
+                          className="text-[12px] tracking-wider text-azure-300 hover:text-azure-400 transition-colors flex items-center gap-2 underline break-all"
+                        >
+                          <Mail size={12} className="shrink-0" /> {selectedContact.email}
+                        </a>
+                      </div>
+                    )}
+
+                    {selectedContact.phone && (
+                      <div className="space-y-1">
+                        <span className="text-[8px] tracking-[0.2em] opacity-40 uppercase block">Phone</span>
+                        <a 
+                          href={`tel:${selectedContact.phone}`} 
+                          className="text-[12px] tracking-wider text-azure-300 hover:text-azure-400 transition-colors flex items-center gap-2 underline"
+                        >
+                          <Phone size={12} className="shrink-0" /> {selectedContact.phone}
+                        </a>
+                      </div>
+                    )}
+
+                    {selectedContact.address && (
+                      <div className="space-y-1">
+                        <span className="text-[8px] tracking-[0.2em] opacity-40 uppercase block">Location</span>
+                        <a 
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedContact.address)}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-[12px] tracking-wider text-azure-300 hover:text-azure-400 transition-colors flex items-center gap-2 underline leading-relaxed"
+                        >
+                          <MapPin size={12} className="shrink-0" /> {selectedContact.address}
+                        </a>
+                      </div>
+                    )}
+
+                    {selectedContact.notes && (
+                      <div className="space-y-1">
+                        <span className="text-[8px] tracking-[0.2em] opacity-40 uppercase block">Private Memo</span>
+                        <div className="text-[11px] tracking-widest text-white/70 bg-white/[0.02] p-4 border border-white/5 rounded-none whitespace-pre-wrap leading-relaxed">
+                          {selectedContact.notes}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2 text-[8px] tracking-widest opacity-25 uppercase font-mono pt-4">
+                      <Calendar size={10} /> Registered at {new Date(selectedContact.created_at).toLocaleDateString()}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-4 pt-6 border-t border-white/5">
+                    <button 
+                      onClick={() => handleDelete(selectedContact.id)}
+                      className="flex-1 py-3 border border-red-500/20 text-red-400 hover:bg-red-500/5 text-[9px] uppercase tracking-widest transition-all font-bold flex items-center justify-center gap-2"
+                      disabled={isDeleting}
+                    >
+                      <Trash2 size={12} /> Delete
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setEditForm(selectedContact);
+                        setIsEditing(true);
+                      }}
+                      className="flex-1 py-3 bg-white text-void hover:scale-105 active:scale-95 text-[9px] uppercase tracking-widest transition-all font-bold flex items-center justify-center gap-2"
+                    >
+                      <Edit2 size={12} /> Edit Details
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // --- 編集フォーム表示 (Edit Mode) ---
+                <div className="space-y-5 pt-4">
+                  <div>
+                    <h2 className="text-sm tracking-[0.3em] uppercase text-white font-light mb-1">Edit Contact</h2>
+                    <p className="text-[8px] tracking-[0.2em] opacity-30 uppercase font-bold">情報を編集する</p>
+                  </div>
+
+                  {editForm && (
+                    <div className="space-y-4 pt-4 border-t border-white/5 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin">
+                      <div className="space-y-1">
+                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Name / お名前 <span className="text-red-500/80">*</span></label>
+                        <input 
+                          type="text" 
+                          value={editForm.name}
+                          onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                          className="w-full bg-white/[0.02] border border-white/10 px-4 py-2.5 text-[11px] tracking-widest focus:border-white/30 outline-none text-white rounded-none"
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Company & Title / 組織名・役職</label>
+                        <input 
+                          type="text" 
+                          value={editForm.handle_name || ""}
+                          onChange={(e) => setEditForm({ ...editForm, handle_name: e.target.value })}
+                          className="w-full bg-white/[0.02] border border-white/10 px-4 py-2.5 text-[11px] tracking-widest focus:border-white/30 outline-none text-white rounded-none"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Email / メールアドレス</label>
+                        <input 
+                          type="email" 
+                          value={editForm.email || ""}
+                          onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                          className="w-full bg-white/[0.02] border border-white/10 px-4 py-2.5 text-[11px] tracking-widest focus:border-white/30 outline-none text-white rounded-none"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Phone / 電話番号</label>
+                        <input 
+                          type="text" 
+                          value={editForm.phone || ""}
+                          onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                          className="w-full bg-white/[0.02] border border-white/10 px-4 py-2.5 text-[11px] tracking-widest focus:border-white/30 outline-none text-white rounded-none"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Location / 所在地</label>
+                        <input 
+                          type="text" 
+                          value={editForm.address || ""}
+                          onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
+                          className="w-full bg-white/[0.02] border border-white/10 px-4 py-2.5 text-[11px] tracking-widest focus:border-white/30 outline-none text-white rounded-none"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Private Memo / メモ</label>
+                        <textarea 
+                          value={editForm.notes || ""}
+                          onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                          rows={3}
+                          className="w-full bg-white/[0.02] border border-white/10 p-4 text-[11px] tracking-widest focus:border-white/30 outline-none text-white rounded-none resize-none"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Edit Actions */}
+                  <div className="flex gap-4 pt-4 border-t border-white/5">
+                    <button 
+                      onClick={() => setIsEditing(false)}
+                      className="flex-1 py-3 border border-white/10 text-[9px] uppercase tracking-widest hover:bg-white/5 transition-all font-bold"
+                      disabled={isSaving}
+                    >
+                      Cancel / キャンセル
+                    </button>
+                    <button 
+                      onClick={handleSaveEdit}
+                      className="flex-1 py-3 bg-white text-void hover:scale-105 active:scale-95 text-[9px] uppercase tracking-widest transition-all font-bold"
+                      disabled={isSaving || !editForm?.name}
+                    >
+                      {isSaving ? "Saving..." : "Save Changes"}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

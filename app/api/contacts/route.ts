@@ -16,7 +16,7 @@ const inquirySchema = z.object({
 
 const contactSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address").optional().or(z.literal("")),
+  email: z.string().optional().or(z.literal("")),
   phone: z.string().optional().or(z.literal("")),
   address: z.string().optional().or(z.literal("")),
   notes: z.string().optional().or(z.literal("")),
@@ -91,5 +91,96 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Submission Error:", error);
     return NextResponse.json({ error: "Failed to process request" }, { status: 500 });
+  }
+}
+
+const contactUpdateSchema = z.object({
+  id: z.string().min(1, "ID is required"),
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address").optional().or(z.literal("")),
+  phone: z.string().optional().or(z.literal("")),
+  address: z.string().optional().or(z.literal("")),
+  notes: z.string().optional().or(z.literal("")),
+  role: z.string().optional().or(z.literal("")),
+});
+
+/**
+ * 連絡先更新ハンドラー (所有権チェック付き)
+ */
+export async function PUT(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const result = contactUpdateSchema.safeParse(body);
+    if (!result.success) {
+      return NextResponse.json({ error: "Invalid contact request", details: result.error.format() }, { status: 400 });
+    }
+
+    const { id, name, email, phone, address, notes, role } = result.data;
+
+    const existing = await prisma.contact.findUnique({
+      where: { id },
+    });
+
+    if (!existing || existing.owner_id !== session.user.id) {
+      return NextResponse.json({ error: "Contact not found or unauthorized" }, { status: 404 });
+    }
+
+    const updated = await prisma.contact.update({
+      where: { id },
+      data: {
+        name,
+        handle_name: role || null,
+        email: email || null,
+        phone: phone || null,
+        address: address || null,
+        notes: notes || null,
+      },
+    });
+
+    return NextResponse.json({ success: true, contact: updated });
+  } catch (error) {
+    console.error("Update Contact Error:", error);
+    return NextResponse.json({ error: "Failed to update contact" }, { status: 500 });
+  }
+}
+
+/**
+ * 連絡先削除ハンドラー (所有権チェック付き)
+ */
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ error: "ID is required" }, { status: 400 });
+    }
+
+    const existing = await prisma.contact.findUnique({
+      where: { id },
+    });
+
+    if (!existing || existing.owner_id !== session.user.id) {
+      return NextResponse.json({ error: "Contact not found or unauthorized" }, { status: 404 });
+    }
+
+    await prisma.contact.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Delete Contact Error:", error);
+    return NextResponse.json({ error: "Failed to delete contact" }, { status: 500 });
   }
 }
