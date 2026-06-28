@@ -65,8 +65,8 @@ export default function GameLoadingScreen() {
 
           <div className="w-full max-w-xs space-y-8 text-center z-10 px-6">
             
-            {/* HXC Logo Center Circle */}
-            <div className="relative w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+            {/* HXC Logo Center Circle (Enlarged) */}
+            <div className="relative w-28 h-28 mx-auto mb-6 flex items-center justify-center">
               {/* Outer rotating dashed ring */}
               <motion.div 
                 animate={{ rotate: 360 }}
@@ -74,7 +74,7 @@ export default function GameLoadingScreen() {
                 className="absolute inset-0 border border-dashed border-azure-500/20 rounded-full"
               />
               {/* Pulsing glow background for the logo */}
-              <div className="absolute inset-4 bg-azure-500/5 rounded-full blur-md animate-pulse" />
+              <div className="absolute inset-6 bg-azure-500/5 rounded-full blur-md animate-pulse" />
               
               {/* HXC Logo */}
               <motion.div
@@ -87,13 +87,13 @@ export default function GameLoadingScreen() {
                   repeat: Infinity, 
                   ease: "easeInOut" 
                 }}
-                className="relative w-16 h-16 z-10"
+                className="relative w-20 h-20 z-10"
               >
                 <Image 
                   src="/logo.png"
                   alt="HXC Logo"
-                  width={64}
-                  height={64}
+                  width={80}
+                  height={80}
                   priority
                   className="object-contain filter drop-shadow-[0_0_8px_rgba(59,130,246,0.25)]"
                 />
@@ -106,21 +106,21 @@ export default function GameLoadingScreen() {
               <p className="text-[7px] tracking-[0.3em] text-azure-400 font-mono uppercase animate-pulse">{statusText}</p>
             </div>
 
-            {/* Horizontal Progress Bar with Running Character */}
+            {/* Horizontal Progress Bar with Running Character (Enlarged & Re-aligned) */}
             <div className="space-y-2 relative pt-6">
               {/* Running Character on top of the progress bar */}
               <motion.div 
-                className="absolute w-8 h-8 -top-2 z-20 pointer-events-none"
+                className="absolute w-10 h-10 -top-4 z-20 pointer-events-none"
                 style={{ 
-                  left: `calc(${progress}% - 16px)`,
+                  left: `calc(${progress}% - 20px)`,
                   transition: "left 0.1s linear" 
                 }}
               >
                 <Image 
                   src="/image-removebg-preview.png"
                   alt="Running Loading Character"
-                  width={32}
-                  height={32}
+                  width={40}
+                  height={40}
                   priority
                   className="object-contain"
                 />
@@ -133,7 +133,7 @@ export default function GameLoadingScreen() {
                 />
               </div>
               
-              <div className="flex justify-between items-center text-[7px] font-mono tracking-widest text-white/30 pt-1">
+              <div className="flex justify-between items-center text-[7px] font-mono tracking-widest text-white/30 pt-1.5">
                 <span>LOADING NOW...</span>
                 <span className="text-white font-bold">{progress}%</span>
               </div>
