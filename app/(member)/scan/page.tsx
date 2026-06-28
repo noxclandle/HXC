@@ -6,6 +6,7 @@ import { Camera, X, Check, Loader2, ScanLine } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { playConnectionSound } from "@/lib/audio/resonance";
+import { createWorker } from "tesseract.js";
 
 export default function ScanPage() {
   const [status, setStatus] = useState<"idle" | "processing" | "confirm">("idle");
@@ -23,29 +24,41 @@ export default function ScanPage() {
     
     setStatus("processing"); // すぐに解析中画面へ
 
-    const formData = new FormData();
-    formData.append("image", file);
-
     try {
-      const res = await fetch("/api/ocr", {
-        method: "POST",
-        body: formData,
-      });
+      // ユーザーのスマートフォン端末内（ブラウザ）で完全にローカル解析を実行します。
+      // 画像を外部のサーバーへ一切送信しないため、通信費・API利用料などは「永久に完全0円」です。
+      const worker = await createWorker('jpn+eng');
+      const { data: { text } } = await worker.recognize(file);
+      await worker.terminate();
 
-      if (res.ok) {
-        const data = await res.json();
-        setScannedData(data);
-        
-        if (typeof navigator !== "undefined" && navigator.vibrate) {
-          navigator.vibrate([20, 50, 20]);
-        }
-        setStatus("confirm");
-      } else {
-        alert("Failed to read the card. Please try again.");
-        setStatus("idle");
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+      const phoneMatch = text.match(/0[0-9]{1,4}-?[0-9]{1,4}-?[0-9]{3,4}/);
+      const addressLine = lines.find(l => 
+        l.includes("都") || l.includes("道") || l.includes("府") || l.includes("県") || 
+        l.includes("市") || l.includes("区") || l.includes("〒")
+      ) || "";
+
+      const name = lines[0] || "Unknown";
+      const role = lines[1] || "Member";
+
+      setScannedData({
+        name,
+        handle: name.substring(0, 5),
+        role,
+        email: emailMatch ? emailMatch[0] : "",
+        phone: phoneMatch ? phoneMatch[0] : "",
+        address: addressLine,
+        notes: "Deciphered locally on your device."
+      });
+      
+      if (typeof navigator !== "undefined" && navigator.vibrate) {
+        navigator.vibrate([20, 50, 20]);
       }
+      setStatus("confirm");
     } catch (err) {
-      console.error(err);
+      console.error("Local OCR error:", err);
+      alert("Failed to read the card locally. Please try again.");
       setStatus("idle");
     }
   };
