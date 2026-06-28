@@ -65,7 +65,7 @@ export default function GameLoadingScreen() {
 
           <div className="w-full max-w-xs space-y-8 text-center z-10 px-6">
             
-            {/* Glowing Logo & Rotating Ring */}
+            {/* HXC Logo Center Circle */}
             <div className="relative w-24 h-24 mx-auto mb-6 flex items-center justify-center">
               {/* Outer rotating dashed ring */}
               <motion.div 
@@ -73,10 +73,10 @@ export default function GameLoadingScreen() {
                 transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
                 className="absolute inset-0 border border-dashed border-azure-500/20 rounded-full"
               />
-              {/* Pulsing glow background for the image */}
+              {/* Pulsing glow background for the logo */}
               <div className="absolute inset-4 bg-azure-500/5 rounded-full blur-md animate-pulse" />
               
-              {/* The Custom Image (Optimized & Resized) */}
+              {/* HXC Logo */}
               <motion.div
                 animate={{ 
                   scale: [1, 1.04, 1],
@@ -90,8 +90,8 @@ export default function GameLoadingScreen() {
                 className="relative w-16 h-16 z-10"
               >
                 <Image 
-                  src="/image-removebg-preview.png"
-                  alt="HXC Loading Emblem"
+                  src="/logo.png"
+                  alt="HXC Logo"
                   width={64}
                   height={64}
                   priority
@@ -106,15 +106,34 @@ export default function GameLoadingScreen() {
               <p className="text-[7px] tracking-[0.3em] text-azure-400 font-mono uppercase animate-pulse">{statusText}</p>
             </div>
 
-            {/* Horizontal Progress Bar */}
-            <div className="space-y-2">
+            {/* Horizontal Progress Bar with Running Character */}
+            <div className="space-y-2 relative pt-6">
+              {/* Running Character on top of the progress bar */}
+              <motion.div 
+                className="absolute w-8 h-8 -top-2 z-20 pointer-events-none"
+                style={{ 
+                  left: `calc(${progress}% - 16px)`,
+                  transition: "left 0.1s linear" 
+                }}
+              >
+                <Image 
+                  src="/image-removebg-preview.png"
+                  alt="Running Loading Character"
+                  width={32}
+                  height={32}
+                  priority
+                  className="object-contain"
+                />
+              </motion.div>
+
               <div className="w-full h-[1px] bg-white/10 overflow-hidden relative">
                 <motion.div 
                   className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-azure-400 to-white"
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <div className="flex justify-between items-center text-[7px] font-mono tracking-widest text-white/30">
+              
+              <div className="flex justify-between items-center text-[7px] font-mono tracking-widest text-white/30 pt-1">
                 <span>LOADING NOW...</span>
                 <span className="text-white font-bold">{progress}%</span>
               </div>
