@@ -70,6 +70,7 @@ export default function ScanPage() {
   const [aiInsight, setAiInsight] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveProgress, setSaveProgress] = useState(0);
+  const [ocrProgress, setOcrProgress] = useState(0);
   const router = useRouter();
 
   const handleCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,7 +82,19 @@ export default function ScanPage() {
     } catch (err) {}
     
     setStatus("processing");
+    setOcrProgress(0);
     setAiInsight("Optimizing image... / 画像を解析用に最適化中...");
+
+    // OCRの進行状況をスムーズに95%まで動かすタイマー
+    const ocrInterval = setInterval(() => {
+      setOcrProgress((prev) => {
+        if (prev >= 95) {
+          clearInterval(ocrInterval);
+          return 95;
+        }
+        return prev + Math.floor(Math.random() * 4) + 2; // スムーズに進める
+      });
+    }, 80);
 
     let targetFile: File | Blob = file;
 
@@ -116,14 +129,22 @@ export default function ScanPage() {
           email: ocrResult.email || "",
           notes: ""
         });
+        
+        clearInterval(ocrInterval);
+        setOcrProgress(100);
         setAiInsight("Auto-fill complete. Please verify the details.");
+        // 100%の表示をユーザーに見せるための微小なウェイト
+        await new Promise((resolve) => setTimeout(resolve, 300));
       } else {
+        clearInterval(ocrInterval);
         setAiInsight("Auto-fill unavailable. Please enter details manually.");
       }
     } catch (err) {
+      clearInterval(ocrInterval);
       console.error("OCR failed:", err);
       setAiInsight("Auto-fill unavailable. Please enter details manually.");
     } finally {
+      clearInterval(ocrInterval);
       // 何があっても必ず入力フォーム画面へ遷移させ、ローディング画面での永続フリーズを防止します
       setStatus("confirm");
     }
@@ -142,7 +163,7 @@ export default function ScanPage() {
           clearInterval(progressInterval);
           return 95;
         }
-        // ランダムで3〜8%ずつ増える
+        // 各ステップでランダムに増やす
         return prev + Math.floor(Math.random() * 6) + 3;
       });
     }, 70);
@@ -280,14 +301,25 @@ export default function ScanPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center space-y-8 z-10 p-6 text-center"
+            className="flex flex-col items-center space-y-8 z-10 p-6 text-center w-full max-w-xs"
           >
             <div className="relative w-20 h-20 flex items-center justify-center">
               <Loader2 className="animate-spin text-white opacity-40" size={36} />
             </div>
-            <div className="text-center space-y-2">
-              <h2 className="text-[10px] tracking-[0.5em] uppercase text-azure-400 font-bold">Processing...</h2>
-              <p className="text-[8px] tracking-[0.3em] uppercase opacity-40 text-white/80">{aiInsight}</p>
+            <div className="text-center space-y-3 w-full">
+              <h2 className="text-[10px] tracking-[0.5em] uppercase text-azure-400 font-bold">Analyzing... / 解析中</h2>
+              <div className="w-full h-[2px] bg-white/5 overflow-hidden relative mt-4">
+                <motion.div 
+                  className="absolute left-0 top-0 bottom-0 bg-azure-400"
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${ocrProgress}%` }}
+                  transition={{ ease: "easeInOut" }}
+                />
+              </div>
+              <div className="flex justify-between text-[8px] uppercase tracking-[0.2em] opacity-40 mt-1">
+                <span>{aiInsight}</span>
+                <span>{ocrProgress}%</span>
+              </div>
             </div>
           </motion.div>
         )}
@@ -408,6 +440,7 @@ export default function ScanPage() {
                   setFormData({ name: "", role: "", address: "", phone: "", email: "", notes: "" });
                   setAiInsight(null);
                   setSaveProgress(0);
+                  setOcrProgress(0);
                 }} 
                 className="flex-1 py-4 border border-white/10 text-[10px] uppercase tracking-widest hover:bg-white/5 active:scale-95 transition-all"
                 disabled={isSaving}
