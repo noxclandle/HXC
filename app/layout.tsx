@@ -51,6 +51,7 @@ export const viewport: Viewport = {
 import ConnectionInteraction from "@/components/ui/ConnectionInteraction";
 import NextAuthProvider from "@/components/providers/NextAuthProvider";
 import { ConnectionToastProvider } from "@/components/ui/ConnectionToast";
+import GameLoadingScreen from "@/components/ui/GameLoadingScreen";
 
 export default function RootLayout({
   children,
@@ -166,6 +167,7 @@ export default function RootLayout({
       <body className="bg-void text-moonlight min-h-screen flex flex-col antialiased">
         <NextAuthProvider>
           <ConnectionToastProvider>
+            <GameLoadingScreen />
             <ConnectionInteraction />
             <div className="relative z-10 flex-grow flex flex-col">
               <main className="flex-grow">
