@@ -2,16 +2,24 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, X, Check, Loader2, ScanLine } from "lucide-react";
+import { Camera, Loader2, ScanLine, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { playConnectionSound } from "@/lib/audio/resonance";
-import { createWorker } from "tesseract.js";
 
 export default function ScanPage() {
   const [status, setStatus] = useState<"idle" | "processing" | "confirm">("idle");
-  const [scannedData, setScannedData] = useState<any>(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
+  const [formData, setFormData] = useState({
+    name: "",
+    role: "",
+    address: "",
+    phone: "",
+    email: "",
+    notes: ""
+  });
   const [aiInsight, setAiInsight] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
 
   const handleCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,78 +30,78 @@ export default function ScanPage() {
       playConnectionSound("silver");
     } catch (err) {}
     
-    setStatus("processing"); // すぐに解析中画面へ
+    setStatus("processing"); // アップロード処理中画面へ
+
+    const data = new FormData();
+    data.append("file", file);
+    data.append("type", "contacts");
 
     try {
-      // ユーザーのスマートフォン端末内（ブラウザ）で完全にローカル解析を実行します。
-      // 画像を外部のサーバーへ一切送信しないため、通信費・API利用料などは「永久に完全0円」です。
-      const worker = await createWorker('jpn+eng');
-      const { data: { text } } = await worker.recognize(file);
-      await worker.terminate();
-
-      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-      const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-      const phoneMatch = text.match(/0[0-9]{1,4}-?[0-9]{1,4}-?[0-9]{3,4}/);
-      const addressLine = lines.find(l => 
-        l.includes("都") || l.includes("道") || l.includes("府") || l.includes("県") || 
-        l.includes("市") || l.includes("区") || l.includes("〒")
-      ) || "";
-
-      const name = lines[0] || "Unknown";
-      const role = lines[1] || "Member";
-
-      setScannedData({
-        name,
-        handle: name.substring(0, 5),
-        role,
-        email: emailMatch ? emailMatch[0] : "",
-        phone: phoneMatch ? phoneMatch[0] : "",
-        address: addressLine,
-        notes: "Deciphered locally on your device."
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: data,
       });
-      
-      if (typeof navigator !== "undefined" && navigator.vibrate) {
-        navigator.vibrate([20, 50, 20]);
-      }
-      setStatus("confirm");
-    } catch (err) {
-      console.error("Local OCR error:", err);
-      alert("Failed to read the card locally. Please try again.");
-      setStatus("idle");
-    }
-  };
 
-  const triggerCamera = () => {
-    const input = document.getElementById("camera-input") as HTMLInputElement;
-    if (input) {
-      input.click();
+      if (res.ok) {
+        const result = await res.json();
+        if (result.url) {
+          setUploadedImageUrl(result.url);
+          setStatus("confirm");
+        } else {
+          alert("Failed to upload the image. Entering manual mode.");
+          setStatus("confirm");
+        }
+      } else {
+        alert("Upload failed. Entering manual mode.");
+        setStatus("confirm");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("A network error occurred. Entering manual mode.");
+      setStatus("confirm");
     }
   };
 
   const handleArchive = async () => {
-    setAiInsight("Synchronizing with the Contacts...");
+    if (!formData.name) return;
+    setIsSaving(true);
+    setAiInsight("Saving contact...");
     
     try {
+      // メモ欄に撮影した名刺の画像URLをリンクとして追記
+      const finalNotes = uploadedImageUrl 
+        ? `${formData.notes}\n\n[Card Photo / 名刺画像](${uploadedImageUrl})`
+        : formData.notes;
+
       const res = await fetch("/api/contacts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...scannedData,
+          name: formData.name,
+          role: formData.role,
+          address: formData.address,
+          phone: formData.phone,
+          email: formData.email,
+          notes: finalNotes,
           coord_x: Math.floor(Math.random() * 100),
           coord_y: Math.floor(Math.random() * 100)
         }),
       });
 
       if (res.ok) {
-        const result = await res.json();
-        setAiInsight(`Connection Complete. Synergy: ${Math.floor(Math.random() * 20) + 70}% detected.`);
-        setTimeout(() => router.push("/library"), 3000);
+        setAiInsight("Contact saved successfully.");
+        try {
+          playConnectionSound("resonance");
+        } catch (soundErr) {}
+        setTimeout(() => router.push("/library"), 1500);
       } else {
-        setAiInsight("Connection Severed: Failed to anchor the identity.");
+        setAiInsight("Failed to save the contact.");
+        setIsSaving(false);
       }
     } catch (err) {
-      setAiInsight("Critical Error: The void rejected this resonance.");
+      setAiInsight("An error occurred while saving.");
       console.error(err);
+      setIsSaving(false);
     }
   };
 
@@ -104,13 +112,25 @@ export default function ScanPage() {
 
       <AnimatePresence mode="wait">
         {status === "idle" && (
-          <motion.div key="idle" className="flex flex-col items-center justify-between h-full max-h-[640px] p-6 w-full max-w-sm">
-            <header className="text-center space-y-1.5">
+          <motion.div 
+            key="idle" 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="flex flex-col items-center justify-between h-full max-h-[640px] p-6 w-full max-w-sm z-10"
+          >
+            <header className="text-center space-y-1.5 w-full relative">
+              <button 
+                onClick={() => router.back()} 
+                className="absolute left-0 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+              >
+                <ArrowLeft size={18} />
+              </button>
               <h2 className="text-xl tracking-[0.6em] uppercase font-light">Scan Card</h2>
-              <p className="text-[9px] tracking-[0.4em] opacity-30 uppercase font-bold text-azure-400">OCR Scan / 名刺をスキャンする</p>
+              <p className="text-[9px] tracking-[0.4em] opacity-30 uppercase font-bold text-azure-400">Add Contact / 名刺登録</p>
             </header>
 
-            {/* Visual Guide (紙名刺の電子化) */}
+            {/* Visual Guide */}
             <div className="relative w-full aspect-[4/3] flex items-center justify-center scale-90">
               {/* Phone Silhouette */}
               <div className="absolute w-36 h-56 border border-moonlight/10 bg-gothic-dark/40 rounded-[32px] shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col items-center pt-4 overflow-hidden">
@@ -120,7 +140,6 @@ export default function ScanPage() {
                  <div className="w-24 h-32 border border-white/10 bg-black/40 rounded-lg flex items-center justify-center relative overflow-hidden">
                     <ScanLine size={24} className="text-azure-400 opacity-20 animate-pulse" />
                     
-                    {/* Simulated Paper Card in Viewfinder */}
                     <div className="absolute inset-3 border border-white/5 bg-white/5 flex flex-col p-1.5 space-y-1">
                        <div className="w-1/2 h-0.5 bg-white/10" />
                        <div className="w-full h-0.5 bg-white/5" />
@@ -128,11 +147,10 @@ export default function ScanPage() {
                     </div>
                  </div>
 
-                 {/* Labels */}
                  <p className="mt-6 text-[6px] tracking-[0.4em] opacity-20 uppercase">Camera Viewfinder</p>
               </div>
 
-              {/* Real World Paper Card (Floating) */}
+              {/* Floating Card Representation */}
               <motion.div 
                 animate={{ 
                   y: [15, 0, 15],
@@ -145,21 +163,21 @@ export default function ScanPage() {
                 <div className="w-1/2 h-1.5 bg-black/20" />
                 <div className="w-full h-0.5 bg-black/10" />
                 <div className="w-3/4 h-0.5 bg-black/10" />
-                <div className="absolute top-1.5 right-1.5 w-4 h-4 border border-black/5" />
               </motion.div>
             </div>
 
+            {/* Actions */}
             <div className="space-y-4 text-center w-full relative pb-4">
               <input 
                 id="camera-input"
                 type="file" 
                 accept="image/*" 
                 capture="environment" 
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-0" 
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" 
                 onChange={handleCapture}
               />
               <p className="text-[9px] tracking-widest opacity-40 leading-relaxed uppercase px-2">
-                {"Capture the other party's \"paper business card\" with the camera, and AI will automatically save it to your digital library. / 相手の「紙の名刺」をカメラで撮影し、AIが自動的にデジタル名刺帳へ保存します。"}
+                {"Take a photo of the card to upload and save it. / 名刺を撮影してアップロードし、連絡先に登録します。"}
               </p>
               <button 
                 type="button"
@@ -167,64 +185,161 @@ export default function ScanPage() {
               >
                 Open Camera
               </button>
-              <button onClick={() => router.back()} className="text-[8px] opacity-20 uppercase tracking-[0.4em] hover:opacity-50 transition-opacity block w-full">Return to Home</button>
+              <button 
+                onClick={() => setStatus("confirm")} 
+                className="text-[8px] opacity-30 uppercase tracking-[0.4em] hover:opacity-60 transition-opacity block w-full py-2 z-30"
+              >
+                Or Enter Manually / 手動で入力する
+              </button>
             </div>
           </motion.div>
         )}
 
-
-
         {status === "processing" && (
-          <motion.div key="processing" className="flex flex-col items-center space-y-12 relative">
-            <div className="relative w-64 h-40 border border-white/10 bg-white/[0.02] flex items-center justify-center overflow-hidden">
-               <motion.div 
-                 animate={{ top: ["0%", "100%", "0%"] }}
-                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                 className="absolute left-0 right-0 h-[1px] bg-azure-400 shadow-[0_0_15px_rgba(59,130,246,0.5)] z-20"
-               />
-               <Loader2 className="animate-spin opacity-20 text-white" size={32} />
+          <motion.div 
+            key="processing" 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center space-y-8 z-10"
+          >
+            <div className="relative w-20 h-20 flex items-center justify-center">
+              <Loader2 className="animate-spin text-white opacity-40" size={36} />
             </div>
-            <div className="text-center space-y-4">
-              <h2 className="text-[10px] tracking-[0.5em] uppercase text-azure-400 font-bold">Scanning Card...</h2>
-              <p className="text-[8px] tracking-[0.3em] uppercase opacity-30">AI is extracting contact details... / 情報抽出中...</p>
+            <div className="text-center space-y-2">
+              <h2 className="text-[10px] tracking-[0.5em] uppercase text-azure-400 font-bold">Uploading Image...</h2>
+              <p className="text-[8px] tracking-[0.3em] uppercase opacity-30">Uploading to secure storage / 画像保存中...</p>
             </div>
           </motion.div>
         )}
 
         {status === "confirm" && (
-          <motion.div key="confirm" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md p-8 flex flex-col items-center h-full overflow-y-auto pt-24">
-            <h3 className="text-[10px] tracking-[0.5em] uppercase opacity-30 mb-12 text-center">Profile Found</h3>
-            
-            <div className="w-full aspect-[1.6/1] bg-gothic-dark border border-moonlight/20 p-8 relative mb-12 shadow-2xl">
-               <header className="flex justify-between items-start">
-                  <h2 className="text-xl tracking-[0.2em] uppercase">{scannedData.name}</h2>
-                  <div className="relative w-8 h-8 opacity-20">
-                     <Image src="/logo.png" alt="Hexa Relation" fill className="object-contain" />
+          <motion.div 
+            key="confirm" 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="w-full max-w-md h-full flex flex-col bg-void z-10"
+          >
+            {/* Header */}
+            <header className="text-center py-6 border-b border-white/5 flex-shrink-0">
+              <h2 className="text-sm tracking-[0.4em] uppercase font-light">Verify Details</h2>
+              <p className="text-[9px] tracking-[0.3em] opacity-30 uppercase font-bold text-azure-400">Save to Library / 登録情報の確認</p>
+            </header>
+
+            {/* Scrollable Form */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin">
+              {/* Photo Preview if uploaded */}
+              {uploadedImageUrl && (
+                <div className="space-y-2">
+                  <span className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Captured Card / 撮影した名刺</span>
+                  <div className="relative w-full aspect-[5/3] rounded-lg overflow-hidden border border-white/10 bg-black/40 shadow-inner">
+                    <Image src={uploadedImageUrl} alt="Card Preview" fill className="object-contain" />
                   </div>
-               </header>
-               <footer className="mt-12 space-y-1">
-                  <p className="text-[11px] tracking-widest opacity-60">{scannedData.email}</p>
-                  <p className="text-[9px] tracking-widest opacity-30 uppercase">{scannedData.role}</p>
-               </footer>
-            </div>
-
-            <div className="w-full space-y-6 mb-12">
-               <input type="text" placeholder="Meeting Location" className="w-full bg-void border border-moonlight/10 p-4 text-[11px] tracking-widest focus:border-moonlight outline-none transition-all uppercase" />
-               <textarea placeholder="Private Memo" rows={3} className="w-full bg-void border border-moonlight/10 p-4 text-[11px] tracking-widest focus:border-moonlight outline-none transition-all uppercase resize-none" />
-            </div>
-
-            <AnimatePresence>
-              {aiInsight && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="w-full p-6 border border-moonlight/10 bg-white/5 mb-8 text-center">
-                  <p className="text-[7px] uppercase tracking-[0.4em] opacity-40 mb-2 italic">Concierge Insight</p>
-                  <p className="text-[10px] tracking-[0.2em] italic text-moonlight">&quot;{aiInsight}&quot;</p>
-                </motion.div>
+                </div>
               )}
-            </AnimatePresence>
 
-            <div className="flex gap-4 w-full pb-12">
-               <button onClick={() => setStatus("idle")} className="flex-1 py-4 border border-moonlight/10 text-[9px] uppercase tracking-widest">Discard</button>
-               <button onClick={handleArchive} className="flex-1 py-4 bg-moonlight text-void font-bold text-[10px] uppercase tracking-[0.4em]">Save Contact</button>
+              {/* Form Inputs */}
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <label className="text-[9px] tracking-[0.2em] opacity-45 uppercase block">Name / お名前 <span className="text-red-500/80">*</span></label>
+                  <input 
+                    type="text" 
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="e.g. 田中 太郎" 
+                    className="w-full bg-white/[0.02] border border-white/10 px-4 py-3 text-[11px] tracking-widest focus:border-white/30 outline-none transition-all text-white rounded-none"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[9px] tracking-[0.2em] opacity-45 uppercase block">Company & Title / 会社名・役職</label>
+                  <input 
+                    type="text" 
+                    value={formData.role}
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    placeholder="e.g. 株式会社ヘキサ / 代表取締役" 
+                    className="w-full bg-white/[0.02] border border-white/10 px-4 py-3 text-[11px] tracking-widest focus:border-white/30 outline-none transition-all text-white rounded-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[9px] tracking-[0.2em] opacity-45 uppercase block">Location / 所在地</label>
+                  <input 
+                    type="text" 
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    placeholder="e.g. 東京都港区南青山 1-1-1" 
+                    className="w-full bg-white/[0.02] border border-white/10 px-4 py-3 text-[11px] tracking-widest focus:border-white/30 outline-none transition-all text-white rounded-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[9px] tracking-[0.2em] opacity-45 uppercase block">Phone / 電話番号</label>
+                  <input 
+                    type="tel" 
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="e.g. 03-1234-5678" 
+                    className="w-full bg-white/[0.02] border border-white/10 px-4 py-3 text-[11px] tracking-widest focus:border-white/30 outline-none transition-all text-white rounded-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[9px] tracking-[0.2em] opacity-45 uppercase block">Email / メールアドレス</label>
+                  <input 
+                    type="email" 
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="e.g. taro.tanaka@example.com" 
+                    className="w-full bg-white/[0.02] border border-white/10 px-4 py-3 text-[11px] tracking-widest focus:border-white/30 outline-none transition-all text-white rounded-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[9px] tracking-[0.2em] opacity-45 uppercase block">Private Memo / メモ</label>
+                  <textarea 
+                    value={formData.notes}
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    placeholder="出会った場所や、相手のメモなど" 
+                    rows={3} 
+                    className="w-full bg-white/[0.02] border border-white/10 p-4 text-[11px] tracking-widest focus:border-white/30 outline-none transition-all text-white rounded-none resize-none"
+                  />
+                </div>
+              </div>
+
+              {aiInsight && (
+                <div className="w-full p-4 border border-white/10 bg-white/[0.02] text-center">
+                  <p className="text-[8px] uppercase tracking-[0.3em] opacity-40 mb-1">Status</p>
+                  <p className="text-[10px] tracking-[0.1em] text-white/80">{aiInsight}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="p-6 border-t border-white/5 flex gap-4 flex-shrink-0 bg-void">
+              <button 
+                type="button"
+                onClick={() => {
+                  setStatus("idle");
+                  setUploadedImageUrl("");
+                  setFormData({ name: "", role: "", address: "", phone: "", email: "", notes: "" });
+                  setAiInsight(null);
+                }} 
+                className="flex-1 py-4 border border-white/10 text-[10px] uppercase tracking-widest hover:bg-white/5 active:scale-95 transition-all"
+                disabled={isSaving}
+              >
+                Discard / 破棄
+              </button>
+              <button 
+                type="button"
+                onClick={handleArchive} 
+                className="flex-1 py-4 bg-white text-void font-bold text-[10px] uppercase tracking-[0.3em] hover:scale-105 active:scale-95 transition-all"
+                disabled={isSaving || !formData.name}
+              >
+                {isSaving ? "Saving..." : "Save Contact"}
+              </button>
             </div>
           </motion.div>
         )}
