@@ -1,7 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Users, CreditCard, Activity, Database, TrendingUp, ShieldCheck, ArrowRight, Shield, BookOpen, Layers, ShieldAlert } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Users, CreditCard, Activity, Database, TrendingUp, 
+  ShieldCheck, ArrowRight, Shield, BookOpen, Layers, 
+  ShieldAlert, Sparkles, Search, CheckCircle, AlertTriangle, 
+  RefreshCw, Wrench, FileText
+} from "lucide-react";
 import Link from "next/link";
 
 interface AdminDashboardClientProps {
@@ -14,137 +20,429 @@ interface AdminDashboardClientProps {
 }
 
 export default function AdminDashboardClient({ stats, reportCount }: AdminDashboardClientProps) {
+  // NFC Card Diagnostic States
+  const [cardUid, setCardUid] = useState("");
+  const [cardResult, setCardResult] = useState<any>(null);
+  const [isDiagnosing, setIsDiagnosing] = useState(false);
+
+  // Database Integrity States
+  const [integrity, setIntegrity] = useState<any>(null);
+  const [isCheckingIntegrity, setIsCheckingIntegrity] = useState(false);
+  const [isFixingIntegrity, setIsFixingIntegrity] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  // Stats
   const statCards = [
-    { label: "有効な ID ユニット", value: stats.activeUsers, icon: <Users size={16} />, trend: "登録済みユーザー" },
-    { label: "発行済み物理カード", value: stats.issuedCards, icon: <CreditCard size={16} />, trend: "物理資産" },
-    { label: "総流通トークン (RT)", value: Number(stats.totalCP).toLocaleString(), icon: <TrendingUp size={16} />, trend: "RT 経済圏" },
-    { label: "プロトコル完全性", value: "正常", icon: <ShieldCheck size={16} />, trend: "100% 稼働" },
+    { label: "有効な ID ユニット", value: stats.activeUsers, icon: <Users size={14} />, desc: "登録ユーザー総数" },
+    { label: "発行済み物理カード", value: stats.issuedCards, icon: <CreditCard size={14} />, desc: "有効化されたNFCカード" },
+    { label: "総流通トークン (RT)", value: Number(stats.totalCP).toLocaleString(), icon: <TrendingUp size={14} />, desc: "システム内総RT残高" },
+    { label: "プロトコル完全性", value: integrity?.isHealthy ? "正常" : "要確認", icon: <ShieldCheck size={14} />, desc: "データベース整合性" },
   ];
 
-  const adminLinks = [
-    { label: "ユーザー登録簿", path: "/admin/users", icon: <Shield size={18}/>, desc: "データベース管理 & 権限付与" },
-    { label: "システム告知", path: "/admin/news", icon: <Activity size={18}/>, desc: "全ユーザー向け通知の発信" },
+  // 1. 自動で整合性チェックを走らせる
+  useEffect(() => {
+    fetchIntegrity();
+  }, []);
+
+  const fetchIntegrity = async () => {
+    setIsCheckingIntegrity(true);
+    try {
+      const res = await fetch("/api/admin/integrity");
+      const data = await res.json();
+      if (res.ok) {
+        setIntegrity(data.diagnostics);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsCheckingIntegrity(false);
+    }
+  };
+
+  // 2. 整合性の自動修復を実行
+  const handleFixIntegrity = async () => {
+    if (!confirm("不整合データを自動修復しますか？\n（ユーザーのRT残高を取引履歴元帳の合計値と強制同期します）")) {
+      return;
+    }
+    setIsFixingIntegrity(true);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/admin/integrity", { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage(data.message);
+        await fetchIntegrity();
+      } else {
+        setMessage("Error: " + (data.error || "修復に失敗しました。"));
+      }
+    } catch (e: any) {
+      setMessage("Error: " + e.message);
+    } finally {
+      setIsFixingIntegrity(false);
+    }
+  };
+
+  // 3. カード診断を実行
+  const handleDiagnoseCard = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!cardUid.trim()) return;
+    setIsDiagnosing(true);
+    setCardResult(null);
+    try {
+      const res = await fetch(`/api/admin/card/diagnose?uid=${encodeURIComponent(cardUid)}`);
+      const data = await res.json();
+      setCardResult(data);
+    } catch (err) {
+      setCardResult({ found: false, message: "診断リクエストに失敗しました。" });
+    } finally {
+      setIsDiagnosing(false);
+    }
+  };
+
+  // 常用業務（普段使う機能）
+  const dailyLinks = [
+    { label: "ユーザー登録簿", path: "/admin/users", icon: <Users size={16}/>, desc: "IDユニットの管理・RT手動付与・権限変更" },
+    { label: "カード中央台帳", path: "/admin/registry", icon: <Layers size={16}/>, desc: "物理カードの登録・アクティベーション状況" },
     { 
       label: "インシデント報告", 
       path: "/admin/reports", 
       icon: (
         <div className="relative">
-          <ShieldAlert size={18}/>
+          <ShieldAlert size={16}/>
           {reportCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-2 w-2">
+            <span className="absolute -top-1 -right-1 flex h-1.5 w-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500"></span>
             </span>
           )}
         </div>
       ), 
-      desc: "ユーザーからの不具合・違反報告",
+      desc: "ユーザーからの不具合・違反報告の処理",
       alert: reportCount > 0
     },
-    { label: "アセット大典", path: "/admin/items", icon: <BookOpen size={18}/>, desc: "称号・フレーム等の獲得条件管理" },
-    { label: "カード中央台帳", path: "/admin/registry", icon: <Layers size={18}/>, desc: "物理カードの登録 & ペアリング" },
-    { label: "LP 管理簿", path: "/admin/lps", icon: <Layers size={18}/>, desc: "各種LP・特設ページのリンク管理" },
-    { label: "発行・登録手順", path: "/admin/onboarding", icon: <ShieldCheck size={18}/>, desc: "新規ユーザー・カード発行プロトコル" },
-    { label: "システム構成", path: "/admin/config", icon: <Database size={18}/>, desc: "価格設定 & 内部パラメータ" },
-    { label: "セキュリティ司令室", path: "/admin/security", icon: <ShieldCheck size={18}/>, desc: "レートリミット & 不正アクセス監視" },
-    { label: "システム実行ログ", path: "/admin/logs", icon: <Database size={18}/>, desc: "全管理操作の証跡記録" },
-    { label: "データバックアップ", path: "/api/admin/backup/export", icon: <Layers size={18}/>, desc: "全データのJSONエクスポート" },
+    { label: "システム告知", path: "/admin/news", icon: <FileText size={16}/>, desc: "全ユーザー向けお知らせの配信・編集" },
+    { label: "LP 管理簿", path: "/admin/lps", icon: <Layers size={16}/>, desc: "各種LP・特設プロモーションページのリンク管理" },
   ];
 
-  const categories = [
-    {
-      id: "identity",
-      title: "Identity & Access / 身元と権限",
-      paths: ["/admin/users", "/admin/reports", "/admin/onboarding"]
-    },
-    {
-      id: "assets",
-      title: "Assets & Codex / 資産と大典",
-      paths: ["/admin/registry", "/admin/items", "/admin/lps"]
-    },
-    {
-      id: "system",
-      title: "System & Config / システムと構成",
-      paths: ["/admin/news", "/admin/config", "/api/admin/backup/export"]
-    },
-    {
-      id: "security",
-      title: "Security & Audit / 保安と監査",
-      paths: ["/admin/security", "/admin/logs"]
-    }
+  // システム管理（たまに管理する機能）
+  const systemLinks = [
+    { label: "システム構成", path: "/admin/config", icon: <Database size={16}/>, desc: "ガチャ確率・初期ボーナス・価格パラメーター設定" },
+    { label: "セキュリティ司令室", path: "/admin/security", icon: <Shield size={16}/>, desc: "レートリミット監視・不正アクセス・IP制限" },
+    { label: "アセット大典", path: "/admin/items", icon: <BookOpen size={16}/>, desc: "称号・フレームなどの獲得条件・ゲームデータ管理" },
+    { label: "システム実行ログ", path: "/admin/logs", icon: <Activity size={16}/>, desc: "管理者が行った全操作の監査トレール確認" },
+    { label: "発行・登録手順", path: "/admin/onboarding", icon: <ShieldCheck size={16}/>, desc: "新規カード発行・プロビジョニング手順マニュアル" },
+    { label: "データバックアップ", path: "/api/admin/backup/export", icon: <Layers size={16}/>, desc: "全データベースのJSONエクスポート（ダウンロード）" },
   ];
 
   return (
-    <>
-      {/* Main Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+    <div className="space-y-12">
+      {/* 1. Stats Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((s, i) => (
           <motion.div 
             key={i} 
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} 
+            initial={{ opacity: 0, y: 15 }} 
+            animate={{ opacity: 1, y: 0 }} 
             transition={{ delay: i * 0.05 }} 
-            className="p-8 border border-white/5 bg-white/[0.02] backdrop-blur-sm relative overflow-hidden"
+            className="p-6 border border-white/5 bg-white/[0.01] backdrop-blur-md relative overflow-hidden rounded-xl group"
           >
-            <div className="flex justify-between items-start mb-6">
-              <div className="p-2 border border-white/10 text-azure-400/60">{s.icon}</div>
-              <span className="text-[7px] text-azure-400 font-bold tracking-[0.2em] uppercase">{s.trend}</span>
+            <div className="absolute inset-0 bg-gradient-to-br from-azure-500/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-[7px] text-azure-400 font-bold tracking-[0.2em] uppercase">{s.label}</span>
+              <div className="p-1.5 border border-white/10 text-azure-400/60 rounded-lg">{s.icon}</div>
             </div>
-            <p className="text-[9px] uppercase tracking-widest opacity-40 mb-2">{s.label}</p>
-            <p className="text-3xl font-extralight tracking-tighter text-white">
+            <p className="text-2xl font-light tracking-tight text-white mb-1">
                {s.value}
             </p>
+            <p className="text-[7px] text-white/30 uppercase tracking-widest">{s.desc}</p>
           </motion.div>
         ))}
       </div>
 
-      {/* Control Hub Categorized Navigation */}
-      <div className="space-y-16 mb-16">
-        {categories.map((cat, catIdx) => {
-          const links = adminLinks.filter(l => cat.paths.includes(l.path));
-          return (
-            <div key={cat.id} className="space-y-6">
-              <div className="flex items-center gap-4 border-b border-white/5 pb-3">
-                <span className="w-1.5 h-1.5 bg-azure-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"></span>
-                <h2 className="text-[11px] tracking-[0.3em] uppercase text-white font-bold font-mono">
-                  {cat.title}
-                </h2>
-                <span className="text-[8px] text-azure-400/40 tracking-[0.25em] font-mono ml-auto">
-                  [ {links.length.toString().padStart(2, '0')} MODULES ]
-                </span>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {links.map((link, linkIdx) => (
-                  <motion.div
-                    key={link.path}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: (catIdx * 0.08) + (linkIdx * 0.04) }}
-                  >
-                    <Link 
-                      href={link.path} 
-                      className="flex flex-col p-8 border border-white/10 bg-white/[0.02] hover:border-azure-500/40 hover:bg-azure-500/[0.02] transition-all group relative overflow-hidden h-full min-h-[170px]"
-                    >
-                      <div className="mb-4 text-azure-400 opacity-40 group-hover:opacity-100 transition-opacity">
-                        {link.icon}
-                      </div>
-                      <p className="text-[11px] tracking-[0.4em] uppercase mb-2 text-white font-bold">
-                        {link.label}
-                      </p>
-                      <p className="text-[8px] opacity-25 uppercase tracking-widest leading-relaxed mb-6">
-                        {link.desc}
-                      </p>
-                      <div className="mt-auto flex items-center gap-2 text-[7px] uppercase tracking-[0.3em] opacity-0 group-hover:opacity-100 transition-all text-azure-400 font-bold">
-                        Access Archives <ArrowRight size={10} />
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
+      {/* 2. Main Workspaces Split (常用業務 vs システム管理) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        {/* LEFT COLUMN: Daily Operations (常用業務) */}
+        <div className="lg:col-span-6 space-y-8">
+          <div className="border border-white/10 bg-void/50 p-6 rounded-2xl space-y-6">
+            <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+              <span className="w-2 h-2 bg-azure-400 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"></span>
+              <h2 className="text-[11px] tracking-[0.3em] uppercase text-white font-black font-mono">Daily Operations / 常用業務</h2>
+              <span className="text-[8px] text-azure-400/40 font-mono ml-auto">[ FREQUENT ]</span>
             </div>
-          );
-        })}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {dailyLinks.map((link, idx) => (
+                <Link 
+                  key={link.path}
+                  href={link.path}
+                  className="p-4 border border-white/5 bg-white/[0.01] hover:border-azure-500/30 hover:bg-azure-500/[0.01] transition-all rounded-xl group flex flex-col justify-between min-h-[110px]"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="text-azure-400/60 group-hover:text-azure-400 transition-colors">{link.icon}</div>
+                    <ArrowRight size={10} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-azure-400" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] tracking-wider text-white font-bold uppercase mb-1">{link.label}</p>
+                    <p className="text-[7.5px] text-white/30 leading-relaxed">{link.desc}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* NFC Card Diagnostics Tool */}
+          <div className="border border-white/10 bg-void/50 p-6 rounded-2xl space-y-6">
+            <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+              <Search size={14} className="text-azure-400" />
+              <h2 className="text-[11px] tracking-[0.3em] uppercase text-white font-black font-mono">Card Diagnostic / 物理カード簡易診断</h2>
+              <span className="text-[8px] text-azure-400/40 font-mono ml-auto">[ TOOL ]</span>
+            </div>
+
+            <form onSubmit={handleDiagnoseCard} className="flex gap-2">
+              <input 
+                type="text" 
+                value={cardUid}
+                onChange={(e) => setCardUid(e.target.value)}
+                placeholder="NFC UIDを入力 (例: 04A23B...)" 
+                className="flex-1 bg-white/[0.02] border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-azure-500/50 font-mono"
+              />
+              <button 
+                type="submit"
+                disabled={isDiagnosing}
+                className="bg-white text-void hover:bg-zinc-200 active:scale-95 text-[10px] font-bold tracking-widest px-4 rounded-lg flex items-center gap-2 transition-all disabled:opacity-50"
+              >
+                {isDiagnosing ? <RefreshCw size={10} className="animate-spin" /> : "SCAN"}
+              </button>
+            </form>
+
+            <AnimatePresence mode="wait">
+              {cardResult && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="p-4 border border-white/10 bg-white/[0.01] rounded-xl space-y-3 text-xs font-mono"
+                >
+                  {!cardResult.found ? (
+                    <div className="text-rose-400 text-[10px] flex items-center gap-2">
+                      <AlertTriangle size={12} />
+                      <span>{cardResult.message}</span>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center border-b border-white/5 pb-2">
+                        <span className="text-[9px] text-white/40">UID: {cardResult.uid}</span>
+                        <span className={`text-[8px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                          cardResult.status === "active" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
+                          cardResult.status === "void" ? "bg-rose-500/10 text-rose-400 border border-rose-500/20" :
+                          "bg-zinc-500/10 text-zinc-400 border border-zinc-500/20"
+                        }`}>
+                          {cardResult.status}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 text-[9px]">
+                        <div>
+                          <p className="text-white/30">INTERNAL SERIAL</p>
+                          <p className="text-white font-bold">{cardResult.serial}</p>
+                        </div>
+                        <div>
+                          <p className="text-white/30">HEALTH CHECK</p>
+                          <p className={cardResult.isHealthy ? "text-emerald-400 font-bold" : "text-rose-400 font-bold"}>
+                            {cardResult.isHealthy ? "✓ SECURE" : "⚠ WARNING"}
+                          </p>
+                        </div>
+                      </div>
+
+                      {cardResult.warnings.length > 0 && (
+                        <div className="p-2.5 bg-rose-500/5 border border-rose-500/20 rounded-lg text-rose-400 text-[8px] space-y-1">
+                          {cardResult.warnings.map((w: string, idx: number) => (
+                            <p key={idx}>⚠ {w}</p>
+                          ))}
+                        </div>
+                      )}
+
+                      {cardResult.user ? (
+                        <div className="p-3 bg-white/[0.02] border border-white/5 rounded-lg space-y-2">
+                          <p className="text-[8px] text-azure-400 font-bold tracking-wider uppercase border-b border-white/5 pb-1">BOUND USER / 紐付けユーザー</p>
+                          <div className="grid grid-cols-2 gap-2 text-[9px]">
+                            <div>
+                              <p className="text-white/30">NAME</p>
+                              <p className="text-white font-bold">{cardResult.user.name}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/30">EMAIL</p>
+                              <p className="text-white">{cardResult.user.email}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/30">ROLE / RANK</p>
+                              <p className="text-white uppercase">{cardResult.user.role} / {cardResult.user.rank}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/30">RT BALANCE</p>
+                              <p className="text-emerald-400 font-bold">{cardResult.user.rtBalance} RT</p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-3 bg-zinc-500/5 border border-white/5 rounded-lg text-center text-[9px] text-white/30">
+                          No user bound to this card. / ユーザー未紐付け
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: System Management (システム管理) */}
+        <div className="lg:col-span-6 space-y-8">
+          <div className="border border-white/10 bg-void/50 p-6 rounded-2xl space-y-6">
+            <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+              <span className="w-2 h-2 bg-purple-400 rounded-full shadow-[0_0_8px_rgba(192,132,252,0.6)]"></span>
+              <h2 className="text-[11px] tracking-[0.3em] uppercase text-white font-black font-mono">System Management / システム管理</h2>
+              <span className="text-[8px] text-purple-400/40 font-mono ml-auto">[ OCCASIONAL ]</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {systemLinks.map((link, idx) => (
+                <Link 
+                  key={link.path}
+                  href={link.path}
+                  className="p-4 border border-white/5 bg-white/[0.01] hover:border-purple-500/30 hover:bg-purple-500/[0.01] transition-all rounded-xl group flex flex-col justify-between min-h-[110px]"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="text-purple-400/60 group-hover:text-purple-400 transition-colors">{link.icon}</div>
+                    <ArrowRight size={10} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-purple-400" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] tracking-wider text-white font-bold uppercase mb-1">{link.label}</p>
+                    <p className="text-[7.5px] text-white/30 leading-relaxed">{link.desc}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Database Integrity Doctor (データ整合性診断) */}
+          <div className="border border-white/10 bg-void/50 p-6 rounded-2xl space-y-6 relative overflow-hidden">
+            {isCheckingIntegrity && (
+              <div className="absolute inset-0 bg-void/80 backdrop-blur-sm z-30 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-3">
+                  <RefreshCw size={24} className="text-azure-400 animate-spin" />
+                  <span className="text-[9px] font-mono tracking-widest text-white/60">SCANNING DATABASE INTEGRITY...</span>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+              <Wrench size={14} className="text-purple-400" />
+              <h2 className="text-[11px] tracking-[0.3em] uppercase text-white font-black font-mono">Data Doctor / データ整合性診断</h2>
+              <button 
+                onClick={fetchIntegrity}
+                className="text-[8px] border border-white/10 hover:border-white/30 px-2 py-1 rounded font-mono text-white/60 hover:text-white transition-all ml-auto"
+              >
+                RE-SCAN
+              </button>
+            </div>
+
+            {integrity ? (
+              <div className="space-y-4 font-mono text-xs">
+                {/* Checks List */}
+                <div className="space-y-2.5">
+                  {/* 1. RT Ledger */}
+                  <div className="flex justify-between items-center p-3 bg-white/[0.01] border border-white/5 rounded-xl">
+                    <div className="space-y-1">
+                      <p className="text-[9px] font-bold text-white uppercase">RT Ledger Reconciliation / RT取引高の突合</p>
+                      <p className="text-[8px] text-white/30">Checked {integrity.rtLedger.checkedCount} users</p>
+                    </div>
+                    {integrity.rtLedger.mismatchCount === 0 ? (
+                      <span className="text-[8px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-bold">SECURE</span>
+                    ) : (
+                      <span className="text-[8px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded-full font-bold">
+                        {integrity.rtLedger.mismatchCount} MISMATCHES
+                      </span>
+                    )}
+                  </div>
+
+                  {/* 2. Orphaned Cards */}
+                  <div className="flex justify-between items-center p-3 bg-white/[0.01] border border-white/5 rounded-xl">
+                    <div className="space-y-1">
+                      <p className="text-[9px] font-bold text-white uppercase">Card Binding Integrity / 有効カード紐付け監査</p>
+                      <p className="text-[8px] text-white/30">Checked {integrity.cards.checkedCount} cards</p>
+                    </div>
+                    {integrity.cards.orphanedCount === 0 ? (
+                      <span className="text-[8px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-bold">SECURE</span>
+                    ) : (
+                      <span className="text-[8px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full font-bold">
+                        {integrity.cards.orphanedCount} ORPHANED
+                      </span>
+                    )}
+                  </div>
+
+                  {/* 3. Incidents */}
+                  <div className="flex justify-between items-center p-3 bg-white/[0.01] border border-white/5 rounded-xl">
+                    <div className="space-y-1">
+                      <p className="text-[9px] font-bold text-white uppercase">Active Incident Reports / 未解決の通報・報告</p>
+                      <p className="text-[8px] text-white/30">Outstanding flags</p>
+                    </div>
+                    {integrity.reports.pendingCount === 0 ? (
+                      <span className="text-[8px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-bold">SECURE</span>
+                    ) : (
+                      <span className="text-[8px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded-full font-bold animate-pulse">
+                        {integrity.reports.pendingCount} PENDING
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* If mismatches found, show the Reconcile button */}
+                {(integrity.rtLedger.mismatchCount > 0) && (
+                  <div className="p-3 bg-rose-500/5 border border-rose-500/20 rounded-xl space-y-3">
+                    <div className="flex items-start gap-2 text-rose-400 text-[9px] leading-relaxed">
+                      <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-bold">データベースの不整合が検出されました。</p>
+                        <p className="opacity-80">取引履歴の合計値とユーザーの表示残高が一致していません。バグや不正、または通信遮断が原因の可能性があります。自動修復を実行してください。</p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={handleFixIntegrity}
+                      disabled={isFixingIntegrity}
+                      className="w-full bg-rose-500 text-white hover:bg-rose-600 disabled:opacity-50 text-[10px] font-bold tracking-widest py-2 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-rose-500/10"
+                    >
+                      {isFixingIntegrity ? <RefreshCw size={10} className="animate-spin" /> : <Wrench size={12} />}
+                      RECONCILE DATABASE / 自動修復を実行
+                    </button>
+                  </div>
+                )}
+
+                {integrity.isHealthy && (
+                  <div className="p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-xl flex items-center gap-2.5 text-emerald-400 text-[9px]">
+                    <CheckCircle size={14} />
+                    <span>All system metrics are aligned. Protocol fully secure. / システムの整合性は保たれています。</span>
+                  </div>
+                )}
+
+                {message && (
+                  <div className="p-2.5 bg-white/[0.02] border border-white/10 rounded-lg text-[8px] text-azure-400">
+                    {message}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center text-white/30 text-[9px] py-4">
+                No diagnostic report loaded.
+              </div>
+            )}
+          </div>
+        </div>
+
       </div>
-    </>
+    </div>
   );
 }
