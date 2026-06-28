@@ -57,7 +57,10 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
       const res = await fetch("/api/admin/integrity");
       const data = await res.json();
       if (res.ok) {
-        setIntegrity(data.diagnostics);
+        setIntegrity({
+          ...data.diagnostics,
+          isHealthy: data.isHealthy
+        });
       }
     } catch (e) {
       console.error(e);
