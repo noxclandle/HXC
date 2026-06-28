@@ -179,13 +179,26 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
     <div className="space-y-8">
       
       {/* ==================== DAILY TASK ACTION CENTER (最上部配置) ==================== */}
-      <div className="border border-white/10 bg-void/70 backdrop-blur-md p-6 rounded-2xl space-y-4 relative overflow-hidden">
+      <div className={`border backdrop-blur-md p-6 rounded-2xl space-y-4 relative overflow-hidden transition-all duration-300 ${
+        hasTasks 
+          ? "border-rose-500/80 bg-rose-950/[0.02] shadow-[0_0_25px_rgba(244,63,94,0.1)] animate-pulse-slow" 
+          : "border-white/10 bg-void/70"
+      }`}>
         <div className="absolute top-0 right-0 w-64 h-64 bg-azure-500/[0.01] rounded-full blur-3xl pointer-events-none" />
         
         <div className="flex items-center justify-between border-b border-white/5 pb-3">
-          <div className="flex items-center gap-3">
-            <span className="w-2.5 h-2.5 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.6)]"></span>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className={`w-2.5 h-2.5 rounded-full ${
+              hasTasks 
+                ? "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]" 
+                : "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]"
+            }`}></span>
             <h2 className="text-[11px] tracking-[0.3em] uppercase text-white font-black font-mono">Daily Task Control / デイリー業務司令部</h2>
+            {hasTasks && (
+              <span className="text-[9px] font-bold text-rose-400 font-mono animate-pulse tracking-wider bg-rose-500/10 border border-rose-500/20 px-2.5 py-1 rounded">
+                ⚠️ 未対応の重要タスクがあります。必ず対応してください。 / PENDING URGENT TASKS. PLEASE RESOLVE IMMEDIATELY.
+              </span>
+            )}
           </div>
           <button 
             onClick={() => { fetchDailyTasks(); fetchIntegrity(); }}
