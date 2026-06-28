@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles } from "lucide-react";
+import Image from "next/image";
 
 export default function GameLoadingScreen() {
   const [progress, setProgress] = useState(0);
@@ -63,19 +64,39 @@ export default function GameLoadingScreen() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03)_0%,transparent_75%)]" />
 
           <div className="w-full max-w-xs space-y-8 text-center z-10 px-6">
-            {/* Geometric Rotating Emblem */}
-            <div className="relative w-14 h-14 mx-auto mb-6">
+            
+            {/* Glowing Logo & Rotating Ring */}
+            <div className="relative w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+              {/* Outer rotating dashed ring */}
               <motion.div 
                 animate={{ rotate: 360 }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 border border-azure-500/20 rounded-xl"
-              />
-              <motion.div 
-                animate={{ rotate: -360 }}
                 transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-2 border border-white/5 rounded-lg flex items-center justify-center"
+                className="absolute inset-0 border border-dashed border-azure-500/20 rounded-full"
+              />
+              {/* Pulsing glow background for the image */}
+              <div className="absolute inset-4 bg-azure-500/5 rounded-full blur-md animate-pulse" />
+              
+              {/* The Custom Image (Optimized & Resized) */}
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.04, 1],
+                  opacity: [0.85, 1, 0.85]
+                }}
+                transition={{ 
+                  duration: 3, 
+                  repeat: Infinity, 
+                  ease: "easeInOut" 
+                }}
+                className="relative w-16 h-16 z-10"
               >
-                <Sparkles className="text-azure-400/50 animate-pulse" size={14} />
+                <Image 
+                  src="/image-removebg-preview.png"
+                  alt="HXC Loading Emblem"
+                  width={64}
+                  height={64}
+                  priority
+                  className="object-contain filter drop-shadow-[0_0_8px_rgba(59,130,246,0.25)]"
+                />
               </motion.div>
             </div>
 
