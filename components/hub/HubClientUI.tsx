@@ -268,9 +268,8 @@ export default function HubClientUI({
               exit={{ opacity: 0, y: 30, scale: 0.95 }}
               className="fixed bottom-[92px] right-6 z-50 max-w-[220px]"
             >
-              <div className="bg-white border border-zinc-200 shadow-[0_10px_35px_rgba(255,255,255,0.15),0_4px_12px_rgba(0,0,0,0.1)] p-3.5 rounded-2xl relative overflow-hidden group">
-                 {/* Subtle premium light blue pulse */}
-                 <div className="absolute inset-0 bg-azure-500/5 animate-pulse pointer-events-none" />
+              <div className="bg-void/95 backdrop-blur-md border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] p-3.5 rounded-2xl relative overflow-hidden group">
+                 <div className="absolute inset-0 bg-white/[0.02] pointer-events-none" />
                  
                  {/* Close Button */}
                  <button 
@@ -278,21 +277,33 @@ export default function HubClientUI({
                      e.stopPropagation();
                      setBonusPromptDismissed(true);
                    }}
-                   className="absolute top-2.5 right-2.5 z-20 p-1 text-zinc-400 hover:text-zinc-800 hover:bg-zinc-100 rounded-full transition-all"
+                   className="absolute top-2.5 right-2.5 z-20 p-1 text-white/40 hover:text-white hover:bg-white/5 rounded-full transition-all"
                    title="Dismiss / 閉じる"
                  >
                    <X size={10} />
                  </button>
 
-                 <div onClick={handleConnection} className="relative z-10 text-left w-full pr-4 cursor-pointer">
+                 <div className="relative z-10 text-left w-full pr-4">
                     <div className="flex items-center gap-2 mb-1.5">
-                      <Sparkles size={11} className="text-azure-600 animate-pulse" />
-                      <span className="text-[8px] tracking-[0.2em] font-black uppercase text-azure-600">Daily Resonance</span>
+                      <Sparkles size={11} className="text-azure-400" />
+                      <span className="text-[8px] tracking-[0.2em] font-bold uppercase text-azure-400">Daily Resonance</span>
                     </div>
-                    <p className="text-[7.5px] tracking-wider text-zinc-800 font-bold uppercase mb-3 leading-relaxed font-sans">本日の共鳴（ボーナス）を受け取りますか？</p>
-                    <div className="text-[8px] font-bold tracking-[0.3em] uppercase text-white bg-void text-center py-1.5 hover:bg-zinc-800 transition-colors rounded-full shadow-sm">
-                      Receive Bonus / ボーナスを受け取る
-                    </div>
+                    <p className="text-[7.5px] tracking-wider text-white/60 uppercase mb-3 leading-relaxed font-sans">本日の共鳴（ボーナス）を受け取りますか？</p>
+                    
+                    <button 
+                      disabled={isResonating}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!isResonating) handleConnection();
+                      }}
+                      className={`w-full text-[8px] font-bold tracking-[0.3em] uppercase py-2 text-center rounded-full shadow-sm transition-all ${
+                        isResonating 
+                          ? "bg-zinc-800 text-zinc-500 cursor-not-allowed" 
+                          : "bg-white text-void hover:bg-zinc-200 active:scale-95 cursor-pointer"
+                      }`}
+                    >
+                      {isResonating ? "RECEIVING... / 接続中..." : "Receive Bonus / ボーナスを受け取る"}
+                    </button>
                  </div>
               </div>
             </motion.div>
