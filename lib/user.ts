@@ -33,7 +33,7 @@ export async function getUserStatus(email: string | null | undefined) {
   const now = new Date();
   const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  const [user, assetPricesConfig, unreadCount, totalContacts, monthlyConnections] = await Promise.all([
+  const [user, assetPricesConfig, unreadCount, monthlyConnections] = await Promise.all([
     prisma.user.findUnique({
       where: { email: normalizedEmail },
       select: {
@@ -63,6 +63,11 @@ export async function getUserStatus(email: string | null | undefined) {
         last_read_news_at: true,
         card: {
           select: { uid: true }
+        },
+        _count: {
+          select: {
+            contacts: true
+          }
         }
       }
     }),
@@ -76,15 +81,12 @@ export async function getUserStatus(email: string | null | undefined) {
       });
       if (config) {
         cachedAssetPrices = config;
-        cachedAssetPricesExpiry = now + 60000; // Cache for 1 min
+        cachedAssetPricesExpiry = now + 300000; // Cache for 5 mins
       }
       return config;
     })(),
     prisma.cardMessage.count({
       where: { target_user: { email: normalizedEmail }, is_read: false }
-    }),
-    prisma.contact.count({
-      where: { owner: { email: normalizedEmail } }
     }),
     prisma.contact.count({
       where: { 
@@ -95,6 +97,8 @@ export async function getUserStatus(email: string | null | undefined) {
   ]);
 
   if (!user) return null;
+
+  const totalContacts = user._count?.contacts ?? 0;
 
   const userEmail = user.email?.toLowerCase() || "";
   const userName = user.name || "";
