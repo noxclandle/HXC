@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { ASSETS } from "@/lib/game/assets";
 
 let cachedAssetPrices: any = null;
 let cachedAssetPricesExpiry = 0;
@@ -111,7 +112,7 @@ export async function getUserStatus(email: string | null | undefined) {
   const titles = isFixer ? allTitles : (Array.isArray(user.unlocked_titles) ? user.unlocked_titles : ["ASSOCIATE"]);
 
   const ownedAssets = isFixer
-    ? ["Obsidian", "Silver", "Gold", "Sakura", "RoseGold", "PearlWhite", "Moonlight", "Grace", "Silk", "Emerald", "Platinum", "Dynamic", "Crimson", "Void", "ImperialGold", "NebulaSteel", "GildedRose", "Default", "PastelSakura", "PearlVeil", "SilkSheet", "GraceGradient", "CrystalGlass", "Carbon", "BrushedMetal", "MonochromeGrid", "Stardust", "RoyalGold", "Nebula", "SilkBlur", "DigitalFlow", "PrismFractal", "GoldenHour", "MonochromeCyber", "None", "Sparkle", "FallingFlowers", "Feathers", "Bubbles", "Ribbons", "Glitch", "Petals", "Snow", "Aethereal", "Scanline", "Interference", "Dust", "Aurora", "Singularity", "CherryPetals", "BinaryCascade", "WhiteMist", "AzureFlame", "GoldenHalo", "VioletHaze", "EmeraldDust", "CrimsonFlare", "VoidEclipse", "PrismGlow", "CyberGrid", "StellarWind", "AbyssalEcho", "Pure White Hex", "Azure Trace", "Emerald Trace", "Ruby Trace", "Gold Trace", "Violet Trace", "Crimson Trace", "Shadow Trace", "Prism Trace", "Void Trace", "Nebula Trace", "Solar Trace", "resonance", "click", "wind", "water", "silver", "crystal", "deep", "heaven", "void", "omega", "ether", "pulse", "ZoomBgDefault", "ZoomBgCyber", "ZoomBgSlate", "ZoomBgWashi", "ZoomBgMist", "ZoomBgGold", "ZoomBgMattePlates", "ZoomBgBronze", "ZoomBgDawn", "ZoomBgPrism", "ZoomBgNebula"]
+    ? ASSETS.map(a => a.id)
     : (Array.isArray(user.owned_assets) ? user.owned_assets : []);
 
   const assetPrices = assetPricesConfig?.value || {};
