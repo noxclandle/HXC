@@ -32,10 +32,16 @@ export async function POST(req: NextRequest) {
       if (!user) throw new Error("USER_NOT_FOUND");
 
       const lastDaily = user.last_daily_at ? new Date(user.last_daily_at) : null;
-      const isSameDay = lastDaily && 
-        lastDaily.getFullYear() === now.getFullYear() &&
-        lastDaily.getMonth() === now.getMonth() &&
-        lastDaily.getDate() === now.getDate();
+      
+      // JST (UTC+9) 基準で日付比較を行い、タイムゾーンのずれを防ぐ
+      const JST_OFFSET = 9 * 60 * 60 * 1000;
+      const lastDailyJST = lastDaily ? new Date(lastDaily.getTime() + JST_OFFSET) : null;
+      const nowJST = new Date(now.getTime() + JST_OFFSET);
+
+      const isSameDay = lastDailyJST && 
+        lastDailyJST.getUTCFullYear() === nowJST.getUTCFullYear() &&
+        lastDailyJST.getUTCMonth() === nowJST.getUTCMonth() &&
+        lastDailyJST.getUTCDate() === nowJST.getUTCDate();
 
       if (isSameDay) throw new Error("ALREADY_RESONATED");
 

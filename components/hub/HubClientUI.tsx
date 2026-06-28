@@ -89,6 +89,7 @@ export default function HubClientUI({
         if (data.error === "Already resonated today.") {
           await fetchData();
           setMood('stable');
+          showToast("本日の共鳴（ボーナス）は既に受け取り済みです。", "info");
         } else {
           // 詳細なエラーを表示するように変更
           const errorMsg = data.error || "Sync Failed / 境界との同期に失敗しました";
