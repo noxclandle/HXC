@@ -23,8 +23,17 @@ export async function POST(req: NextRequest) {
     const now = new Date();
     const lastDaily = user?.last_daily_at;
 
-    // 既に今日受け取っているかチェック (JST基準)
-    if (lastDaily && lastDaily.toDateString() === now.toDateString()) {
+    // 既に今日受け取っているかチェック (JST基準でタイムゾーンのずれを防ぐ)
+    const JST_OFFSET = 9 * 60 * 60 * 1000;
+    const lastDailyJST = lastDaily ? new Date(lastDaily.getTime() + JST_OFFSET) : null;
+    const nowJST = new Date(now.getTime() + JST_OFFSET);
+
+    const isSameDay = lastDailyJST && 
+      lastDailyJST.getUTCFullYear() === nowJST.getUTCFullYear() &&
+      lastDailyJST.getUTCMonth() === nowJST.getUTCMonth() &&
+      lastDailyJST.getUTCDate() === nowJST.getUTCDate();
+
+    if (isSameDay) {
       return NextResponse.json({ success: false, message: "本日のボーナスは受領済みです。" });
     }
 
