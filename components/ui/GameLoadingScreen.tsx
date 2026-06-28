@@ -4,13 +4,22 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function GameLoadingScreen() {
+  const pathname = usePathname();
   const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(true);
   const [statusText, setStatusText] = useState("INITIALIZING SYSTEM...");
 
   useEffect(() => {
+    // セッションストレージを確認し、すでに読み込み済みの場合はローディングをスキップ
+    const hasLoaded = sessionStorage.getItem("hxc_loaded");
+    if (pathname !== "/" || hasLoaded === "true") {
+      setVisible(false);
+      return;
+    }
+
     // ゲーム感を演出するサイバー調の起動ログ
     const texts = [
       "CONNECTING TO HXC NODE...",
@@ -35,7 +44,10 @@ export default function GameLoadingScreen() {
           clearInterval(progressInterval);
           clearInterval(textInterval);
           // 100%に達した0.4秒後にフェードアウトを開始
-          setTimeout(() => setVisible(false), 400);
+          setTimeout(() => {
+            setVisible(false);
+            sessionStorage.setItem("hxc_loaded", "true");
+          }, 400);
           return 100;
         }
         // 最初はランダムに進み、後半（50%以降）は少し細かく進む
@@ -48,7 +60,12 @@ export default function GameLoadingScreen() {
       clearInterval(progressInterval);
       clearInterval(textInterval);
     };
-  }, []);
+  }, [pathname]);
+
+  // ランディングページ以外ではローディング画面自体をレンダリングしない（パフォーマンス最優先）
+  if (pathname !== "/") {
+    return null;
+  }
 
   return (
     <AnimatePresence>
