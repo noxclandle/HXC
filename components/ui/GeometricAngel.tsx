@@ -51,13 +51,13 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
       {/* Background Glow (Grows stronger with stage) */}
       <motion.div
         animate={{
-          scale: stage === 4 ? [1, 1.25, 1] : stage === 3 ? [1, 1.15, 1] : [1, 1.05, 1],
-          opacity: stage === 4 ? [0.15, 0.35, 0.15] : stage === 3 ? [0.12, 0.25, 0.12] : [0.08, 0.18, 0.08],
+          scale: stage === 4 ? [1, 1.3, 1] : stage === 3 ? [1, 1.15, 1] : [1, 1.05, 1],
+          opacity: stage === 4 ? [0.2, 0.45, 0.2] : stage === 3 ? [0.12, 0.25, 0.12] : [0.08, 0.18, 0.08],
         }}
         transition={{ duration: floatDuration * 1.5, repeat: Infinity, ease: "easeInOut" }}
         className={`absolute inset-0 rounded-full blur-3xl`}
         style={{
-          backgroundColor: stageColor,
+          backgroundColor: stage === 4 ? '#ec4899' : stageColor, // Strong Pink for Seraph background
         }}
       />
 
@@ -90,50 +90,61 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
               </feMerge>
             </filter>
 
-            {/* Rich Gold Gradient */}
+            {/* Weak Gold / Yellow Gradient */}
             <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fef08a" /> {/* Bright Gold */}
-              <stop offset="50%" stopColor="#e2b857" /> {/* Gold */}
-              <stop offset="100%" stopColor="#a16207" stopOpacity="0.8" /> {/* Bronze */}
+              <stop offset="0%" stopColor="#fef08a" stopOpacity="0.9" /> {/* Gold */}
+              <stop offset="100%" stopColor="#e2b857" stopOpacity="0.4" />
             </linearGradient>
 
-            {/* Rose Gold Gradient (Left & Right) */}
+            {/* Intense Pink Dominant Rose Gold Gradient (Left & Right) */}
+            {/* White normal (0-20%), Gold weak (20-40%), Pink strong (40-100%) */}
             <linearGradient id="rose-gold-left" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="30%" stopColor="#fef08a" />
-              <stop offset="75%" stopColor="#fb7185" />
-              <stop offset="100%" stopColor="#fb7185" stopOpacity="0.05" />
+              <stop offset="0%" stopColor="#ffffff" /> {/* White */}
+              <stop offset="20%" stopColor="#fef08a" /> {/* Gold (Weak) */}
+              <stop offset="45%" stopColor="#f43f5e" /> {/* Pink */}
+              <stop offset="80%" stopColor="#ec4899" /> {/* Deep Pink (Strong) */}
+              <stop offset="100%" stopColor="#ec4899" stopOpacity="0.05" />
             </linearGradient>
             
             <linearGradient id="rose-gold-right" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="30%" stopColor="#fef08a" />
-              <stop offset="75%" stopColor="#fb7185" />
-              <stop offset="100%" stopColor="#fb7185" stopOpacity="0.05" />
+              <stop offset="20%" stopColor="#fef08a" />
+              <stop offset="45%" stopColor="#f43f5e" />
+              <stop offset="80%" stopColor="#ec4899" />
+              <stop offset="100%" stopColor="#ec4899" stopOpacity="0.05" />
             </linearGradient>
 
-            {/* Aura Ray Gradient (後光) */}
+            {/* Pink Dominant Aura Ray Gradient (後光) */}
             <linearGradient id="aura-ray-grad" x1="0%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="#fef08a" stopOpacity="0.8" />
-              <stop offset="40%" stopColor="#fb7185" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#fb7185" stopOpacity="0" />
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+              <stop offset="25%" stopColor="#f43f5e" stopOpacity="0.6" />
+              <stop offset="70%" stopColor="#ec4899" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#ec4899" stopOpacity="0" />
             </linearGradient>
+
+            {/* Blinding Pink Backlight Radial Gradient */}
+            <radialGradient id="hyper-pink-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+              <stop offset="35%" stopColor="#ec4899" stopOpacity="0.8" />
+              <stop offset="70%" stopColor="#f43f5e" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+            </radialGradient>
 
             {/* Gradients for Premium Seraph Stage */}
             <radialGradient id="seraph-core-glow" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-              <stop offset="40%" stopColor={stageColor} stopOpacity="0.8" />
+              <stop offset="40%" stopColor="#ec4899" stopOpacity="0.8" />
               <stop offset="100%" stopColor="#000000" stopOpacity="0" />
             </radialGradient>
 
             <radialGradient id="seraph-head-grad" cx="50%" cy="40%" r="50%">
               <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-              <stop offset="100%" stopColor={stageColor} stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#ec4899" stopOpacity="0.95" />
             </radialGradient>
 
             <linearGradient id="seraph-body-grad" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="60%" stopColor={stageColor} />
+              <stop offset="60%" stopColor="#ec4899" />
               <stop offset="100%" stopColor="#000000" stopOpacity="0.4" />
             </linearGradient>
 
@@ -253,18 +264,57 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
           {/* ================= STAGE 4: SERAPH / ULTRA-PREMIUM (Lv 30+) ================= */}
           {stage === 4 && (
             <g>
-              {/* 1. Divine Aura / Radial Rays (後光) */}
-              <g opacity="0.35" filter="url(#divine-glow)">
-                {/* 12 radiating light rays emitting from the core */}
-                {Array.from({ length: 12 }).map((_, idx) => {
-                  const angle = (idx * 360) / 12;
+              {/* 要素3: 超発光ピンクバックライトオーラ (Hyper-Glow Pink Back Light) */}
+              <circle cx="100" cy="112" r="95" fill="url(#hyper-pink-glow)" filter="url(#divine-glow)" opacity="0.65" />
+
+              {/* 要素5: 上昇する光の粒子柱（Ascending Energy Stream） */}
+              <g>
+                {/* Particle 1 */}
+                <motion.path
+                  animate={{ y: [-10, -160], opacity: [0, 0.9, 0], scale: [0.8, 1.2, 0.6] }}
+                  transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
+                  d="M 55,180 L 57,183 L 55,186 L 53,183 Z"
+                  fill="#ffffff"
+                  filter="url(#divine-glow)"
+                />
+                {/* Particle 2 */}
+                <motion.path
+                  animate={{ y: [0, -150], opacity: [0, 0.9, 0], scale: [0.7, 1.1, 0.5] }}
+                  transition={{ duration: 2.8, repeat: Infinity, ease: "linear", delay: 0.8 }}
+                  d="M 145,170 L 147,173 L 145,176 L 143,173 Z"
+                  fill="#f43f5e"
+                  filter="url(#divine-glow)"
+                />
+                {/* Particle 3 */}
+                <motion.path
+                  animate={{ y: [10, -170], opacity: [0, 0.8, 0], scale: [0.6, 1.0, 0.4] }}
+                  transition={{ duration: 4.2, repeat: Infinity, ease: "linear", delay: 1.5 }}
+                  d="M 75,190 L 76.5,192 L 75,194 L 73.5,192 Z"
+                  fill="#ffffff"
+                  filter="url(#divine-glow)"
+                />
+                {/* Particle 4 */}
+                <motion.path
+                  animate={{ y: [-20, -180], opacity: [0, 0.9, 0], scale: [0.7, 1.2, 0.5] }}
+                  transition={{ duration: 3.1, repeat: Infinity, ease: "linear", delay: 2.2 }}
+                  d="M 125,185 L 126.5,187 L 125,189 L 123.5,187 Z"
+                  fill="#f43f5e"
+                  filter="url(#divine-glow)"
+                />
+              </g>
+
+              {/* 1. Divine Aura / Radial Rays (後光 - ピンク強め、白普通) */}
+              <g opacity="0.4" filter="url(#divine-glow)">
+                {/* 16 radiating light rays emitting from the core */}
+                {Array.from({ length: 16 }).map((_, idx) => {
+                  const angle = (idx * 360) / 16;
                   return (
                     <line
                       key={idx}
                       x1="100"
                       y1="112"
                       x2="100"
-                      y2="15"
+                      y2="10"
                       stroke="url(#aura-ray-grad)"
                       strokeWidth="0.8"
                       transform={`rotate(${angle} 100 112)`}
@@ -273,30 +323,28 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                 })}
               </g>
 
-              {/* 2. Nested Back-Rings (背中のリング・後背) */}
-              <g opacity="0.45" filter="url(#divine-glow)">
-                {/* Large elegant outer ring */}
-                <circle cx="100" cy="112" r="50" fill="none" stroke="url(#gold-grad)" strokeWidth="0.8" />
-                {/* Middle ring with fine ticks */}
+              {/* 2. Nested Back-Rings (背中のリング・後背 - ピンク・白構成) */}
+              <g opacity="0.5" filter="url(#divine-glow)">
+                {/* Large elegant outer ring (Pink) */}
+                <circle cx="100" cy="112" r="50" fill="none" stroke="#f43f5e" strokeWidth="0.8" />
+                {/* Middle ring with fine ticks (White) */}
                 <circle cx="100" cy="112" r="44" fill="none" stroke="#ffffff" strokeWidth="0.5" strokeDasharray="1.5 4" />
-                {/* Inner ring */}
+                {/* Inner ring (Pink/Gold) */}
                 <circle cx="100" cy="112" r="38" fill="none" stroke="url(#gold-grad)" strokeWidth="0.6" />
               </g>
 
-              {/* 3. Layer 1: Clockwise Outer Astrolabe (40s) */}
+              {/* 3. Layer 1: Clockwise Outer Astrolabe (40s - ピンク・白ベース) */}
               <motion.g
                 animate={{ rotate: 360 }}
                 transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
                 style={{ originX: '100px', originY: '112px' }}
               >
-                {/* 12-pointed star (Two overlapping hexagons + square) */}
-                <polygon points="100,24 143,33 176,66 185,110 176,154 143,187 100,196 57,187 24,154 15,110 24,66 57,33" fill="none" stroke="url(#gold-grad)" strokeWidth="0.4" opacity="0.18" />
-                <polygon points="100,24 176,66 176,154 100,196 24,154 24,66" fill="none" stroke="#ffffff" strokeWidth="0.3" opacity="0.12" />
-                <polygon points="138,28 182,102 144,180 62,180 18,102 62,28" fill="none" stroke="url(#gold-grad)" strokeWidth="0.3" opacity="0.12" />
+                {/* 12-pointed star (Pink & White) */}
+                <polygon points="100,24 143,33 176,66 185,110 176,154 143,187 100,196 57,187 24,154 15,110 24,66 57,33" fill="none" stroke="#f43f5e" strokeWidth="0.5" opacity="0.22" />
+                <polygon points="100,24 176,66 176,154 100,196 24,154 24,66" fill="none" stroke="#ffffff" strokeWidth="0.3" opacity="0.15" />
                 
                 {/* Outer micro-tick ring */}
-                <circle cx="100" cy="112" r="80" fill="none" stroke="url(#gold-grad)" strokeWidth="0.6" strokeDasharray="1 3" opacity="0.4" />
-                <circle cx="100" cy="112" r="83" fill="none" stroke="url(#gold-grad)" strokeWidth="0.3" opacity="0.2" />
+                <circle cx="100" cy="112" r="80" fill="none" stroke="#f43f5e" strokeWidth="0.6" strokeDasharray="1 3" opacity="0.4" />
               </motion.g>
 
               {/* 4. Layer 2: Counter-Clockwise Middle Bezel (22s) */}
@@ -306,11 +354,46 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                 style={{ originX: '100px', originY: '112px' }}
               >
                 {/* Segmented gear ring */}
-                <circle cx="100" cy="112" r="70" fill="none" stroke={stageColor} strokeWidth="0.8" strokeDasharray="8 6" opacity="0.25" />
+                <circle cx="100" cy="112" r="70" fill="none" stroke="#ec4899" strokeWidth="0.8" strokeDasharray="8 6" opacity="0.3" />
                 {/* Inner dotted ring */}
-                <circle cx="100" cy="112" r="66" fill="none" stroke="#ffffff" strokeWidth="0.5" strokeDasharray="2 4" opacity="0.35" />
+                <circle cx="100" cy="112" r="66" fill="none" stroke="#ffffff" strokeWidth="0.5" strokeDasharray="2 4" opacity="0.4" />
                 {/* Geometric intersecting lines */}
-                <path d="M 100,46 L 100,178 M 34,112 L 166,112 M 53,65 L 147,159 M 147,65 L 53,159" stroke="#ffffff" strokeWidth="0.2" opacity="0.15" />
+                <path d="M 100,46 L 100,178 M 34,112 L 166,112 M 53,65 L 147,159 M 147,65 L 53,159" stroke="#ffffff" strokeWidth="0.2" opacity="0.2" />
+              </motion.g>
+
+              {/* 要素4: 3重アストロラーベ構造（Extra Outer Tick Ring - 12s 高速回転） */}
+              <motion.g
+                animate={{ rotate: 360 }}
+                transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                style={{ originX: '100px', originY: '112px' }}
+              >
+                <circle cx="100" cy="112" r="86" fill="none" stroke="#f43f5e" strokeWidth="0.4" strokeDasharray="2 8" opacity="0.35" />
+                <circle cx="100" cy="112" r="89" fill="none" stroke="#ffffff" strokeWidth="0.3" strokeDasharray="1 15" opacity="0.5" />
+              </motion.g>
+
+              {/* 要素2: 浮遊するヘキサルーン軌道（Floating Hexa-Runes） */}
+              <motion.g
+                animate={{ rotate: -360 }}
+                transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
+                style={{ originX: '100px', originY: '112px' }}
+                opacity="0.8"
+              >
+                {/* 6 tiny hexagons arranged in a circle of radius 45 */}
+                {Array.from({ length: 6 }).map((_, idx) => {
+                  const angle = (idx * 60) * (Math.PI / 180);
+                  const cx = 100 + 44 * Math.cos(angle);
+                  const cy = 112 + 44 * Math.sin(angle);
+                  return (
+                    <polygon
+                      key={idx}
+                      points={`${cx},${cy-2.5} ${cx+2.2},${cy-1.2} ${cx+2.2},${cy+1.2} ${cx},${cy+2.5} ${cx-2.2},${cy+1.2} ${cx-2.2},${cy-1.2}`}
+                      fill="none"
+                      stroke="#ffffff"
+                      strokeWidth="0.5"
+                      filter="url(#divine-glow)"
+                    />
+                  );
+                })}
               </motion.g>
 
               {/* 5. Layer 3: 3D Gyroscopic Orbits */}
@@ -320,7 +403,7 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                   animate={{ rotate: 360 }}
                   transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
                   cx="100" cy="112" rx="72" ry="18" 
-                  fill="none" stroke="url(#gold-grad)" strokeWidth="0.5" strokeDasharray="5 10" opacity="0.3"
+                  fill="none" stroke="#f43f5e" strokeWidth="0.5" strokeDasharray="5 10" opacity="0.35"
                   transform="rotate(-25 100 112)"
                   style={{ originX: '100px', originY: '112px' }}
                 />
@@ -329,16 +412,16 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                   animate={{ rotate: -360 }}
                   transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
                   cx="100" cy="112" rx="72" ry="18" 
-                  fill="none" stroke="#ffffff" strokeWidth="0.4" strokeDasharray="15 5" opacity="0.25"
+                  fill="none" stroke="#ffffff" strokeWidth="0.4" strokeDasharray="15 5" opacity="0.3"
                   transform="rotate(25 100 112)"
                   style={{ originX: '100px', originY: '112px' }}
                 />
               </g>
 
-              {/* 6. Triple Divine Halos */}
+              {/* Triple Divine Halos */}
               <g filter="url(#divine-glow)">
                 {/* Inner thick halo */}
-                <circle cx="100" cy="52" r="20" fill="none" stroke="url(#gold-grad)" strokeWidth="2.2" />
+                <circle cx="100" cy="52" r="20" fill="none" stroke="#f43f5e" strokeWidth="2.2" />
                 {/* Middle dashed halo */}
                 <circle cx="100" cy="52" r="25" fill="none" stroke="#ffffff" strokeWidth="0.8" opacity="0.85" strokeDasharray="3 2" />
                 {/* Outer micro-dotted halo */}
@@ -350,27 +433,53 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
               
               {/* Body (Divine Blade / Sword) */}
               <g filter="url(#divine-glow)">
-                <polygon points="100,90 114,165 100,195 86,165" fill="url(#seraph-body-grad)" stroke="url(#gold-grad)" strokeWidth="0.5" />
+                <polygon points="100,90 114,165 100,195 86,165" fill="url(#seraph-body-grad)" stroke="#f43f5e" strokeWidth="0.5" />
                 <polygon points="100,98 106,155 100,180 94,155" fill="#ffffff" opacity="0.95" />
               </g>
 
-              {/* 7. 6 Wings (3 Pairs in Luxury Rose Gold Gradients) */}
+              {/* 7. 6 Wings (3 Pairs in Luxury Rose Gold Gradients + 要素1: 翼の骨格線) */}
               <motion.g
                 animate={{ scale: [1, 1.03, 1] }}
                 transition={{ duration: floatDuration * 0.8, repeat: Infinity, ease: "easeInOut" }}
                 style={{ originX: '100px', originY: '112px' }}
               >
-                {/* Upper Wings (Large, pointing up-outward) */}
-                <path d="M 88,96 L 26,45 L 56,132 L 88,115 Z" fill="url(#rose-gold-left)" stroke="url(#gold-grad)" strokeWidth="0.5" opacity="0.95" filter="url(#divine-glow)" />
-                <path d="M 112,96 L 174,45 L 144,132 L 112,115 Z" fill="url(#rose-gold-right)" stroke="url(#gold-grad)" strokeWidth="0.5" opacity="0.95" filter="url(#divine-glow)" />
-                
-                {/* Middle Wings (Pointing outward) */}
-                <path d="M 88,112 L 15,102 L 48,160 L 88,132 Z" fill="url(#rose-gold-left)" opacity="0.8" />
-                <path d="M 112,112 L 185,102 L 152,160 L 112,132 Z" fill="url(#rose-gold-right)" opacity="0.8" />
-                
-                {/* Lower Wings (Pointing down-outward) */}
-                <path d="M 88,128 L 32,165 L 62,188 L 88,148 Z" fill="url(#rose-gold-left)" opacity="0.5" />
-                <path d="M 112,128 L 168,165 L 138,188 L 112,148 Z" fill="url(#rose-gold-right)" opacity="0.5" />
+                {/* Left Wings */}
+                <g filter="url(#divine-glow)">
+                  {/* Upper Left Wing */}
+                  <path d="M 88,96 L 26,45 L 56,132 L 88,115 Z" fill="url(#rose-gold-left)" stroke="#ffffff" strokeWidth="0.5" opacity="0.95" />
+                  {/* 要素1: 翼の骨格線 (Feather/Rib lines) */}
+                  <line x1="88" y1="96" x2="38" y2="62" stroke="#ffffff" strokeWidth="0.7" opacity="0.8" />
+                  <line x1="88" y1="105" x2="48" y2="92" stroke="#f43f5e" strokeWidth="0.6" opacity="0.7" />
+                  <line x1="88" y1="112" x2="58" y2="122" stroke="#f43f5e" strokeWidth="0.5" opacity="0.5" />
+
+                  {/* Middle Left Wing */}
+                  <path d="M 88,112 L 15,102 L 48,160 L 88,132 Z" fill="url(#rose-gold-left)" opacity="0.8" />
+                  <line x1="88" y1="112" x2="28" y2="110" stroke="#ffffff" strokeWidth="0.6" opacity="0.7" />
+                  <line x1="88" y1="122" x2="38" y2="138" stroke="#f43f5e" strokeWidth="0.5" opacity="0.6" />
+
+                  {/* Lower Left Wing */}
+                  <path d="M 88,128 L 32,165 L 62,188 L 88,148 Z" fill="url(#rose-gold-left)" opacity="0.5" />
+                  <line x1="88" y1="128" x2="42" y2="160" stroke="#ffffff" strokeWidth="0.5" opacity="0.5" />
+                </g>
+
+                {/* Right Wings */}
+                <g filter="url(#divine-glow)">
+                  {/* Upper Right Wing */}
+                  <path d="M 112,96 L 174,45 L 144,132 L 112,115 Z" fill="url(#rose-gold-right)" stroke="#ffffff" strokeWidth="0.5" opacity="0.95" />
+                  {/* 要素1: 翼の骨格線 */}
+                  <line x1="112" y1="96" x2="162" y2="62" stroke="#ffffff" strokeWidth="0.7" opacity="0.8" />
+                  <line x1="112" y1="105" x2="152" y2="92" stroke="#f43f5e" strokeWidth="0.6" opacity="0.7" />
+                  <line x1="112" y1="112" x2="142" y2="122" stroke="#f43f5e" strokeWidth="0.5" opacity="0.5" />
+
+                  {/* Middle Right Wing */}
+                  <path d="M 112,112 L 185,102 L 152,160 L 112,132 Z" fill="url(#rose-gold-right)" opacity="0.8" />
+                  <line x1="112" y1="112" x2="172" y2="110" stroke="#ffffff" strokeWidth="0.6" opacity="0.7" />
+                  <line x1="112" y1="122" x2="162" y2="138" stroke="#f43f5e" strokeWidth="0.5" opacity="0.6" />
+
+                  {/* Lower Right Wing */}
+                  <path d="M 112,128 L 168,165 L 138,188 L 112,148 Z" fill="url(#rose-gold-right)" opacity="0.5" />
+                  <line x1="112" y1="128" x2="158" y2="160" stroke="#ffffff" strokeWidth="0.5" opacity="0.5" />
+                </g>
               </motion.g>
               
               {/* 8. Glowing Heart Core with Cross-Star */}
@@ -383,34 +492,38 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
               </g>
 
               {/* 9. Floating Sparks (Diamond Sparkle Particles) */}
-              <g opacity="0.8">
+              <g opacity="0.9">
                 {/* Sparkle 1 */}
                 <motion.path 
-                  animate={{ opacity: [0.3, 0.9, 0.3], scale: [0.8, 1.2, 0.8] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                  d="M 50,55 L 52,58 L 50,61 L 48,58 Z" 
+                  animate={{ opacity: [0.3, 1.0, 0.3], scale: [0.8, 1.3, 0.8] }}
+                  transition={{ duration: 2.5, repeat: Infinity }}
+                  d="M 50,45 L 52,48 L 50,51 L 48,48 Z" 
                   fill="#ffffff" 
+                  filter="url(#divine-glow)"
                 />
                 {/* Sparkle 2 */}
                 <motion.path 
-                  animate={{ opacity: [0.4, 1.0, 0.4], scale: [0.9, 1.3, 0.9] }}
-                  transition={{ duration: 2.4, repeat: Infinity, delay: 0.5 }}
-                  d="M 150,65 L 152,68 L 150,71 L 148,68 Z" 
-                  fill="#fef08a" 
+                  animate={{ opacity: [0.4, 1.0, 0.4], scale: [0.9, 1.4, 0.9] }}
+                  transition={{ duration: 2.1, repeat: Infinity, delay: 0.4 }}
+                  d="M 150,55 L 152,58 L 150,61 L 148,58 Z" 
+                  fill="#f43f5e" 
+                  filter="url(#divine-glow)"
                 />
                 {/* Sparkle 3 */}
                 <motion.path 
-                  animate={{ opacity: [0.2, 0.8, 0.2], scale: [0.7, 1.1, 0.7] }}
-                  transition={{ duration: 3.5, repeat: Infinity, delay: 1.0 }}
-                  d="M 55,155 L 57,157 L 55,159 L 53,157 Z" 
-                  fill="#fb7185" 
+                  animate={{ opacity: [0.2, 0.9, 0.2], scale: [0.7, 1.2, 0.7] }}
+                  transition={{ duration: 3.1, repeat: Infinity, delay: 0.8 }}
+                  d="M 45,145 L 47,147 L 45,149 L 43,147 Z" 
+                  fill="#ec4899" 
+                  filter="url(#divine-glow)"
                 />
                 {/* Sparkle 4 */}
                 <motion.path 
-                  animate={{ opacity: [0.3, 0.9, 0.3], scale: [0.8, 1.2, 0.8] }}
-                  transition={{ duration: 2.8, repeat: Infinity, delay: 0.2 }}
-                  d="M 145,155 L 147,157 L 145,159 L 143,157 Z" 
+                  animate={{ opacity: [0.3, 1.0, 0.3], scale: [0.8, 1.3, 0.8] }}
+                  transition={{ duration: 2.6, repeat: Infinity, delay: 0.2 }}
+                  d="M 155,145 L 157,147 L 155,149 L 153,147 Z" 
                   fill="#ffffff" 
+                  filter="url(#divine-glow)"
                 />
               </g>
             </g>
