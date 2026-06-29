@@ -62,34 +62,20 @@ export async function GET(req: NextRequest) {
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: '#0c0c0c',
-            backgroundImage: 'radial-gradient(circle at 50% 50%, #1a1a1a 0%, #0c0c0c 100%)',
+            background: 'linear-gradient(135deg, #1a1a1a 0%, #0c0c0c 100%)',
             position: 'relative',
             padding: '40px',
             fontFamily: 'sans-serif',
           }}
         >
-          {/* 背景のドットグリッドデザイン */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              opacity: 0.08,
-              backgroundImage: 'radial-gradient(circle at 20px 20px, #ffffff 2%, transparent 0%)',
-              backgroundSize: '40px 40px',
-            }}
-          />
-
-          {/* 背面のぼかしオーラ発光エフェクト */}
+          {/* 背面のぼかしオーラ発光エフェクト (Satori互換の放射状グラデーションで自然なボケを表現) */}
           <div
             style={{
               position: 'absolute',
               width: '600px',
               height: '350px',
               borderRadius: '200px',
-              background: `radial-gradient(circle, ${glowColor} 0%, transparent 70%)`,
+              background: `radial-gradient(circle, ${glowColor} 0%, rgba(12, 12, 12, 0) 70%)`,
               top: '140px',
               left: '300px',
             }}
@@ -139,7 +125,7 @@ export async function GET(req: NextRequest) {
             </span>
           </div>
 
-          {/* デジタル名刺本体プレビュー */}
+          {/* デジタル名刺本体プレビュー (Satori完全互換のクリーンなデザイン) */}
           <div
             style={{
               display: 'flex',
@@ -155,20 +141,6 @@ export async function GET(req: NextRequest) {
               justifyContent: 'space-between',
             }}
           >
-            {/* カード内部のグリッドライン */}
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                opacity: 0.12,
-                backgroundImage: 'linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%)',
-                backgroundSize: '28px 28px',
-              }}
-            />
-
             {/* カード上段：会社名とホログラムマーク */}
             <div
               style={{
@@ -259,7 +231,7 @@ export async function GET(req: NextRequest) {
                 </span>
               </div>
 
-              {/* プロフィール画像アバター */}
+              {/* プロフィール画像アバター (Satori互換の丸型クリッピング) */}
               {profile.photo_url && (
                 <div
                   style={{
@@ -269,8 +241,6 @@ export async function GET(req: NextRequest) {
                     border: `1.5px solid ${borderColor}`,
                     overflow: 'hidden',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     backgroundColor: '#111111',
                     boxShadow: `0 0 20px ${glowColor}`,
                   }}
@@ -280,9 +250,9 @@ export async function GET(req: NextRequest) {
                     src={photoUrl}
                     alt={displayName}
                     style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
+                      width: '94px',
+                      height: '94px',
+                      borderRadius: '47px',
                     }}
                   />
                 </div>
