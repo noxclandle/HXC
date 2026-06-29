@@ -6,151 +6,145 @@ import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
 /**
- * 【管理者限定】データベースの整合性をセルフスキャンする
- * GET /api/admin/integrity
+ * GET: データベースの整合性をチェック（診断）
  */
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id || !ADMIN_ROLES.includes(session.user.role)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 1. RT Ledger Check (残高と履歴の突合)
+    // 1. RT残高の不整合監査
     const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        rt_balance: true,
-        rt_transactions: {
-          select: {
-            amount: true
-          }
+      select: { id: true, rt_balance: true }
+    });
+
+    let mismatchCount = 0;
+
+    // 各ユーザーについて、取引履歴（RTTransaction）の合計を算出
+    for (const user of users) {
+      const txSum = await prisma.rTTransaction.aggregate({
+        _sum: { amount: true },
+        where: { user_id: user.id }
+      });
+      const expectedBalance = txSum._sum.amount || 0;
+      if (user.rt_balance !== expectedBalance) {
+        mismatchCount++;
+      }
+    }
+
+    // 2. 孤立カードのチェック（ユーザーIDが設定されているが、そのユーザーが実在しない）
+    const cards = await prisma.card.findMany({
+      where: { user_id: { not: null } },
+      select: { uid: true, user_id: true }
+    });
+
+    let orphanedCount = 0;
+
+    for (const card of cards) {
+      if (card.user_id) {
+        const userExists = await prisma.user.findUnique({
+          where: { id: card.user_id },
+          select: { id: true }
+        });
+        if (!userExists) {
+          orphanedCount++;
         }
       }
-    });
-
-    const rtMismatches: any[] = [];
-    for (const u of users) {
-      const transactionSum = u.rt_transactions.reduce((sum, t) => sum + t.amount, 0);
-      if (u.rt_balance !== transactionSum) {
-        rtMismatches.push({
-          userId: u.id,
-          name: u.name,
-          email: u.email,
-          cachedBalance: u.rt_balance,
-          actualSum: transactionSum,
-          diff: transactionSum - u.rt_balance
-        });
-      }
     }
 
-    // 2. Orphaned Cards Check (有効だがユーザーのいないカード)
-    const orphanedCards = await prisma.card.findMany({
-      where: {
-        status: "active",
-        user_id: null
-      },
-      select: {
-        uid: true,
-        internal_serial: true,
-        activated_at: true
-      }
-    });
-
-    // 3. Unresolved Reports Check
-    const pendingReportsCount = await prisma.report.count({
+    // 3. 未解決の通報件数
+    const pendingReports = await prisma.report.count({
       where: { status: "pending" }
     });
 
-    const isHealthy = rtMismatches.length === 0 && orphanedCards.length === 0;
+    const isHealthy = mismatchCount === 0 && orphanedCount === 0;
 
     return NextResponse.json({
-      success: true,
       isHealthy,
       diagnostics: {
         rtLedger: {
           checkedCount: users.length,
-          mismatchCount: rtMismatches.length,
-          mismatches: rtMismatches,
-          status: rtMismatches.length === 0 ? "SECURE" : "DISCREPANCY"
+          mismatchCount
         },
         cards: {
-          checkedCount: await prisma.card.count(),
-          orphanedCount: orphanedCards.length,
-          orphaned: orphanedCards,
-          status: orphanedCards.length === 0 ? "SECURE" : "ORPHANED"
+          checkedCount: cards.length,
+          orphanedCount
         },
         reports: {
-          pendingCount: pendingReportsCount,
-          status: pendingReportsCount === 0 ? "SECURE" : "ATTENTION"
+          pendingCount: pendingReports
         }
       }
     });
-
   } catch (error: any) {
-    console.error("Integrity check error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("Integrity check failed:", error);
+    return NextResponse.json({ error: "Integrity check failed" }, { status: 500 });
   }
 }
 
 /**
- * 【管理者限定】不整合データを自動修復する (元帳・台帳ベースでの再構築)
- * POST /api/admin/integrity
+ * POST: データベース不整合の自動修復
  */
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id || !ADMIN_ROLES.includes(session.user.role)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // トランザクション内で安全に修復
-    const fixResult = await prisma.$transaction(async (tx) => {
-      const users = await tx.user.findMany({
-        select: {
-          id: true,
-          rt_balance: true,
-          rt_transactions: {
-            select: {
-              amount: true
-            }
-          }
-        }
-      });
+    const users = await prisma.user.findMany({
+      select: { id: true, rt_balance: true }
+    });
 
-      let fixedUsersCount = 0;
-      const details: string[] = [];
+    let fixedUsers = 0;
 
-      for (const u of users) {
-        const transactionSum = u.rt_transactions.reduce((sum, t) => sum + t.amount, 0);
-        if (u.rt_balance !== transactionSum) {
-          // 残高を取引履歴の合計値に強制同期する (原簿優先ルール)
+    // トランザクション処理で安全に不整合残高を履歴元帳と同期
+    await prisma.$transaction(async (tx) => {
+      for (const user of users) {
+        const txSum = await tx.rTTransaction.aggregate({
+          _sum: { amount: true },
+          where: { user_id: user.id }
+        });
+        const expectedBalance = txSum._sum.amount || 0;
+        if (user.rt_balance !== expectedBalance) {
           await tx.user.update({
-            where: { id: u.id },
-            data: { rt_balance: transactionSum }
+            where: { id: user.id },
+            data: { rt_balance: expectedBalance }
           });
-          fixedUsersCount++;
-          details.push(`User ${u.id}: Reconciled balance from ${u.rt_balance} to ${transactionSum} RT.`);
+          fixedUsers++;
         }
       }
-
-      // 有効なのにユーザーがいない孤立カードは安全のため status: "unissued" に戻すか、そのまま残す
-      // ここでは、勝手に紐付けをいじるのは危険なので警告のみとし、RT残高の自動修復のみを行う
-      
-      return { fixedUsersCount, details };
     });
+
+    // 孤立カードの修復（ユーザーIDをクリアし、未発行状態に戻す）
+    const cards = await prisma.card.findMany({
+      where: { user_id: { not: null } },
+      select: { uid: true, user_id: true }
+    });
+
+    let fixedCards = 0;
+    for (const card of cards) {
+      if (card.user_id) {
+        const userExists = await prisma.user.findUnique({
+          where: { id: card.user_id },
+          select: { id: true }
+        });
+        if (!userExists) {
+          await prisma.card.update({
+            where: { uid: card.uid },
+            data: { user_id: null, status: "unissued" }
+          });
+          fixedCards++;
+        }
+      }
+    }
 
     return NextResponse.json({
-      success: true,
-      message: `Reconciliation complete. Fixed ${fixResult.fixedUsersCount} user records. / データ修復が完了しました。${fixResult.fixedUsersCount}件のレコードを同期しました。`,
-      fixedCount: fixResult.fixedUsersCount,
-      details: fixResult.details
+      message: `自動修復が完了しました。修正ユーザー数: ${fixedUsers}名、修正カード数: ${fixedCards}枚`
     });
-
   } catch (error: any) {
-    console.error("Integrity fix error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("Integrity repair failed:", error);
+    return NextResponse.json({ error: "Integrity repair failed" }, { status: 500 });
   }
 }
