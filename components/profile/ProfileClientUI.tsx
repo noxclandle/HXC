@@ -366,30 +366,54 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                         selectedDesign === "silver" ? "bg-gradient-to-br from-zinc-800 to-zinc-950 text-cyan-100 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]" :
                         "bg-gradient-to-br from-zinc-950 via-void to-zinc-900 text-rose-100 border border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.15)]"
                       }`}>
-                        {/* NFC Chip */}
-                        <div className={`w-8 h-7 rounded border flex items-center justify-center bg-white/[0.03] ${
-                          selectedDesign === "white" ? "border-zinc-300" :
-                          selectedDesign === "silver" ? "border-cyan-500/40" :
-                          "border-rose-500/40"
-                        }`}>
-                          <div className="w-3.5 h-3.5 border-t border-r border-white/20" />
+                        {/* Top Row */}
+                        <div className="flex justify-between items-start z-10">
+                          {/* Company Name on Top Left */}
+                          <div className="flex flex-col text-left">
+                            <div className="text-[8px] font-bold tracking-[0.15em] uppercase opacity-85 truncate max-w-[170px]">
+                              {shareBackForm.company || "TEMPORARY ID"}
+                            </div>
+                            <div className="text-[5px] opacity-45 tracking-widest uppercase mt-0.5">
+                              {shareBackForm.company ? "ORGANIZATION" : "GUEST CONNECTION"}
+                            </div>
+                          </div>
+
+                          {/* NFC Chip on Top Right */}
+                          <div className={`w-7 h-6 rounded border flex items-center justify-center bg-white/[0.02] ${
+                            selectedDesign === "white" ? "border-zinc-300" :
+                            selectedDesign === "silver" ? "border-cyan-500/30" :
+                            "border-rose-500/30"
+                          }`}>
+                            <div className="w-3 h-3 border-t border-r border-white/20" />
+                          </div>
                         </div>
 
-                        {/* Card Details */}
-                        <div className="space-y-1.5 z-10 text-left">
-                          <div className="text-[11px] font-bold tracking-wider truncate">{shareBackForm.name || "YOUR NAME"}</div>
-                          <div className="text-[7px] opacity-60 tracking-widest uppercase truncate">
-                            {shareBackForm.company 
-                              ? `${shareBackForm.company} ${shareBackForm.role ? `| ${shareBackForm.role}` : ""}`
-                              : (shareBackForm.role || "YOUR ROLE / TITLE")
-                            }
+                        {/* Center Row: Name & Title */}
+                        <div className="z-10 text-left my-auto pt-2">
+                          <div className="text-[6.5px] opacity-50 tracking-[0.2em] uppercase font-bold mb-0.5">
+                            {shareBackForm.role || "MEMBER"}
                           </div>
-                          
-                          <div className={`h-[1px] my-1.5 ${selectedDesign === "white" ? "bg-zinc-200" : "bg-white/10"}`} />
-                          
-                          <div className="text-[6.5px] opacity-40 tracking-widest truncate">{shareBackForm.email || "email@example.com"}</div>
-                          <div className="text-[6.5px] opacity-40 tracking-widest truncate">{shareBackForm.phone || "+81 90-0000-0000"}</div>
+                          <div className="text-[14px] font-light tracking-[0.25em] text-white truncate">
+                            {shareBackForm.name || "YOUR NAME"}
+                          </div>
                         </div>
+
+                        {/* Bottom Row: Contacts */}
+                        <div className="z-10 text-left space-y-0.5 pt-1.5 border-t border-white/10">
+                          {shareBackForm.email && (
+                            <div className="text-[6px] opacity-40 tracking-wider truncate">{shareBackForm.email}</div>
+                          )}
+                          {shareBackForm.phone && (
+                            <div className="text-[6px] opacity-40 tracking-wider truncate">{shareBackForm.phone}</div>
+                          )}
+                          {shareBackForm.address && (
+                            <div className="text-[6px] opacity-40 tracking-wider truncate">{shareBackForm.address}</div>
+                          )}
+                          {!shareBackForm.email && !shareBackForm.phone && !shareBackForm.address && (
+                            <div className="text-[6px] opacity-25 tracking-widest">NO CONTACT DETAILS PROVIDED</div>
+                          )}
+                        </div>
+                      </div>
 
                         <div className="absolute right-4 top-4 text-[7px] tracking-[0.25em] opacity-30 font-black uppercase">
                           TEMPORARY
@@ -427,25 +451,49 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                       selectedDesign === "silver" ? "bg-gradient-to-br from-zinc-800 to-zinc-950 text-cyan-100 border border-cyan-500/30" :
                       "bg-gradient-to-br from-zinc-950 via-void to-zinc-900 text-rose-100 border border-rose-500/30"
                     }`}>
-                      <div className={`w-8 h-7 rounded border flex items-center justify-center bg-white/[0.03] ${
-                        selectedDesign === "white" ? "border-zinc-300" :
-                        selectedDesign === "silver" ? "border-cyan-500/40" :
-                        "border-rose-500/40"
-                      }`}>
-                        <div className="w-3.5 h-3.5 border-t border-r border-white/20" />
-                      </div>
-                      <div className="space-y-1.5 z-10">
-                        <div className="text-[11px] font-bold tracking-wider truncate">{shareBackForm.name}</div>
-                        <div className="text-[7px] opacity-60 tracking-widest uppercase truncate">
-                          {shareBackForm.company 
-                            ? `${shareBackForm.company} ${shareBackForm.role ? `| ${shareBackForm.role}` : ""}`
-                            : (shareBackForm.role || "MEMBER")
-                          }
+                      {/* Top Row */}
+                      <div className="flex justify-between items-start z-10">
+                        <div className="flex flex-col text-left">
+                          <div className="text-[8px] font-bold tracking-[0.15em] uppercase opacity-85 truncate max-w-[170px]">
+                            {shareBackForm.company || "TEMPORARY ID"}
+                          </div>
+                          <div className="text-[5px] opacity-45 tracking-widest uppercase mt-0.5">
+                            {shareBackForm.company ? "ORGANIZATION" : "GUEST CONNECTION"}
+                          </div>
                         </div>
-                        <div className={`h-[1px] my-1.5 ${selectedDesign === "white" ? "bg-zinc-200" : "bg-white/10"}`} />
-                        <div className="text-[6.5px] opacity-40 tracking-widest truncate">{shareBackForm.email || "-"}</div>
-                        <div className="text-[6.5px] opacity-40 tracking-widest truncate">{shareBackForm.phone || "-"}</div>
+
+                        <div className={`w-7 h-6 rounded border flex items-center justify-center bg-white/[0.02] ${
+                          selectedDesign === "white" ? "border-zinc-300" :
+                          selectedDesign === "silver" ? "border-cyan-500/30" :
+                          "border-rose-500/30"
+                        }`}>
+                          <div className="w-3 h-3 border-t border-r border-white/20" />
+                        </div>
                       </div>
+
+                      {/* Center Row: Name & Title */}
+                      <div className="z-10 text-left my-auto pt-2">
+                        <div className="text-[6.5px] opacity-50 tracking-[0.2em] uppercase font-bold mb-0.5">
+                          {shareBackForm.role || "MEMBER"}
+                        </div>
+                        <div className="text-[14px] font-light tracking-[0.25em] text-white truncate">
+                          {shareBackForm.name}
+                        </div>
+                      </div>
+
+                      {/* Bottom Row: Contacts */}
+                      <div className="z-10 text-left space-y-0.5 pt-1.5 border-t border-white/10">
+                        {shareBackForm.email && (
+                          <div className="text-[6px] opacity-40 tracking-wider truncate">{shareBackForm.email}</div>
+                        )}
+                        {shareBackForm.phone && (
+                          <div className="text-[6px] opacity-40 tracking-wider truncate">{shareBackForm.phone}</div>
+                        )}
+                        {shareBackForm.address && (
+                          <div className="text-[6px] opacity-40 tracking-wider truncate">{shareBackForm.address}</div>
+                        )}
+                      </div>
+                    </div>
                       <div className="absolute right-4 top-4 text-[7px] tracking-[0.25em] opacity-30 font-black uppercase">
                         TEMPORARY
                       </div>

@@ -242,23 +242,43 @@ export default function MailboxPage() {
                             {/* Card Graphic */}
                             <div className="flex justify-center py-4">
                               <div className={`w-[260px] h-[150px] rounded-2xl p-4 flex flex-col justify-between font-mono text-left relative overflow-hidden shadow-2xl ${bgClass}`}>
-                                <div className={`w-8 h-7 rounded border flex items-center justify-center bg-white/[0.03] ${chipBorder}`}>
-                                  <div className="w-3.5 h-3.5 border-t border-r border-white/20" />
-                                </div>
-                                <div className="space-y-1.5 z-10">
-                                  <div className="text-[11px] font-bold tracking-wider truncate">{contactData.name}</div>
-                                  <div className="text-[7px] opacity-60 tracking-widest uppercase truncate">
-                                    {contactData.company 
-                                      ? `${contactData.company} ${contactData.role ? `| ${contactData.role}` : ""}`
-                                      : (contactData.role || "MEMBER")
-                                    }
+                                {/* Top Row */}
+                                <div className="flex justify-between items-start z-10">
+                                  <div className="flex flex-col text-left">
+                                    <div className="text-[8px] font-bold tracking-[0.15em] uppercase opacity-85 truncate max-w-[150px]">
+                                      {contactData.company || "TEMPORARY ID"}
+                                    </div>
+                                    <div className="text-[5px] opacity-45 tracking-widest uppercase mt-0.5">
+                                      {contactData.company ? "ORGANIZATION" : "GUEST CONNECTION"}
+                                    </div>
                                   </div>
-                                  <div className={`h-[1px] my-1.5 ${design === "white" ? "bg-zinc-200" : "bg-white/10"}`} />
-                                  <div className="text-[6.5px] opacity-40 tracking-widest truncate">{contactData.email || "-"}</div>
-                                  <div className="text-[6.5px] opacity-40 tracking-widest truncate">{contactData.phone || "-"}</div>
+
+                                  <div className={`w-7 h-6 rounded border flex items-center justify-center bg-white/[0.02] ${chipBorder}`}>
+                                    <div className="w-3 h-3 border-t border-r border-white/20" />
+                                  </div>
                                 </div>
-                                <div className="absolute right-4 top-4 text-[7px] tracking-[0.2em] opacity-35 font-black uppercase">
-                                  TEMPORARY
+
+                                {/* Center Row: Name & Title */}
+                                <div className="z-10 text-left my-auto pt-1">
+                                  <div className="text-[6.5px] opacity-50 tracking-[0.2em] uppercase font-bold mb-0.5">
+                                    {contactData.role || "MEMBER"}
+                                  </div>
+                                  <div className="text-[13px] font-light tracking-[0.25em] text-white truncate">
+                                    {contactData.name || "YOUR NAME"}
+                                  </div>
+                                </div>
+
+                                {/* Bottom Row: Contacts */}
+                                <div className="z-10 text-left space-y-0.5 pt-1 border-t border-white/10">
+                                  {contactData.email && (
+                                    <div className="text-[6px] opacity-45 tracking-wider truncate">{contactData.email}</div>
+                                  )}
+                                  {contactData.phone && (
+                                    <div className="text-[6px] opacity-45 tracking-wider truncate">{contactData.phone}</div>
+                                  )}
+                                  {contactData.address && (
+                                    <div className="text-[6px] opacity-45 tracking-wider truncate">{contactData.address}</div>
+                                  )}
                                 </div>
                               </div>
                             </div>
