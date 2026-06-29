@@ -384,7 +384,7 @@ export default function ResidentAgent() {
             transition={{ duration: 5, repeat: Infinity }} 
             className="absolute -inset-6 rounded-full blur-2xl pointer-events-none" 
             style={{
-              backgroundColor: level >= 30 ? '#fb7185' : level >= 20 ? '#fb923c' : level >= 10 ? '#38bdf8' : '#fbbf24'
+              backgroundColor: level >= 30 ? '#ffffff' : level >= 20 ? '#fb923c' : level >= 10 ? '#38bdf8' : '#fbbf24'
             }}
           />
           

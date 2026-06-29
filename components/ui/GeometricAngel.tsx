@@ -52,12 +52,12 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
       <motion.div
         animate={{
           scale: stage === 4 ? [1, 1.3, 1] : stage === 3 ? [1, 1.15, 1] : [1, 1.05, 1],
-          opacity: stage === 4 ? [0.2, 0.45, 0.2] : stage === 3 ? [0.12, 0.25, 0.12] : [0.08, 0.18, 0.08],
+          opacity: stage === 4 ? [0.25, 0.5, 0.25] : stage === 3 ? [0.12, 0.25, 0.12] : [0.08, 0.18, 0.08],
         }}
         transition={{ duration: floatDuration * 1.5, repeat: Infinity, ease: "easeInOut" }}
         className={`absolute inset-0 rounded-full blur-3xl`}
         style={{
-          backgroundColor: stage === 4 ? '#ec4899' : stageColor, // Strong Pink for Seraph background
+          backgroundColor: stage === 4 ? '#ffffff' : stageColor, // Pure White surrounding glow for Seraph
         }}
       />
 
@@ -120,11 +120,10 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
               <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
             </linearGradient>
 
-            {/* Blinding Pink Backlight Radial Gradient */}
-            <radialGradient id="hyper-pink-glow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
-              <stop offset="35%" stopColor="#ec4899" stopOpacity="0.8" />
-              <stop offset="70%" stopColor="#f43f5e" stopOpacity="0.3" />
+            {/* Blinding White Backlight Radial Gradient */}
+            <radialGradient id="hyper-white-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+              <stop offset="50%" stopColor="#ffffff" stopOpacity="0.4" />
               <stop offset="100%" stopColor="#000000" stopOpacity="0" />
             </radialGradient>
 
@@ -262,8 +261,8 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
           {/* ================= STAGE 4: SERAPH / ULTRA-PREMIUM (Lv 30+) ================= */}
           {stage === 4 && (
             <g>
-              {/* 要素3: 超発光ピンクバックライトオーラ (Hyper-Glow Pink Back Light) */}
-              <circle cx="100" cy="112" r="95" fill="url(#hyper-pink-glow)" filter="url(#divine-glow)" opacity="0.65" />
+              {/* 要素3: 超発光純白バックライトオーラ (Hyper-Glow White Back Light) */}
+              <circle cx="100" cy="112" r="95" fill="url(#hyper-white-glow)" filter="url(#divine-glow)" opacity="0.75" />
 
               {/* 要素5: 上昇する光の粒子柱（紫の小さな六角形をアセンディング） */}
               <g>
@@ -309,8 +308,8 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                 />
               </g>
 
-              {/* 1. Divine Aura / Radial Rays (後光 - 純白のオーラに変更) */}
-              <g opacity="0.5" filter="url(#divine-glow)">
+              {/* 1. Divine Aura / Radial Rays (後光 - 純白のオーラ) */}
+              <g opacity="0.6" filter="url(#divine-glow)">
                 {/* 16 radiating light rays emitting from the core */}
                 {Array.from({ length: 16 }).map((_, idx) => {
                   const angle = (idx * 360) / 16;
@@ -325,6 +324,34 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                       strokeWidth="1.0"
                       transform={`rotate(${angle} 100 112)`}
                     />
+                  );
+                })}
+              </g>
+
+              {/* 10. Sacred Purple Hexagon Drum Ring (背中の紫ヘキサゴン太鼓の輪) */}
+              {/* 翼のすぐ後ろに配置されるよう、ここでレンダリングします */}
+              <g filter="url(#divine-glow)">
+                {/* Connecting Ring Line */}
+                <circle cx="100" cy="112" r="58" fill="none" stroke="url(#gold-grad)" strokeWidth="0.8" opacity="0.6" />
+                
+                {/* 8 Purple Hexagons arranged at regular intervals */}
+                {Array.from({ length: 8 }).map((_, idx) => {
+                  const angle = (idx * 45) * (Math.PI / 180);
+                  const cx = 100 + 58 * Math.cos(angle);
+                  const cy = 112 + 58 * Math.sin(angle);
+                  const r = 5.5; // Size of the drums
+                  return (
+                    <g key={idx}>
+                      {/* The drum hexagon */}
+                      <polygon
+                        points={`${cx},${cy-r} ${cx+r*0.86},${cy-r*0.5} ${cx+r*0.86},${cy+r*0.5} ${cx},${cy+r} ${cx-r*0.86},${cy+r*0.5} ${cx-r*0.86},${cy-r*0.5}`}
+                        fill="rgba(168, 85, 247, 0.45)"
+                        stroke="#c084fc"
+                        strokeWidth="1"
+                      />
+                      {/* Small white core in the center of the drum */}
+                      <circle cx={cx} cy={cy} r="1.2" fill="#ffffff" />
+                    </g>
                   );
                 })}
               </g>
