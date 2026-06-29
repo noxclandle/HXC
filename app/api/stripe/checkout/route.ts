@@ -15,7 +15,7 @@ const stripe = new Stripe(stripeKey, {
 
 export async function POST(req: NextRequest) {
   try {
-    const { tier, variant, customerDetails } = await req.json();
+    const { tier, variant, customerDetails, referrerId } = await req.json();
 
     if (!tier) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -49,8 +49,8 @@ export async function POST(req: NextRequest) {
           tier: tier,
           variant: variant || "Original",
           price: numericPrice,
-          customer_email: "test@example.com",
-          customer_name: "テストユーザー",
+          customer_email: customerDetails?.email || "test@example.com",
+          customer_name: customerDetails?.name || "テストユーザー",
           shipping_address: {
             postal_code: "150-0001",
             state: "東京都",
@@ -61,6 +61,57 @@ export async function POST(req: NextRequest) {
           status: "paid",
         },
       });
+
+      // ローカルテスト用に紹介システムをモック実行 (ポイント整合性の検証用)
+      if (referrerId) {
+        const referrer = await prisma.user.findUnique({
+          where: { id: referrerId }
+        });
+        if (referrer) {
+          await prisma.$transaction(async (tx) => {
+            // A. 紹介者に3000 RTを付与
+            await tx.rTTransaction.create({
+              data: {
+                user_id: referrer.id,
+                amount: 3000,
+                type: "REFERRAL_BONUS",
+                description: `Mock Referral bonus for Session: ${mockSessionId} (Buyer: ${customerDetails?.email || "test@example.com"})`
+              }
+            });
+
+            // B. 残高の加算
+            await tx.user.update({
+              where: { id: referrer.id },
+              data: {
+                rt_balance: {
+                  increment: 3000
+                }
+              }
+            });
+
+            // C. 30人紹介によるレジェンダリー称号チェック
+            const referralCount = await tx.rTTransaction.count({
+              where: {
+                user_id: referrer.id,
+                type: "REFERRAL_BONUS"
+              }
+            });
+
+            if (referralCount >= 30) {
+              const currentTitles = (referrer.unlocked_titles as string[]) || [];
+              if (!currentTitles.includes("Resonance Catalyst")) {
+                await tx.user.update({
+                  where: { id: referrer.id },
+                  data: {
+                    unlocked_titles: [...currentTitles, "Resonance Catalyst"]
+                  }
+                });
+              }
+            }
+          });
+          console.log(`[Mock Referral] Successfully processed 3,000 RT referral bonus to ${referrer.email}`);
+        }
+      }
 
       return NextResponse.json({ url: `${baseUrl}/purchase/success?session_id=${mockSessionId}` });
     }
@@ -93,7 +144,8 @@ export async function POST(req: NextRequest) {
         custom_name: customerDetails?.name,
         custom_handle: customerDetails?.handle,
         custom_phone: customerDetails?.phone,
-        custom_email: customerDetails?.email
+        custom_email: customerDetails?.email,
+        referrerId: referrerId || ""
       },
     });
 

@@ -133,6 +133,18 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
     };
   }, [slug, data]);
 
+  // ビジターがプロフィールを閲覧した際、紹介者IDとしてlocalStorageに保存（購入時のトラッキング用）
+  useEffect(() => {
+    if (data?.id) {
+      try {
+        localStorage.setItem("hxc_referrer_id", data.id);
+        console.log(`[Referral] Saved referrer ID: ${data.id}`);
+      } catch (e) {
+        console.error("Failed to save referrer ID to localStorage:", e);
+      }
+    }
+  }, [data]);
+
   const handleOpen = () => {
     setIsOpened(true);
     // アンヴェイル演出（1.2秒）の後にUIを表示
