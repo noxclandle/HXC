@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Mail, MessageSquare, Calendar, Trash2, Eye, ShieldCheck, CheckCircle2, ChevronRight } from "lucide-react";
@@ -68,7 +68,7 @@ export default function MailboxPage() {
     return null;
   };
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       const res = await fetch("/api/user/messages", { cache: "no-store" });
       if (res.ok) {
@@ -81,11 +81,11 @@ export default function MailboxPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     fetchMessages();
-  }, []);
+  }, [fetchMessages]);
 
   const handleSelectMessage = async (msg: CardMessage) => {
     setSelectedMessage(msg);

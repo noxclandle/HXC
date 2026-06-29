@@ -89,11 +89,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   try {
-    // Fetch only official/admin profiles to be indexed
+    // Fetch all public member profiles to be indexed
     const users = await prisma.user.findMany({
       where: {
-        handle_name: { not: null },
-        role: { in: ['admin', 'architect', 'fixer', 'mastermind', 'manager'] }
+        handle_name: { not: null }
       },
       select: {
         handle_name: true,
