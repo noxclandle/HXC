@@ -46,6 +46,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = profile.title ? `${profile.title} | ` : "";
   const displayName = user.name || user.handle_name || "MEMBER";
 
+  // 美麗な動的名刺OGP画像のURLを生成
+  const ogImageUrl = `https://virtual-business-card.hexa-relation.com/api/og?slug=${encodeURIComponent(decodedSlug)}`;
+
   return {
     title: `${displayName}`,
     description: profile.bio || `${displayName} のデジタルアイデンティティ / Digital Identity for ${displayName}.`,
@@ -61,7 +64,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: profile.bio || "アイデンティティを同期する次世代スマート名刺。",
       images: [
         {
-          url: user.photo_url || "/ogp_card.png",
+          url: ogImageUrl,
           width: 1200,
           height: 630,
           alt: `${displayName}'s Hexa Card`,
@@ -72,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       title: `${title}${displayName} | Hexa Card`,
       description: profile.bio || "アイデンティティを同期する次世代スマート名刺。",
-      images: [user.photo_url || "/ogp_card.png"],
+      images: [ogImageUrl],
     },
   };
 }
