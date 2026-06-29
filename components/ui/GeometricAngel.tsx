@@ -329,28 +329,47 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
               </g>
 
               {/* 10. Sacred Purple Hexagon Drum Ring (背中の紫ヘキサゴン太鼓の輪) */}
-              {/* 翼のすぐ後ろに配置されるよう、ここでレンダリングします */}
-              {/* 半径を80に広げ、羽の外側を大きく囲むように配置します */}
+              {/* 翼のすぐ後ろに配置し、半径を88に広げて羽の外側を大きく囲みます */}
+              {/* 真下の太鼓（idx === 2）を1つだけ取り外し、各太鼓が様々な色のオーラを放ちます */}
               <g filter="url(#divine-glow)">
                 {/* Connecting Ring Line */}
-                <circle cx="100" cy="112" r="80" fill="none" stroke="url(#gold-grad)" strokeWidth="1.0" opacity="0.65" />
+                <circle cx="100" cy="112" r="88" fill="none" stroke="url(#gold-grad)" strokeWidth="1.0" opacity="0.55" />
                 
                 {/* 8 Purple Hexagons arranged at regular intervals */}
                 {Array.from({ length: 8 }).map((_, idx) => {
+                  // 真下の太鼓（90度、idx === 2）はスキップして取り外す
+                  if (idx === 2) return null;
+
                   const angle = (idx * 45) * (Math.PI / 180);
-                  const cx = 100 + 80 * Math.cos(angle);
-                  const cy = 112 + 80 * Math.sin(angle);
-                  const r = 6.5; // Size of the drums (slightly larger)
+                  const cx = 100 + 88 * Math.cos(angle);
+                  const cy = 112 + 88 * Math.sin(angle);
+                  const r = 6.5; // Size of the drums
+
+                  // 各太鼓が放つ個別のオーラカラー（紫、シアン、ローズ、ゴールド、ピンク、エメラルド、アジュール）
+                  const drumColors = [
+                    '#c084fc', // 0: 右 (紫)
+                    '#22d3ee', // 1: 右下 (シアン)
+                    '#ffffff', // 2: 真下 (スキップ)
+                    '#fb7185', // 3: 左下 (ローズ)
+                    '#fbbf24', // 4: 左 (ゴールド)
+                    '#f472b6', // 5: 左上 (ピンク)
+                    '#34d399', // 6: 真上 (エメラルド)
+                    '#60a5fa', // 7: 右上 (アジュール)
+                  ];
+
                   return (
                     <g key={idx}>
-                      {/* The drum hexagon */}
+                      {/* 個別のカラーオーラ（太鼓の背後で発光） */}
+                      <circle cx={cx} cy={cy} r="11" fill={drumColors[idx]} opacity="0.45" />
+
+                      {/* 紫の太鼓本体 */}
                       <polygon
                         points={`${cx},${cy-r} ${cx+r*0.86},${cy-r*0.5} ${cx+r*0.86},${cy+r*0.5} ${cx},${cy+r} ${cx-r*0.86},${cy+r*0.5} ${cx-r*0.86},${cy-r*0.5}`}
                         fill="rgba(168, 85, 247, 0.45)"
                         stroke="#c084fc"
                         strokeWidth="1.2"
                       />
-                      {/* Small white core in the center of the drum */}
+                      {/* 中心部の高輝度な白いコア */}
                       <circle cx={cx} cy={cy} r="1.5" fill="#ffffff" />
                     </g>
                   );
