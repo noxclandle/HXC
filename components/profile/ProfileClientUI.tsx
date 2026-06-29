@@ -413,13 +413,12 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                             <div className="text-[6px] opacity-25 tracking-widest">NO CONTACT DETAILS PROVIDED</div>
                           )}
                         </div>
-                      </div>
 
                         <div className="absolute right-4 top-4 text-[7px] tracking-[0.25em] opacity-30 font-black uppercase">
                           TEMPORARY
                         </div>
-                      </div>
-                    </div>
+                      </div> {/* End of Card Component */}
+                    </div> {/* End of Group */}
                     
                     <p className="text-[8px] text-white/30 leading-relaxed text-center max-w-[240px]">
                       入力された情報は暗号化され、{profileName} の名刺管理ライブラリに安全に転送されます。
@@ -493,12 +492,12 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                           <div className="text-[6px] opacity-40 tracking-wider truncate">{shareBackForm.address}</div>
                         )}
                       </div>
-                    </div>
+
                       <div className="absolute right-4 top-4 text-[7px] tracking-[0.25em] opacity-30 font-black uppercase">
                         TEMPORARY
                       </div>
-                    </div>
-                  </div>
+                    </div> {/* End of Card Component */}
+                  </div> {/* End of Wrapper */}
 
                   <div className="w-full max-w-sm pt-4 space-y-4">
                     <Link
