@@ -109,6 +109,15 @@ export default function PurchasePage() {
 
     try {
       const selectedTierData = tiers.find(t => t.id === selection.tier);
+      
+      // 紹介者IDをlocalStorageから安全に取得
+      let referrerId = "";
+      try {
+        referrerId = localStorage.getItem("hxc_referrer_id") || "";
+      } catch (e) {
+        console.error("Failed to retrieve referrer ID from localStorage:", e);
+      }
+
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -116,7 +125,8 @@ export default function PurchasePage() {
           tier: selectedTierData?.name,
           variant: selection.variant,
           price: selectedTierData?.price,
-          customerDetails: formData // ここに独自情報を載せてAPIへ
+          customerDetails: formData,
+          referrerId: referrerId // APIに紹介者IDを渡す
         }),
       });
 

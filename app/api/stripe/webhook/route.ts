@@ -87,6 +87,96 @@ export async function POST(req: NextRequest) {
         },
       });
 
+      // 1.2 紹介システム（レフェラル）のトランザクション処理
+      const referrerId = session.metadata?.referrerId;
+      if (referrerId) {
+        try {
+          // 二重付与防止の事前チェック (Idempotency check)
+          const existingReferralTx = await prisma.rTTransaction.findFirst({
+            where: {
+              description: {
+                contains: `Referral bonus for Session: ${session.id}`
+              }
+            }
+          });
+
+          if (!existingReferralTx) {
+            // 紹介者がデータベースに存在するか検証
+            const referrer = await prisma.user.findUnique({
+              where: { id: referrerId }
+            });
+
+            if (referrer) {
+              // トランザクションで安全に実行 (並行実行によるズレを防ぐため、ブロック内でも再確認)
+              await prisma.$transaction(async (tx) => {
+                const doubleCheckTx = await tx.rTTransaction.findFirst({
+                  where: {
+                    description: {
+                      contains: `Referral bonus for Session: ${session.id}`
+                    }
+                  }
+                });
+
+                if (doubleCheckTx) {
+                  console.log(`[Referral] Duplicate prevention triggered inside transaction for session ${session.id}`);
+                  return;
+                }
+
+                // A. 紹介者に3000 RTの付与ログを作成
+                await tx.rTTransaction.create({
+                  data: {
+                    user_id: referrer.id,
+                    amount: 3000,
+                    type: "REFERRAL_BONUS",
+                    description: `Referral bonus for Session: ${session.id} (Buyer: ${customerEmail})`
+                  }
+                });
+
+                // B. 紹介者の残高を加算 (Prismaのインクリメント機能でアトミックに加算)
+                await tx.user.update({
+                  where: { id: referrer.id },
+                  data: {
+                    rt_balance: {
+                      increment: 3000
+                    }
+                  }
+                });
+
+                // C. 30人紹介のレジェンダリー称号獲得判定 (紹介トランザクション数で集計するため、カラムズレが絶対に起きない)
+                const referralCount = await tx.rTTransaction.count({
+                  where: {
+                    user_id: referrer.id,
+                    type: "REFERRAL_BONUS"
+                  }
+                });
+
+                if (referralCount >= 30) {
+                  const currentTitles = (referrer.unlocked_titles as string[]) || [];
+                  if (!currentTitles.includes("Resonance Catalyst")) {
+                    const newTitles = [...currentTitles, "Resonance Catalyst"];
+                    await tx.user.update({
+                      where: { id: referrer.id },
+                      data: {
+                        unlocked_titles: newTitles
+                      }
+                    });
+                    console.log(`[Referral] Referrer ${referrer.email} unlocked Legendary Title: Resonance Catalyst`);
+                  }
+                }
+              });
+              console.log(`[Referral] Successfully processed 3,000 RT referral bonus to ${referrer.email} for session ${session.id}`);
+            } else {
+              console.warn(`[Referral] Referrer ID ${referrerId} not found in database for session ${session.id}`);
+            }
+          } else {
+            console.log(`[Referral] Referral bonus already processed for session ${session.id}`);
+          }
+        } catch (referralError) {
+          console.error("[Referral] Error processing referral bonus:", referralError);
+          // 紹介処理のエラーで全体の注文処理(Webhook)を落とさないようキャッチするが、ログには残す
+        }
+      }
+
       // 1.5 Notify admin via email
       try {
         await sendAdminOrderNotification({
