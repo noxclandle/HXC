@@ -13,6 +13,7 @@ const publicContactSubmitSchema = z.object({
   notes: z.string().optional().or(z.literal("")),
   role: z.string().optional().or(z.literal("")),
   design: z.string().optional().or(z.literal("")),
+  company: z.string().optional().or(z.literal("")),
 });
 
 /**
@@ -39,17 +40,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       id: contact.id,
       name: contact.name,
-      email: contact.email || "",
-      phone: contact.phone || "",
-      role: contact.handle_name || "Member", // 肩書（Role）
-      address: contact.address || "",
-      notes: contact.notes || "",
-      coord_x: contact.coord_x,
-      coord_y: contact.coord_y
+      handle_name: contact.handle_name,
+      email: contact.email,
+      phone: contact.phone,
+      address: contact.address,
+      notes: contact.notes,
+      ai_tags: contact.ai_tags,
     });
   } catch (error) {
-    console.error("Public Contact API Error:", error);
-    return NextResponse.json({ error: "Failed to fetch contact details" }, { status: 500 });
+    console.error("GET Public Contact Error:", error);
+    return NextResponse.json({ error: "Failed to fetch contact" }, { status: 500 });
   }
 }
 
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid request", details: result.error.format() }, { status: 400 });
     }
 
-    const { ownerId, name, email, phone, address, notes, role, design } = result.data;
+    const { ownerId, name, email, phone, address, notes, role, design, company } = result.data;
 
     // 受信者の存在チェック
     const owner = await prisma.user.findUnique({
@@ -82,11 +82,12 @@ export async function POST(req: NextRequest) {
       data: {
         target_user_id: ownerId,
         sender_name: name,
-        sender_company: role || "名刺交換リクエスト",
+        sender_company: company || role || "名刺交換リクエスト",
         content: JSON.stringify({
           type: "contact_shareback",
           name,
           role: role || "",
+          company: company || "",
           email: email || "",
           phone: phone || "",
           address: address || "",

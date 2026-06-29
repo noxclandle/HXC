@@ -34,7 +34,7 @@ export default function MailboxPage() {
           email: data.email || "",
           phone: data.phone || "",
           address: data.address || "",
-          notes: data.notes || "",
+          notes: data.company ? `【会社名】${data.company}\n${data.notes || ""}` : (data.notes || ""),
           role: data.role || ""
         })
       });
@@ -247,7 +247,12 @@ export default function MailboxPage() {
                                 </div>
                                 <div className="space-y-1.5 z-10">
                                   <div className="text-[11px] font-bold tracking-wider truncate">{contactData.name}</div>
-                                  <div className="text-[7px] opacity-60 tracking-widest uppercase truncate">{contactData.role || "MEMBER"}</div>
+                                  <div className="text-[7px] opacity-60 tracking-widest uppercase truncate">
+                                    {contactData.company 
+                                      ? `${contactData.company} ${contactData.role ? `| ${contactData.role}` : ""}`
+                                      : (contactData.role || "MEMBER")
+                                    }
+                                  </div>
                                   <div className={`h-[1px] my-1.5 ${design === "white" ? "bg-zinc-200" : "bg-white/10"}`} />
                                   <div className="text-[6.5px] opacity-40 tracking-widest truncate">{contactData.email || "-"}</div>
                                   <div className="text-[6.5px] opacity-40 tracking-widest truncate">{contactData.phone || "-"}</div>
@@ -263,6 +268,10 @@ export default function MailboxPage() {
                               <div className="grid grid-cols-3 border-b border-white/5 pb-2">
                                 <span className="text-white/40">名前</span>
                                 <span className="col-span-2 text-white font-bold">{contactData.name}</span>
+                              </div>
+                              <div className="grid grid-cols-3 border-b border-white/5 pb-2">
+                                <span className="text-white/40">会社名</span>
+                                <span className="col-span-2 text-white">{contactData.company || "-"}</span>
                               </div>
                               <div className="grid grid-cols-3 border-b border-white/5 pb-2">
                                 <span className="text-white/40">肩書</span>

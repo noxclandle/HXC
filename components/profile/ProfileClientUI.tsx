@@ -38,7 +38,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
 
   // Share Back (Two-Way Resonance) State
   const [showShareBack, setShowShareBack] = useState(false);
-  const [shareBackForm, setShareBackForm] = useState({ name: "", role: "", email: "", phone: "", address: "", notes: "" });
+  const [shareBackForm, setShareBackForm] = useState({ name: "", role: "", email: "", phone: "", address: "", company: "", notes: "" });
   const [selectedDesign, setSelectedDesign] = useState<"black" | "white" | "silver">("black");
   const [sendingShareBack, setSendingShareBack] = useState(false);
   const [shareBackSuccess, setShareBackSuccess] = useState(false);
@@ -85,6 +85,8 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
           role: shareBackForm.role,
           email: shareBackForm.email,
           phone: shareBackForm.phone,
+          address: shareBackForm.address,
+          company: shareBackForm.company,
           notes: shareBackForm.notes,
           design: selectedDesign
         })
@@ -225,7 +227,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                 onClick={() => {
                   setShowShareBack(false);
                   setShareBackSuccess(false);
-                  setShareBackForm({ name: "", role: "", email: "", phone: "", address: "", notes: "" });
+                  setShareBackForm({ name: "", role: "", email: "", phone: "", address: "", company: "", notes: "" });
                 }} 
                 className="absolute top-4 right-4 text-white/40 hover:text-white text-xs font-mono tracking-widest"
               >
@@ -235,8 +237,8 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
               {!shareBackSuccess ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                   
-                  {/* Left: Input Form */}
-                  <div className="space-y-6">
+                  {/* Left: Input Form (Shows below card on mobile) */}
+                  <div className="space-y-6 md:order-first order-last">
                     <div>
                       <h3 className="text-sm tracking-[0.3em] uppercase font-bold text-white">Share Your Contact</h3>
                       <p className="text-[8.5px] tracking-widest text-white/40 uppercase mt-1">連絡先を送り返し、同調を完了する</p>
@@ -250,6 +252,16 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                           placeholder="あなたのフルネーム"
                           value={shareBackForm.name}
                           onChange={(e) => setShareBackForm({...shareBackForm, name: e.target.value})}
+                          className="w-full bg-white/[0.02] border border-white/10 p-3 text-[10px] tracking-widest outline-none focus:border-emerald-500/50 text-white"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">COMPANY / 会社名</label>
+                        <input 
+                          placeholder="例: 株式会社ヘキサ"
+                          value={shareBackForm.company}
+                          onChange={(e) => setShareBackForm({...shareBackForm, company: e.target.value})}
                           className="w-full bg-white/[0.02] border border-white/10 p-3 text-[10px] tracking-widest outline-none focus:border-emerald-500/50 text-white"
                         />
                       </div>
@@ -336,8 +348,8 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                     </form>
                   </div>
 
-                  {/* Right: Live Interactive Card Preview */}
-                  <div className="flex flex-col items-center justify-center h-full space-y-6 py-6 border-t md:border-t-0 md:border-l border-white/5 md:pl-8">
+                  {/* Right: Live Interactive Card Preview (Shows at the top on mobile) */}
+                  <div className="flex flex-col items-center justify-center h-full space-y-6 py-6 border-t md:border-t-0 md:border-l border-white/5 md:pl-8 order-first md:order-last">
                     <span className="text-[7.5px] tracking-[0.3em] text-white/30 uppercase font-mono">Live Card Preview / 一時名刺プレビュー</span>
                     
                     <div className="relative group">
@@ -366,7 +378,12 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                         {/* Card Details */}
                         <div className="space-y-1.5 z-10 text-left">
                           <div className="text-[11px] font-bold tracking-wider truncate">{shareBackForm.name || "YOUR NAME"}</div>
-                          <div className="text-[7px] opacity-60 tracking-widest uppercase truncate">{shareBackForm.role || "YOUR ROLE / TITLE"}</div>
+                          <div className="text-[7px] opacity-60 tracking-widest uppercase truncate">
+                            {shareBackForm.company 
+                              ? `${shareBackForm.company} ${shareBackForm.role ? `| ${shareBackForm.role}` : ""}`
+                              : (shareBackForm.role || "YOUR ROLE / TITLE")
+                            }
+                          </div>
                           
                           <div className={`h-[1px] my-1.5 ${selectedDesign === "white" ? "bg-zinc-200" : "bg-white/10"}`} />
                           
@@ -419,7 +436,12 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                       </div>
                       <div className="space-y-1.5 z-10">
                         <div className="text-[11px] font-bold tracking-wider truncate">{shareBackForm.name}</div>
-                        <div className="text-[7px] opacity-60 tracking-widest uppercase truncate">{shareBackForm.role || "MEMBER"}</div>
+                        <div className="text-[7px] opacity-60 tracking-widest uppercase truncate">
+                          {shareBackForm.company 
+                            ? `${shareBackForm.company} ${shareBackForm.role ? `| ${shareBackForm.role}` : ""}`
+                            : (shareBackForm.role || "MEMBER")
+                          }
+                        </div>
                         <div className={`h-[1px] my-1.5 ${selectedDesign === "white" ? "bg-zinc-200" : "bg-white/10"}`} />
                         <div className="text-[6.5px] opacity-40 tracking-widest truncate">{shareBackForm.email || "-"}</div>
                         <div className="text-[6.5px] opacity-40 tracking-widest truncate">{shareBackForm.phone || "-"}</div>
@@ -446,7 +468,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                       onClick={() => {
                         setShowShareBack(false);
                         setShareBackSuccess(false);
-                        setShareBackForm({ name: "", role: "", email: "", phone: "", address: "", notes: "" });
+                        setShareBackForm({ name: "", role: "", email: "", phone: "", address: "", company: "", notes: "" });
                       }}
                       className="w-full py-4 border border-white/10 text-[9px] tracking-[0.3em] uppercase hover:bg-white/5 text-white/40"
                     >
