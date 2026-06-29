@@ -20,6 +20,51 @@ export default function MailboxPage() {
   const [messages, setMessages] = useState<CardMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState<CardMessage | null>(null);
+  const [addingContactId, setAddingContactId] = useState<string | null>(null);
+  const [addedContacts, setAddedContacts] = useState<Record<string, boolean>>({});
+
+  const handleAddContact = async (msg: CardMessage, data: any) => {
+    setAddingContactId(msg.id);
+    try {
+      const res = await fetch("/api/contacts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email || "",
+          phone: data.phone || "",
+          address: data.address || "",
+          notes: data.notes || "",
+          role: data.role || ""
+        })
+      });
+
+      if (res.ok) {
+        setAddedContacts(prev => ({ ...prev, [msg.id]: true }));
+        showToast("名刺をライブラリに追加しました。 / Added to Contacts", "success");
+        window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
+      } else {
+        const errData = await res.json();
+        alert(errData.error || "Failed to add contact. / 追加に失敗しました。");
+      }
+    } catch (e) {
+      console.error(e);
+      showToast("通信エラーが発生しました。", "error");
+    } finally {
+      setAddingContactId(null);
+    }
+  };
+
+  const getContactData = (content: string) => {
+    if (content.startsWith('{"type":"contact_shareback"')) {
+      try {
+        return JSON.parse(content);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  };
 
   const fetchMessages = async () => {
     try {
@@ -175,9 +220,103 @@ export default function MailboxPage() {
                       <Calendar size={10} />
                       {new Date(selectedMessage.created_at).toLocaleString()}
                     </div>
-                    <div className="text-xs leading-relaxed tracking-widest text-white/80 whitespace-pre-wrap font-sans bg-void/50 p-4 border border-white/5 rounded-lg max-h-[220px] overflow-y-auto">
-                      {selectedMessage.content}
-                    </div>
+
+                    {(() => {
+                      const contactData = getContactData(selectedMessage.content);
+                      if (contactData) {
+                        const isAlreadyAdded = addedContacts[selectedMessage.id];
+                        const design = contactData.design || "black";
+                        
+                        const bgClass = 
+                          design === "white" ? "bg-white text-zinc-900 border border-zinc-200" :
+                          design === "silver" ? "bg-gradient-to-br from-zinc-800 to-zinc-950 text-cyan-100 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]" :
+                          "bg-gradient-to-br from-zinc-950 via-void to-zinc-900 text-rose-100 border border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.15)]";
+
+                        const chipBorder = 
+                          design === "white" ? "border-zinc-300" :
+                          design === "silver" ? "border-cyan-500/40" :
+                          "border-rose-500/40";
+
+                        return (
+                          <div className="space-y-6">
+                            {/* Card Graphic */}
+                            <div className="flex justify-center py-4">
+                              <div className={`w-[260px] h-[150px] rounded-2xl p-4 flex flex-col justify-between font-mono text-left relative overflow-hidden shadow-2xl ${bgClass}`}>
+                                <div className={`w-8 h-7 rounded border flex items-center justify-center bg-white/[0.03] ${chipBorder}`}>
+                                  <div className="w-3.5 h-3.5 border-t border-r border-white/20" />
+                                </div>
+                                <div className="space-y-1.5 z-10">
+                                  <div className="text-[11px] font-bold tracking-wider truncate">{contactData.name}</div>
+                                  <div className="text-[7px] opacity-60 tracking-widest uppercase truncate">{contactData.role || "MEMBER"}</div>
+                                  <div className={`h-[1px] my-1.5 ${design === "white" ? "bg-zinc-200" : "bg-white/10"}`} />
+                                  <div className="text-[6.5px] opacity-40 tracking-widest truncate">{contactData.email || "-"}</div>
+                                  <div className="text-[6.5px] opacity-40 tracking-widest truncate">{contactData.phone || "-"}</div>
+                                </div>
+                                <div className="absolute right-4 top-4 text-[7px] tracking-[0.2em] opacity-35 font-black uppercase">
+                                  TEMPORARY
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Details List */}
+                            <div className="space-y-3 bg-void/40 p-4 border border-white/5 rounded-xl text-left font-sans text-[10px] tracking-widest">
+                              <div className="grid grid-cols-3 border-b border-white/5 pb-2">
+                                <span className="text-white/40">名前</span>
+                                <span className="col-span-2 text-white font-bold">{contactData.name}</span>
+                              </div>
+                              <div className="grid grid-cols-3 border-b border-white/5 pb-2">
+                                <span className="text-white/40">肩書</span>
+                                <span className="col-span-2 text-white">{contactData.role || "-"}</span>
+                              </div>
+                              <div className="grid grid-cols-3 border-b border-white/5 pb-2">
+                                <span className="text-white/40">メール</span>
+                                <span className="col-span-2 text-white/80 font-mono">{contactData.email || "-"}</span>
+                              </div>
+                              <div className="grid grid-cols-3 border-b border-white/5 pb-2">
+                                <span className="text-white/40">電話番号</span>
+                                <span className="col-span-2 text-white/80 font-mono">{contactData.phone || "-"}</span>
+                              </div>
+                              <div className="grid grid-cols-3 border-b border-white/5 pb-2">
+                                <span className="text-white/40">住所</span>
+                                <span className="col-span-2 text-white/80">{contactData.address || "-"}</span>
+                              </div>
+                              <div className="grid grid-cols-3 pt-1">
+                                <span className="text-white/40">メモ/メッセージ</span>
+                                <span className="col-span-2 text-white/80 whitespace-pre-wrap leading-relaxed">{contactData.notes || "-"}</span>
+                              </div>
+                            </div>
+
+                            {/* Action Button */}
+                            <div className="pt-2">
+                              <button
+                                disabled={isAlreadyAdded || addingContactId === selectedMessage.id}
+                                onClick={() => handleAddContact(selectedMessage, contactData)}
+                                className={`w-full py-4 font-bold text-[10px] tracking-[0.3em] uppercase transition-all flex items-center justify-center gap-2 rounded-lg ${
+                                  isAlreadyAdded
+                                    ? "bg-emerald-950/20 border border-emerald-500/30 text-emerald-400 cursor-not-allowed"
+                                    : "bg-white text-void hover:bg-zinc-200"
+                                }`}
+                              >
+                                {isAlreadyAdded ? (
+                                  <><CheckCircle2 size={12} /> Added to Contacts / 追加済み</>
+                                ) : addingContactId === selectedMessage.id ? (
+                                  "Adding... / 追加中..."
+                                ) : (
+                                  "Add to Contacts / 名刺帳に追加"
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      // Standard message content
+                      return (
+                        <div className="text-xs leading-relaxed tracking-widest text-white/80 whitespace-pre-wrap font-sans bg-void/50 p-4 border border-white/5 rounded-lg max-h-[220px] overflow-y-auto">
+                          {selectedMessage.content}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
 

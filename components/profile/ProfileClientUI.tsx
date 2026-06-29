@@ -38,7 +38,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
 
   // Share Back (Two-Way Resonance) State
   const [showShareBack, setShowShareBack] = useState(false);
-  const [shareBackForm, setShareBackForm] = useState({ name: "", role: "", email: "", phone: "", notes: "" });
+  const [shareBackForm, setShareBackForm] = useState({ name: "", role: "", email: "", phone: "", address: "", notes: "" });
   const [selectedDesign, setSelectedDesign] = useState<"black" | "white" | "silver">("black");
   const [sendingShareBack, setSendingShareBack] = useState(false);
   const [shareBackSuccess, setShareBackSuccess] = useState(false);
@@ -225,7 +225,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                 onClick={() => {
                   setShowShareBack(false);
                   setShareBackSuccess(false);
-                  setShareBackForm({ name: "", role: "", email: "", phone: "", notes: "" });
+                  setShareBackForm({ name: "", role: "", email: "", phone: "", address: "", notes: "" });
                 }} 
                 className="absolute top-4 right-4 text-white/40 hover:text-white text-xs font-mono tracking-widest"
               >
@@ -283,6 +283,27 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                           value={shareBackForm.phone}
                           onChange={(e) => setShareBackForm({...shareBackForm, phone: e.target.value})}
                           className="w-full bg-white/[0.02] border border-white/10 p-3 text-[10px] tracking-widest outline-none focus:border-emerald-500/50 text-white font-mono"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">ADDRESS / 住所</label>
+                        <input 
+                          placeholder="東京都渋谷区神宮前..."
+                          value={shareBackForm.address}
+                          onChange={(e) => setShareBackForm({...shareBackForm, address: e.target.value})}
+                          className="w-full bg-white/[0.02] border border-white/10 p-3 text-[10px] tracking-widest outline-none focus:border-emerald-500/50 text-white"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">NOTES / メモ・メッセージ (会社名など)</label>
+                        <textarea 
+                          rows={2}
+                          placeholder="会社名、SNSアカウント、またはオーナーへのメッセージをご記入ください"
+                          value={shareBackForm.notes}
+                          onChange={(e) => setShareBackForm({...shareBackForm, notes: e.target.value})}
+                          className="w-full bg-white/[0.02] border border-white/10 p-3 text-[10px] tracking-widest outline-none focus:border-emerald-500/50 text-white resize-none font-sans"
                         />
                       </div>
 
@@ -425,7 +446,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                       onClick={() => {
                         setShowShareBack(false);
                         setShareBackSuccess(false);
-                        setShareBackForm({ name: "", role: "", email: "", phone: "", notes: "" });
+                        setShareBackForm({ name: "", role: "", email: "", phone: "", address: "", notes: "" });
                       }}
                       className="w-full py-4 border border-white/10 text-[9px] tracking-[0.3em] uppercase hover:bg-white/5 text-white/40"
                     >
