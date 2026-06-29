@@ -76,7 +76,7 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
         <svg 
           width="100%" 
           height="100%" 
-          viewBox="0 0 200 200" 
+          viewBox="-10 0 220 224" 
           style={{ opacity: moodOpacity }}
           className="transition-all duration-500"
         >
@@ -329,11 +329,11 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
               </g>
 
               {/* 10. Sacred Purple Hexagon Drum Ring (背中の紫ヘキサゴン太鼓の輪) */}
-              {/* 翼のすぐ後ろに配置し、半径を88に広げて羽の外側を大きく囲みます */}
-              {/* 真下の太鼓（idx === 2）を1つだけ取り外し、各太鼓が不規則に点滅（フリッカー）するオーラを放ちます */}
+              {/* 翼のすぐ後ろに配置し、半径を94に広げて羽の外側を大きく囲みます（羽に重ならない位置） */}
+              {/* 真下の太鼓（idx === 2）を1つだけ取り外し、各太鼓が不規則にゆっくりと点滅（フリッカー）するオーラを放ちます */}
               <g filter="url(#divine-glow)">
                 {/* Connecting Ring Line */}
-                <circle cx="100" cy="112" r="88" fill="none" stroke="url(#gold-grad)" strokeWidth="1.0" opacity="0.55" />
+                <circle cx="100" cy="112" r="94" fill="none" stroke="url(#gold-grad)" strokeWidth="1.0" opacity="0.55" />
                 
                 {/* 8 Purple Hexagons arranged at regular intervals */}
                 {Array.from({ length: 8 }).map((_, idx) => {
@@ -341,8 +341,8 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                   if (idx === 2) return null;
 
                   const angle = (idx * 45) * (Math.PI / 180);
-                  const cx = 100 + 88 * Math.cos(angle);
-                  const cy = 112 + 88 * Math.sin(angle);
+                  const cx = 100 + 94 * Math.cos(angle);
+                  const cy = 112 + 94 * Math.sin(angle);
                   const r = 6.5; // Size of the drums
 
                   // 各太鼓が放つ個別のオーラカラー
@@ -357,13 +357,13 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                     '#60a5fa', // 7: 右上 (アジュール)
                   ];
 
-                  // 不規則な点滅アニメーションを実現するための各太鼓固有のディレイと周期設定
-                  const drumDelays = [0.1, 0.5, 0, 1.3, 0.7, 1.8, 0.3, 2.2];
-                  const drumDurations = [2.2, 1.8, 0, 2.6, 2.0, 2.4, 1.6, 3.0];
+                  // ゆっくりとした不規則な点滅アニメーション（周期を2倍に延長：3.5秒〜6.0秒）
+                  const drumDelays = [0.2, 0.8, 0, 2.0, 1.2, 2.5, 0.5, 3.2];
+                  const drumDurations = [4.5, 3.8, 0, 5.2, 4.0, 4.8, 3.5, 5.8];
 
                   return (
                     <g key={idx}>
-                      {/* 不規則なキーフレーム点滅する個別カラーオーラ */}
+                      {/* ゆっくり不規則に点滅する個別カラーオーラ */}
                       <motion.circle 
                         cx={cx} 
                         cy={cy} 
