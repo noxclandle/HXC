@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Hexagon, Sparkles } from "lucide-react";
 
@@ -36,7 +37,14 @@ export default function SublimationOverlay({ isVisible, onComplete, rankName }: 
             transition={{ duration: 2, ease: "circOut" }}
             className="relative"
           >
-            <img src="/logo.png" alt="Sublimation Logo" className="w-[160px] h-[160px] object-contain" />
+            <Image 
+              src="/logo.png" 
+              alt="Sublimation Logo" 
+              width={160} 
+              height={160} 
+              className="object-contain" 
+              priority
+            />
             <motion.div
               animate={{ opacity: [0, 1, 0] }}
               transition={{ repeat: Infinity, duration: 2 }}

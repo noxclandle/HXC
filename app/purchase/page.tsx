@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { ChevronRight, CreditCard, Shield, Star, Crown, Check, ArrowRight } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
@@ -248,10 +249,11 @@ export default function PurchasePage() {
                   <UnifiedCardContainer orientation="horizontal" showControls={false} previewLabel="">
                     {tier.id === "standard" ? (
                       <div className="relative w-[350px] h-[220px] rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_20px_rgba(255,255,255,0.05)] bg-[#0c0c0c]">
-                        <img
+                        <Image
                           src="/ogp_card.png"
                           alt="Standard Physical Card Design"
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
                         />
                       </div>
                     ) : (
