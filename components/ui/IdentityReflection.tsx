@@ -81,35 +81,52 @@ export default function IdentityReflection({ user }: { user: any }) {
              />
           </UnifiedCardContainer>
        </div>
-       
-       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-12">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-12 font-sans">
            <div className="flex flex-col gap-4">
-              <Link href="/profile/edit" className="flex flex-col items-center justify-center p-6 bg-white/[0.02] border border-white/5 hover:bg-white/5 transition-all group/btn">
-                 <Edit3 size={16} className="mb-3 opacity-20 group-hover/btn:opacity-100 group-hover/btn:text-azure-400 transition-all" />
-                 <span className="text-[9px] tracking-[0.4em] uppercase font-bold text-white">Edit Profile</span>
-                 <span className="text-[7px] tracking-[0.2em] opacity-40 uppercase">プロフィール編集</span>
+              <Link 
+                href="/profile/edit" 
+                className="flex flex-col items-center justify-center p-6 bg-white/[0.04] border border-azure-500/30 hover:border-azure-400 hover:bg-azure-500/[0.06] shadow-[0_0_15px_rgba(59,130,246,0.03)] hover:shadow-[0_0_20px_rgba(59,130,246,0.12)] transition-all duration-300 group/btn rounded-xl"
+              >
+                 <Edit3 size={18} className="mb-3 text-azure-400 opacity-60 group-hover/btn:opacity-100 group-hover/btn:scale-110 transition-all duration-300" />
+                 <span className="text-[10px] tracking-[0.4em] uppercase font-black text-white">Edit Profile</span>
+                 <span className="text-[7.5px] tracking-[0.2em] text-white/50 group-hover/btn:text-white/80 uppercase mt-1">プロフィール編集</span>
               </Link>
            </div>
            <div className="flex flex-col gap-4">
-              <Link href="/inventory" className="flex flex-col items-center justify-center p-6 bg-white/[0.02] border border-white/5 hover:bg-white/5 transition-all group/btn">
-                 <Trophy size={16} className="mb-3 opacity-20 group-hover/btn:opacity-100 group-hover/btn:text-orange-400 transition-all" />
-                 <span className="text-[9px] tracking-[0.4em] uppercase font-bold text-white">Store & Inventory</span>
-                 <span className="text-[7px] tracking-[0.2em] opacity-40 uppercase">ショップ・装備変更</span>
+              <Link 
+                href="/inventory" 
+                className="flex flex-col items-center justify-center p-6 bg-white/[0.04] border border-orange-500/30 hover:border-orange-400 hover:bg-orange-500/[0.06] shadow-[0_0_15px_rgba(249,115,22,0.03)] hover:shadow-[0_0_20px_rgba(249,115,22,0.12)] transition-all duration-300 group/btn rounded-xl"
+              >
+                 <Trophy size={18} className="mb-3 text-orange-400 opacity-60 group-hover/btn:opacity-100 group-hover/btn:scale-110 transition-all duration-300" />
+                 <span className="text-[10px] tracking-[0.4em] uppercase font-black text-white">Store & Inventory</span>
+                 <span className="text-[7.5px] tracking-[0.2em] text-white/50 group-hover/btn:text-white/80 uppercase mt-1">ショップ・装備変更</span>
               </Link>
            </div>
            <div className="flex flex-col gap-4">
               <button 
                 onClick={() => {
                   const shareUrl = `${window.location.origin}/p/${encodeURIComponent(safeUser.slug || 'unknown')}`;
-                  const text = `新時代のデジタル名刺「Hexa Card」と同調しました。私のプロフィールはこちら：\n`;
-                  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}&hashtags=HexaCard`;
-                  window.open(twitterUrl, "_blank", "width=550,height=420");
+                  if (navigator.share) {
+                    navigator.share({
+                      title: `${safeUser.name || 'Hexa Card'}`,
+                      text: `新時代のデジタル名刺「Hexa Card」と同調しました。私のプロフィールはこちら：`,
+                      url: shareUrl
+                    }).catch(console.error);
+                  } else {
+                    try {
+                      navigator.clipboard.writeText(shareUrl);
+                      showToast("名刺のリンクをコピーしました。 / Link copied.", "success");
+                    } catch (err) {
+                      console.error(err);
+                      showToast("コピーに失敗しました。", "error");
+                    }
+                  }
                 }}
-                className="flex flex-col items-center justify-center p-6 bg-white/[0.02] border border-white/5 hover:bg-white/5 transition-all group/btn w-full text-center"
+                className="flex flex-col items-center justify-center p-6 bg-white/[0.04] border border-emerald-500/30 hover:border-emerald-400 hover:bg-emerald-500/[0.06] shadow-[0_0_15px_rgba(16,185,129,0.03)] hover:shadow-[0_0_20px_rgba(16,185,129,0.12)] transition-all duration-300 group/btn w-full text-center rounded-xl"
               >
-                 <Share2 size={16} className="mb-3 opacity-20 group-hover/btn:opacity-100 group-hover/btn:text-emerald-400 transition-all" />
-                 <span className="text-[9px] tracking-[0.4em] uppercase font-bold text-white">Share Card (X)</span>
-                 <span className="text-[7px] tracking-[0.2em] opacity-40 uppercase">SNSで共有・自慢する</span>
+                 <Share2 size={18} className="mb-3 text-emerald-400 opacity-60 group-hover/btn:opacity-100 group-hover/btn:scale-110 transition-all duration-300" />
+                 <span className="text-[10px] tracking-[0.4em] uppercase font-black text-white">Share Card</span>
+                 <span className="text-[7.5px] tracking-[0.2em] text-white/50 group-hover/btn:text-white/80 uppercase mt-1">名刺を共有・コピー</span>
               </button>
            </div>
         </div>
