@@ -374,20 +374,28 @@ export default function ResidentAgent() {
           </motion.div>
         )}
 
-        <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="relative">
+        <motion.div animate={{ y: [0, -4, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="relative">
+          {/* Glowing Aura behind the mini angel */}
           <motion.div 
             animate={{ 
-              scale: [1, 1.2, 1], 
-              opacity: [0.05, 0.15, 0.05] 
+              scale: [1, 1.15, 1], 
+              opacity: [0.1, 0.2, 0.1] 
             }} 
             transition={{ duration: 5, repeat: Infinity }} 
-            className={`absolute -inset-8 rounded-full blur-2xl pointer-events-none ${level >= 20 ? 'bg-orange-400' : level >= 10 ? 'bg-azure-400' : 'bg-white'}`} 
+            className="absolute -inset-6 rounded-full blur-2xl pointer-events-none" 
+            style={{
+              backgroundColor: level >= 30 ? '#fb7185' : level >= 20 ? '#fb923c' : level >= 10 ? '#38bdf8' : '#fbbf24'
+            }}
           />
           
-          <div className={`w-6 h-6 bg-gradient-to-b ${level >= 30 ? 'from-rose-100 to-rose-500' : level >= 20 ? 'from-orange-100 to-orange-500' : level >= 10 ? 'from-azure-100 to-azure-500' : 'from-white to-zinc-400'} rounded-full border border-white/40 flex items-center justify-center backdrop-blur-md relative z-10 shadow-sm`}>
-             <div className="w-2 h-2 bg-white rounded-full shadow-[0_0_10px_white]" />
+          <div className="w-12 h-12 flex items-center justify-center relative z-10 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.15)] hover:scale-110 transition-transform duration-300">
+             <GeometricAngel 
+               level={level} 
+               size={44} 
+               mood="stable" 
+             />
              {isNewMessage && (
-               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border border-void" />
+               <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border border-void shadow-[0_0_8px_#f43f5e]" />
              )}
           </div>
         </motion.div>
