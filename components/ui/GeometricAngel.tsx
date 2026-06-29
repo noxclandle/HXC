@@ -97,7 +97,6 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
             </linearGradient>
 
             {/* Intense Pink Dominant Rose Gold Gradient (Left & Right) */}
-            {/* White normal (0-20%), Gold weak (20-40%), Pink strong (40-100%) */}
             <linearGradient id="rose-gold-left" x1="100%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#ffffff" /> {/* White */}
               <stop offset="20%" stopColor="#fef08a" /> {/* Gold (Weak) */}
@@ -114,12 +113,11 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
               <stop offset="100%" stopColor="#ec4899" stopOpacity="0.05" />
             </linearGradient>
 
-            {/* Pink Dominant Aura Ray Gradient (後光) */}
+            {/* Pure White Emitting Aura Ray Gradient (後光) */}
             <linearGradient id="aura-ray-grad" x1="0%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
-              <stop offset="25%" stopColor="#f43f5e" stopOpacity="0.6" />
-              <stop offset="70%" stopColor="#ec4899" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#ec4899" stopOpacity="0" />
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+              <stop offset="50%" stopColor="#ffffff" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
             </linearGradient>
 
             {/* Blinding Pink Backlight Radial Gradient */}
@@ -267,44 +265,52 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
               {/* 要素3: 超発光ピンクバックライトオーラ (Hyper-Glow Pink Back Light) */}
               <circle cx="100" cy="112" r="95" fill="url(#hyper-pink-glow)" filter="url(#divine-glow)" opacity="0.65" />
 
-              {/* 要素5: 上昇する光の粒子柱（Ascending Energy Stream） */}
+              {/* 要素5: 上昇する光の粒子柱（紫の小さな六角形をアセンディング） */}
               <g>
-                {/* Particle 1 */}
-                <motion.path
-                  animate={{ y: [-10, -160], opacity: [0, 0.9, 0], scale: [0.8, 1.2, 0.6] }}
+                {/* Purple Hexagon Particle 1 */}
+                <motion.polygon
+                  animate={{ y: [-10, -160], opacity: [0, 0.9, 0], scale: [0.8, 1.2, 0.6], rotate: 360 }}
                   transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
-                  d="M 55,180 L 57,183 L 55,186 L 53,183 Z"
-                  fill="#ffffff"
+                  points="55,177.5 57.2,178.7 57.2,181.3 55,182.5 52.8,181.3 52.8,178.7"
+                  fill="rgba(168, 85, 247, 0.25)"
+                  stroke="#c084fc"
+                  strokeWidth="0.5"
                   filter="url(#divine-glow)"
                 />
-                {/* Particle 2 */}
-                <motion.path
-                  animate={{ y: [0, -150], opacity: [0, 0.9, 0], scale: [0.7, 1.1, 0.5] }}
+                {/* Purple Hexagon Particle 2 */}
+                <motion.polygon
+                  animate={{ y: [0, -150], opacity: [0, 0.9, 0], scale: [0.7, 1.1, 0.5], rotate: -360 }}
                   transition={{ duration: 2.8, repeat: Infinity, ease: "linear", delay: 0.8 }}
-                  d="M 145,170 L 147,173 L 145,176 L 143,173 Z"
-                  fill="#f43f5e"
+                  points="145,167.5 147.2,168.7 147.2,171.3 145,172.5 142.8,171.3 142.8,168.7"
+                  fill="rgba(168, 85, 247, 0.25)"
+                  stroke="#c084fc"
+                  strokeWidth="0.5"
                   filter="url(#divine-glow)"
                 />
-                {/* Particle 3 */}
-                <motion.path
-                  animate={{ y: [10, -170], opacity: [0, 0.8, 0], scale: [0.6, 1.0, 0.4] }}
+                {/* Purple Hexagon Particle 3 */}
+                <motion.polygon
+                  animate={{ y: [10, -170], opacity: [0, 0.8, 0], scale: [0.6, 1.0, 0.4], rotate: 180 }}
                   transition={{ duration: 4.2, repeat: Infinity, ease: "linear", delay: 1.5 }}
-                  d="M 75,190 L 76.5,192 L 75,194 L 73.5,192 Z"
-                  fill="#ffffff"
+                  points="75,187.5 77.2,188.7 77.2,191.3 75,192.5 72.8,191.3 72.8,188.7"
+                  fill="rgba(168, 85, 247, 0.25)"
+                  stroke="#c084fc"
+                  strokeWidth="0.5"
                   filter="url(#divine-glow)"
                 />
-                {/* Particle 4 */}
-                <motion.path
-                  animate={{ y: [-20, -180], opacity: [0, 0.9, 0], scale: [0.7, 1.2, 0.5] }}
+                {/* Purple Hexagon Particle 4 */}
+                <motion.polygon
+                  animate={{ y: [-20, -180], opacity: [0, 0.9, 0], scale: [0.7, 1.2, 0.5], rotate: -180 }}
                   transition={{ duration: 3.1, repeat: Infinity, ease: "linear", delay: 2.2 }}
-                  d="M 125,185 L 126.5,187 L 125,189 L 123.5,187 Z"
-                  fill="#f43f5e"
+                  points="125,182.5 127.2,183.7 127.2,186.3 125,187.5 122.8,186.3 122.8,183.7"
+                  fill="rgba(168, 85, 247, 0.25)"
+                  stroke="#c084fc"
+                  strokeWidth="0.5"
                   filter="url(#divine-glow)"
                 />
               </g>
 
-              {/* 1. Divine Aura / Radial Rays (後光 - ピンク強め、白普通) */}
-              <g opacity="0.4" filter="url(#divine-glow)">
+              {/* 1. Divine Aura / Radial Rays (後光 - 純白のオーラに変更) */}
+              <g opacity="0.5" filter="url(#divine-glow)">
                 {/* 16 radiating light rays emitting from the core */}
                 {Array.from({ length: 16 }).map((_, idx) => {
                   const angle = (idx * 360) / 16;
@@ -316,7 +322,7 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                       x2="100"
                       y2="10"
                       stroke="url(#aura-ray-grad)"
-                      strokeWidth="0.8"
+                      strokeWidth="1.0"
                       transform={`rotate(${angle} 100 112)`}
                     />
                   );
@@ -437,7 +443,7 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                 <polygon points="100,98 106,155 100,180 94,155" fill="#ffffff" opacity="0.95" />
               </g>
 
-              {/* 7. 6 Wings (3 Pairs in Luxury Rose Gold Gradients + 要素1: 翼の骨格線) */}
+              {/* 7. 6 Wings (3 Pairs in Luxury Rose Gold Gradients + 翼の骨格線) */}
               <motion.g
                 animate={{ scale: [1, 1.03, 1] }}
                 transition={{ duration: floatDuration * 0.8, repeat: Infinity, ease: "easeInOut" }}
@@ -447,7 +453,7 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                 <g filter="url(#divine-glow)">
                   {/* Upper Left Wing */}
                   <path d="M 88,96 L 26,45 L 56,132 L 88,115 Z" fill="url(#rose-gold-left)" stroke="#ffffff" strokeWidth="0.5" opacity="0.95" />
-                  {/* 要素1: 翼の骨格線 (Feather/Rib lines) */}
+                  {/* 翼の骨格線 */}
                   <line x1="88" y1="96" x2="38" y2="62" stroke="#ffffff" strokeWidth="0.7" opacity="0.8" />
                   <line x1="88" y1="105" x2="48" y2="92" stroke="#f43f5e" strokeWidth="0.6" opacity="0.7" />
                   <line x1="88" y1="112" x2="58" y2="122" stroke="#f43f5e" strokeWidth="0.5" opacity="0.5" />
@@ -466,7 +472,7 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                 <g filter="url(#divine-glow)">
                   {/* Upper Right Wing */}
                   <path d="M 112,96 L 174,45 L 144,132 L 112,115 Z" fill="url(#rose-gold-right)" stroke="#ffffff" strokeWidth="0.5" opacity="0.95" />
-                  {/* 要素1: 翼の骨格線 */}
+                  {/* 翼の骨格線 */}
                   <line x1="112" y1="96" x2="162" y2="62" stroke="#ffffff" strokeWidth="0.7" opacity="0.8" />
                   <line x1="112" y1="105" x2="152" y2="92" stroke="#f43f5e" strokeWidth="0.6" opacity="0.7" />
                   <line x1="112" y1="112" x2="142" y2="122" stroke="#f43f5e" strokeWidth="0.5" opacity="0.5" />
@@ -491,38 +497,46 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                 <line x1="92" y1="112" x2="108" y2="112" stroke="#ffffff" strokeWidth="1" opacity="0.9" />
               </g>
 
-              {/* 9. Floating Sparks (Diamond Sparkle Particles) */}
-              <g opacity="0.9">
-                {/* Sparkle 1 */}
-                <motion.path 
-                  animate={{ opacity: [0.3, 1.0, 0.3], scale: [0.8, 1.3, 0.8] }}
+              {/* 9. Floating Sparks (紫の小さな六角形を散らす) */}
+              <g opacity="0.8">
+                {/* Purple Hexagon Sparkle 1 */}
+                <motion.polygon 
+                  animate={{ opacity: [0.3, 1.0, 0.3], scale: [0.8, 1.3, 0.8], rotate: 45 }}
                   transition={{ duration: 2.5, repeat: Infinity }}
-                  d="M 50,45 L 52,48 L 50,51 L 48,48 Z" 
-                  fill="#ffffff" 
+                  points="50,42.5 52.2,43.7 52.2,46.3 50,47.5 47.8,46.3 47.8,43.7"
+                  fill="rgba(168, 85, 247, 0.25)" 
+                  stroke="#c084fc"
+                  strokeWidth="0.5"
                   filter="url(#divine-glow)"
                 />
-                {/* Sparkle 2 */}
-                <motion.path 
-                  animate={{ opacity: [0.4, 1.0, 0.4], scale: [0.9, 1.4, 0.9] }}
+                {/* Purple Hexagon Sparkle 2 */}
+                <motion.polygon 
+                  animate={{ opacity: [0.4, 1.0, 0.4], scale: [0.9, 1.4, 0.9], rotate: -45 }}
                   transition={{ duration: 2.1, repeat: Infinity, delay: 0.4 }}
-                  d="M 150,55 L 152,58 L 150,61 L 148,58 Z" 
-                  fill="#f43f5e" 
+                  points="150,52.5 152.2,53.7 152.2,56.3 150,57.5 147.8,56.3 147.8,53.7"
+                  fill="rgba(168, 85, 247, 0.25)" 
+                  stroke="#c084fc"
+                  strokeWidth="0.5"
                   filter="url(#divine-glow)"
                 />
-                {/* Sparkle 3 */}
-                <motion.path 
-                  animate={{ opacity: [0.2, 0.9, 0.2], scale: [0.7, 1.2, 0.7] }}
+                {/* Purple Hexagon Sparkle 3 */}
+                <motion.polygon 
+                  animate={{ opacity: [0.2, 0.9, 0.2], scale: [0.7, 1.2, 0.7], rotate: 60 }}
                   transition={{ duration: 3.1, repeat: Infinity, delay: 0.8 }}
-                  d="M 45,145 L 47,147 L 45,149 L 43,147 Z" 
-                  fill="#ec4899" 
+                  points="45,142.5 47.2,143.7 47.2,146.3 45,147.5 42.8,146.3 42.8,143.7"
+                  fill="rgba(168, 85, 247, 0.25)" 
+                  stroke="#c084fc"
+                  strokeWidth="0.5"
                   filter="url(#divine-glow)"
                 />
-                {/* Sparkle 4 */}
-                <motion.path 
-                  animate={{ opacity: [0.3, 1.0, 0.3], scale: [0.8, 1.3, 0.8] }}
+                {/* Purple Hexagon Sparkle 4 */}
+                <motion.polygon 
+                  animate={{ opacity: [0.3, 1.0, 0.3], scale: [0.8, 1.3, 0.8], rotate: -60 }}
                   transition={{ duration: 2.6, repeat: Infinity, delay: 0.2 }}
-                  d="M 155,145 L 157,147 L 155,149 L 153,147 Z" 
-                  fill="#ffffff" 
+                  points="155,142.5 157.2,143.7 157.2,146.3 155,147.5 152.8,146.3 152.8,143.7"
+                  fill="rgba(168, 85, 247, 0.25)" 
+                  stroke="#c084fc"
+                  strokeWidth="0.5"
                   filter="url(#divine-glow)"
                 />
               </g>
