@@ -330,16 +330,17 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
 
               {/* 10. Sacred Purple Hexagon Drum Ring (背中の紫ヘキサゴン太鼓の輪) */}
               {/* 翼のすぐ後ろに配置されるよう、ここでレンダリングします */}
+              {/* 半径を80に広げ、羽の外側を大きく囲むように配置します */}
               <g filter="url(#divine-glow)">
                 {/* Connecting Ring Line */}
-                <circle cx="100" cy="112" r="58" fill="none" stroke="url(#gold-grad)" strokeWidth="0.8" opacity="0.6" />
+                <circle cx="100" cy="112" r="80" fill="none" stroke="url(#gold-grad)" strokeWidth="1.0" opacity="0.65" />
                 
                 {/* 8 Purple Hexagons arranged at regular intervals */}
                 {Array.from({ length: 8 }).map((_, idx) => {
                   const angle = (idx * 45) * (Math.PI / 180);
-                  const cx = 100 + 58 * Math.cos(angle);
-                  const cy = 112 + 58 * Math.sin(angle);
-                  const r = 5.5; // Size of the drums
+                  const cx = 100 + 80 * Math.cos(angle);
+                  const cy = 112 + 80 * Math.sin(angle);
+                  const r = 6.5; // Size of the drums (slightly larger)
                   return (
                     <g key={idx}>
                       {/* The drum hexagon */}
@@ -347,10 +348,10 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                         points={`${cx},${cy-r} ${cx+r*0.86},${cy-r*0.5} ${cx+r*0.86},${cy+r*0.5} ${cx},${cy+r} ${cx-r*0.86},${cy+r*0.5} ${cx-r*0.86},${cy-r*0.5}`}
                         fill="rgba(168, 85, 247, 0.45)"
                         stroke="#c084fc"
-                        strokeWidth="1"
+                        strokeWidth="1.2"
                       />
                       {/* Small white core in the center of the drum */}
-                      <circle cx={cx} cy={cy} r="1.2" fill="#ffffff" />
+                      <circle cx={cx} cy={cy} r="1.5" fill="#ffffff" />
                     </g>
                   );
                 })}
