@@ -34,8 +34,10 @@ export default function MailboxPage() {
           email: data.email || "",
           phone: data.phone || "",
           address: data.address || "",
-          notes: data.company ? `【会社名】${data.company}\n${data.notes || ""}` : (data.notes || ""),
-          role: data.role || ""
+          notes: data.notes || "",
+          role: data.company 
+            ? (data.role ? `${data.company} | ${data.role}` : data.company)
+            : (data.role || "")
         })
       });
 
