@@ -101,6 +101,9 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
   const [showUI, setShowUI] = useState(false);
 
   const isOwner = useMemo(() => {
+    if (typeof window !== "undefined" && window.location.search.includes("preview=visitor")) {
+      return false;
+    }
     return !!(session?.user?.id && data?.id && session.user.id === data.id);
   }, [session, data]);
 
