@@ -36,6 +36,13 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
   const [sendingMessage, setSendingMessage] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
 
+  // Share Back (Two-Way Resonance) State
+  const [showShareBack, setShowShareBack] = useState(false);
+  const [shareBackForm, setShareBackForm] = useState({ name: "", role: "", email: "", phone: "", notes: "" });
+  const [selectedDesign, setSelectedDesign] = useState<"black" | "white" | "silver">("black");
+  const [sendingShareBack, setSendingShareBack] = useState(false);
+  const [shareBackSuccess, setShareBackSuccess] = useState(false);
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     setSendingMessage(true);
@@ -61,6 +68,41 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
       alert("Network error. Please try again. / 通信エラーが発生しました。再度お試しください。");
     } finally {
       setSendingMessage(false);
+    }
+  };
+
+  const handleShareBackSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!shareBackForm.name) return;
+    setSendingShareBack(true);
+    try {
+      const res = await fetch("/api/contacts/public", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ownerId: data.id,
+          name: shareBackForm.name,
+          role: shareBackForm.role,
+          email: shareBackForm.email,
+          phone: shareBackForm.phone,
+          notes: shareBackForm.notes,
+          design: selectedDesign
+        })
+      });
+      if (res.ok) {
+        setShareBackSuccess(true);
+        // 相手へのリスペクト・高級感のあるバイブレーション
+        if (typeof navigator !== "undefined" && navigator.vibrate) {
+          navigator.vibrate([40, 10, 40, 10, 80]);
+        }
+      } else {
+        alert("Failed to transmit contact. Please try again. / 送信に失敗しました。再度お試しください。");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Network error. Please try again. / 通信エラーが発生しました。再度お試しください。");
+    } finally {
+      setSendingShareBack(false);
     }
   };
 
@@ -172,6 +214,230 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
             </motion.div>
           </motion.div>
         )}
+
+        {/* SHARE BACK MODAL (Two-Way Resonance with Card Preview) */}
+        {showShareBack && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-void/95 z-[100] flex items-center justify-center p-4 overflow-y-auto backdrop-blur-sm">
+            <motion.div initial={{ scale: 0.95, y: 15 }} animate={{ scale: 1, y: 0 }} className="max-w-2xl w-full bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-2xl space-y-6 relative max-h-[95vh] overflow-y-auto custom-scrollbar font-sans">
+              
+              {/* Close Button */}
+              <button 
+                onClick={() => {
+                  setShowShareBack(false);
+                  setShareBackSuccess(false);
+                  setShareBackForm({ name: "", role: "", email: "", phone: "", notes: "" });
+                }} 
+                className="absolute top-4 right-4 text-white/40 hover:text-white text-xs font-mono tracking-widest"
+              >
+                [ CLOSE ]
+              </button>
+
+              {!shareBackSuccess ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                  
+                  {/* Left: Input Form */}
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-sm tracking-[0.3em] uppercase font-bold text-white">Share Your Contact</h3>
+                      <p className="text-[8.5px] tracking-widest text-white/40 uppercase mt-1">連絡先を送り返し、同調を完了する</p>
+                    </div>
+
+                    <form onSubmit={handleShareBackSubmit} className="space-y-4">
+                      <div className="space-y-1">
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">NAME / お名前 *</label>
+                        <input 
+                          required
+                          placeholder="あなたのフルネーム"
+                          value={shareBackForm.name}
+                          onChange={(e) => setShareBackForm({...shareBackForm, name: e.target.value})}
+                          className="w-full bg-white/[0.02] border border-white/10 p-3 text-[10px] tracking-widest outline-none focus:border-emerald-500/50 text-white"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">TITLE / 肩書・職種</label>
+                        <input 
+                          placeholder="例: デザイナー, エンジニア, VTuber"
+                          value={shareBackForm.role}
+                          onChange={(e) => setShareBackForm({...shareBackForm, role: e.target.value})}
+                          className="w-full bg-white/[0.02] border border-white/10 p-3 text-[10px] tracking-widest outline-none focus:border-emerald-500/50 text-white"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">EMAIL / メールアドレス</label>
+                        <input 
+                          type="email"
+                          placeholder="your-email@example.com"
+                          value={shareBackForm.email}
+                          onChange={(e) => setShareBackForm({...shareBackForm, email: e.target.value})}
+                          className="w-full bg-white/[0.02] border border-white/10 p-3 text-[10px] tracking-widest outline-none focus:border-emerald-500/50 text-white font-mono"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">PHONE / 電話番号</label>
+                        <input 
+                          type="tel"
+                          placeholder="090-0000-0000"
+                          value={shareBackForm.phone}
+                          onChange={(e) => setShareBackForm({...shareBackForm, phone: e.target.value})}
+                          className="w-full bg-white/[0.02] border border-white/10 p-3 text-[10px] tracking-widest outline-none focus:border-emerald-500/50 text-white font-mono"
+                        />
+                      </div>
+
+                      <div className="space-y-2 pt-2">
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1 block font-bold">CARD DESIGN / カードデザインの選択</label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {(["black", "white", "silver"] as const).map((d) => (
+                            <button
+                              key={d}
+                              type="button"
+                              onClick={() => setSelectedDesign(d)}
+                              className={`py-2 text-[9px] font-bold tracking-widest uppercase border transition-all ${
+                                selectedDesign === d 
+                                  ? "border-emerald-500 bg-emerald-500/10 text-emerald-400" 
+                                  : "border-white/5 bg-white/[0.02] text-white/40 hover:border-white/10"
+                              }`}
+                            >
+                              {d}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <button 
+                        disabled={sendingShareBack}
+                        className="w-full py-4 mt-6 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] tracking-[0.4em] uppercase transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                      >
+                        {sendingShareBack ? <Loader2 size={12} className="animate-spin" /> : <><Send size={12} /> Send Contact / 同調を送信する</>}
+                      </button>
+                    </form>
+                  </div>
+
+                  {/* Right: Live Interactive Card Preview */}
+                  <div className="flex flex-col items-center justify-center h-full space-y-6 py-6 border-t md:border-t-0 md:border-l border-white/5 md:pl-8">
+                    <span className="text-[7.5px] tracking-[0.3em] text-white/30 uppercase font-mono">Live Card Preview / 一時名刺プレビュー</span>
+                    
+                    <div className="relative group">
+                      {/* Interactive glowing effect based on design */}
+                      <div className={`absolute inset-[-8px] rounded-2xl opacity-40 blur-md transition-all duration-300 ${
+                        selectedDesign === "white" ? "bg-zinc-200/20" :
+                        selectedDesign === "silver" ? "bg-cyan-500/15 group-hover:blur-lg" :
+                        "bg-rose-500/15 group-hover:blur-lg"
+                      }`} />
+
+                      {/* Card Component */}
+                      <div className={`w-[270px] h-[155px] rounded-2xl p-5 flex flex-col justify-between font-mono relative overflow-hidden transition-all duration-500 ${
+                        selectedDesign === "white" ? "bg-white text-zinc-900 border border-zinc-200" :
+                        selectedDesign === "silver" ? "bg-gradient-to-br from-zinc-800 to-zinc-950 text-cyan-100 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]" :
+                        "bg-gradient-to-br from-zinc-950 via-void to-zinc-900 text-rose-100 border border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.15)]"
+                      }`}>
+                        {/* NFC Chip */}
+                        <div className={`w-8 h-7 rounded border flex items-center justify-center bg-white/[0.03] ${
+                          selectedDesign === "white" ? "border-zinc-300" :
+                          selectedDesign === "silver" ? "border-cyan-500/40" :
+                          "border-rose-500/40"
+                        }`}>
+                          <div className="w-3.5 h-3.5 border-t border-r border-white/20" />
+                        </div>
+
+                        {/* Card Details */}
+                        <div className="space-y-1.5 z-10 text-left">
+                          <div className="text-[11px] font-bold tracking-wider truncate">{shareBackForm.name || "YOUR NAME"}</div>
+                          <div className="text-[7px] opacity-60 tracking-widest uppercase truncate">{shareBackForm.role || "YOUR ROLE / TITLE"}</div>
+                          
+                          <div className={`h-[1px] my-1.5 ${selectedDesign === "white" ? "bg-zinc-200" : "bg-white/10"}`} />
+                          
+                          <div className="text-[6.5px] opacity-40 tracking-widest truncate">{shareBackForm.email || "email@example.com"}</div>
+                          <div className="text-[6.5px] opacity-40 tracking-widest truncate">{shareBackForm.phone || "+81 90-0000-0000"}</div>
+                        </div>
+
+                        <div className="absolute right-4 top-4 text-[7px] tracking-[0.25em] opacity-30 font-black uppercase">
+                          TEMPORARY
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <p className="text-[8px] text-white/30 leading-relaxed text-center max-w-[240px]">
+                      入力された情報は暗号化され、{profileName} の名刺管理ライブラリに安全に転送されます。
+                    </p>
+                  </div>
+
+                </div>
+              ) : (
+                // Success Screen with Purchase Call to Action
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-10 space-y-8 flex flex-col items-center">
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                    <CheckCircle2 size={32} className="animate-pulse" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-md tracking-[0.4em] uppercase font-bold text-white">Transmission Complete</h3>
+                    <p className="text-[11px] tracking-widest text-emerald-400 uppercase">一時名刺の同調と送信が完了しました！</p>
+                  </div>
+
+                  <p className="text-[10px] text-white/50 leading-relaxed max-w-md mx-auto">
+                    あなたの名刺情報は {profileName} のLibraryへ安全に送信されました。<br />
+                    この一時名刺を半永久的に有効化し、自分だけの物理スマートカードを作成しませんか？
+                  </p>
+
+                  {/* Render the completed card */}
+                  <div className="py-4">
+                    <div className={`w-[270px] h-[155px] rounded-2xl p-5 flex flex-col justify-between font-mono text-left relative overflow-hidden shadow-2xl ${
+                      selectedDesign === "white" ? "bg-white text-zinc-900 border border-zinc-200" :
+                      selectedDesign === "silver" ? "bg-gradient-to-br from-zinc-800 to-zinc-950 text-cyan-100 border border-cyan-500/30" :
+                      "bg-gradient-to-br from-zinc-950 via-void to-zinc-900 text-rose-100 border border-rose-500/30"
+                    }`}>
+                      <div className={`w-8 h-7 rounded border flex items-center justify-center bg-white/[0.03] ${
+                        selectedDesign === "white" ? "border-zinc-300" :
+                        selectedDesign === "silver" ? "border-cyan-500/40" :
+                        "border-rose-500/40"
+                      }`}>
+                        <div className="w-3.5 h-3.5 border-t border-r border-white/20" />
+                      </div>
+                      <div className="space-y-1.5 z-10">
+                        <div className="text-[11px] font-bold tracking-wider truncate">{shareBackForm.name}</div>
+                        <div className="text-[7px] opacity-60 tracking-widest uppercase truncate">{shareBackForm.role || "MEMBER"}</div>
+                        <div className={`h-[1px] my-1.5 ${selectedDesign === "white" ? "bg-zinc-200" : "bg-white/10"}`} />
+                        <div className="text-[6.5px] opacity-40 tracking-widest truncate">{shareBackForm.email || "-"}</div>
+                        <div className="text-[6.5px] opacity-40 tracking-widest truncate">{shareBackForm.phone || "-"}</div>
+                      </div>
+                      <div className="absolute right-4 top-4 text-[7px] tracking-[0.25em] opacity-30 font-black uppercase">
+                        TEMPORARY
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="w-full max-w-sm pt-4 space-y-4">
+                    <Link
+                      href={`/purchase?ref=${data.id}`}
+                      onClick={() => {
+                        setShowShareBack(false);
+                        setShareBackSuccess(false);
+                      }}
+                      className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.3em] uppercase hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 shadow-lg"
+                    >
+                      Activate Permanently / 自分用のカードを作る <ArrowRight size={12} />
+                    </Link>
+                    
+                    <button 
+                      onClick={() => {
+                        setShowShareBack(false);
+                        setShareBackSuccess(false);
+                        setShareBackForm({ name: "", role: "", email: "", phone: "", notes: "" });
+                      }}
+                      className="w-full py-4 border border-white/10 text-[9px] tracking-[0.3em] uppercase hover:bg-white/5 text-white/40"
+                    >
+                      Close / 閉じる
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+
+            </motion.div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       <div className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center px-6">
@@ -221,6 +487,14 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
            <button onClick={handleSaveContact} className="w-full py-6 bg-azure-600 text-white font-bold text-[11px] tracking-[1em] uppercase shadow-[0_0_40px_rgba(59,130,246,0.3)] hover:bg-azure-500 transition-all flex items-center justify-center gap-4 group">
               <Download size={14} className="group-hover:translate-y-1 transition-transform" /> Save Contact
            </button>
+
+           {/* SHARE BACK BUTTON (Only visible to guests/visitors) */}
+           {!isOwner && (
+             <button onClick={() => setShowShareBack(true)} className="w-full py-5 bg-emerald-950/20 border border-emerald-500/30 text-emerald-400 font-bold text-[10px] tracking-[0.3em] uppercase shadow-[0_0_20px_rgba(52,211,153,0.1)] hover:bg-emerald-500/10 transition-all flex items-center justify-center gap-3 group">
+                <Network size={12} className="group-hover:scale-110 transition-transform" /> Share Your Contact / 連絡先を送り返す
+             </button>
+           )}
+
            <button onClick={() => { if (navigator.share) navigator.share({ title: data.name, url: window.location.href }); else { navigator.clipboard.writeText(window.location.href); alert("URL Copied."); } }} className="w-full py-5 border border-white/10 bg-white/[0.02] text-[10px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all flex items-center justify-center gap-3 text-white/60">
               <Share2 size={12} /> Share Identity
            </button>

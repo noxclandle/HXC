@@ -82,22 +82,37 @@ export default function IdentityReflection({ user }: { user: any }) {
           </UnifiedCardContainer>
        </div>
        
-       <div className="grid grid-cols-2 gap-4 mt-12">
-          <div className="flex flex-col gap-4">
-             <Link href="/profile/edit" className="flex flex-col items-center justify-center p-6 bg-white/[0.02] border border-white/5 hover:bg-white/5 transition-all group/btn">
-                <Edit3 size={16} className="mb-3 opacity-20 group-hover/btn:opacity-100 group-hover/btn:text-azure-400 transition-all" />
-                <span className="text-[9px] tracking-[0.4em] uppercase font-bold text-white">Edit Profile</span>
-                <span className="text-[7px] tracking-[0.2em] opacity-40 uppercase">プロフィール編集</span>
-             </Link>
-          </div>
-          <div className="flex flex-col gap-4">
-             <Link href="/inventory" className="flex flex-col items-center justify-center p-6 bg-white/[0.02] border border-white/5 hover:bg-white/5 transition-all group/btn">
-                <Trophy size={16} className="mb-3 opacity-20 group-hover/btn:opacity-100 group-hover/btn:text-orange-400 transition-all" />
-                <span className="text-[9px] tracking-[0.4em] uppercase font-bold text-white">Store & Inventory</span>
-                <span className="text-[7px] tracking-[0.2em] opacity-40 uppercase">ショップ・装備変更</span>
-             </Link>
-          </div>
-       </div>
+       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-12">
+           <div className="flex flex-col gap-4">
+              <Link href="/profile/edit" className="flex flex-col items-center justify-center p-6 bg-white/[0.02] border border-white/5 hover:bg-white/5 transition-all group/btn">
+                 <Edit3 size={16} className="mb-3 opacity-20 group-hover/btn:opacity-100 group-hover/btn:text-azure-400 transition-all" />
+                 <span className="text-[9px] tracking-[0.4em] uppercase font-bold text-white">Edit Profile</span>
+                 <span className="text-[7px] tracking-[0.2em] opacity-40 uppercase">プロフィール編集</span>
+              </Link>
+           </div>
+           <div className="flex flex-col gap-4">
+              <Link href="/inventory" className="flex flex-col items-center justify-center p-6 bg-white/[0.02] border border-white/5 hover:bg-white/5 transition-all group/btn">
+                 <Trophy size={16} className="mb-3 opacity-20 group-hover/btn:opacity-100 group-hover/btn:text-orange-400 transition-all" />
+                 <span className="text-[9px] tracking-[0.4em] uppercase font-bold text-white">Store & Inventory</span>
+                 <span className="text-[7px] tracking-[0.2em] opacity-40 uppercase">ショップ・装備変更</span>
+              </Link>
+           </div>
+           <div className="flex flex-col gap-4">
+              <button 
+                onClick={() => {
+                  const shareUrl = `${window.location.origin}/p/${encodeURIComponent(safeUser.slug || 'unknown')}`;
+                  const text = `新時代のデジタル名刺「Hexa Card」と同調しました。私のプロフィールはこちら：\n`;
+                  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}&hashtags=HexaCard`;
+                  window.open(twitterUrl, "_blank", "width=550,height=420");
+                }}
+                className="flex flex-col items-center justify-center p-6 bg-white/[0.02] border border-white/5 hover:bg-white/5 transition-all group/btn w-full text-center"
+              >
+                 <Share2 size={16} className="mb-3 opacity-20 group-hover/btn:opacity-100 group-hover/btn:text-emerald-400 transition-all" />
+                 <span className="text-[9px] tracking-[0.4em] uppercase font-bold text-white">Share Card (X)</span>
+                 <span className="text-[7px] tracking-[0.2em] opacity-40 uppercase">SNSで共有・自慢する</span>
+              </button>
+           </div>
+        </div>
     </section>
   );
 }

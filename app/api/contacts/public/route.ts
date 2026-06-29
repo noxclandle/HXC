@@ -1,7 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { z } from "zod";
 
 export const dynamic = "force-dynamic";
+
+const publicContactSubmitSchema = z.object({
+  ownerId: z.string().uuid("Invalid owner ID"),
+  name: z.string().min(1, "Name is required"),
+  email: z.string().optional().or(z.literal("")),
+  phone: z.string().optional().or(z.literal("")),
+  address: z.string().optional().or(z.literal("")),
+  notes: z.string().optional().or(z.literal("")),
+  role: z.string().optional().or(z.literal("")),
+  design: z.string().optional().or(z.literal("")),
+});
 
 /**
  * GET /api/contacts/public?id=[contact_uuid]
@@ -38,5 +50,52 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error("Public Contact API Error:", error);
     return NextResponse.json({ error: "Failed to fetch contact details" }, { status: 500 });
+  }
+}
+
+/**
+ * POST /api/contacts/public
+ * ゲスト（未ログイン）からカード所有者への連絡先送り返し（SHARE BACK）
+ */
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const result = publicContactSubmitSchema.safeParse(body);
+    if (!result.success) {
+      return NextResponse.json({ error: "Invalid request", details: result.error.format() }, { status: 400 });
+    }
+
+    const { ownerId, name, email, phone, address, notes, role, design } = result.data;
+
+    // 受信者の存在チェック
+    const owner = await prisma.user.findUnique({
+      where: { id: ownerId }
+    });
+
+    if (!owner) {
+      return NextResponse.json({ error: "Card owner not found" }, { status: 404 });
+    }
+
+    // 連絡先を作成して保存
+    const contact = await prisma.contact.create({
+      data: {
+        owner_id: ownerId,
+        name,
+        handle_name: role || null,
+        email: email || null,
+        phone: phone || null,
+        address: address || null,
+        notes: notes || null,
+        ai_tags: {
+          source: "resonance_share_back",
+          design: design || "black"
+        } as any,
+      }
+    });
+
+    return NextResponse.json({ success: true, id: contact.id });
+  } catch (error) {
+    console.error("Public Contact Submit Error:", error);
+    return NextResponse.json({ error: "Failed to submit contact details" }, { status: 500 });
   }
 }
