@@ -90,13 +90,47 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
               </feMerge>
             </filter>
 
-            {/* Weak Gold / Yellow Gradient */}
+            {/* Rich Gold / Yellow Gradient */}
             <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#fef08a" stopOpacity="0.9" /> {/* Gold */}
               <stop offset="100%" stopColor="#e2b857" stopOpacity="0.4" />
             </linearGradient>
 
-            {/* Intense Pink Dominant Rose Gold Gradient (Left & Right) */}
+            {/* Stage 1 (Baby) Wings Gradient */}
+            <linearGradient id="stage1-wing-left" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="100%" stopColor="#fbbf24" stopOpacity="0.1" />
+            </linearGradient>
+            <linearGradient id="stage1-wing-right" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="100%" stopColor="#fbbf24" stopOpacity="0.1" />
+            </linearGradient>
+
+            {/* Stage 2 (Guardian) Wings Gradient */}
+            <linearGradient id="stage2-wing-left" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="50%" stopColor="#38bdf8" />
+              <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.1" />
+            </linearGradient>
+            <linearGradient id="stage2-wing-right" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="50%" stopColor="#38bdf8" />
+              <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.1" />
+            </linearGradient>
+
+            {/* Stage 3 (Archangel) Wings Gradient */}
+            <linearGradient id="stage3-wing-left" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="40%" stopColor="#fb923c" />
+              <stop offset="100%" stopColor="#fb923c" stopOpacity="0.05" />
+            </linearGradient>
+            <linearGradient id="stage3-wing-right" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="40%" stopColor="#fb923c" />
+              <stop offset="100%" stopColor="#fb923c" stopOpacity="0.05" />
+            </linearGradient>
+
+            {/* Intense Pink Dominant Rose Gold Gradient (Left & Right - Seraph) */}
             <linearGradient id="rose-gold-left" x1="100%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#ffffff" /> {/* White */}
               <stop offset="20%" stopColor="#fef08a" /> {/* Gold (Weak) */}
@@ -161,33 +195,36 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
           {/* ================= STAGE 1: BABY ANGEL (Lv 1 - 9) ================= */}
           {stage === 1 && (
             <g>
-              {/* Cute Little Halo */}
-              <circle cx="100" cy="74" r="11" fill="none" stroke={stageColor} strokeWidth="1.2" opacity="0.7" />
+              {/* Cute Little Halo (Glow applied) */}
+              <circle cx="100" cy="74" r="11" fill="none" stroke={stageColor} strokeWidth="1.5" filter="url(#divine-glow)" />
               
               {/* Cute Round Head */}
               <circle cx="100" cy="88" r="7" fill={stageColor} />
               
               {/* Cute Tiny Body */}
-              <polygon points="100,96 105,112 95,112" fill={stageColor} opacity="0.8" />
+              <polygon points="100,96 105,112 95,112" fill={stageColor} opacity="0.85" />
               
-              {/* Tiny Cute Baby Wings (Gentle pulsing) */}
+              {/* Tiny Cute Baby Wings (Gentle pulsing, Gradient applied) */}
               <motion.g
                 animate={{ scale: [1, 1.08, 1], rotate: [0, 3, 0] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 style={{ originX: '100px', originY: '100px' }}
               >
                 {/* Left wing */}
-                <path d="M 94,97 L 78,92 L 85,106 Z" fill={stageColor} opacity="0.6" />
+                <path d="M 94,97 L 78,92 L 85,106 Z" fill="url(#stage1-wing-left)" stroke={stageColor} strokeWidth="0.3" />
                 {/* Right wing */}
-                <path d="M 106,97 L 122,92 L 115,106 Z" fill={stageColor} opacity="0.6" />
+                <path d="M 106,97 L 122,92 L 115,106 Z" fill="url(#stage1-wing-right)" stroke={stageColor} strokeWidth="0.3" />
               </motion.g>
+
+              {/* Tiny Glowing Core */}
+              <circle cx="100" cy="102" r="2.2" fill="#ffffff" filter="url(#divine-glow)" />
             </g>
           )}
 
           {/* ================= STAGE 2: GROWING ANGEL (Lv 10 - 19) ================= */}
           {stage === 2 && (
             <g>
-              {/* Dotted Orbit Ring */}
+              {/* Dotted Orbit Ring (Glow applied) */}
               <motion.circle 
                 animate={{ rotate: 360 }}
                 transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
@@ -196,72 +233,113 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                 r="35" 
                 fill="none" 
                 stroke={stageColor} 
-                strokeWidth="0.7" 
+                strokeWidth="0.8" 
                 strokeDasharray="4 3" 
-                opacity="0.4"
+                opacity="0.6"
+                filter="url(#divine-glow)"
                 style={{ originX: '100px', originY: '102px' }}
               />
               
-              {/* Halo */}
-              <circle cx="100" cy="70" r="15" fill="none" stroke={stageColor} strokeWidth="1.5" />
+              {/* Halo (Glow applied) */}
+              <circle cx="100" cy="70" r="15" fill="none" stroke={stageColor} strokeWidth="1.8" filter="url(#divine-glow)" />
               
               {/* Head */}
               <circle cx="100" cy="88" r="9" fill={stageColor} />
               
               {/* Body */}
-              <polygon points="100,98 108,132 100,142 92,132" fill={stageColor} opacity="0.8" />
+              <polygon points="100,98 108,132 100,142 92,132" fill="url(#stage2-wing-left)" stroke={stageColor} strokeWidth="0.4" />
               
-              {/* Wings (Flapping animation) */}
+              {/* Wings (Flapping animation, Gradients applied) */}
               <motion.g
                 animate={{ scaleX: [1, 0.92, 1], rotate: [0, -2, 0] }}
                 transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
                 style={{ originX: '100px', originY: '102px' }}
               >
                 {/* Left wing */}
-                <path d="M 92,100 L 60,78 L 75,120 L 92,112 Z" fill={stageColor} opacity="0.75" />
+                <path d="M 92,100 L 60,78 L 75,120 L 92,112 Z" fill="url(#stage2-wing-left)" stroke="#ffffff" strokeWidth="0.4" />
                 {/* Right wing */}
-                <path d="M 108,100 L 140,78 L 125,120 L 108,112 Z" fill={stageColor} opacity="0.75" />
+                <path d="M 108,100 L 140,78 L 125,120 L 108,112 Z" fill="url(#stage2-wing-right)" stroke="#ffffff" strokeWidth="0.4" />
               </motion.g>
+
+              {/* Glowing Core */}
+              <circle cx="100" cy="115" r="3.2" fill="#ffffff" filter="url(#divine-glow)" />
             </g>
           )}
 
           {/* ================= STAGE 3: ARCHANGEL (Lv 20 - 29) ================= */}
           {stage === 3 && (
             <g>
-              {/* Concentric Halos */}
-              <circle cx="100" cy="62" r="18" fill="none" stroke={stageColor} strokeWidth="1.5" />
-              <circle cx="100" cy="62" r="23" fill="none" stroke={stageColor} strokeWidth="0.5" strokeDasharray="3 3" opacity="0.5" />
+              {/* Precursor Back-Ring (背中の後背の予兆として、薄いオレンジの破線リングを追加) */}
+              <circle cx="100" cy="115" r="46" fill="none" stroke="#fb923c" strokeWidth="0.8" opacity="0.4" strokeDasharray="4 4" />
+
+              {/* Concentric Rotating Halos (頭上のリングを多重逆回転、Glow適用) */}
+              <g filter="url(#divine-glow)">
+                {/* Inner Halo (Clockwise) */}
+                <motion.circle 
+                  cx="100" 
+                  cy="62" 
+                  r="18" 
+                  fill="none" 
+                  stroke={stageColor} 
+                  strokeWidth="1.8"
+                  strokeDasharray="25 6"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                  style={{ originX: '100px', originY: '62px' }}
+                />
+                {/* Outer Halo (Counter-Clockwise) */}
+                <motion.circle 
+                  cx="100" 
+                  cy="62" 
+                  r="24" 
+                  fill="none" 
+                  stroke="#ffffff" 
+                  strokeWidth="0.8" 
+                  opacity="0.8" 
+                  strokeDasharray="4 3"
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  style={{ originX: '100px', originY: '62px' }}
+                />
+              </g>
               
               {/* Head */}
               <circle cx="100" cy="82" r="11" fill={stageColor} />
               
               {/* Body (Sleek Blade) */}
               <g>
-                <polygon points="100,95 111,158 100,178 89,158" fill={stageColor} opacity="0.85" />
+                <polygon points="100,95 111,158 100,178 89,158" fill="url(#stage3-wing-left)" stroke={stageColor} strokeWidth="0.5" />
                 <polygon points="100,103 105,145 100,162 95,145" fill="#ffffff" opacity="0.9" />
               </g>
               
-              {/* Double-Layered Wings (Independent flapping) */}
+              {/* Double-Layered Wings (Independent flapping, Gradients applied) */}
               <motion.g
                 animate={{ scaleY: [1, 1.04, 1] }}
                 transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
                 style={{ originX: '100px', originY: '100px' }}
               >
                 {/* Upper Wings (Left & Right) */}
-                <path d="M 91,99 L 42,62 L 63,130 L 91,118 Z" fill={stageColor} opacity="0.8" />
-                <path d="M 109,99 L 158,62 L 137,130 L 109,118 Z" fill={stageColor} opacity="0.8" />
+                <path d="M 91,99 L 42,62 L 63,130 L 91,118 Z" fill="url(#stage3-wing-left)" stroke="#ffffff" strokeWidth="0.4" />
+                <path d="M 109,99 L 158,62 L 137,130 L 109,118 Z" fill="url(#stage3-wing-right)" stroke="#ffffff" strokeWidth="0.4" />
                 
                 {/* Lower Wings (Left & Right - offset motion) */}
-                <path d="M 91,115 L 34,107 L 58,155 L 91,126 Z" fill={stageColor} opacity="0.45" />
-                <path d="M 109,115 L 166,107 L 142,155 L 109,126 Z" fill={stageColor} opacity="0.45" />
+                <path d="M 91,115 L 34,107 L 58,155 L 91,126 Z" fill="url(#stage3-wing-left)" opacity="0.6" />
+                <path d="M 109,115 L 166,107 L 142,155 L 109,126 Z" fill="url(#stage3-wing-right)" opacity="0.6" />
               </motion.g>
+
+              {/* Glowing Core with Cross-Star (Seraphへの進化の予兆) */}
+              <g filter="url(#divine-glow)">
+                <circle cx="100" cy="115" r="4.5" fill="#ffffff" />
+                <line x1="100" y1="109" x2="100" y2="121" stroke="#ffffff" strokeWidth="0.8" />
+                <line x1="94" y1="115" x2="106" y2="115" stroke="#ffffff" strokeWidth="0.8" />
+              </g>
             </g>
           )}
 
           {/* ================= STAGE 4: SERAPH / ULTRA-PREMIUM (Lv 30+) ================= */}
           {stage === 4 && (
             <g>
-              {/* 要素3: 超発光純白バックライトオーラ (Hyper-Glow White Back Light) */}
+              {/* 要素3: 超発光ピンクバックライトオーラ (Hyper-Glow Pink Back Light) */}
               <circle cx="100" cy="112" r="95" fill="url(#hyper-white-glow)" filter="url(#divine-glow)" opacity="0.75" />
 
               {/* 要素5: 上昇する光の粒子柱（紫の小さな六角形をアセンディング） */}
