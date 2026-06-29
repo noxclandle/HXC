@@ -330,7 +330,7 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
 
               {/* 10. Sacred Purple Hexagon Drum Ring (背中の紫ヘキサゴン太鼓の輪) */}
               {/* 翼のすぐ後ろに配置し、半径を88に広げて羽の外側を大きく囲みます */}
-              {/* 真下の太鼓（idx === 2）を1つだけ取り外し、各太鼓が様々な色のオーラを放ちます */}
+              {/* 真下の太鼓（idx === 2）を1つだけ取り外し、各太鼓が不規則に点滅（フリッカー）するオーラを放ちます */}
               <g filter="url(#divine-glow)">
                 {/* Connecting Ring Line */}
                 <circle cx="100" cy="112" r="88" fill="none" stroke="url(#gold-grad)" strokeWidth="1.0" opacity="0.55" />
@@ -345,7 +345,7 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                   const cy = 112 + 88 * Math.sin(angle);
                   const r = 6.5; // Size of the drums
 
-                  // 各太鼓が放つ個別のオーラカラー（紫、シアン、ローズ、ゴールド、ピンク、エメラルド、アジュール）
+                  // 各太鼓が放つ個別のオーラカラー
                   const drumColors = [
                     '#c084fc', // 0: 右 (紫)
                     '#22d3ee', // 1: 右下 (シアン)
@@ -357,10 +357,28 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                     '#60a5fa', // 7: 右上 (アジュール)
                   ];
 
+                  // 不規則な点滅アニメーションを実現するための各太鼓固有のディレイと周期設定
+                  const drumDelays = [0.1, 0.5, 0, 1.3, 0.7, 1.8, 0.3, 2.2];
+                  const drumDurations = [2.2, 1.8, 0, 2.6, 2.0, 2.4, 1.6, 3.0];
+
                   return (
                     <g key={idx}>
-                      {/* 個別のカラーオーラ（太鼓の背後で発光） */}
-                      <circle cx={cx} cy={cy} r="11" fill={drumColors[idx]} opacity="0.45" />
+                      {/* 不規則なキーフレーム点滅する個別カラーオーラ */}
+                      <motion.circle 
+                        cx={cx} 
+                        cy={cy} 
+                        r="11" 
+                        fill={drumColors[idx]} 
+                        animate={{ 
+                          opacity: [0.15, 0.65, 0.25, 0.8, 0.15, 0.7, 0.3, 0.6, 0.15] 
+                        }}
+                        transition={{
+                          duration: drumDurations[idx],
+                          repeat: Infinity,
+                          delay: drumDelays[idx],
+                          ease: "easeInOut"
+                        }}
+                      />
 
                       {/* 紫の太鼓本体 */}
                       <polygon
@@ -471,14 +489,49 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                 />
               </g>
 
-              {/* Triple Divine Halos */}
+              {/* Triple Divine Halos (頭上のリングを多重逆回転させ、駆動しているように表現) */}
               <g filter="url(#divine-glow)">
-                {/* Inner thick halo */}
-                <circle cx="100" cy="52" r="20" fill="none" stroke="#f43f5e" strokeWidth="2.2" />
-                {/* Middle dashed halo */}
-                <circle cx="100" cy="52" r="25" fill="none" stroke="#ffffff" strokeWidth="0.8" opacity="0.85" strokeDasharray="3 2" />
-                {/* Outer micro-dotted halo */}
-                <circle cx="100" cy="52" r="30" fill="none" stroke="url(#gold-grad)" strokeWidth="0.5" opacity="0.6" strokeDasharray="1 4" />
+                {/* Inner thick halo (時計回りにゆっくり回転する冠形状) */}
+                <motion.circle
+                  cx="100"
+                  cy="52"
+                  r="20"
+                  fill="none"
+                  stroke="#f43f5e"
+                  strokeWidth="2.2"
+                  strokeDasharray="30 8"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                  style={{ originX: '100px', originY: '52px' }}
+                />
+                {/* Middle dashed halo (反時計回りに中速回転) */}
+                <motion.circle
+                  cx="100"
+                  cy="52"
+                  r="25"
+                  fill="none"
+                  stroke="#ffffff"
+                  strokeWidth="0.8"
+                  opacity="0.85"
+                  strokeDasharray="4 3"
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  style={{ originX: '100px', originY: '52px' }}
+                />
+                {/* Outer micro-dotted halo (時計回りに高速回転する光の粒子の輪) */}
+                <motion.circle
+                  cx="100"
+                  cy="52"
+                  r="30"
+                  fill="none"
+                  stroke="url(#gold-grad)"
+                  strokeWidth="0.5"
+                  opacity="0.6"
+                  strokeDasharray="1 5"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                  style={{ originX: '100px', originY: '52px' }}
+                />
               </g>
               
               {/* Head (Floating Core) */}
