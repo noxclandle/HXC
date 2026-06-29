@@ -215,26 +215,66 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
           {/* ================= STAGE 4: SERAPH / ULTRA-PREMIUM (Lv 30+) ================= */}
           {stage === 4 && (
             <g>
-              {/* Sacred Geometry Background (Metatron-style Outer Plate) */}
+              {/* Layer 1: Clockwise Outer Astrolabe (40s) */}
               <motion.g
                 animate={{ rotate: 360 }}
-                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
                 style={{ originX: '100px', originY: '110px' }}
               >
-                {/* Outer dodecagon */}
-                <polygon points="100,30 135,39 165,65 180,100 175,135 150,165 100,180 50,165 25,135 20,100 35,65 65,39" fill="none" stroke={stageColor} strokeWidth="0.5" opacity="0.2" />
-                {/* Outer ring */}
-                <circle cx="100" cy="110" r="76" fill="none" stroke={stageColor} strokeWidth="0.5" strokeDasharray="6 4" opacity="0.3" />
-                {/* Inner ring */}
-                <circle cx="100" cy="110" r="62" fill="none" stroke="#ffffff" strokeWidth="0.3" opacity="0.4" />
-                {/* Geometric intersecting lines */}
-                <path d="M 100,30 L 100,180 M 20,100 L 180,100 M 35,65 L 165,135 M 165,65 L 35,135" stroke="#ffffff" strokeWidth="0.2" opacity="0.2" />
+                {/* 12-pointed star (Two overlapping hexagons + square) */}
+                <polygon points="100,24 143,33 176,66 185,110 176,154 143,187 100,196 57,187 24,154 15,110 24,66 57,33" fill="none" stroke={stageColor} strokeWidth="0.4" opacity="0.15" />
+                <polygon points="100,24 176,66 176,154 100,196 24,154 24,66" fill="none" stroke="#ffffff" strokeWidth="0.3" opacity="0.1" />
+                <polygon points="138,28 182,102 144,180 62,180 18,102 62,28" fill="none" stroke={stageColor} strokeWidth="0.3" opacity="0.1" />
+                
+                {/* Outer micro-tick ring */}
+                <circle cx="100" cy="110" r="80" fill="none" stroke={stageColor} strokeWidth="0.6" strokeDasharray="1 3" opacity="0.4" />
+                <circle cx="100" cy="110" r="83" fill="none" stroke={stageColor} strokeWidth="0.3" opacity="0.2" />
               </motion.g>
 
-              {/* Divine Halos */}
+              {/* Layer 2: Counter-Clockwise Middle Bezel (22s) */}
+              <motion.g
+                animate={{ rotate: -360 }}
+                transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
+                style={{ originX: '100px', originY: '110px' }}
+              >
+                {/* Segmented gear ring */}
+                <circle cx="100" cy="110" r="70" fill="none" stroke={stageColor} strokeWidth="0.8" strokeDasharray="8 6" opacity="0.25" />
+                {/* Inner dotted ring */}
+                <circle cx="100" cy="110" r="66" fill="none" stroke="#ffffff" strokeWidth="0.5" strokeDasharray="2 4" opacity="0.35" />
+                {/* Geometric intersecting lines */}
+                <path d="M 100,44 L 100,176 M 34,110 L 166,110 M 53,63 L 147,157 M 147,63 L 53,157" stroke="#ffffff" strokeWidth="0.2" opacity="0.15" />
+              </motion.g>
+
+              {/* Layer 3: 3D Gyroscopic Orbits */}
               <g>
-                <circle cx="100" cy="52" r="22" fill="none" stroke={stageColor} strokeWidth="1.8" />
-                <circle cx="100" cy="52" r="28" fill="none" stroke="#ffffff" strokeWidth="0.8" opacity="0.8" strokeDasharray="3 3" />
+                {/* Left-to-right diagonal orbit */}
+                <motion.ellipse 
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                  cx="100" cy="112" rx="72" ry="18" 
+                  fill="none" stroke={stageColor} strokeWidth="0.5" strokeDasharray="5 10" opacity="0.3"
+                  transform="rotate(-25 100 112)"
+                  style={{ originX: '100px', originY: '112px' }}
+                />
+                {/* Right-to-left diagonal orbit */}
+                <motion.ellipse 
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+                  cx="100" cy="112" rx="72" ry="18" 
+                  fill="none" stroke="#ffffff" strokeWidth="0.4" strokeDasharray="15 5" opacity="0.25"
+                  transform="rotate(25 100 112)"
+                  style={{ originX: '100px', originY: '112px' }}
+                />
+              </g>
+
+              {/* Triple Divine Halos */}
+              <g>
+                {/* Inner thick halo */}
+                <circle cx="100" cy="52" r="20" fill="none" stroke={stageColor} strokeWidth="1.8" />
+                {/* Middle dashed halo */}
+                <circle cx="100" cy="52" r="25" fill="none" stroke="#ffffff" strokeWidth="0.8" opacity="0.8" strokeDasharray="3 2" />
+                {/* Outer micro-dotted halo */}
+                <circle cx="100" cy="52" r="30" fill="none" stroke={stageColor} strokeWidth="0.4" opacity="0.5" strokeDasharray="1 4" />
               </g>
               
               {/* Head (Floating Core) */}
@@ -265,10 +305,13 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
                 <path d="M 112,128 L 168,165 L 138,188 L 112,148 Z" fill="url(#wing-grad-right)" opacity="0.5" />
               </motion.g>
               
-              {/* Glowing Heart Core */}
+              {/* Glowing Heart Core with Cross-Star */}
               <g>
                 <circle cx="100" cy="112" r="16" fill="url(#seraph-core-glow)" />
                 <circle cx="100" cy="112" r="4" fill="#ffffff" />
+                {/* Cross-Star highlight */}
+                <line x1="100" y1="105" x2="100" y2="119" stroke="#ffffff" strokeWidth="0.8" opacity="0.8" />
+                <line x1="93" y1="112" x2="107" y2="112" stroke="#ffffff" strokeWidth="0.8" opacity="0.8" />
               </g>
             </g>
           )}
