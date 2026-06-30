@@ -182,7 +182,7 @@ export default function ResidentAgent() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }} 
             animate={{ opacity: 1, y: 0, scale: 1 }} 
             exit={{ opacity: 0, y: 20, scale: 0.95 }} 
-            className="mb-6 w-[360px] bg-void/90 border border-white/10 shadow-2xl backdrop-blur-2xl overflow-hidden flex flex-col h-[600px] rounded-sm text-left"
+            className="mb-6 w-[360px] bg-[#030305] border-2 border-azure-500/40 shadow-[0_0_50px_rgba(59,130,246,0.25)] backdrop-blur-2xl overflow-hidden flex flex-col h-[600px] rounded-sm text-left"
           >
             <div className="p-6 bg-gradient-to-b from-white/5 to-transparent border-b border-white/5 relative flex flex-col items-center">
                <div className="flex justify-between items-start w-full mb-4">
