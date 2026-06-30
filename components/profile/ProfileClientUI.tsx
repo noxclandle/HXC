@@ -633,7 +633,28 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                      <textarea 
                        required
                        rows={4}
-                       placeholder="YOUR MESSAGE / メッセージ内容を入力し      {/* Digital QR Exchange Section */}
+                       placeholder="YOUR MESSAGE / メッセージ内容を入力してください... (必須)"
+                       value={messageForm.content}
+                       onChange={(e) => setMessageForm({...messageForm, content: e.target.value})}
+                       className="w-full bg-white/[0.02] border border-white/10 p-6 text-[10px] tracking-widest outline-none focus:border-white/30 transition-all resize-none text-white font-sans"
+                     />
+                     <p className="text-[9px] tracking-widest text-white/50 leading-relaxed text-left pl-1">
+                         * If you require a response, please include your contact details within the message. <br />
+                         ※返信をご希望の場合は、メッセージ内にご自身の連絡先（メールアドレス等）をご記載ください。
+                     </p>
+                  </div>
+                 <button 
+                   disabled={sendingMessage}
+                   className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.3em] lg:tracking-[0.5em] uppercase hover:bg-zinc-200 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+                 >
+                   {sendingMessage ? <Loader2 size={16} className="animate-spin" /> : <><Send size={14} /> Transmit Message to {profileName} / {profileName} にメッセージを送信する</>}
+                 </button>
+              </form>
+            )}
+         </div>
+      </section>
+
+      {/* Digital QR Exchange Section */}
       {isOwner && (
         <section className="relative z-10 w-full max-w-lg mx-auto py-24 px-6 border-t border-white/5 flex flex-col items-center space-y-12">
           <div className="text-center space-y-4">
@@ -744,7 +765,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                     variants={{
                       rest: { y: -16, x: 0, rotate: -12, scale: 1 },
                       hover: { y: -34, x: -8, rotate: -8, scale: 1.05, transition: { type: "spring", stiffness: 200, damping: 15 } }
-                    }}
+                  }}
                     className="absolute w-20 h-12 border border-azure-400 bg-azure-950/20 rounded flex items-center justify-center shadow-lg"
                   >
                     <Layers size={10} className="text-azure-400 animate-pulse" />
@@ -859,7 +880,6 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
               href="/" 
               className="inline-flex items-center gap-2 text-[9px] tracking-[0.3em] uppercase font-bold text-white/40 hover:text-white transition-colors"
             >
-              <!-- Visit Official Site / 公式サイトトップへ -->
               ← Visit Official Site / 公式サイトトップへ
             </Link>
           </div>

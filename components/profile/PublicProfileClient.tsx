@@ -100,6 +100,20 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
   const [isOpened, setIsOpened] = useState(false);
   const [showUI, setShowUI] = useState(false);
 
+  const ownerLevel = useMemo(() => {
+    return data ? Math.min(30, Math.floor(Math.sqrt((data.exp || 0) / 10)) + 1) : 1;
+  }, [data]);
+
+  const welcomeMessage = useMemo(() => {
+    if (!data) return "";
+    let conciergeName = "Sentinel";
+    if (ownerLevel >= 30) conciergeName = "Seraph";
+    else if (ownerLevel >= 20) conciergeName = "Archangel";
+    else if (ownerLevel >= 10) conciergeName = "Guardian";
+
+    return `[System Concierge: ${conciergeName}] Welcome to the domain of ${data.name || "MEMBER"}. Tapping the core will establish resonance. / [システムコンシェルジュ: ${conciergeName}] ${data.name || "MEMBER"} の領域へようこそ。コアに触れることで、共鳴が開始されます。`;
+  }, [data, ownerLevel]);
+
   const isOwner = useMemo(() => {
     if (typeof window !== "undefined" && window.location.search.includes("preview=visitor")) {
       return false;
