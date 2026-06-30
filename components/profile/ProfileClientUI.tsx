@@ -555,7 +555,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
         <div className="w-full max-w-sm space-y-6 mt-20">
            {portfolioLinks.length > 0 && (
              <div className="space-y-4 mb-12">
-                <p className="text-[9px] tracking-[0.4em] uppercase text-azure-400 font-bold text-center mb-6">Documents & Portfolio</p>
+                <p className="text-[9px] tracking-[0.4em] uppercase text-azure-400 font-bold text-center mb-6">Documents / 資料</p>
                 {portfolioLinks.map((link: any, i: number) => (
                   <a 
                     key={i} 
@@ -690,25 +690,50 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
             {/* Card 1: Touch Resonance / NFC連携と共鳴 */}
-            <div className="space-y-6 p-6 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-300 group text-white rounded-lg flex flex-col justify-between">
-              <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/30 transition-colors">
-                {/* Smartphone silhouette */}
-                <div className="absolute right-12 w-14 h-24 border border-white/10 rounded-lg flex items-center justify-center bg-zinc-950/80 transition-all group-hover:border-white/30">
+            <motion.div 
+              initial="rest"
+              whileHover="hover"
+              animate="rest"
+              className="space-y-6 p-6 border border-white/5 bg-white/[0.01] hover:border-azure-500/30 hover:bg-azure-500/[0.01] transition-all duration-300 group text-white rounded-lg flex flex-col justify-between cursor-pointer"
+            >
+              <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/20 transition-colors">
+                {/* Smartphone silhouette (floating) */}
+                <motion.div 
+                  animate={{ y: [0, -3, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute right-12 w-14 h-24 border border-white/10 rounded-lg flex items-center justify-center bg-zinc-950/80 transition-all group-hover:border-white/30"
+                >
                   <div className="w-1.5 h-1.5 bg-white/20 rounded-full absolute top-1.5" />
                   <div className="w-8 h-12 bg-white/[0.02] border border-white/5 rounded flex flex-col justify-center items-center">
                     <Smartphone size={12} className="text-white/30 group-hover:text-azure-400 transition-colors duration-300" />
                   </div>
-                </div>
+                </motion.div>
                 
-                {/* NFC Card hovering */}
-                <div className="absolute left-12 w-16 h-10 bg-white/5 border border-white/20 rounded-md shadow-lg transition-all duration-500 transform group-hover:translate-x-6 group-hover:rotate-12 flex items-center justify-center backdrop-blur-sm z-10">
+                {/* NFC Card (Hover slides and taps the phone) */}
+                <motion.div 
+                  variants={{
+                    rest: { x: 0, y: 0, rotate: -5 },
+                    hover: { x: 28, y: -4, rotate: 8, scale: 1.05, transition: { type: "spring", stiffness: 200, damping: 15 } }
+                  }}
+                  className="absolute left-12 w-16 h-10 bg-white/5 border border-white/20 rounded-md shadow-lg flex items-center justify-center backdrop-blur-sm z-10"
+                >
                   <div className="text-[6px] tracking-widest text-white/50 uppercase font-mono font-bold">HEXA</div>
-                </div>
+                </motion.div>
 
-                {/* Ripple animation */}
+                {/* Ripple wave on tap */}
                 <div className="absolute left-[110px] w-12 h-12 flex items-center justify-center">
-                  <div className="absolute w-8 h-8 rounded-full border border-azure-500/40 animate-ping opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute w-12 h-12 rounded-full border border-azure-400/20 animate-pulse" />
+                  <motion.div 
+                    variants={{
+                      rest: { scale: 0.8, opacity: 0 },
+                      hover: { 
+                        scale: [0.8, 2, 2.5], 
+                        opacity: [0, 0.8, 0],
+                        transition: { repeat: Infinity, duration: 1.5, ease: "easeOut" }
+                      }
+                    }}
+                    className="absolute w-12 h-12 rounded-full border border-azure-500/40" 
+                  />
+                  <div className="absolute w-12 h-12 rounded-full border border-azure-400/10 animate-pulse" />
                 </div>
               </div>
 
@@ -717,76 +742,125 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                   Touch Resonance <span className="text-[9px] text-white/60 font-normal">/ NFC連携と共鳴</span>
                 </h3>
                 <p className="text-[9px] tracking-widest leading-loose opacity-50">
-                  Instant digital portfolio access by tapping the physical card against a smartphone. No app installation required. / 物理カードをかざすだけで、瞬時にデジタルポートフォリオを展開。アプリ不要で即座に繋がります。
+                  物理カードをスマホにかざすだけで、アプリ不要で瞬時にデジタル名刺が起動。スマートかつ未来的な出会いを演出します。 / Just tap the physical card against a phone to instantly launch your profile. No app required—delivering a seamless, futuristic first contact.
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Card 2: Aesthetic Architect / 3万通りの意匠 */}
-            <div className="space-y-6 p-6 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-300 group text-white rounded-lg flex flex-col justify-between">
-              <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/30 transition-colors">
+            {/* Card 2: Aesthetic Architect / 3万通りのカスタマイズ */}
+            <motion.div 
+              initial="rest"
+              whileHover="hover"
+              animate="rest"
+              className="space-y-6 p-6 border border-white/5 bg-white/[0.01] hover:border-azure-500/30 hover:bg-azure-500/[0.01] transition-all duration-300 group text-white rounded-lg flex flex-col justify-between cursor-pointer"
+            >
+              <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/20 transition-colors">
                 <div className="relative w-24 h-24 flex items-center justify-center">
-                  {/* Frame layer (top) */}
-                  <div className="absolute w-20 h-12 border border-azure-400 bg-azure-950/20 rounded transform -rotate-12 -translate-y-4 group-hover:-translate-y-8 group-hover:scale-105 transition-all duration-300 flex items-center justify-center shadow-lg">
+                  {/* Frame layer (top - slides up on hover) */}
+                  <motion.div 
+                    variants={{
+                      rest: { y: -16, x: 0, rotate: -12, scale: 1 },
+                      hover: { y: -34, x: -8, rotate: -8, scale: 1.05, transition: { type: "spring", stiffness: 200, damping: 15 } }
+                    }}
+                    className="absolute w-20 h-12 border border-azure-400 bg-azure-950/20 rounded flex items-center justify-center shadow-lg"
+                  >
                     <Layers size={10} className="text-azure-400 animate-pulse" />
-                  </div>
+                  </motion.div>
                   
                   {/* Core Design layer (middle) */}
-                  <div className="absolute w-20 h-12 border border-white/20 bg-zinc-900/60 rounded transform -rotate-12 group-hover:scale-100 transition-all duration-300 flex items-center justify-center">
+                  <motion.div 
+                    variants={{
+                      rest: { scale: 1 },
+                      hover: { scale: 1.02 }
+                    }}
+                    className="absolute w-20 h-12 border border-white/20 bg-zinc-900/60 rounded transform -rotate-12 flex items-center justify-center"
+                  >
                     <Sparkles size={10} className="text-white/60" />
-                  </div>
+                  </motion.div>
                   
-                  {/* Base structure layer (bottom) */}
-                  <div className="absolute w-20 h-12 border border-dashed border-white/10 bg-void rounded transform -rotate-12 translate-y-4 group-hover:translate-y-8 transition-all duration-300 flex items-center justify-center opacity-60">
+                  {/* Base structure layer (bottom - slides down on hover) */}
+                  <motion.div 
+                    variants={{
+                      rest: { y: 16, x: 0, rotate: -12, opacity: 0.6 },
+                      hover: { y: 34, x: 8, rotate: -16, opacity: 0.8, transition: { type: "spring", stiffness: 200, damping: 15 } }
+                    }}
+                    className="absolute w-20 h-12 border border-dashed border-white/10 bg-void rounded flex items-center justify-center"
+                  >
                     <span className="text-[6px] text-white/20 font-mono">BASE</span>
-                  </div>
+                  </motion.div>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-azure-400 flex flex-wrap items-center gap-1">
-                  Aesthetic Architect <span className="text-[9px] text-white/60 font-normal">/ 3万通りの意匠</span>
+                  Aesthetic Architect <span className="text-[9px] text-white/60 font-normal">/ 3万通りのデザイン</span>
                 </h3>
                 <p className="text-[9px] tracking-widest leading-loose opacity-50">
-                  Easily configure layout, frame, background effect, and glow. Express your identity with over 36,000 design combinations. / レイアウトやエフェクトを直感的に構築。数万通りのデザインシステムで自分らしさを表現。
+                  フレーム、背景エフェクト、BGM、そして進化する守護天使。3万通り以上の組み合わせから、あなただけの独自の世界観を構築。 / Design your own identity with over 30,000 combinations. Choose custom frames, background effects, ambient music, and watch your mascot angel evolve.
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Card 3: Stealth Identity / 匿名性と存在の保護 */}
-            <div className="space-y-6 p-6 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-300 group text-white rounded-lg flex flex-col justify-between">
-              <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/30 transition-colors">
+            {/* Card 3: Stealth Identity / 匿名性と情報保護 */}
+            <motion.div 
+              initial="rest"
+              whileHover="hover"
+              animate="rest"
+              className="space-y-6 p-6 border border-white/5 bg-white/[0.01] hover:border-azure-500/30 hover:bg-azure-500/[0.01] transition-all duration-300 group text-white rounded-lg flex flex-col justify-between cursor-pointer"
+            >
+              <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/20 transition-colors">
                 {/* Left Side: Public Profile (Alias) */}
                 <div className="w-1/2 h-full border-r border-white/5 flex flex-col items-center justify-center p-3 relative bg-azure-500/[0.01]">
-                  <div className="w-8 h-8 rounded-full bg-azure-500/10 border border-azure-500/20 flex items-center justify-center mb-1.5">
+                  <motion.div 
+                    animate={{ scale: [1, 1.15, 1], opacity: [0.7, 1, 0.7] }} 
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    className="w-8 h-8 rounded-full bg-azure-500/10 border border-azure-500/20 flex items-center justify-center mb-1.5"
+                  >
                     <Sparkles size={12} className="text-azure-400" />
-                  </div>
-                  <div className="text-[8px] font-bold tracking-wider text-azure-400">ALIAS NAME</div>
-                  <div className="text-[6px] tracking-widest text-white/30 uppercase mt-0.5">Public Persona</div>
+                  </motion.div>
+                  <div className="text-[8px] font-bold tracking-wider text-azure-400 font-mono">ALIAS NAME</div>
+                  <div className="text-[6px] tracking-widest text-white/30 uppercase mt-0.5 font-mono">Public Persona</div>
                 </div>
 
                 {/* Right Side: Private Info (Lock/Shield) */}
                 <div className="w-1/2 h-full flex flex-col items-center justify-center p-3 relative">
-                  <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-1.5 group-hover:bg-zinc-800 transition-colors duration-300">
+                  <motion.div 
+                    variants={{
+                      rest: { scale: 1, rotate: 0 },
+                      hover: { scale: 1.15, rotate: [0, -10, 10, -5, 5, 0], transition: { duration: 0.6 } }
+                    }}
+                    className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-1.5"
+                  >
                     <ShieldCheck size={12} className="text-white/60 group-hover:text-white transition-colors duration-300" />
-                  </div>
-                  <div className="text-[8px] font-bold tracking-wider text-white/70">SECURED DATA</div>
-                  <div className="text-[6px] tracking-widest text-white/30 uppercase mt-0.5">Personal Info</div>
+                  </motion.div>
+                  <div className="text-[8px] font-bold tracking-wider text-white/70 font-mono">SECURED DATA</div>
+                  <div className="text-[6px] tracking-widest text-white/30 uppercase mt-0.5 font-mono">Personal Info</div>
                 </div>
                 
-                {/* Animated separation barrier */}
-                <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-gradient-to-b from-transparent via-azure-500/30 to-transparent" />
+                {/* Animated separation barrier (laser scan) */}
+                <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-gradient-to-b from-transparent via-azure-500/30 to-transparent">
+                  <motion.div 
+                    variants={{
+                      rest: { y: "-100%" },
+                      hover: { 
+                        y: ["-100%", "100%", "-100%"], 
+                        transition: { repeat: Infinity, duration: 2, ease: "linear" } 
+                      }
+                    }}
+                    className="w-full h-1/4 bg-azure-400 shadow-[0_0_8px_#38bdf8]" 
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
                 <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-azure-400 flex flex-wrap items-center gap-1">
-                  Stealth Identity <span className="text-[9px] text-white/60 font-normal">/ 匿名性と存在の保護</span>
+                  Stealth Identity <span className="text-[9px] text-white/60 font-normal">/ 匿名性と情報保護</span>
                 </h3>
                 <p className="text-[9px] tracking-widest leading-loose opacity-50">
-                  Safeguard your real name and contact info. Highlight your alias or portfolio, and securely share data only with those you trust. / 本名を保護し、活動名や実績を主体に開示。信頼できる相手にだけ情報を安全に共有します。
+                  本名を保護し、活動名（エイリアス）や実績のみを開示。信頼できる相手にだけ情報を安全に共有できる、プライバシー保護設計。 / Safeguard your real name and share only your alias or portfolio. Maintain absolute control over your personal data, sharing securely with trusted contacts.
                 </p>
               </div>
-            </div>
+            </motion.div>
           </div>
 
           <div className="text-center py-12 lg:py-20 bg-azure-500/[0.02] border border-azure-500/10 backdrop-blur-sm relative overflow-hidden px-4 flex flex-col items-center gap-6">
