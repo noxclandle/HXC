@@ -730,7 +730,6 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
             >
               <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/20 transition-colors">
                 <div className="relative w-24 h-24 flex items-center justify-center">
-                  {/* Frame layer (top - slides up on hover) */}
                   <motion.div 
                     variants={{
                       rest: { y: -16, x: 0, rotate: -12, scale: 1 },
@@ -741,7 +740,6 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                     <Layers size={10} className="text-azure-400 animate-pulse" />
                   </motion.div>
                   
-                  {/* Core Design layer (middle) */}
                   <motion.div 
                     variants={{
                       rest: { scale: 1 },
@@ -752,7 +750,6 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                     <Sparkles size={10} className="text-white/60" />
                   </motion.div>
                   
-                  {/* Base structure layer (bottom - slides down on hover) */}
                   <motion.div 
                     variants={{
                       rest: { y: 16, x: 0, rotate: -12, opacity: 0.6 },
@@ -783,7 +780,6 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
               className="space-y-6 p-6 border border-white/5 bg-white/[0.01] hover:border-azure-500/30 hover:bg-azure-500/[0.01] transition-all duration-300 group text-white rounded-lg flex flex-col justify-between cursor-pointer"
             >
               <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/20 transition-colors">
-                {/* Left Side: Public Profile (Alias) */}
                 <div className="w-1/2 h-full border-r border-white/5 flex flex-col items-center justify-center p-3 relative bg-azure-500/[0.01]">
                   <motion.div 
                     animate={{ scale: [1, 1.15, 1], opacity: [0.7, 1, 0.7] }} 
@@ -796,7 +792,6 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                   <div className="text-[6px] tracking-widest text-white/30 uppercase mt-0.5 font-mono">Public Persona</div>
                 </div>
 
-                {/* Right Side: Private Info (Lock/Shield) */}
                 <div className="w-1/2 h-full flex flex-col items-center justify-center p-3 relative">
                   <motion.div 
                     variants={{
@@ -811,35 +806,6 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                   <div className="text-[6px] tracking-widest text-white/30 uppercase mt-0.5 font-mono">Personal Info</div>
                 </div>
                 
-                {/* Animated separation barrier (laser scan) */}
-                <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-gradient-to-b from-transparent via-azure-500/30 to-transparent">
-                  <motion.div 
-                    variants={{
-                      rest: { y: "-100%" },
-                      hover: { 
-                        y: ["-100%", "100%", "-100%"], 
-                        transition: { repeat: Infinity, duration: 2, ease: "linear" } 
-                      }
-                    }}
-                    className="w-full h-1/4 bg-azure-400 shadow-[0_0_8px_#38bdf8]" 
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-azure-400 flex flex-wrap items-center gap-1">
-                  Stealth Identity <span className="text-[9px] text-white/60 font-normal">/ 匿名性と情報保護</span>
-                </h3>
-                <p className="text-[9px] tracking-widest leading-loose opacity-50">
-                  本名を保護し、活動名（エイリアス）や実績のみを開示。信頼できる相手にだけ情報を安全に共有できる、プライバシー保護設計。 / Safeguard your real name and share only your alias or portfolio. Maintain absolute control over your personal data, sharing securely with trusted contacts.
-                </p>
-              </div>
-            </motion.div>mb-1.5"
-                  >
-                    <ShieldCheck size={12} className="text-white/60 group-hover:text-white transition-colors duration-300" />
-                  </motion.div>
-                  <div className="text-[8px] font-bold tracking-wider text-white/70 font-mono">SECURED DATA</div>
-                  <div className="text-[6px] tracking-widest text-white/30 uppercase mt-0.5 font-mono">Personal Info</div>
                 </div>
                 
                 {/* Animated separation barrier (laser scan) */}
