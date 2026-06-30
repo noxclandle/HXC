@@ -77,7 +77,7 @@ export default function ProfileEditPage() {
 
     // 10MB以上の生ファイルはガード
     if (file.size > 10 * 1024 * 1024) {
-      showToast("10MB以下の画像を選択してください", "error");
+      showToast("Please select an image under 10MB. / 10MB以下の画像を選択してください", "error");
       return;
     }
 
@@ -105,10 +105,10 @@ export default function ProfileEditPage() {
 
       const uploadData = await uploadRes.json();
       updateField(type === "face" ? "faceUrl" : "logoUrl", uploadData.url);
-      showToast("画像を最適化してアップロードしました", "success");
+      showToast("Image optimized and uploaded. / 画像を最適化してアップロードしました", "success");
     } catch (err) {
       console.error(err);
-      showToast("アップロードに失敗しました", "error");
+      showToast("Upload failed. / アップロードに失敗しました", "error");
     } finally {
       setIsUploading(null);
     }
@@ -304,19 +304,19 @@ export default function ProfileEditPage() {
 
       if (res.ok) {
         setSaveStatus("saved");
-        showToast("保存しました", "success");
+        showToast("Profile saved. / 保存しました", "success");
         setTimeout(() => setSaveStatus("idle"), 2000);
       } else {
         const errData = await res.json();
         setSaveStatus("error");
         // サーバーからの具体的なエラーメッセージを表示
-        showToast(errData.error || "保存に失敗しました", "error");
+        showToast(errData.error || "Save failed. / 保存に失敗しました", "error");
         console.error("Auto-save sync error:", errData);
       }
       } catch (err) {
       console.error("Auto-save network error:", err);
       setSaveStatus("error");
-      showToast("通信エラーが発生しました", "error");
+      showToast("Network error. / 通信エラーが発生しました", "error");
       }
       }, [showToast]);
 
@@ -410,7 +410,7 @@ export default function ProfileEditPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Name / 氏名</label>
-                      <input type="text" value={formData.name} onChange={(e) => updateField('name', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="漢字・英語" />
+                      <input type="text" value={formData.name} onChange={(e) => updateField('name', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="DAISUKE SASAKI / 佐々木 大輔" />
                       <div className="flex items-center">
                         <AlignButtons field="name" />
                         <ScaleButtons field="name" />
@@ -418,7 +418,7 @@ export default function ProfileEditPage() {
                    </div>
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Reading / ふりがな</label>
-                      <input type="text" value={formData.reading} onChange={(e) => updateField('reading', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="ひらがな または 英数字" />
+                      <input type="text" value={formData.reading} onChange={(e) => updateField('reading', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="SASAKI DAISUKE / ささき だいすけ" />
                       <div className="flex items-center">
                         <AlignButtons field="reading" />
                         <ScaleButtons field="reading" />
@@ -426,7 +426,7 @@ export default function ProfileEditPage() {
                    </div>
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Company / 所属企業</label>
-                      <input type="text" value={formData.company} onChange={(e) => updateField('company', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-bronze-400 outline-none text-white" placeholder="企業名" />
+                      <input type="text" value={formData.company} onChange={(e) => updateField('company', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-bronze-400 outline-none text-white" placeholder="COMPANY NAME / 企業名" />
                       <div className="flex items-center">
                         <AlignButtons field="company" />
                         <ScaleButtons field="company" />
@@ -442,7 +442,7 @@ export default function ProfileEditPage() {
                     </div>
                     <div className="space-y-3 md:col-span-2">
                        <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Company Location / 会社の所在地</label>
-                       <input type="text" value={formData.address} onChange={(e) => updateField('address', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="東京都港区南青山..." />
+                       <input type="text" value={formData.address} onChange={(e) => updateField('address', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="MINAMI-AOYAMA, MINATO-KU, TOKYO / 東京都港区南青山..." />
                        <ScaleButtons field="address" />
                     </div>
                    <div className="space-y-3">
@@ -516,7 +516,7 @@ export default function ProfileEditPage() {
                    </div>
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">LINE ID / URL</label>
-                      <input type="text" value={formData.link_line} onChange={(e) => updateField('link_line', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="ID または https://line.me/..." />
+                      <input type="text" value={formData.link_line} onChange={(e) => updateField('link_line', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="ID or URL / ID または URL (https://line.me/...)" />
                    </div>
                    <div className="space-y-3">
                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Facebook URL</label>

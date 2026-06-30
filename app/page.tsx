@@ -39,8 +39,8 @@ export default function LandingPage() {
         </h1>
 
         <p className="text-white/40 max-w-sm mb-12 tracking-[0.2em] text-[10px] md:text-[11px] leading-relaxed uppercase px-4">
-          Connecting physical and digital identities.<br />
-          Redefining business networking.
+          Connecting physical and digital identities / 物理とデジタルのアイデンティティを繋ぐ<br />
+          Redefining business networking / ビジネスネットワーキングの再定義
         </p>
 
         {/* Action Buttons */}
@@ -80,8 +80,8 @@ export default function LandingPage() {
               <div className="w-14 h-14 rounded-full bg-white/[0.02] border border-white/10 flex items-center justify-center text-white/60">
                 <CreditCard size={20} />
               </div>
-              <span className="text-[9px] tracking-wider font-bold">1. Tap Card</span>
-              <p className="text-[7px] text-white/30 tracking-widest leading-relaxed">物理カードを相手のスマートフォンにかざすだけ</p>
+              <span className="text-[9px] tracking-wider font-bold">1. Tap Card / カードをかざす</span>
+              <p className="text-[7px] text-white/30 tracking-widest leading-relaxed">物理カードを相手のスマートフォンにかざすだけ / Simply tap the physical card to any smartphone.</p>
             </div>
 
             {/* Connection Arrow/Ripple 1 */}
@@ -96,8 +96,8 @@ export default function LandingPage() {
               <div className="w-14 h-14 rounded-full bg-white/[0.02] border border-white/10 flex items-center justify-center text-white/60">
                 <Smartphone size={20} />
               </div>
-              <span className="text-[9px] tracking-wider font-bold">2. Instant Sync</span>
-              <p className="text-[7px] text-white/30 tracking-widest leading-relaxed">専用アプリ不要。ブラウザが自動起動し接続</p>
+              <span className="text-[9px] tracking-wider font-bold">2. Instant Sync / 瞬時の同期</span>
+              <p className="text-[7px] text-white/30 tracking-widest leading-relaxed">専用アプリ不要。ブラウザが自動起動し接続 / No app required. The browser opens automatically.</p>
             </div>
 
             {/* Connection Arrow/Ripple 2 */}
@@ -112,8 +112,8 @@ export default function LandingPage() {
               <div className="w-14 h-14 rounded-full bg-white/[0.02] border border-white/10 flex items-center justify-center text-white/60">
                 <Share2 size={20} />
               </div>
-              <span className="text-[9px] tracking-wider font-bold">3. Connection</span>
-              <p className="text-[7px] text-white/30 tracking-widest leading-relaxed">あなたのアイデンティティを美しく展開・保存</p>
+              <span className="text-[9px] tracking-wider font-bold">3. Connection / つながりの構築</span>
+              <p className="text-[7px] text-white/30 tracking-widest leading-relaxed">あなたのアイデンティティを美しく展開・保存 / Share and save your digital identity elegantly.</p>
             </div>
 
           </div>
@@ -129,28 +129,32 @@ export default function LandingPage() {
             <div className="p-6 border border-white/5 bg-white/[0.01]">
               <h3 className="text-[10px] tracking-[0.2em] font-bold text-white mb-2 uppercase">Physical-Digital Resonance / 物理とデジタルの同期</h3>
               <p className="text-[9px] text-white/40 leading-relaxed tracking-wider">
-                NFC (近距離無線通信) 技術を用いて、カードをタップするだけで最新のプロフィールデータを相手のスマートフォンに即座に透過展開します。
+                NFC (近距離無線通信) 技術を用いて、カードをタップするだけで最新のプロフィールデータを相手のスマートフォンに即座に透過展開します。 <br />
+                <span className="text-[8px] opacity-60 mt-1 block">Seamlessly transmit your latest profile data to any smartphone with a simple card tap using NFC technology.</span>
               </p>
             </div>
 
             <div className="p-6 border border-white/5 bg-white/[0.01]">
               <h3 className="text-[10px] tracking-[0.2em] font-bold text-white mb-2 uppercase">Infinite Customize / 豊富なアセット機能</h3>
               <p className="text-[9px] text-white/40 leading-relaxed tracking-wider">
-                Relation Token（RT）を使用し、フレーム、背景、エフェクト、さらには共鳴サウンドなどを自由に解禁・装着し、独自の世界観を構築可能。
+                Relation Token（RT）を使用し、フレーム、背景、エフェクト、さらには共鳴サウンドなどを自由に解禁・装着し、独自の世界観を構築可能。 <br />
+                <span className="text-[8px] opacity-60 mt-1 block">Use Relation Tokens (RT) to unlock and equip custom frames, backgrounds, effects, and resonance sounds.</span>
               </p>
             </div>
 
             <div className="p-6 border border-white/5 bg-white/[0.01]">
               <h3 className="text-[10px] tracking-[0.2em] font-bold text-white mb-2 uppercase">AI-OCR Document Scan / アナログ名刺のOCR解析</h3>
               <p className="text-[9px] text-white/40 leading-relaxed tracking-wider">
-                カメラで撮影した従来の紙名刺から、AI（OCR）が文字情報を自動解析し、システム内のデジタル名刺ライブラリへと一括保存します。
+                カメラで撮影した従来の紙名刺から、AI（OCR）が文字情報を自動解析し、システム内のデジタル名刺ライブラリへと一括保存します。 <br />
+                <span className="text-[8px] opacity-60 mt-1 block">Scan traditional paper cards with the AI-OCR camera, automatically converting and saving them to your digital library.</span>
               </p>
             </div>
 
             <div className="p-6 border border-white/5 bg-white/[0.01]">
               <h3 className="text-[10px] tracking-[0.2em] font-bold text-white mb-2 uppercase">Strict iOS Alignment / 完全なSafari・iPhone対応</h3>
               <p className="text-[9px] text-white/40 leading-relaxed tracking-wider">
-                iOSでの動作安定に特化したCSSアニメーション設計と、iPhone連絡先に画像付きで一発登録可能な独自規格vCard出力を実現。
+                iOSでの動作安定に特化したCSSアニメーション設計と、iPhone連絡先に画像付きで一発登録可能な独自規格vCard出力を実現。 <br />
+                <span className="text-[8px] opacity-60 mt-1 block">Engineered with Safari-optimized CSS animations and a vCard output for seamless contact saving on iOS.</span>
               </p>
             </div>
           </div>
@@ -164,7 +168,8 @@ export default function LandingPage() {
             </div>
             <h3 className="text-[10px] tracking-[0.3em] font-bold text-white uppercase">System Architect / 開発者紹介</h3>
             <p className="text-[9px] text-white/40 leading-relaxed max-w-md tracking-wider">
-              本デジタル名刺システム「Hexa Card」は、次世代ビジネスネットワーキングを支援するため、**[nox]**によって設計・開発されています。
+              本デジタル名刺システム「Hexa Card」は、次世代ビジネスネットワーキングを支援するため、**[nox]**によって設計・開発されています。 <br />
+              <span className="text-[8px] opacity-60 mt-1 block">Designed and developed by **[nox]** to empower the next generation of business networking.</span>
             </p>
             <div className="flex gap-6 items-center justify-center pt-2">
               <Link 
@@ -189,7 +194,7 @@ export default function LandingPage() {
         {/* Status Indicator */}
         <div className="flex items-center gap-3 opacity-30">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[8px] uppercase tracking-[0.4em] font-mono">System Online / Secure Connected</span>
+          <span className="text-[8px] uppercase tracking-[0.4em] font-mono">System Online / システム稼働中</span>
         </div>
 
       </main>

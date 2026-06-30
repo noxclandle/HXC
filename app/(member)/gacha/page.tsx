@@ -46,8 +46,8 @@ export default function GachaPage() {
   return (
     <div className="max-w-4xl mx-auto pt-32 px-6 pb-24 text-moonlight text-center">
       <header className="mb-24">
-        <h1 className="text-2xl tracking-[0.6em] uppercase font-extralight mb-4">Ethereal Gacha</h1>
-        <p className="text-[10px] tracking-[0.4em] opacity-40 uppercase italic">Spend 500 RT to summon a fragment of the soul.</p>
+        <h1 className="text-2xl tracking-[0.6em] uppercase font-extralight mb-4">Ethereal Gacha / 霊的召喚</h1>
+        <p className="text-[10px] tracking-[0.4em] opacity-40 uppercase italic">Spend 500 RT to summon a fragment of the soul / 500 RTを消費して、魂の破片を召喚します。</p>
       </header>
 
       <div className="relative h-80 flex items-center justify-center">
@@ -68,7 +68,7 @@ export default function GachaPage() {
                 onClick={handleGacha}
                 className="px-16 py-5 bg-moonlight text-void text-[11px] font-bold tracking-[0.8em] uppercase hover:bg-white transition-all shadow-[0_0_30px_rgba(224,224,224,0.2)]"
               >
-                Gacha
+                Summon / 召喚する
               </button>
             </motion.div>
           )}
@@ -82,7 +82,7 @@ export default function GachaPage() {
               className="flex flex-col items-center"
             >
               <RefreshCw size={64} className="animate-spin opacity-20 mb-8" />
-              <p className="text-[10px] tracking-[0.6em] animate-pulse">Resonating with the Void...</p>
+              <p className="text-[10px] tracking-[0.6em] animate-pulse">Resonating with the Void... / 境界と同調中...</p>
             </motion.div>
           )}
 
@@ -99,7 +99,7 @@ export default function GachaPage() {
                  onClick={() => setError(null)}
                  className="text-[9px] tracking-[0.4em] uppercase opacity-40 hover:opacity-100 transition-opacity underline underline-offset-8"
                >
-                 Try Again
+                 Try Again / 再試行
                </button>
              </motion.div>
           )}
@@ -128,16 +128,16 @@ export default function GachaPage() {
               
               {isDuplicate && (
                 <p className="text-[9px] tracking-[0.3em] text-azure-400 uppercase mb-8 animate-pulse">
-                  Duplicate Identity // 200 RT Refunded
+                  Duplicate Identity // 200 RT Refunded / 重複する存在 // 200 RT 返還
                 </p>
               )}
 
-              <p className="text-[9px] tracking-[0.2em] opacity-40 mb-12">New asset bound to your soul record.</p>
+              <p className="text-[9px] tracking-[0.2em] opacity-40 mb-12">New asset bound to your soul record. / 新たなアセットが魂の記録に紐付けられました。</p>
               <button 
                 onClick={() => setResult(null)}
                 className="text-[9px] tracking-[0.4em] uppercase opacity-40 hover:opacity-100 transition-opacity underline underline-offset-8"
               >
-                Return to Alter
+                Return to Altar / 祭壇へ戻る
               </button>
             </motion.div>
           )}

@@ -15,9 +15,9 @@ import { useSearchParams } from "next/navigation";
 import { ASSETS, Asset, CATEGORIES, getRarityStyles } from "@/lib/game/assets";
 
 const RT_PACKS = [
-  { id: "rt_small", price: 1000, rt: 2000, label: "2,000 ポイント", description: "基本的なポイント補充。1回のアセット購入に。" },
-  { id: "rt_medium", price: 5000, rt: 11000, label: "11,000 ポイント", description: "推奨パック。広範なカスタマイズを可能にします。", popular: true },
-  { id: "rt_large", price: 10000, rt: 23000, label: "23,000 ポイント", description: "最大限の補充。すべてのアイテムを揃える方に。" },
+  { id: "rt_small", price: 1000, rt: 2000, label: "2,000 Points / 2,000 ポイント", description: "Basic point refill. For a single asset purchase. / 基本的なポイント補充。1回のアセット購入に。" },
+  { id: "rt_medium", price: 5000, rt: 11000, label: "11,000 Points / 11,000 ポイント", description: "Recommended pack. Unlocks extensive customization. / 推奨パック。広範なカスタマイズを可能にします。", popular: true },
+  { id: "rt_large", price: 10000, rt: 23000, label: "23,000 Points / 23,000 ポイント", description: "Maximum refill. Perfect for collecting all assets. / 最大限の補充。すべてのアイテムを揃える方に。" },
 ];
 
 const getPointerStyle = (id: string) => {
@@ -272,7 +272,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
             <ArrowLeft size={12} /> <span className="hidden lg:inline">Back to Home / </span>拠点へ戻る
           </Link>
           <h1 className="hidden lg:block text-3xl lg:text-5xl tracking-[0.3em] lg:tracking-[0.5em] uppercase font-extralight text-white mt-4">Shop & Items</h1>
-          <p className="text-[9px] lg:text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold hidden lg:block">ショップ・アイテム管理 / Asset Management</p>
+          <p className="text-[9px] lg:text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold hidden lg:block">Asset Management / ショップ・アイテム管理</p>
         </div>
         <div className="text-right flex items-center lg:flex-col lg:items-end gap-3 lg:gap-2">
            <div className="flex items-center gap-2 lg:gap-4 group">
@@ -636,10 +636,10 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
                            if (data.url) {
                              window.location.href = data.url;
                            } else {
-                             showToast(data.error || "接続に失敗しました", "error");
+                             showToast(data.error || "Connection failed. / 接続に失敗しました", "error");
                            }
                          } catch (e) {
-                           showToast("通信エラー", "error");
+                           showToast("Network error. / 通信エラーが発生しました", "error");
                          }
                        }}
                        className="group p-4 border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-azure-500/40 transition-all text-left flex flex-col gap-2 relative overflow-hidden"

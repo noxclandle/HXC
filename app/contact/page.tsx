@@ -56,8 +56,8 @@ export default function ContactPage() {
     <main className="min-h-screen pt-32 pb-40 px-6 flex flex-col items-center">
       <div className="max-w-xl w-full">
         <header className="text-center mb-20">
-          <h1 className="text-3xl tracking-[0.4em] uppercase font-light mb-4">Contact</h1>
-          <p className="text-[9px] tracking-[0.2em] opacity-30 uppercase italic">Interaction & Inquiry</p>
+          <h1 className="text-2xl tracking-[0.4em] uppercase font-light mb-4">Contact / お問い合わせ</h1>
+          <p className="text-[9px] tracking-[0.2em] opacity-30 uppercase italic">Interaction & Inquiry / 交流とご質問</p>
         </header>
 
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -123,13 +123,13 @@ export default function ContactPage() {
               )}
             </button>
             {status === "error" && (
-              <p className="text-[9px] text-rose-500 uppercase tracking-widest mt-4 text-center">Transmission failed. Please try again.</p>
+              <p className="text-[9px] text-rose-500 uppercase tracking-widest mt-4 text-center">Transmission failed. Please try again. / 送信に失敗しました。再試行してください。</p>
             )}
           </div>
         </form>
 
         <div className="mt-24 border-t border-white/5 pt-12 text-center">
-          <p className="text-[9px] tracking-[0.3em] opacity-20 uppercase mb-8">Social Connections</p>
+          <p className="text-[9px] tracking-[0.3em] opacity-20 uppercase mb-8">Social Connections / ソーシャルリンク</p>
           <div className="flex justify-center gap-12 text-[10px] tracking-[0.2em] opacity-40">
             <a href="https://x.com/HexaRelation" target="_blank" className="hover:opacity-100 transition-opacity">X (TWITTER)</a>
             <span className="opacity-10 cursor-default">INSTAGRAM</span>

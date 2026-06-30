@@ -8,16 +8,16 @@ export default function ShopPage() {
   const categories = [
     {
       id: "physical-card",
-      title: "Physical Cards",
-      desc: "NFC搭載・最高級素材の物理名刺",
+      title: "Physical Cards / 物理カード",
+      desc: "Premium physical business cards with NFC / NFC搭載・最高級素材 of 物理名刺",
       icon: <CreditCard size={24} />,
       link: "/shop/card",
       color: "border-moonlight/20",
     },
     {
       id: "premium-assets",
-      title: "Digital Assets",
-      desc: "背景・称号・共鳴音の解禁",
+      title: "Digital Assets / デジタルアセット",
+      desc: "Unlock backgrounds, titles, and resonance sounds / 背景・称号・共鳴音の解禁",
       icon: <Sparkles size={24} />,
       link: "/inventory",
       color: "border-yellow-500/20",
@@ -28,10 +28,10 @@ export default function ShopPage() {
     <div className="max-w-6xl mx-auto pt-32 px-6 pb-24 text-moonlight">
       <header className="mb-20 text-center relative">
         <Link href="/inventory" className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center gap-2 text-[8px] uppercase tracking-[0.4em] opacity-30 hover:opacity-100 transition-opacity">
-           <ChevronLeft size={12} /> Back to Items
+           <ChevronLeft size={12} /> Back to Items / アイテム一覧へ
         </Link>
-        <h1 className="text-3xl tracking-[0.8em] uppercase font-light mb-4">The Exchange</h1>
-        <p className="text-[10px] tracking-[0.4em] opacity-30 uppercase">Equip yourself for the new reality.</p>
+        <h1 className="text-3xl tracking-[0.8em] uppercase font-light mb-4">The Exchange / 交換所</h1>
+        <p className="text-[10px] tracking-[0.4em] opacity-30 uppercase">Equip yourself for the new reality / 新たな現実に備えよ</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

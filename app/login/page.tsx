@@ -64,7 +64,7 @@ function LoginContent() {
       });
 
       if (result?.error) {
-        setError("認証に失敗しました");
+        setError("AUTHENTICATION FAILED / 認証に失敗しました");
       } else if (result?.ok) {
         // ログイン成功後、デバイス紐付け（Soul-Link）を自動実行
         try {
@@ -89,7 +89,7 @@ function LoginContent() {
         }
       }
     } catch (err) {
-      setError("通信エラーが発生しました");
+      setError("NETWORK ERROR / 通信エラーが発生しました");
     } finally {
       setIsLoading(false);
     }
