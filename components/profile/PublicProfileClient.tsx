@@ -243,7 +243,7 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
                   animate={{ opacity: [0.6, 1, 0.6], scale: [0.98, 1.02, 0.98] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
-                  <GeometricAngel level={20} mood="stable" size={110} />
+                  <GeometricAngel level={ownerLevel} mood="stable" size={110} />
                 </motion.div>
               </div>
 
@@ -278,6 +278,11 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
                     <ChevronDown size={14} className="-mt-2.5 opacity-60" />
                   </motion.div>
                 </div>
+                
+                {/* コンシェルジュによる歓迎メッセージ吹き出し */}
+                <p className="text-[9px] tracking-widest text-azure-400/80 font-light max-w-xs mx-auto leading-relaxed pt-4 opacity-80 border-t border-white/5 mt-6 px-4">
+                  {welcomeMessage}
+                </p>
               </motion.div>
             </motion.div>
           </motion.div>

@@ -659,37 +659,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
         <section className="relative z-10 w-full max-w-lg mx-auto py-24 px-6 border-t border-white/5 flex flex-col items-center space-y-12">
           <div className="text-center space-y-4">
             <h3 className="text-[10px] tracking-[0.5em] uppercase font-bold text-azure-400">Digital Handshake</h3>
-            <p className="text-[8px] tracking-[0.2em] uppercase opacity-40">物理カードがない場合は、このQRを読み取ってください</p>
-          </div>
-          
-          <div className="p-6 bg-white border border-white/10 shadow-[0_0_50px_rgba(59,130,246,0.2)] rounded-xl relative group">
-            <div className="absolute inset-[-10px] border border-azure-500/20 rounded-2xl animate-pulse" />
-            <QRCodeSVG 
-              value={typeof window !== "undefined" ? window.location.href : `https://virtual-business-card.hexa-relation.com/p/${data.handle_name || data.id}`}
-              size={180}
-              level="H"
-              includeMargin={false}
-              fgColor="#020202"
-              bgColor="#FFFFFF"
-            />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white border-2 border-void flex items-center justify-center rounded-sm">
-               <QrCode size={16} className="text-void" />
-            </div>
-          </div>
-
-          <p className="text-[7px] tracking-[0.4em] uppercase opacity-20 italic">Encrypted via Hexa System</p>
-        </section>
-      )}
-
-      {/* Feature section */}
-      {!isOwner && (
-        <section className="relative z-10 w-full max-w-5xl py-48 px-6 border-t border-white/5 space-y-32">
-          <div className="text-center space-y-12">
-            <h2 className="text-3xl md:text-5xl tracking-[0.2em] font-extralight uppercase text-white leading-tight">あなたも、次世代の<br />デジタル名刺を<br />始めてみませんか？</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-            {/* Card 1: Touch Resonance / NFC連携と共鳴 */}
+            <p className="text-[8px] tracking-[0.2em] uppercase opacity-40">物理カードがない場合は、このQRを読み取ってください</p            {/* Card 1: Paper Card Scan / 紙名刺のデジタル管理 */}
             <motion.div 
               initial="rest"
               whileHover="hover"
@@ -697,57 +667,61 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
               className="space-y-6 p-6 border border-white/5 bg-white/[0.01] hover:border-azure-500/30 hover:bg-azure-500/[0.01] transition-all duration-300 group text-white rounded-lg flex flex-col justify-between cursor-pointer"
             >
               <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/20 transition-colors">
-                {/* Smartphone silhouette (floating) */}
-                <motion.div 
-                  animate={{ y: [0, -3, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute right-12 w-14 h-24 border border-white/10 rounded-lg flex items-center justify-center bg-zinc-950/80 transition-all group-hover:border-white/30"
-                >
-                  <div className="w-1.5 h-1.5 bg-white/20 rounded-full absolute top-1.5" />
-                  <div className="w-8 h-12 bg-white/[0.02] border border-white/5 rounded flex flex-col justify-center items-center">
-                    <Smartphone size={12} className="text-white/30 group-hover:text-azure-400 transition-colors duration-300" />
-                  </div>
-                </motion.div>
-                
-                {/* NFC Card (Hover slides and taps the phone) */}
+                {/* Physical Card Silhouette */}
                 <motion.div 
                   variants={{
-                    rest: { x: 0, y: 0, rotate: -5 },
-                    hover: { x: 28, y: -4, rotate: 8, scale: 1.05, transition: { type: "spring", stiffness: 200, damping: 15 } }
+                    rest: { rotate: -6, y: 0, scale: 0.9 },
+                    hover: { rotate: 0, y: -4, scale: 0.95, transition: { type: "spring", stiffness: 200, damping: 15 } }
                   }}
-                  className="absolute left-12 w-16 h-10 bg-white/5 border border-white/20 rounded-md shadow-lg flex items-center justify-center backdrop-blur-sm z-10"
+                  className="w-28 h-16 border border-white/10 bg-zinc-950/90 rounded flex flex-col justify-between p-2.5 relative shadow-lg"
                 >
-                  <div className="text-[6px] tracking-widest text-white/50 uppercase font-mono font-bold">HEXA</div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-azure-400/40 animate-pulse" />
+                    <div className="w-10 h-1 bg-white/10 rounded" />
+                  </div>
+                  <div className="space-y-1">
+                    <div className="w-16 h-1.5 bg-white/15 rounded" />
+                    <div className="w-10 h-1 bg-white/10 rounded" />
+                  </div>
                 </motion.div>
 
-                {/* Ripple wave on tap */}
-                <div className="absolute left-[110px] w-12 h-12 flex items-center justify-center">
-                  <motion.div 
-                    variants={{
-                      rest: { scale: 0.8, opacity: 0 },
-                      hover: { 
-                        scale: [0.8, 2, 2.5], 
-                        opacity: [0, 0.8, 0],
-                        transition: { repeat: Infinity, duration: 1.5, ease: "easeOut" }
-                      }
-                    }}
-                    className="absolute w-12 h-12 rounded-full border border-azure-500/40" 
-                  />
-                  <div className="absolute w-12 h-12 rounded-full border border-azure-400/10 animate-pulse" />
-                </div>
+                {/* Scanner Laser Line */}
+                <motion.div 
+                  variants={{
+                    rest: { y: "-100%", opacity: 0 },
+                    hover: { 
+                      y: ["-50px", "50px", "-50px"], 
+                      opacity: [0, 1, 0],
+                      transition: { repeat: Infinity, duration: 2, ease: "easeInOut" } 
+                    }
+                  }}
+                  className="absolute left-6 right-6 h-[1.5px] bg-azure-400 shadow-[0_0_8px_#38bdf8] z-20 pointer-events-none"
+                />
+
+                {/* OCR Text Nodes (glowing particles appearing on hover) */}
+                <motion.div 
+                  variants={{
+                    rest: { opacity: 0, scale: 0.8 },
+                    hover: { opacity: 0.6, scale: 1, transition: { delay: 0.2 } }
+                  }}
+                  className="absolute inset-0 pointer-events-none flex items-center justify-center"
+                >
+                  <div className="absolute top-8 left-16 w-1 h-1 bg-azure-400 rounded-full animate-ping" />
+                  <div className="absolute bottom-8 right-16 w-1 h-1 bg-azure-400 rounded-full animate-ping" />
+                </motion.div>
               </div>
 
               <div className="space-y-2">
                 <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-azure-400 flex flex-wrap items-center gap-1">
-                  Touch Resonance <span className="text-[9px] text-white/60 font-normal">/ NFC連携と共鳴</span>
+                  Paper Card Scan <span className="text-[9px] text-white/60 font-normal">/ 紙名刺のデジタル管理</span>
                 </h3>
                 <p className="text-[9px] tracking-widest leading-loose opacity-50">
-                  物理カードをスマホにかざすだけで、アプリ不要で瞬時にデジタル名刺が起動。スマートかつ未来的な出会いを演出します。 / Just tap the physical card against a phone to instantly launch your profile. No app required—delivering a seamless, futuristic first contact.
+                  受け取った紙名刺は、高性能AIスキャナーで読み取って自動データベース化。名刺管理やホルダーに悩む必要はもうありません。 / Scan physical paper cards with our built-in AI OCR scanner, saving them instantly to your digital connection list.
                 </p>
               </div>
             </motion.div>
 
-            {/* Card 2: Aesthetic Architect / 3万通りのカスタマイズ */}
+            {/* Card 2: Dynamic Media / メディアと資料の即時共有 */}
             <motion.div 
               initial="rest"
               whileHover="hover"
@@ -793,10 +767,10 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
 
               <div className="space-y-2">
                 <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-azure-400 flex flex-wrap items-center gap-1">
-                  Aesthetic Architect <span className="text-[9px] text-white/60 font-normal">/ 3万通りのデザイン</span>
+                  Dynamic Media <span className="text-[9px] text-white/60 font-normal">/ メディアと資料の即時共有</span>
                 </h3>
                 <p className="text-[9px] tracking-widest leading-loose opacity-50">
-                  フレーム、背景エフェクト、BGM、そして進化する守護天使。3万通り以上の組み合わせから、あなただけの独自の世界観を構築。 / Design your own identity with over 30,000 combinations. Choose custom frames, background effects, ambient music, and watch your mascot angel evolve.
+                  静止した紙では不可能な、動的デザイン、BGM、そして提案資料(PDF)やポートフォリオの即時共有。この1枚で全てが完結します。 / Share dynamic designs, background music, and proposal PDFs instantly. Deliver a rich experience paper can never match.
                 </p>
               </div>
             </motion.div>
@@ -830,6 +804,37 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                       hover: { scale: 1.15, rotate: [0, -10, 10, -5, 5, 0], transition: { duration: 0.6 } }
                     }}
                     className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-1.5"
+                  >
+                    <ShieldCheck size={12} className="text-white/60 group-hover:text-white transition-colors duration-300" />
+                  </motion.div>
+                  <div className="text-[8px] font-bold tracking-wider text-white/70 font-mono">SECURED DATA</div>
+                  <div className="text-[6px] tracking-widest text-white/30 uppercase mt-0.5 font-mono">Personal Info</div>
+                </div>
+                
+                {/* Animated separation barrier (laser scan) */}
+                <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-gradient-to-b from-transparent via-azure-500/30 to-transparent">
+                  <motion.div 
+                    variants={{
+                      rest: { y: "-100%" },
+                      hover: { 
+                        y: ["-100%", "100%", "-100%"], 
+                        transition: { repeat: Infinity, duration: 2, ease: "linear" } 
+                      }
+                    }}
+                    className="w-full h-1/4 bg-azure-400 shadow-[0_0_8px_#38bdf8]" 
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-[11px] tracking-[0.4em] uppercase font-bold text-azure-400 flex flex-wrap items-center gap-1">
+                  Stealth Identity <span className="text-[9px] text-white/60 font-normal">/ 匿名性と情報保護</span>
+                </h3>
+                <p className="text-[9px] tracking-widest leading-loose opacity-50">
+                  本名を保護し、活動名（エイリアス）や実績のみを開示。信頼できる相手にだけ情報を安全に共有できる、プライバシー保護設計。 / Safeguard your real name and share only your alias or portfolio. Maintain absolute control over your personal data, sharing securely with trusted contacts.
+                </p>
+              </div>
+            </motion.div>mb-1.5"
                   >
                     <ShieldCheck size={12} className="text-white/60 group-hover:text-white transition-colors duration-300" />
                   </motion.div>
