@@ -160,6 +160,7 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
     },
     { label: "システム告知", path: "/admin/news", icon: <FileText size={16}/>, desc: "全ユーザー向けお知らせの配信・編集" },
     { label: "LP 管理簿", path: "/admin/lps", icon: <Layers size={16}/>, desc: "各種LP・特設プロモーションページのリンク管理" },
+    { label: "売上・財務統計", path: "/admin/sales", icon: <TrendingUp size={16}/>, desc: "物理カード販売およびRTチャージの売上集計（月別・年別）" },
   ];
 
   // システム管理（たまに管理する機能）
