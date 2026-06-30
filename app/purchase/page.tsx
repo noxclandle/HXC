@@ -192,7 +192,7 @@ export default function PurchasePage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-3xl md:text-4xl font-light tracking-[0.5em] uppercase text-white"
           >
-            Card Order
+            Card Order / カードの注文
           </motion.h1>
           <motion.div
             initial={{ opacity: 0 }}

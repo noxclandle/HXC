@@ -241,9 +241,10 @@ export default function ResidentAgent() {
             <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
               <AnimatePresence mode="wait">
                 {activeTab === "portal" && (
-                  <motion.div key="portal" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="space-y-8">
-                    <div className="space-y-4">
-                      <p className="text-[10px] tracking-widest leading-relaxed opacity-60">
+                  <motion.div key="portal" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="space-y-6">
+                    {/* Chat Bubble style for Concierge's voice & status */}
+                    <div className="relative p-4 bg-azure-500/[0.03] border border-azure-500/10 rounded-sm space-y-4">
+                      <p className="text-[10px] tracking-widest leading-relaxed text-white/80 font-light">
                         &quot;ようこそ、主。こちらは貴方の活動をサポートする窓口です。何かお手伝いしましょうか？&quot;
                       </p>
 
@@ -255,46 +256,49 @@ export default function ResidentAgent() {
                       )}
 
                       <div className="grid grid-cols-2 gap-3">
-                         <div className="p-4 bg-white/[0.02] border border-white/5 rounded-sm">
+                         <div className="p-3 bg-void/60 border border-white/5 rounded-sm">
                             <p className="text-[7px] opacity-40 uppercase tracking-widest mb-1">Holding RT / 所持RT</p>
-                            <p className="text-sm font-light tracking-widest text-white">{Number(rtBalance).toLocaleString()} <span className="text-[8px] opacity-20">RT</span></p>
+                            <p className="text-xs font-light tracking-widest text-white">{Number(rtBalance).toLocaleString()} <span className="text-[8px] opacity-20">RT</span></p>
                          </div>
-                         <div className="p-4 bg-white/[0.02] border border-white/5 rounded-sm">
+                         <div className="p-3 bg-void/60 border border-white/5 rounded-sm">
                             <p className="text-[7px] opacity-40 uppercase tracking-widest mb-1">Rank</p>
-                            <p className="text-sm font-light tracking-widest text-azure-400 uppercase italic">{userRank}</p>
+                            <p className="text-xs font-light tracking-widest text-azure-400 uppercase italic">{userRank}</p>
                          </div>
                       </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <p className="text-[8px] tracking-[0.4em] uppercase opacity-30 font-bold border-b border-white/5 pb-2">Menu</p>
+                    {/* Distinct Menu Container with thicker border */}
+                    <div className="p-5 bg-white/[0.01] border-2 border-white/10 rounded-sm space-y-4">
+                      <p className="text-[8px] tracking-[0.4em] uppercase opacity-40 font-bold border-b border-white/5 pb-2">Menu / メニュー</p>
                       
-                      <AnimatePresence mode="wait">
-                        {!hasDaily && (
-                          <motion.button 
-                            key="bonus-btn"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            onClick={collectDaily} 
-                            className="w-full p-4 bg-white text-void flex items-center justify-between group transition-all hover:bg-azure-50 overflow-hidden"
-                          >
-                             <div className="flex items-center gap-3">
-                                <Sparkles size={14}/>
-                                <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Daily Bonus / 報酬を受け取る</span>
-                             </div>
-                             <ChevronRight size={14}/>
-                          </motion.button>
-                        )}
-                      </AnimatePresence>
+                      <div className="space-y-3">
+                        <AnimatePresence mode="wait">
+                          {!hasDaily && (
+                            <motion.button 
+                              key="bonus-btn"
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              onClick={collectDaily} 
+                              className="w-full p-4 bg-white text-void flex items-center justify-between group transition-all hover:bg-azure-50 overflow-hidden"
+                            >
+                               <div className="flex items-center gap-3">
+                                  <Sparkles size={14}/>
+                                  <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Daily Bonus / 報酬を受け取る</span>
+                               </div>
+                               <ChevronRight size={14}/>
+                            </motion.button>
+                          )}
+                        </AnimatePresence>
 
-                      <Link href="/inventory" onClick={() => setIsOpen(false)} className="w-full p-4 bg-white/5 border border-white/10 flex items-center justify-between group transition-all hover:border-white/30">
-                         <div className="flex items-center gap-3">
-                            <Trophy size={14} className="opacity-40 group-hover:opacity-100 transition-opacity" />
-                            <span className="text-[9px] tracking-[0.2em] uppercase">Shop & Items / アイテム・装備</span>
-                         </div>
-                         <ChevronRight size={14} className="opacity-20"/>
-                      </Link>
+                        <Link href="/inventory" onClick={() => setIsOpen(false)} className="w-full p-4 bg-white/5 border border-white/10 flex items-center justify-between group transition-all hover:border-white/30">
+                           <div className="flex items-center gap-3">
+                              <Trophy size={14} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                              <span className="text-[9px] tracking-[0.2em] uppercase">Shop & Items / アイテム・装備</span>
+                           </div>
+                           <ChevronRight size={14} className="opacity-20"/>
+                        </Link>
+                      </div>
                     </div>
                   </motion.div>
                 )}

@@ -25,12 +25,12 @@ export default function SettingsPage() {
 
   const handleUnlock = (name: string, cost: number) => {
     if (rtBalance >= cost) {
-      if (confirm(`${name} を ${cost} RT でアンロックしますか？`)) {
+      if (confirm(`Unlock ${name} for ${cost} RT? / ${name} を ${cost} RT でアンロックしますか？`)) {
         setRtBalance(rtBalance - cost);
         setUnlockedAssets([...unlockedAssets, name]);
       }
     } else {
-      alert("RTが不足しています。活動してポイントを蓄積してください。");
+      alert("Insufficient RT. Please accumulate points. / RTが不足しています。活動してポイントを蓄積してください。");
     }
   };
 
@@ -64,8 +64,8 @@ export default function SettingsPage() {
   return (
     <div className="max-w-6xl mx-auto pt-24 px-6 pb-24 text-moonlight">
       <header className="mb-16">
-        <h1 className="text-3xl tracking-[0.4em] mb-2 font-extralight">設定</h1>
-        <p className="text-xs tracking-widest opacity-40">アカウントとシステムの詳細設定</p>
+        <h1 className="text-3xl tracking-[0.4em] mb-2 font-extralight">Settings / 設定</h1>
+        <p className="text-xs tracking-widest opacity-40">Account & System Configuration / アカウントとシステムの詳細設定</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-start">
@@ -97,7 +97,7 @@ export default function SettingsPage() {
           {/* Frame Selection */}
           <div>
             <h2 className="text-[10px] tracking-[0.3em] opacity-40 mb-6 flex items-center gap-2">
-              <Zap size={14} /> 外枠設定
+              <Zap size={14} /> Frame Selection / 外枠設定
             </h2>
             <div className="grid grid-cols-2 gap-4">
                {[
@@ -130,7 +130,7 @@ export default function SettingsPage() {
           {/* Personality / Title */}
           <div>
             <h2 className="text-[10px] tracking-[0.3em] opacity-40 mb-6 flex items-center gap-2">
-              <Brain size={14} /> 性格階級（称号）
+              <Brain size={14} /> Title Selection / 性格階級（称号）
             </h2>
             <div className="grid grid-cols-2 gap-4">
                {[
@@ -163,7 +163,7 @@ export default function SettingsPage() {
           {/* Environmental Harmony (Aura) */}
           <div className="space-y-6">
             <h2 className="text-[10px] tracking-[0.3em] opacity-40 flex items-center gap-2">
-              <Sparkles size={14} /> 環境調和率（オーラ）
+              <Sparkles size={14} /> Environmental Harmony (Aura) / 環境調和率（オーラ）
             </h2>
             <div className="space-y-4">
               <div className="h-1 bg-white/5 w-full relative">
@@ -188,18 +188,18 @@ export default function SettingsPage() {
 
           {/* Account Management (Danger Zone) */}
           <div className="pt-16 border-t border-white/5">
-            <h2 className="text-[10px] tracking-[0.3em] text-red-400 mb-8 uppercase flex items-center gap-2">
-              <Volume2 size={14} /> 環境報告 / サポート
+            <h2 className="text-[10px] tracking-[0.3em] text-azure-400 mb-8 uppercase flex items-center gap-2">
+              <Volume2 size={14} /> Support & Feedback / 環境報告・サポート
             </h2>
             <form onSubmit={handleReport} className="space-y-6">
                <div className="space-y-2">
-                 <label className="text-[8px] tracking-widest opacity-40 uppercase">報告内容</label>
+                 <label className="text-[8px] tracking-widest opacity-40 uppercase">Report Subject / 報告内容</label>
                  <select 
                    value={reportReason}
                    onChange={(e) => setReportReason(e.target.value)}
                    className="w-full bg-white/5 border border-white/10 p-4 text-xs tracking-widest outline-none focus:border-white/20"
                  >
-                   <option value="">選択してください</option>
+                   <option value="">Select Option / 選択してください</option>
                    <option value="UI_GLITCH">表示の乱れ (UI Glitch)</option>
                    <option value="SYNC_ERROR">同期エラー (Sync Error)</option>
                    <option value="FEATURE_REQUEST">機能提案 (Feature Request)</option>
@@ -207,12 +207,12 @@ export default function SettingsPage() {
                  </select>
                </div>
                <div className="space-y-2">
-                 <label className="text-[8px] tracking-widest opacity-40 uppercase">詳細</label>
+                 <label className="text-[8px] tracking-widest opacity-40 uppercase">Details / 詳細</label>
                  <textarea 
                    value={reportDetails}
                    onChange={(e) => setReportDetails(e.target.value)}
                    className="w-full bg-white/5 border border-white/10 p-4 text-xs tracking-widest outline-none focus:border-white/20 h-32 resize-none"
-                   placeholder="状況を詳しく教えてください..."
+                   placeholder="Please provide details of the issue... / 状況を詳しく教えてください..."
                  />
                </div>
                <button 
@@ -220,9 +220,9 @@ export default function SettingsPage() {
                  disabled={isReporting || !reportReason}
                  className="px-8 py-3 border border-white/10 text-[9px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all disabled:opacity-20"
                >
-                 {isReporting ? "送信中..." : "報告を送信"}
+                 {isReporting ? "SENDING... / 送信中..." : "SUBMIT REPORT / 報告を送信"}
                </button>
-               {reportSuccess && <p className="text-[9px] text-emerald-400 tracking-widest uppercase">報告を受領しました。境界の調整を行います。</p>}
+               {reportSuccess && <p className="text-[9px] text-emerald-400 tracking-widest uppercase">Report received. Adjusting environmental boundary. / 報告を受領しました。境界の調整を行います。</p>}
             </form>
           </div>
         </div>

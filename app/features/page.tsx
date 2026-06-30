@@ -12,9 +12,9 @@ export default function FeaturesPage() {
   // 1. 実装している全機能の紹介（ベクターアート付き）
   const coreFeatures = [
     {
-      title: "NFC 同調転送",
+      title: "NFC Tap Transfer / NFC 同調転送",
       subtitle: "NFC TAP TRANSFER",
-      desc: "専用アプリは一切不要。カードを相手のスマートフォンにかざすだけで、ブラウザが起動し、あなたのデジタルプロフィールが一瞬で透過展開されます。名刺交換の瞬間を、シームレスなデジタル体験へと昇華します。",
+      desc: "専用アプリは一切不要。カードを相手のスマートフォンにかざすだけで、ブラウザが起動し、あなたのデジタルプロフィールが一瞬で透過展開されます。名刺交換の瞬間を、シームレスなデジタル体験へと昇華します。 / No app required. Simply tap the card on a smartphone to instantly share your digital profile, transforming card exchanges into seamless digital experiences.",
       illustration: (
         <svg className="w-full h-32" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           {/* Card */}
@@ -38,9 +38,9 @@ export default function FeaturesPage() {
       )
     },
     {
-      title: "五感に共鳴するカスタムデザイン",
+      title: "Visual & Audio Customization / 五感に共鳴するカスタムデザイン",
       subtitle: "VISUAL & AUDIO CUSTOMIZATION",
-      desc: "静的な名刺の限界を超えます。厳選されたビジュアルテーマ、流麗なアニメーションフレーム、 agendaとなる背景音楽（BGM）まで自由にカスタマイズ。相手の視覚と聴覚に深い印象を刻み込みます。",
+      desc: "静的な名刺の限界を超えます。厳選されたビジュアルテーマ、流麗なアニメーションフレーム、背景音楽（BGM）まで自由にカスタマイズ。相手の視覚と聴覚に深い印象を刻み込みます。 / Transcend the limits of static paper cards. Customize visual themes, fluid frames, and background music (BGM) to leave a lasting impression on sight and sound.",
       illustration: (
         <svg className="w-full h-32" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g transform="translate(15, 2)">
@@ -67,9 +67,9 @@ export default function FeaturesPage() {
       )
     },
     {
-      title: "AI-OCR 紙名刺スキャナー",
+      title: "AI-OCR Card Scanner / AI-OCR 紙名刺スキャナー",
       subtitle: "AI-OCR ANALOG CARD SCANNER",
-      desc: "受け取った紙の名刺も無駄にしません。スマートフォンのカメラで撮影するだけで、内蔵AIが文字情報を高精度で瞬時に解析。あなたの中央名刺ライブラリ（Library）にデジタルデータとして一元保存します。",
+      desc: "受け取った紙の名刺も無駄にしません。スマートフォンのカメラで撮影するだけで、内蔵AI`が文字情報を高精度で瞬時に解析。あなたの中央名刺ライブラリ（Library）にデジタルデータとして一元保存します。 / Never waste a paper card again. Snap a photo with your camera, and the built-in AI will instantly parse the text to save it directly into your digital Library.",
       illustration: (
         <svg className="w-full h-32" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           {/* Paper Card */}
@@ -99,9 +99,9 @@ export default function FeaturesPage() {
       )
     },
     {
-      title: "vCard 連絡先一括インポート",
+      title: "One-Click Contact Save / vCard 連絡先一括インポート",
       subtitle: "ONE-CLICK CONTACT SAVE",
-      desc: "相手があなたのプロフィール画面から「連絡先を保存」を押すだけで、電話番号やメールアドレスはもちろん、アイコン画像や各種SNSリンク情報まで、スマートフォンの連絡先（アドレス帳）に直接保存されます。",
+      desc: "相手があなたのプロフィール画面から「連絡先を保存」を押すだけで、電話番号やメールアドレスはもちろん、アイコン画像や各種SNSリンク情報まで、スマートフォンの連絡先（アドレス帳）に直接保存されます。 / With a single tap, others can save your phone number, email, profile photo, and social links directly into their smartphone's native address book.",
       illustration: (
         <svg className="w-full h-32" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           {/* Smartphone */}
@@ -128,9 +128,9 @@ export default function FeaturesPage() {
       )
     },
     {
-      title: "二重のアイデンティティ（双子アバター）",
+      title: "Dual Alter Identity / 二重のアイデンティティ（双子アバター）",
       subtitle: "DUAL ALTER IDENTITY",
-      desc: "本名や物理的な所属を明かす必要はありません。クリエイター名、VTuber名、アバター名など、あなたの「もう一つの存在」として名刺を構築可能。プライバシーを守りながら、バーチャルとリアルを繋ぎます。",
+      desc: "本名や物理的な所属を明かす必要はありません。クリエイター名、VTuber名、アバター名など、あなたの「もう一つの存在」として名刺を構築可能。プライバシーを守りながら、バーチャルとリアルを繋ぎます。 / No need to reveal your physical identity. Build your card under a creator alias, VTuber name, or avatar name, bridging virtual and real worlds while protecting your privacy.",
       illustration: (
         <svg className="w-full h-32" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g transform="translate(10, 0)">
@@ -158,35 +158,35 @@ export default function FeaturesPage() {
   // 2. 紙名刺じゃできないこと
   const vsPaper = [
     {
-      title: "印刷不要・情報の即時更新",
-      desc: "電話番号、メールアドレス、所属が変わるたびに名刺を再印刷する必要はありません。管理画面から書き換えるだけで、すでに配ったカードも含め、すべてのデータがリアルタイムで最新状態に更新されます。"
+      title: "No Printing & Instant Updates / 印刷不要・情報の即時更新",
+      desc: "電話番号、メールアドレス、所属が変わるたびに名刺を再印刷する必要はありません。管理画面から書き換えるだけで、すでに配ったカードも含め、すべてのデータがリアルタイムで最新状態に更新されます。 / Never reprint cards. Simply update your details in the dashboard to instantly refresh your profile across all distributed cards in real time."
     },
     {
-      title: "無限のリンクとポートフォリオの統合",
-      desc: "紙名刺の限られたスペースには書ききれない、X、Instagram、ウェブサイト、ポートフォリオ、紹介動画など、すべての活動拠点を一つの画面に集約。相手をあなたのポートフォリオへダイレクトに招待します。"
+      title: "Infinite Links & Portfolios / 無限のリンクとポートフォリオの統合",
+      desc: "紙名刺の限られたスペースには書ききれない、X、Instagram、ウェブサイト、ポートフォリオ、紹介動画など、すべての活動拠点を一つの画面に集約。相手をあなたのポートフォリオへダイレクトに招待します。 / Consolidate all your platforms—X, Instagram, websites, portfolios, and videos—into a single screen, inviting others directly to your creative showcase."
     },
     {
-      title: "半永久的なエコロジーとコスト削減",
-      desc: "何百枚、何千枚もの紙名刺を持ち歩き、消費する時代は終わりました。たった一枚のHexa Cardが、あなたの生涯にわたるすべてのネットワーキングをカバーし、紙資源の無駄を完全に排除します。"
+      title: "Permanent Ecology & Cost Savings / 半永久的なエコロジーとコスト削減",
+      desc: "何百枚、何千枚もの紙名刺を持ち歩き、消費する時代は終わりました。たった一枚のHexa Cardが、あなたの生涯にわたるすべてのネットワーキングをカバーし、紙資源の無駄を完全に排除します。 / The era of carrying stacks of paper cards is over. A single Hexa Card covers all your networking needs for life, completely eliminating paper waste."
     }
   ];
 
   // 3. 同業にはない唯一無二の価値
   const vsCompetitors = [
     {
-      title: "月額費用の完全排除（買い切りモデル）",
+      title: "No Monthly Fees (One-time Purchase) / 月額費用の完全排除（買い切りモデル）",
       subtitle: "NO MONTHLY SUBSCRIPTIONS",
-      desc: "多くのデジタル名刺サービスが月額や年額のサブスクリプション契約を求める中、Hexa Cardは完全な『買い切りモデル』を採用。追加のランニングコストは一切発生せず、一生涯無料でシステムをお使いいただけます。"
+      desc: "多くのデジタル名刺サービスが月額や年額のサブスクリプション契約を求める中、Hexa Cardは完全な『買い切りモデル』を採用。追加のランニングコストは一切発生せず、一生涯無料でシステムをお使いいただけます。 / While other services require monthly fees, Hexa Card is a one-time purchase with zero recurring costs. Enjoy lifetime access to the system for free."
     },
     {
-      title: "クリエイター・個人のためのアイデンティティ設計",
+      title: "Creator-First Identity / クリエイター・個人のためのアイデンティティ設計",
       subtitle: "CREATOR-CENTRIC ARCHITECTURE",
-      desc: "ビジネス用の実名利用を前提とした他社サービスとは異なり、私たちはハンドルネームや活動アバターでの登録を全面的にサポート。現実とバーチャルの多面的なアイデンティティを自由に表現できます。"
+      desc: "ビジネス用の実名利用を前提とした他社サービスとは異なり、私たちはハンドルネームや活動アバターでの登録を全面的にサポート。現実とバーチャルの多面的なアイデンティティを自由に表現できます。 / Unlike corporate-focused services, we fully support aliases, creator names, and avatars, allowing you to express your multi-dimensional identity."
     },
     {
-      title: "所有感を満たすビジュアル演出",
+      title: "Premium Visual Resonance / 所有感を満たすビジュアル演出",
       subtitle: "HIGH-END RESONANCE EFFECTS",
-      desc: "ただ情報を渡すだけではない。カードを開いた瞬間のアニメーションや演出、サウンドなど、高級Webデザインの技術を駆使したエフェクトを標準搭載。圧倒的な体験価値で同業者と差別化します。"
+      desc: "ただ情報を渡すだけではない。カードを開いた瞬間のアニメーションや演出、サウンドなど、高級Webデザインの技術を駆使したエフェクトを標準搭載。圧倒的な体験価値で同業者と差別化します。 / Beyond sharing info. Deliver custom animations, frames, and sounds crafted with premium web design technology to stand out with an unforgettable experience."
     }
   ];
 
@@ -259,7 +259,7 @@ export default function FeaturesPage() {
           <h1 className="text-3xl md:text-6xl font-extralight tracking-[0.2em] leading-tight text-white uppercase pt-2">
             Hexa Card
             <span className="block text-xl md:text-2xl tracking-[0.3em] font-light text-white/40 mt-4 normal-case font-sans">
-              物理とデジタルを繋ぐ、境界の透過。
+              物理とデジタルを繋ぐ、境界の透過 / Permeation of boundaries, connecting physical and digital.
             </span>
           </h1>
           
@@ -268,12 +268,17 @@ export default function FeaturesPage() {
           {/* クリップハイライト：新時代のデジタル名刺ステートメント */}
           <div className="space-y-6">
             <p className="text-lg md:text-2xl tracking-[0.25em] font-extralight text-white border-y border-white/5 py-4 max-w-2xl mx-auto leading-relaxed">
-              「このアイテムは新時代のデジタル名刺です」
+              「このアイテムは新時代のデジタル名刺です」<br />
+              <span className="text-sm tracking-widest block opacity-70 mt-1">&quot;This item is the digital business card of a new era.&quot;</span>
             </p>
             <p className="text-[10px] md:text-xs tracking-[0.15em] text-white/50 max-w-2xl mx-auto leading-relaxed font-light">
               ビジネスカードの概念を再定義する。本名である必要も、印刷を繰り返す必要もありません。<br />
               あなたのすべての存在とポートフォリオを、たった一枚の重厚なカードに宿し、<br />
-              タップひとつで相手のスマートフォンに美しく展開します。
+              タップひとつで相手のスマートフォンに美しく展開します。<br />
+              <span className="text-[9px] opacity-60 mt-2 block">
+                Redefining the concept of business cards. No real names or constant reprinting required.<br />
+                Carry your entire presence and portfolio within a single premium card, expanding it elegantly on any smartphone with a single tap.
+              </span>
             </p>
           </div>
 
@@ -292,7 +297,7 @@ export default function FeaturesPage() {
       <section className="py-20 px-6 max-w-5xl mx-auto border-t border-white/5">
         <div className="text-center mb-16 space-y-2">
           <span className="text-[8px] tracking-[0.3em] text-azure-400 font-mono font-bold uppercase">SYSTEM CAPABILITIES</span>
-          <h2 className="text-xl md:text-2xl font-light tracking-[0.2em] text-white">実装されている機能のすべて</h2>
+          <h2 className="text-xl md:text-2xl font-light tracking-[0.2em] text-white">実装されている機能のすべて / Complete Feature Set</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -333,7 +338,7 @@ export default function FeaturesPage() {
               <div className="space-y-3">
                 <span className="text-[8px] tracking-[0.3em] text-pink-400 font-mono font-bold uppercase">EVOLUTION FROM ANALOG</span>
                 <h2 className="text-xl md:text-2xl font-light tracking-[0.2em] text-white leading-snug">
-                  紙の名刺には、<br />決してできないこと。
+                  紙名刺には、決してできないこと / What Paper Cards Can Never Do
                 </h2>
               </div>
               
@@ -378,7 +383,7 @@ export default function FeaturesPage() {
               </div>
 
               <p className="text-[10px] text-white/40 leading-relaxed tracking-wider font-light">
-                100年以上変わらない紙名刺の制約から解放され、デジタルならではの機動力と表現力を手に入れましょう。
+                100年以上変わらない紙名刺の制約から解放され、デジタルならではの機動力と表現力を手に入れましょう。 / Break free from the century-old constraints of paper cards and embrace the speed and expressiveness of digital networking.
               </p>
             </div>
             
@@ -402,7 +407,7 @@ export default function FeaturesPage() {
       <section className="py-24 px-6 max-w-5xl mx-auto">
         <div className="text-center mb-16 space-y-2">
           <span className="text-[8px] tracking-[0.3em] text-purple-400 font-mono font-bold uppercase">THE HEXA ADVANTAGE</span>
-          <h2 className="text-xl md:text-2xl font-light tracking-[0.2em] text-white">同業他社にはない、唯一無二の価値</h2>
+          <h2 className="text-xl md:text-2xl font-light tracking-[0.2em] text-white">同業他社にはない、唯一無二の価値 / The Unique Value of Hexa Card</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -450,14 +455,19 @@ export default function FeaturesPage() {
 
         <div className="space-y-3">
           <span className="text-[8px] tracking-[0.3em] text-cyan-400 font-mono font-bold uppercase">LIFELONG PARTNERSHIP</span>
-          <h2 className="text-xl md:text-2xl font-light tracking-[0.2em] text-white">これから一生、使っていけるということ</h2>
+          <h2 className="text-xl md:text-2xl font-light tracking-[0.2em] text-white">これから一生、使っていけるということ / A Lifelong Companion</h2>
         </div>
 
         <p className="text-[10px] md:text-xs text-white/60 leading-relaxed max-w-2xl mx-auto font-light tracking-widest">
-          物理カードは、傷や摩耗に強い最高峰の耐久素材を使用。何万回ものタップに耐えうる頑丈な設計です。<br />
+          物理カードは、傷や摩耗に強い最高峰 of 耐久素材を使用。何万回ものタップに耐えうる頑丈な設計です。<br />
           そして、カードの裏側で稼働するデジタルシステムはクラウド上で動き続け、<br />
           今後も最新のスマートフォンOSへの対応や機能追加など、半永久的に無償で進化し続けます。<br />
-          使い捨てる名刺から、一生共に歩む「デジタルな相棒」へ。
+          使い捨てる名刺から、一生共に歩む「デジタルな相棒」へ。<br />
+          <span className="text-[9px] opacity-60 mt-2 block font-sans">
+            Crafted with highly durable materials resistant to wear and scratches, built to withstand tens of thousands of taps.<br />
+            The digital system running behind the card will continue to evolve on the cloud, providing free updates and OS compatibility for life.<br />
+            Transition from disposable paper to a lifelong digital partner.
+          </span>
         </p>
       </section>
 
@@ -466,8 +476,7 @@ export default function FeaturesPage() {
         <div className="max-w-2xl mx-auto space-y-8 relative z-10">
           <div className="h-[1px] w-12 bg-white/25 mx-auto" />
           <h2 className="text-2xl md:text-4xl font-extralight tracking-[0.2em] text-white leading-snug">
-            境界を超え、<br />
-            アイデンティティを同調する。
+            境界を超え、アイデンティティを同調する / Transcending boundaries, synchronizing identities.
           </h2>
           <p className="text-[8px] tracking-[0.4em] text-white/40 uppercase font-mono">
             NO RUNNING COSTS / PERMANENT IDENTITY

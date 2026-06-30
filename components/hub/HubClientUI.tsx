@@ -89,7 +89,7 @@ export default function HubClientUI({
         if (data.error === "Already resonated today.") {
           await fetchData();
           setMood('stable');
-          showToast("本日の共鳴（ボーナス）は既に受け取り済みです。", "info");
+          showToast("Daily resonance bonus already claimed. / 本日の共鳴（ボーナス）は既に受け取り済みです。", "info");
         } else {
           // 詳細なエラーを表示するように変更
           const errorMsg = data.error || "Sync Failed / 境界との同期に失敗しました";
@@ -113,13 +113,13 @@ export default function HubClientUI({
     if (isBonusAvailable) {
       setGreeting("Awaiting daily bonus");
     } else if (realStats?.unread_messages > 0) {
-      setGreeting(`観測局より報告：未読のメッセージが ${realStats.unread_messages} 件届いています。`);
+      setGreeting(`Signal from observatory: You have ${realStats.unread_messages} unread messages. / 観測局より報告：未読のメッセージが ${realStats.unread_messages} 件届いています。`);
     } else {
       const hour = new Date().getHours();
-      if (hour < 5) setGreeting("静かな夜ですね。");
-      else if (hour < 11) setGreeting("おはようございます。");
-      else if (hour < 17) setGreeting("こんにちは。");
-      else setGreeting("こんばんは。");
+      if (hour < 5) setGreeting("A quiet night. / 静かな夜ですね。");
+      else if (hour < 11) setGreeting("Good morning. / おはようございます。");
+      else if (hour < 17) setGreeting("Good afternoon. / こんにちは。");
+      else setGreeting("Good evening. / こんばんは。");
     }
   }, [isBonusAvailable, realStats?.unread_messages]);
 
@@ -209,7 +209,7 @@ export default function HubClientUI({
                 <div className="absolute top-0 left-0 w-1 h-full bg-bronze-500/40" />
                 <div>
                    <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100">Contacts</h2>
-                   <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-bronze-300 group-hover:opacity-100">名刺帳 / Library</p>
+                   <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-bronze-300 group-hover:opacity-100">Library / 名刺帳</p>
                 </div>
                 <Book size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
              </Link>
@@ -219,7 +219,7 @@ export default function HubClientUI({
                    <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100 flex items-center gap-2">
                      System Guide
                    </h2>
-                   <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-purple-300 group-hover:opacity-100">アプリの使い方 / Guide</p>
+                   <p className="text-[9px] tracking-[0.2em] opacity-60 uppercase font-bold text-purple-300 group-hover:opacity-100">Guide / 使い方ガイド</p>
                 </div>
                 <HelpCircle size={32} className="opacity-30 group-hover:opacity-80 transition-all text-white" />
              </Link>
@@ -240,7 +240,7 @@ export default function HubClientUI({
                    </div>
                    <div>
                       <h2 className="text-xl tracking-[0.4em] uppercase font-light mb-1 text-white opacity-90 group-hover:opacity-100">Presentation Suite</h2>
-                      <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-white group-hover:opacity-100">商談用背景生成・配布資料管理 / Zoom Background & Portfolio</p>
+                      <p className="text-[9px] tracking-[0.2em] opacity-40 uppercase font-bold text-white group-hover:opacity-100">Zoom Background & Portfolio / 商談用背景生成・配布資料管理</p>
                    </div>
                 </div>
                 <ChevronRight size={24} className="opacity-10 group-hover:opacity-40 transition-all" />
@@ -289,7 +289,7 @@ export default function HubClientUI({
                       <Sparkles size={11} className="text-azure-400" />
                       <span className="text-[8px] tracking-[0.2em] font-bold uppercase text-azure-400">Daily Resonance</span>
                     </div>
-                    <p className="text-[7.5px] tracking-wider text-white/60 uppercase mb-3 leading-relaxed font-sans">本日の共鳴（ボーナス）を受け取りますか？</p>
+                    <p className="text-[7.5px] tracking-wider text-white/60 uppercase mb-3 leading-relaxed font-sans">Receive daily resonance bonus? / 本日の共鳴（ボーナス）を受け取りますか？</p>
                     
                     <button 
                       disabled={isResonating}
