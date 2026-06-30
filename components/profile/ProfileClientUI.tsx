@@ -859,6 +859,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
               href="/" 
               className="inline-flex items-center gap-2 text-[9px] tracking-[0.3em] uppercase font-bold text-white/40 hover:text-white transition-colors"
             >
+              <!-- Visit Official Site / 公式サイトトップへ -->
               ← Visit Official Site / 公式サイトトップへ
             </Link>
           </div>
