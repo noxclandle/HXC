@@ -633,33 +633,42 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                      <textarea 
                        required
                        rows={4}
-                       placeholder="YOUR MESSAGE / メッセージ内容を入力してください... (必須)"
-                       value={messageForm.content}
-                       onChange={(e) => setMessageForm({...messageForm, content: e.target.value})}
-                       className="w-full bg-white/[0.02] border border-white/10 p-6 text-[10px] tracking-widest outline-none focus:border-white/30 transition-all resize-none text-white font-sans"
-                     />
-                     <p className="text-[9px] tracking-widest text-white/50 leading-relaxed text-left pl-1">
-                         * If you require a response, please include your contact details within the message. <br />
-                         ※返信をご希望の場合は、メッセージ内にご自身の連絡先（メールアドレス等）をご記載ください。
-                     </p>
-                  </div>
-                 <button 
-                   disabled={sendingMessage}
-                   className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.3em] lg:tracking-[0.5em] uppercase hover:bg-zinc-200 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
-                 >
-                   {sendingMessage ? <Loader2 size={16} className="animate-spin" /> : <><Send size={14} /> Transmit Message to {profileName} / {profileName} にメッセージを送信する</>}
-                 </button>
-              </form>
-            )}
-         </div>
-      </section>
-
-      {/* Digital QR Exchange Section */}
+                       placeholder="YOUR MESSAGE / メッセージ内容を入力し      {/* Digital QR Exchange Section */}
       {isOwner && (
         <section className="relative z-10 w-full max-w-lg mx-auto py-24 px-6 border-t border-white/5 flex flex-col items-center space-y-12">
           <div className="text-center space-y-4">
             <h3 className="text-[10px] tracking-[0.5em] uppercase font-bold text-azure-400">Digital Handshake</h3>
-            <p className="text-[8px] tracking-[0.2em] uppercase opacity-40">物理カードがない場合は、このQRを読み取ってください</p            {/* Card 1: Paper Card Scan / 紙名刺のデジタル管理 */}
+            <p className="text-[8px] tracking-[0.2em] uppercase opacity-40">物理カードがない場合は、このQRを読み取ってください</p>
+          </div>
+          
+          <div className="p-6 bg-white border border-white/10 shadow-[0_0_50px_rgba(59,130,246,0.2)] rounded-xl relative group">
+            <div className="absolute inset-[-10px] border border-azure-500/20 rounded-2xl animate-pulse" />
+            <QRCodeSVG 
+              value={typeof window !== "undefined" ? window.location.href : `https://virtual-business-card.hexa-relation.com/p/${data.handle_name || data.id}`}
+              size={180}
+              level="H"
+              includeMargin={false}
+              fgColor="#020202"
+              bgColor="#FFFFFF"
+            />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white border-2 border-void flex items-center justify-center rounded-sm">
+               <QrCode size={16} className="text-void" />
+            </div>
+          </div>
+
+          <p className="text-[7px] tracking-[0.4em] uppercase opacity-20 italic">Encrypted via Hexa System</p>
+        </section>
+      )}
+
+      {/* Feature section */}
+      {!isOwner && (
+        <section className="relative z-10 w-full max-w-5xl py-48 px-6 border-t border-white/5 space-y-32">
+          <div className="text-center space-y-12">
+            <h2 className="text-3xl md:text-5xl tracking-[0.2em] font-extralight uppercase text-white leading-tight">あなたも、次世代の<br />デジタル名刺を<br />始めてみませんか？</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
+            {/* Card 1: Paper Card Scan / 紙名刺のデジタル管理 */}
             <motion.div 
               initial="rest"
               whileHover="hover"
@@ -730,6 +739,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
             >
               <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/20 transition-colors">
                 <div className="relative w-24 h-24 flex items-center justify-center">
+                  {/* Frame layer (top - slides up on hover) */}
                   <motion.div 
                     variants={{
                       rest: { y: -16, x: 0, rotate: -12, scale: 1 },
@@ -740,6 +750,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                     <Layers size={10} className="text-azure-400 animate-pulse" />
                   </motion.div>
                   
+                  {/* Core Design layer (middle) */}
                   <motion.div 
                     variants={{
                       rest: { scale: 1 },
@@ -750,6 +761,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                     <Sparkles size={10} className="text-white/60" />
                   </motion.div>
                   
+                  {/* Base structure layer (bottom - slides down on hover) */}
                   <motion.div 
                     variants={{
                       rest: { y: 16, x: 0, rotate: -12, opacity: 0.6 },
@@ -780,6 +792,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
               className="space-y-6 p-6 border border-white/5 bg-white/[0.01] hover:border-azure-500/30 hover:bg-azure-500/[0.01] transition-all duration-300 group text-white rounded-lg flex flex-col justify-between cursor-pointer"
             >
               <div className="relative w-full h-36 bg-void/40 border border-white/5 rounded-lg overflow-hidden flex items-center justify-center group-hover:border-azure-500/20 transition-colors">
+                {/* Left Side: Public Profile (Alias) */}
                 <div className="w-1/2 h-full border-r border-white/5 flex flex-col items-center justify-center p-3 relative bg-azure-500/[0.01]">
                   <motion.div 
                     animate={{ scale: [1, 1.15, 1], opacity: [0.7, 1, 0.7] }} 
@@ -792,6 +805,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                   <div className="text-[6px] tracking-widest text-white/30 uppercase mt-0.5 font-mono">Public Persona</div>
                 </div>
 
+                {/* Right Side: Private Info (Lock/Shield) */}
                 <div className="w-1/2 h-full flex flex-col items-center justify-center p-3 relative">
                   <motion.div 
                     variants={{
@@ -804,8 +818,6 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                   </motion.div>
                   <div className="text-[8px] font-bold tracking-wider text-white/70 font-mono">SECURED DATA</div>
                   <div className="text-[6px] tracking-widest text-white/30 uppercase mt-0.5 font-mono">Personal Info</div>
-                </div>
-                
                 </div>
                 
                 {/* Animated separation barrier (laser scan) */}
