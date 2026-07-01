@@ -69,3 +69,60 @@ export async function sendCustomerShipmentNotification(email: string, name: stri
   // In production, use Resend or SendGrid here.
 }
 
+/**
+ * Send Customer Purchase Confirmation Email with dark-themed layout and setup instructions
+ */
+export async function sendCustomerOrderNotification(order: {
+  customerEmail: string;
+  customerName: string;
+  tier: string;
+  variant: string;
+  price: number;
+}) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://virtual-business-card.hexa-relation.com';
+  
+  console.log(`[MAILER] Sending order confirmation to ${order.customerEmail}`);
+  console.log(`[MAILER] Subject: 【Hexa Relation】Order Completed & Setup Guide / カード注文完了と初期設定ガイド`);
+  console.log(`[MAILER] Content (Minimalist Black Theme HTML Mock):
+    ====================================================================
+    [BLACK THEME EMAIL LAYOUT: bg-void (#050505), text-moonlight, border-azure]
+    --------------------------------------------------------------------
+    HEXA RELATION | IDENTITY REGISTRY
+    --------------------------------------------------------------------
+    Dear ${order.customerName},
+
+    Thank you for choosing Hexa Card. 
+    Your order for the "${order.tier}" physical asset has been completed.
+    
+    --------------------------------------------------------------------
+    [Order Summary / 注文内容]
+    - Plan: ${order.tier}
+    - Variant: ${order.variant || "Standard"}
+    - Total Price: ${(order.price).toLocaleString()} JPY
+    --------------------------------------------------------------------
+
+    [NFC Activation Guide / 初期設定の手順]
+    Once your card arrives, follow these steps to connect your identity:
+
+    1. TAP (かざす)
+       Tap the physical card near the top-rear of your iPhone.
+       カードをスマートフォンの背面（iPhoneは上部）にかざしてください。
+
+    2. ACCESS (アクセス)
+       A browser notification will appear. Tap it to open your registry URL.
+       自動でポップアップ通知が表示されますので、タップして専用URLを開きます。
+
+    3. ACTIVATE (同期する)
+       Click "Activate / アクティベート" to create your account or login. 
+       Your card and digital profile will resonate instantly.
+       「アクティベート」を押してアカウントを登録またはログインします。
+       瞬時にお手元のカードとデジタルプロフィールが共鳴し同期します。
+
+    --------------------------------------------------------------------
+    If you have any questions, contact us via:
+    ${baseUrl}/contact
+    ====================================================================
+  `);
+}
+
+
