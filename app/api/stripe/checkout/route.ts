@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
     const PRICE_MAP: Record<string, number> = {
       "Standard": 3000,
       "Executive": 10000,
-      "Apex": 1000000
+      "Apex": 1000000,
+      "Corporate": 580000
     };
 
     const numericPrice = PRICE_MAP[tier];
