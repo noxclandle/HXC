@@ -178,7 +178,7 @@ function RegisterContent() {
             {/* Ambient azure glow */}
             <div className="absolute inset-0 bg-gradient-to-t from-azure-950/10 via-transparent to-transparent" />
             <Image 
-              src="/購入.png" 
+              src="/purchase-guide.png" 
               alt="Guide" 
               width={320}
               height={320}
