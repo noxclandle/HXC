@@ -6,7 +6,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   alternates: {
-    canonical: "https://virtual-business-card.hexa-relation.com",
+    canonical: "https://virtual-business-card.hexa-relation.com/",
   },
 };
 
