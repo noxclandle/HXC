@@ -29,6 +29,33 @@ function RegisterContent() {
   const [confirmStep, setConfirmStep] = useState(0); // 0: None, 1: Profile, 2: Authorization, 3: Finalize
   const [cardInfo, setCardInfo] = useState<any>(null);
 
+  // Dialogue steps for the guide character
+  const dialogueLines = [
+    {
+      text: "――接続、確認。アイデンティティ透過プロトコルを開始します。",
+      enText: "...Connection verified. Initiating identity permeation protocol."
+    },
+    {
+      text: "この度は Hexa Card をご購入いただき、誠にありがとうございます。",
+      enText: "Thank you very much for purchasing Hexa Card."
+    },
+    {
+      text: "私はあなたのデバイスとデジタルアトリエを繋ぐ、最初の案内人です。",
+      enText: "I am your guide, connecting your device with your digital Atelier."
+    },
+    {
+      text: "これから、物理カードをあなたのアカウントに紐付けるための登録（同期）を行います。",
+      enText: "We will now register and synchronize your physical card with your account."
+    },
+    {
+      text: "準備はよろしいですか？　それでは、あなたのアイデンティティを教えてください。",
+      enText: "Are you ready? Please let me know who you are."
+    }
+  ];
+
+  const [dialogueIndex, setDialogueIndex] = useState(0);
+  const [showDialogue, setShowDialogue] = useState(true);
+
   // Admin用のカード情報取得と出荷処理
   useEffect(() => {
     if (isAdmin && uid) {
@@ -130,7 +157,54 @@ function RegisterContent() {
 
   return (
     <AnimatePresence mode="wait">
-        {step === 0 ? (
+      {showDialogue ? (
+        <motion.div
+          key="dialogue"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, y: -20 }}
+          onClick={() => {
+            if (dialogueIndex < dialogueLines.length - 1) {
+              setDialogueIndex(dialogueIndex + 1);
+            } else {
+              setShowDialogue(false);
+            }
+          }}
+          className="max-w-md w-full py-12 flex flex-col items-center justify-center min-h-[70vh] cursor-pointer select-none"
+        >
+          {/* Character Image */}
+          <div className="relative w-64 h-64 md:w-80 md:h-80 mb-8 border border-white/5 bg-white/[0.01] rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(59,130,246,0.03)] flex items-center justify-center">
+            {/* Ambient azure glow */}
+            <div className="absolute inset-0 bg-gradient-to-t from-azure-950/10 via-transparent to-transparent" />
+            <img 
+              src="/購入.png" 
+              alt="Guide" 
+              className="w-full h-full object-contain max-h-[85%] animate-pulse"
+              style={{ animationDuration: '4s' }}
+            />
+          </div>
+
+          {/* Dialogue Bubble */}
+          <div className="w-full border border-azure-500/20 bg-void/90 p-6 rounded-lg relative space-y-3 min-h-[140px] text-left shadow-[0_0_30px_rgba(59,130,246,0.05)] flex flex-col justify-between">
+            <div className="absolute -top-2.5 left-6 bg-void border border-azure-500/30 px-3 py-0.5 rounded text-[8px] tracking-[0.2em] font-bold text-azure-400 uppercase">
+              NAVIGATOR / 案内人
+            </div>
+
+            <div className="space-y-2 pt-2 font-sans">
+              <p className="text-xs md:text-sm text-white/90 tracking-widest leading-relaxed">
+                {dialogueLines[dialogueIndex].text}
+              </p>
+              <p className="text-[9px] md:text-[10px] text-white/40 tracking-wider leading-relaxed font-mono">
+                {dialogueLines[dialogueIndex].enText}
+              </p>
+            </div>
+
+            <div className="flex justify-end text-[7px] tracking-[0.3em] font-bold text-azure-400/60 uppercase animate-pulse font-sans">
+              [ Tap / クリックして次へ ]
+            </div>
+          </div>
+        </motion.div>
+      ) : step === 0 ? (
           <motion.div 
             key="form"
             initial={{ opacity: 0, y: 20 }} 
