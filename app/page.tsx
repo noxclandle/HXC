@@ -160,6 +160,83 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Specifications & Technical Details Section */}
+        <section className="w-full max-w-2xl mb-16 text-left px-4">
+          <h2 className="text-[9px] tracking-[0.5em] uppercase font-bold text-azure-400 mb-8 border-l border-azure-500 pl-4">
+            Technical Specifications / 技術仕様と対応規格
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-sans">
+            <div className="p-6 border border-white/5 bg-white/[0.01]">
+              <h3 className="text-[10px] tracking-[0.2em] font-bold text-white mb-2 uppercase">Hardware Standard / ハードウェア規格</h3>
+              <ul className="text-[9px] text-white/40 space-y-2 tracking-wider leading-relaxed list-disc pl-4">
+                <li>通信チップ: NTAG213 / NTAG215 高感度NFCICチップ搭載</li>
+                <li>動作周波数: 13.56 MHz (近接型無線通信プロトコル準拠)</li>
+                <li>データフォーマット: NDEF (NFC Data Exchange Format) 規格</li>
+                <li>物理仕様: 高耐久マットブラックPVC素材 / ISO/IEC 7810準拠 (85.6mm × 53.98mm)</li>
+              </ul>
+            </div>
+
+            <div className="p-6 border border-white/5 bg-white/[0.01]">
+              <h3 className="text-[10px] tracking-[0.2em] font-bold text-white mb-2 uppercase">System Compatibility / システム互換性</h3>
+              <ul className="text-[9px] text-white/40 space-y-2 tracking-wider leading-relaxed list-disc pl-4">
+                <li>対応デバイス: NFCリーダー搭載のすべてのスマートフォン</li>
+                <li>iOS環境: iPhone XS以降 (iOS 13以上の標準カメラ/NFCリーダー)</li>
+                <li>Android環境: OS 6.0以降のNFCオン設定端末</li>
+                <li>ブラウザ仕様: WebKit (Safari), Blink (Chrome/Edge) に完全最適化</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Detailed Activation Protocol */}
+        <section className="w-full max-w-2xl mb-16 text-left px-4 font-sans">
+          <h2 className="text-[9px] tracking-[0.5em] uppercase font-bold text-azure-400 mb-8 border-l border-azure-500 pl-4">
+            Activation Protocol / カード初期登録の詳細手順
+          </h2>
+          
+          <div className="p-8 border border-white/5 bg-white/[0.01] space-y-6">
+            <p className="text-[9px] text-white/40 leading-relaxed tracking-wider">
+              Hexa Cardがお手元に届いた後、以下のプロトコルに従ってあなたのデジタルアイデンティティ（アトリエ）と物理カードを紐付けます。この手順は一回のみ必要で、暗号化通信により安全に保護されています。
+            </p>
+            <div className="space-y-4">
+              <div className="flex gap-4">
+                <span className="text-[9px] font-mono text-azure-400 font-bold shrink-0">STEP 01</span>
+                <div>
+                  <h4 className="text-[10px] font-bold text-white uppercase">NFC Tap & Detection / カードの検知</h4>
+                  <p className="text-[9px] text-white/40 tracking-wider leading-relaxed">スマホのNFC読み取りエリア（iPhoneは本体上部の背面、Androidは中央付近）にカードを数秒間近づけます。自動的にブラウザ通知ポップアップが起動します。</p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <span className="text-[9px] font-mono text-azure-400 font-bold shrink-0">STEP 02</span>
+                <div>
+                  <h4 className="text-[10px] font-bold text-white uppercase">Secure Claim Page / 所有権の認証</h4>
+                  <p className="text-[9px] text-white/40 tracking-wider leading-relaxed">通知をタップすると、カード固有のセキュアなクレーム（登録）画面にアクセスします。ここでアカウント登録（または既存アカウントへのログイン）を行います。</p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <span className="text-[9px] font-mono text-azure-400 font-bold shrink-0">STEP 03</span>
+                <div>
+                  <h4 className="text-[10px] font-bold text-white uppercase">Resonance Sync / アイデンティティの透過同期</h4>
+                  <p className="text-[9px] text-white/40 tracking-wider leading-relaxed">登録完了後、カードの固有UIDとあなたのアトリエデータが透過的に共鳴し、同期されます。以降、カードを誰かにタップするだけで、あなたの最新のプロフィールが表示されます。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Security & Integrity Overview */}
+        <section className="w-full max-w-2xl mb-16 text-left px-4 font-sans">
+          <h2 className="text-[9px] tracking-[0.5em] uppercase font-bold text-azure-400 mb-8 border-l border-azure-500 pl-4">
+            Security & Data Integrity / セキュリティと整合性
+          </h2>
+          <div className="p-6 border border-white/5 bg-white/[0.01]">
+            <p className="text-[9px] text-white/40 leading-relaxed tracking-wider">
+              Hexa Cardシステムは、ユーザーのプライバシーとデータの整合性を第一に設計されています。物理カードに書き込まれるUID（固有識別子）は、サーバー上の暗号化されたプロフィールと紐付いており、カード自体にあなたの個人情報（電話番号やメールアドレスなど）が直接書き込まれることはありません。紛失時には管理画面から瞬時にカードのリンク解除や無効化（Void）を実行でき、不正アクセスを確実に防ぎます。
+            </p>
+          </div>
+        </section>
+
         {/* Developer Showcase Section */}
         <section className="w-full max-w-xl border-t border-white/5 pt-12 mb-16 text-center px-4">
           <div className="flex flex-col items-center space-y-4">
