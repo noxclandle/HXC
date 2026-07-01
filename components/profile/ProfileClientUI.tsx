@@ -43,6 +43,11 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
   const [sendingShareBack, setSendingShareBack] = useState(false);
   const [shareBackSuccess, setShareBackSuccess] = useState(false);
 
+  // Resonance Link State
+  const [resonanceStatus, setResonanceStatus] = useState<"none" | "pending_sent" | "pending_received" | "connected" | "self" | null>(null);
+  const [isViewerMember, setIsViewerMember] = useState(false);
+  const [loadingResonance, setLoadingResonance] = useState(false);
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     setSendingMessage(true);
@@ -127,6 +132,60 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
     };
     trySoulLink();
   }, [isOwner, status]);
+
+  useEffect(() => {
+    if (isOwner || !data) return;
+    
+    const fetchResonanceStatus = async () => {
+      try {
+        const slug = data.handle_name || data.id;
+        const res = await fetch(`/api/profile/resonance?targetSlug=${encodeURIComponent(slug)}`);
+        if (res.ok) {
+          const resData = await res.json();
+          setResonanceStatus(resData.status);
+          setIsViewerMember(resData.isViewerMember);
+        }
+      } catch (e) {
+        console.error("Failed to fetch resonance status:", e);
+      }
+    };
+    
+    fetchResonanceStatus();
+  }, [isOwner, data]);
+
+  const handleResonate = async () => {
+    if (isOwner || loadingResonance || !data) return;
+    setLoadingResonance(true);
+    
+    try {
+      const slug = data.handle_name || data.id;
+      const res = await fetch("/api/profile/resonance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetSlug: slug })
+      });
+      
+      if (res.ok) {
+        const resData = await res.json();
+        setResonanceStatus(resData.status);
+        if (resData.status === "connected") {
+          if (typeof navigator !== "undefined" && navigator.vibrate) {
+            navigator.vibrate([100, 50, 100, 50, 300]);
+          }
+          alert(resData.message || "Resonance established! Mutual contact details exchanged, +3,000 RT awarded, and 'Resonance Catalyst' Title unlocked.");
+        } else if (resData.status === "pending") {
+          alert("Resonance signal transmitted. Wait for partner to resonate back. / 共鳴シグナルを送信しました。相手が共鳴するのをお待ちください。");
+        }
+      } else {
+        alert("Failed to establish resonance. / 共鳴リンクに失敗しました。");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Network error. Please try again. / 通信エラーが発生しました。");
+    } finally {
+      setLoadingResonance(false);
+    }
+  };
 
   const handleSaveContact = async () => {
     if (!data) return;
@@ -578,11 +637,38 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
               <Download size={14} className="group-hover:translate-y-1 transition-transform" /> Save Contact
            </button>
 
-           {/* SHARE BACK BUTTON (Only visible to guests/visitors) */}
+           {/* RESONANCE / SHARE BACK BUTTONS */}
            {!isOwner && (
-             <button onClick={() => setShowShareBack(true)} className="w-full py-5 bg-emerald-950/20 border border-emerald-500/30 text-emerald-400 font-bold text-[10px] tracking-[0.3em] uppercase shadow-[0_0_20px_rgba(52,211,153,0.1)] hover:bg-emerald-500/10 transition-all flex items-center justify-center gap-3 group">
-                <Network size={12} className="group-hover:scale-110 transition-transform" /> Share Your Contact / 連絡先を送り返す
-             </button>
+             <>
+               {isViewerMember ? (
+                 <>
+                   {resonanceStatus === "connected" ? (
+                     <div className="w-full py-5 bg-azure-950/20 border border-azure-500/30 text-azure-400 font-bold text-[10px] tracking-[0.3em] uppercase flex items-center justify-center gap-3 rounded cursor-default animate-in fade-in duration-300">
+                       <CheckCircle2 size={12} className="text-azure-400 animate-pulse" /> Resonated / 共鳴同調済み
+                     </div>
+                   ) : resonanceStatus === "pending_sent" ? (
+                     <div className="w-full py-5 bg-zinc-900/40 border border-white/10 text-white/40 font-bold text-[10px] tracking-[0.3em] uppercase flex items-center justify-center gap-3 rounded cursor-wait animate-in fade-in duration-300">
+                       <Loader2 size={12} className="animate-spin text-white/30" /> Resonating... / 共鳴待機中...
+                     </div>
+                   ) : (
+                     <button 
+                       onClick={handleResonate} 
+                       disabled={loadingResonance}
+                       className="w-full py-5 bg-azure-950/20 border border-azure-500/30 text-azure-400 font-bold text-[10px] tracking-[0.3em] uppercase shadow-[0_0_20px_rgba(59,130,246,0.1)] hover:bg-azure-500/10 transition-all flex items-center justify-center gap-3 group rounded animate-in fade-in duration-300"
+                     >
+                       <Network size={12} className="group-hover:scale-110 transition-transform" /> 
+                       {resonanceStatus === "pending_received" 
+                         ? "Accept Resonance / 共鳴を承認し同調する" 
+                         : "Establish Resonance / アイデンティティを共鳴させる"}
+                     </button>
+                   )}
+                 </>
+               ) : (
+                 <button onClick={() => setShowShareBack(true)} className="w-full py-5 bg-emerald-950/20 border border-emerald-500/30 text-emerald-400 font-bold text-[10px] tracking-[0.3em] uppercase shadow-[0_0_20px_rgba(52,211,153,0.1)] hover:bg-emerald-500/10 transition-all flex items-center justify-center gap-3 group rounded animate-in fade-in duration-300">
+                    <Network size={12} className="group-hover:scale-110 transition-transform" /> Share Your Contact / 連絡先を送り返す
+                 </button>
+               )}
+             </>
            )}
 
            <button onClick={() => { if (navigator.share) navigator.share({ title: data.name, url: window.location.href }); else { navigator.clipboard.writeText(window.location.href); alert("URL Copied."); } }} className="w-full py-5 border border-white/10 bg-white/[0.02] text-[10px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all flex items-center justify-center gap-3 text-white/60">
@@ -607,49 +693,49 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
             </header>
             
             {messageSent ? (
-              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="p-12 border border-emerald-500/20 bg-emerald-500/5 text-center space-y-4">
-                 <CheckCircle2 size={32} className="mx-auto text-emerald-400" />
-                 <p className="text-[10px] tracking-[0.3em] uppercase text-emerald-400 font-bold">Transmission Complete / 送信完了</p>
-                 <p className="text-[8px] tracking-widest text-white/40 uppercase">メッセージを送信しました。相手に届くまでお待ちください。</p>
-              </motion.div>
+               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="p-12 border border-emerald-500/20 bg-emerald-500/5 text-center space-y-4">
+                  <CheckCircle2 size={32} className="mx-auto text-emerald-400" />
+                  <p className="text-[10px] tracking-[0.3em] uppercase text-emerald-400 font-bold">Transmission Complete / 送信完了</p>
+                  <p className="text-[8px] tracking-widest text-white/40 uppercase">メッセージを送信しました。相手に届くまでお待ちください。</p>
+               </motion.div>
             ) : (
-              <form onSubmit={handleSendMessage} className="space-y-6">
-                 <div className="grid grid-cols-2 gap-4">
-                    <input 
-                      required
-                      placeholder="NAME / お名前 (必須)"
-                      value={messageForm.name}
-                      onChange={(e) => setMessageForm({...messageForm, name: e.target.value})}
-                      className="bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-white/30 text-white"
-                    />
-                    <input 
-                      placeholder="COMPANY / 社名・組織名"
-                      value={messageForm.company}
-                      onChange={(e) => setMessageForm({...messageForm, company: e.target.value})}
-                      className="bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-white/30 text-white"
-                    />
-                 </div>
-                 <div className="space-y-2">
-                     <textarea 
+               <form onSubmit={handleSendMessage} className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                     <input 
                        required
-                       rows={4}
-                       placeholder="YOUR MESSAGE / メッセージ内容を入力してください... (必須)"
-                       value={messageForm.content}
-                       onChange={(e) => setMessageForm({...messageForm, content: e.target.value})}
-                       className="w-full bg-white/[0.02] border border-white/10 p-6 text-[10px] tracking-widest outline-none focus:border-white/30 transition-all resize-none text-white font-sans"
+                       placeholder="NAME / お名前 (必須)"
+                       value={messageForm.name}
+                       onChange={(e) => setMessageForm({...messageForm, name: e.target.value})}
+                       className="bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-white/30 text-white"
                      />
-                     <p className="text-[9px] tracking-widest text-white/50 leading-relaxed text-left pl-1">
-                         * If you require a response, please include your contact details within the message. <br />
-                         ※返信をご希望の場合は、メッセージ内にご自身の連絡先（メールアドレス等）をご記載ください。
-                     </p>
+                     <input 
+                       placeholder="COMPANY / 社名・組織名"
+                       value={messageForm.company}
+                       onChange={(e) => setMessageForm({...messageForm, company: e.target.value})}
+                       className="bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-white/30 text-white"
+                     />
                   </div>
-                 <button 
-                   disabled={sendingMessage}
-                   className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.3em] lg:tracking-[0.5em] uppercase hover:bg-zinc-200 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
-                 >
-                   {sendingMessage ? <Loader2 size={16} className="animate-spin" /> : <><Send size={14} /> Transmit Message to {profileName} / {profileName} にメッセージを送信する</>}
-                 </button>
-              </form>
+                  <div className="space-y-2">
+                      <textarea 
+                        required
+                        rows={4}
+                        placeholder="YOUR MESSAGE / メッセージ内容を入力してください... (必須)"
+                        value={messageForm.content}
+                        onChange={(e) => setMessageForm({...messageForm, content: e.target.value})}
+                        className="w-full bg-white/[0.02] border border-white/10 p-6 text-[10px] tracking-widest outline-none focus:border-white/30 transition-all resize-none text-white font-sans"
+                      />
+                      <p className="text-[9px] tracking-widest text-white/50 leading-relaxed text-left pl-1">
+                          * If you require a response, please include your contact details within the message. <br />
+                          ※返信をご希望の場合は、メッセージ内にご自身の連絡先（メールアドレス等）をご記載ください。
+                      </p>
+                   </div>
+                  <button 
+                    disabled={sendingMessage}
+                    className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.3em] lg:tracking-[0.5em] uppercase hover:bg-zinc-200 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+                  >
+                    {sendingMessage ? <Loader2 size={16} className="animate-spin" /> : <><Send size={14} /> Transmit Message to {profileName} / {profileName} にメッセージを送信する</>}
+                  </button>
+               </form>
             )}
          </div>
       </section>
@@ -765,7 +851,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                     variants={{
                       rest: { y: -16, x: 0, rotate: -12, scale: 1 },
                       hover: { y: -34, x: -8, rotate: -8, scale: 1.05, transition: { type: "spring", stiffness: 200, damping: 15 } }
-                  }}
+                    }}
                     className="absolute w-20 h-12 border border-azure-400 bg-azure-950/20 rounded flex items-center justify-center shadow-lg"
                   >
                     <Layers size={10} className="text-azure-400 animate-pulse" />
@@ -774,23 +860,12 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                   {/* Core Design layer (middle) */}
                   <motion.div 
                     variants={{
-                      rest: { scale: 1 },
-                      hover: { scale: 1.02 }
+                      rest: { y: 0, x: 0, rotate: 6, scale: 0.95 },
+                      hover: { y: 6, x: 12, rotate: 12, scale: 1, transition: { type: "spring", stiffness: 200, damping: 15 } }
                     }}
-                    className="absolute w-20 h-12 border border-white/20 bg-zinc-900/60 rounded transform -rotate-12 flex items-center justify-center"
+                    className="absolute w-20 h-12 border border-white/10 bg-zinc-900 rounded flex items-center justify-center shadow-md"
                   >
-                    <Sparkles size={10} className="text-white/60" />
-                  </motion.div>
-                  
-                  {/* Base structure layer (bottom - slides down on hover) */}
-                  <motion.div 
-                    variants={{
-                      rest: { y: 16, x: 0, rotate: -12, opacity: 0.6 },
-                      hover: { y: 34, x: 8, rotate: -16, opacity: 0.8, transition: { type: "spring", stiffness: 200, damping: 15 } }
-                    }}
-                    className="absolute w-20 h-12 border border-dashed border-white/10 bg-void rounded flex items-center justify-center"
-                  >
-                    <span className="text-[6px] text-white/20 font-mono">BASE</span>
+                     <Smartphone size={10} className="opacity-40" />
                   </motion.div>
                 </div>
               </div>
