@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
-import { sendAdminOrderNotification } from "@/lib/mail";
+import { sendAdminOrderNotification, sendCustomerOrderNotification } from "@/lib/mail";
 import { sendDiscordNotification } from "@/lib/discord";
 
 export const dynamic = "force-dynamic";
@@ -177,7 +177,7 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // 1.5 Notify admin via email
+      // 1.5 Notify admin and customer via email
       try {
         await sendAdminOrderNotification({
           id: newOrder.id,
@@ -188,6 +188,16 @@ export async function POST(req: NextRequest) {
           price: price / 1,
           shippingAddress: shippingAddress,
         });
+
+        if (customerEmail) {
+          await sendCustomerOrderNotification({
+            customerEmail,
+            customerName,
+            tier,
+            variant,
+            price: price / 1,
+          });
+        }
         
         // Discord Notification
         await sendDiscordNotification(
@@ -200,7 +210,7 @@ export async function POST(req: NextRequest) {
           `■ 配送先: ${shippingAddress.postal_code || ""} ${shippingAddress.state || ""}${shippingAddress.city || ""}${shippingAddress.line1 || ""} ${shippingAddress.line2 || ""}`
         );
       } catch (mailError) {
-        console.error("Failed to send admin mail:", mailError);
+        console.error("Failed to send notification mails:", mailError);
       }
 
       // 2. If it's an Apex tier, try to automatically grant black_member role
