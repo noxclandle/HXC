@@ -10,8 +10,20 @@ export default function Footer() {
     <footer className="mt-auto border-t border-white/5 bg-void/80 pt-16 pb-12 px-6 hxc-global-footer">
       <div className="max-w-4xl mx-auto flex flex-col items-center gap-12">
         {/* Branding */}
-        <div className="flex flex-col items-center text-center group">
-          <span className="text-[11px] tracking-[1.2em] uppercase font-light text-moonlight/60">Hexa Relation / アイデンティティの透過</span>
+        <div className="flex flex-col items-center text-center group select-none">
+          <span 
+            className="text-[12px] tracking-[1.2em] uppercase font-black text-black"
+            style={{
+              textShadow: `
+                0 0 4px rgba(59, 130, 246, 0.9),
+                0 0 8px rgba(59, 130, 246, 0.7),
+                0 0 15px rgba(59, 130, 246, 0.5),
+                0 0 30px rgba(59, 130, 246, 0.3)
+              `
+            }}
+          >
+            Hexa Relation
+          </span>
         </div>
 
         {/* Navigation/Legal Links */}
