@@ -413,13 +413,23 @@ export default function PurchasePage() {
                   </div>
 
                   {selection.tier === "corporate" ? (
-                    <Link 
-                      href="/contact?subject=Corporate%20Card%20Order%20Inquiry%20/%20法人用オリジナルデザインカードに関するお問い合わせ"
-                      className="w-full py-5 bg-white text-black hover:bg-[#d0d0d0] transition-all duration-500 font-bold tracking-[0.5em] text-[10px] uppercase flex items-center justify-center gap-4 group rounded"
-                    >
-                      Inquire / お問い合わせ
-                      <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    <div className="flex flex-col sm:flex-row gap-4 w-full">
+                      <button 
+                        onClick={handleStartCheckout}
+                        disabled={loading}
+                        className="flex-grow py-5 bg-white text-black hover:bg-[#d0d0d0] transition-all duration-500 font-bold tracking-[0.3em] text-[10px] uppercase flex items-center justify-center gap-3 group rounded animate-in fade-in duration-300"
+                      >
+                        Purchase (¥580,000) / 決済へ進む
+                        <CreditCard size={12} className="group-hover:scale-110 transition-transform" />
+                      </button>
+                      <Link 
+                        href="/contact?subject=Corporate%20Card%20Order%20Inquiry%20/%20法人用オリジナルデザインカードに関するお問い合わせ"
+                        className="flex-grow py-5 border border-white/20 text-white hover:bg-white/5 transition-all duration-500 font-bold tracking-[0.3em] text-[10px] uppercase flex items-center justify-center gap-3 group rounded animate-in fade-in duration-300"
+                      >
+                        Inquire / お問い合わせ
+                        <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </div>
                   ) : (
                     <button 
                       onClick={handleStartCheckout}
