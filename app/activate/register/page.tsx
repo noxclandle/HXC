@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Hexagon, UserCheck, Mail, Lock, CheckCircle2, Fingerprint, Phone, ArrowRight, Loader2, User } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
+import Image from "next/image";
 
 function RegisterContent() {
   const router = useRouter();
@@ -176,9 +177,12 @@ function RegisterContent() {
           <div className="relative w-64 h-64 md:w-80 md:h-80 mb-8 border border-white/5 bg-white/[0.01] rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(59,130,246,0.03)] flex items-center justify-center">
             {/* Ambient azure glow */}
             <div className="absolute inset-0 bg-gradient-to-t from-azure-950/10 via-transparent to-transparent" />
-            <img 
+            <Image 
               src="/購入.png" 
               alt="Guide" 
+              width={320}
+              height={320}
+              priority
               className="w-full h-full object-contain max-h-[85%] animate-pulse"
               style={{ animationDuration: '4s' }}
             />
