@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Camera, Book, ShieldCheck, ChevronRight, Newspaper, Sparkles, Smartphone, HelpCircle, Mail, X, Presentation } from "lucide-react";
+import { Camera, Book, ShieldCheck, ChevronRight, Newspaper, Sparkles, Smartphone, HelpCircle, Mail, X, Presentation, Network, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,8 +14,8 @@ export default function HubClientUI({
   initialStats, 
   initialNews 
 }: { 
-  initialStats: any, 
-  initialNews: any 
+  initialStats: any; 
+  initialNews: any; 
 }) {
   const { data: session } = useSession();
   const { showToast } = useToast();
@@ -31,6 +31,10 @@ export default function HubClientUI({
   const [isTarotOpen, setIsTarotOpen] = useState(false);
   const [bonusPromptDismissed, setBonusPromptDismissed] = useState(false);
 
+  // Resonance Link States
+  const [resonanceRequests, setResonanceRequests] = useState<any[]>([]);
+  const [processingResonance, setProcessingResonance] = useState<string | null>(null);
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -40,11 +44,11 @@ export default function HubClientUI({
   const isNewMessage = latestNews && (!realStats?.last_read_news_at || new Date(latestNews.created_at) > new Date(realStats.last_read_news_at));
 
   const fetchData = useCallback(async () => {
-    // 初回読み込み時はサーバーからのデータを既に使用しているためスキップ
     try {
-      const [statusRes, newsRes] = await Promise.all([
+      const [statusRes, newsRes, resonanceRes] = await Promise.all([
         fetch("/api/user/status", { cache: "no-store" }),
-        fetch("/api/news", { cache: "no-store" })
+        fetch("/api/news", { cache: "no-store" }),
+        fetch("/api/profile/resonance?mode=incoming", { cache: "no-store" })
       ]);
       if (statusRes.ok) {
         const data = await statusRes.json();
@@ -53,6 +57,10 @@ export default function HubClientUI({
       if (newsRes.ok) {
         const nData = await newsRes.json();
         if (nData.length > 0) setLatestNews(nData[0]);
+      }
+      if (resonanceRes.ok) {
+        const rData = await resonanceRes.json();
+        setResonanceRequests(rData.requests || []);
       }
     } catch (err) { 
       console.error(err);
@@ -71,41 +79,56 @@ export default function HubClientUI({
     setMood('excited');
     
     try {
-      const res = await fetch("/api/user/daily-resonance", { method: "POST" });
-      const data = await res.json();
+      const res = await fetch('/api/user/daily-resonance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
       
-      if (res.ok) {
-        await fetchData();
-        window.dispatchEvent(new CustomEvent("rt-grace-received"));
-        window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
-        
-        if (typeof navigator !== "undefined" && navigator.vibrate) {
-          navigator.vibrate([15]);
-        }
-        
-        setMood('stable');
-        setIsResonating(false);
-      } else {
-        if (data.error === "Already resonated today.") {
-          await fetchData();
-          setMood('stable');
-          showToast("Daily resonance bonus already claimed. / 本日の共鳴（ボーナス）は既に受け取り済みです。", "info");
-        } else {
-          // 詳細なエラーを表示するように変更
-          const errorMsg = data.error || "Sync Failed / 境界との同期に失敗しました";
-          const errorDetail = data.details ? ` / ${data.details}` : "";
-          showToast(errorMsg + errorDetail, "error");
-          setMood('unstable');
-          // 一応データを再取得してみる
-          await fetchData();
-        }
-        setIsResonating(false);
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Connection Failed");
       }
+      
+      const result = await res.json();
+      
+      if (result.success) {
+        // デイリーボーナスの場合はタロットモーダルを開く
+        setIsTarotOpen(true);
+        setMood('stable');
+      } else {
+        showToast(result.message || "Sync Complete / 境界の同期が完了しました", "success");
+        await fetchData();
+      }
+      setIsResonating(false);
     } catch (e: any) {
       setMood('unstable');
       setIsResonating(false);
       showToast(e.message || "Sync Failed / 境界との同期に失敗しました", "error");
       await fetchData();
+    }
+  };
+
+  const handleAcceptResonance = async (targetSlug: string) => {
+    setProcessingResonance(targetSlug);
+    try {
+      const res = await fetch("/api/profile/resonance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetSlug })
+      });
+      if (res.ok) {
+        const resData = await res.json();
+        showToast(resData.message || "Resonance established! / 同調に成功しました", "success");
+        await fetchData();
+        window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
+      } else {
+        showToast("Failed to establish resonance. / 同調に失敗しました", "error");
+      }
+    } catch (e) {
+      console.error(e);
+      showToast("Network error. / 通信エラーが発生しました", "error");
+    } finally {
+      setProcessingResonance(null);
     }
   };
 
@@ -249,6 +272,43 @@ export default function HubClientUI({
         </div>
 
         <aside className="lg:col-span-4 space-y-12">
+           {/* Incoming Resonance Requests / 受信した共鳴要請 */}
+           {resonanceRequests.length > 0 && (
+             <div className="p-6 border border-azure-500/20 bg-azure-500/[0.02] shadow-[0_0_25px_rgba(59,130,246,0.08)] rounded-xl space-y-4 animate-in fade-in slide-in-from-bottom-3 duration-500">
+                <div className="opacity-80 text-[10px] tracking-[0.4em] uppercase font-bold text-azure-400 flex items-center gap-2">
+                   <Network size={12} className="animate-pulse" /> Resonance Demands / 共鳴要請
+                </div>
+                <div className="h-px bg-white/10" />
+                <div className="space-y-4 max-h-60 overflow-y-auto custom-scrollbar">
+                   {resonanceRequests.map((req) => (
+                     <div key={req.id} className="flex flex-col gap-2.5 p-3 bg-white/[0.01] border border-white/5 hover:border-azure-500/20 transition-all rounded">
+                       <div className="flex justify-between items-center gap-2">
+                         <div className="truncate">
+                           <p className="text-[11px] font-bold text-white tracking-widest truncate">{req.requester.name}</p>
+                           <p className="text-[8px] opacity-40 font-mono tracking-wider truncate">@{req.requester.slug}</p>
+                         </div>
+                         <button
+                           disabled={processingResonance !== null}
+                           onClick={() => handleAcceptResonance(req.requester.slug)}
+                           className="px-3.5 py-2 bg-azure-600 hover:bg-azure-500 active:scale-95 text-white font-bold text-[8px] tracking-widest uppercase transition-all rounded shrink-0 flex items-center justify-center gap-1.5 disabled:opacity-50"
+                         >
+                           {processingResonance === req.requester.slug ? (
+                             <Loader2 size={10} className="animate-spin" />
+                           ) : (
+                             <CheckCircle2 size={10} />
+                           )}
+                           Resonate
+                         </button>
+                       </div>
+                       <p className="text-[6.5px] text-white/30 font-mono text-right">
+                         Requested: {new Date(req.createdAt).toLocaleDateString()}
+                       </p>
+                     </div>
+                   ))}
+                </div>
+             </div>
+           )}
+
            <div className="p-1 bg-gradient-to-b from-white/5 to-transparent">
               <div className="mb-6 opacity-30 px-4 text-[9px] tracking-[0.4em] uppercase font-bold text-white">
                  <p>Monthly Report / 解析レポート</p>
@@ -256,127 +316,126 @@ export default function HubClientUI({
               </div>
               <MonthlyReport stats={realStats} />
            </div>
+        </aside>
+      </div>
 
-           </aside>
-        </div>
+      {/* Floating Daily Bonus Prompt */}
+      <AnimatePresence>
+        {isBonusAvailable && !bonusPromptDismissed && (
+          <motion.div 
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 30, scale: 0.95 }}
+            className="fixed bottom-[92px] right-6 z-50 max-w-[220px]"
+          >
+            <div className="bg-void/95 backdrop-blur-md border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] p-3.5 rounded-2xl relative overflow-hidden group">
+               <div className="absolute inset-0 bg-white/[0.02] pointer-events-none" />
+               
+               {/* Close Button */}
+               <button 
+                 onClick={(e) => {
+                   e.stopPropagation();
+                   setBonusPromptDismissed(true);
+                 }}
+                 className="absolute top-2.5 right-2.5 z-20 p-1 text-white/40 hover:text-white hover:bg-white/5 rounded-full transition-all"
+                 title="Dismiss / 閉じる"
+               >
+                 <X size={10} />
+               </button>
 
-        {/* Floating Daily Bonus Prompt */}
-        <AnimatePresence>
-          {isBonusAvailable && !bonusPromptDismissed && (
+               <div className="relative z-10 text-left w-full pr-4">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <Sparkles size={11} className="text-azure-400" />
+                    <span className="text-[8px] tracking-[0.2em] font-bold uppercase text-azure-400">Daily Resonance</span>
+                  </div>
+                  <p className="text-[7.5px] tracking-wider text-white/60 uppercase mb-3 leading-relaxed font-sans">Receive daily resonance bonus? / 本日の共鳴（ボーナス）を受け取りますか?</p>
+                  
+                  <button 
+                    disabled={isResonating}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!isResonating) handleConnection();
+                    }}
+                    className={`w-full text-[8px] font-bold tracking-[0.3em] uppercase py-2 text-center rounded-full shadow-sm transition-all ${
+                      isResonating 
+                        ? "bg-zinc-800 text-zinc-500 cursor-not-allowed" 
+                        : "bg-white text-void hover:bg-zinc-200 active:scale-95 cursor-pointer"
+                    }`}
+                  >
+                    {isResonating ? "RECEIVING... / 接続中..." : "Receive Bonus / ボーナスを受け取る"}
+                  </button>
+               </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Tarot Daily Resonance Modal */}
+      <TarotModal
+        isOpen={isTarotOpen}
+        onClose={() => setIsTarotOpen(false)}
+        mode="daily"
+        onSuccess={async () => {
+          await fetchData();
+          window.dispatchEvent(new CustomEvent("rt-grace-received"));
+          window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
+        }}
+      />
+
+      {/* Announcement Detail Modal */}
+      <AnimatePresence>
+        {selectedNews && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
             <motion.div 
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 30, scale: 0.95 }}
-              className="fixed bottom-[92px] right-6 z-50 max-w-[220px]"
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedNews(null)}
+              className="absolute inset-0 bg-void/90 backdrop-blur-md" 
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-lg bg-gothic-dark border border-white/10 p-8 shadow-2xl overflow-hidden"
             >
-              <div className="bg-void/95 backdrop-blur-md border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] p-3.5 rounded-2xl relative overflow-hidden group">
-                 <div className="absolute inset-0 bg-white/[0.02] pointer-events-none" />
-                 
-                 {/* Close Button */}
-                 <button 
-                   onClick={(e) => {
-                     e.stopPropagation();
-                     setBonusPromptDismissed(true);
-                   }}
-                   className="absolute top-2.5 right-2.5 z-20 p-1 text-white/40 hover:text-white hover:bg-white/5 rounded-full transition-all"
-                   title="Dismiss / 閉じる"
-                 >
-                   <X size={10} />
-                 </button>
-
-                 <div className="relative z-10 text-left w-full pr-4">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <Sparkles size={11} className="text-azure-400" />
-                      <span className="text-[8px] tracking-[0.2em] font-bold uppercase text-azure-400">Daily Resonance</span>
-                    </div>
-                    <p className="text-[7.5px] tracking-wider text-white/60 uppercase mb-3 leading-relaxed font-sans">Receive daily resonance bonus? / 本日の共鳴（ボーナス）を受け取りますか？</p>
-                    
-                    <button 
-                      disabled={isResonating}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (!isResonating) handleConnection();
-                      }}
-                      className={`w-full text-[8px] font-bold tracking-[0.3em] uppercase py-2 text-center rounded-full shadow-sm transition-all ${
-                        isResonating 
-                          ? "bg-zinc-800 text-zinc-500 cursor-not-allowed" 
-                          : "bg-white text-void hover:bg-zinc-200 active:scale-95 cursor-pointer"
-                      }`}
-                    >
-                      {isResonating ? "RECEIVING... / 接続中..." : "Receive Bonus / ボーナスを受け取る"}
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent" />
+              
+              <header className="mb-8">
+                 <div className="flex justify-between items-start mb-4">
+                    <span className="text-[8px] tracking-[0.4em] uppercase font-bold text-azure-400 bg-azure-500/10 px-2 py-1 border border-azure-500/20">
+                       {selectedNews.category || "Announcement / お知らせ"}
+                    </span>
+                    <button onClick={() => setSelectedNews(null)} className="opacity-40 hover:opacity-100 transition-opacity">
+                       <ChevronRight size={20} className="rotate-90" />
                     </button>
                  </div>
+                 <h2 className="text-xl tracking-widest uppercase font-light text-white leading-relaxed">
+                    {selectedNews.title}
+                 </h2>
+                 <div className="mt-2 text-[8px] tracking-widest opacity-20 uppercase font-mono">
+                    Published: {new Date(selectedNews.created_at).toLocaleDateString()}
+                 </div>
+              </header>
+
+              <div className="space-y-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                 <p className="text-xs leading-relaxed tracking-widest text-white/70 whitespace-pre-wrap">
+                    {selectedNews.content}
+                 </p>
+              </div>
+
+              <div className="mt-12 flex justify-end">
+                 <button 
+                   onClick={() => setSelectedNews(null)}
+                   className="px-8 py-3 border border-white/10 text-[9px] tracking-[0.4em] hover:bg-white/5 transition-all text-white/40 hover:text-white"
+                 >
+                    Close / 閉じる
+                 </button>
               </div>
             </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Tarot Daily Resonance Modal */}
-        <TarotModal
-          isOpen={isTarotOpen}
-          onClose={() => setIsTarotOpen(false)}
-          mode="daily"
-          onSuccess={async () => {
-            await fetchData();
-            window.dispatchEvent(new CustomEvent("rt-grace-received"));
-            window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
-          }}
-        />
-
-        {/* Announcement Detail Modal */}
-        <AnimatePresence>
-          {selectedNews && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-              <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                exit={{ opacity: 0 }}
-                onClick={() => setSelectedNews(null)}
-                className="absolute inset-0 bg-void/90 backdrop-blur-md" 
-              />
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="relative w-full max-w-lg bg-gothic-dark border border-white/10 p-8 shadow-2xl overflow-hidden"
-              >
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-azure-500/40 to-transparent" />
-                
-                <header className="mb-8">
-                   <div className="flex justify-between items-start mb-4">
-                      <span className="text-[8px] tracking-[0.4em] uppercase font-bold text-azure-400 bg-azure-500/10 px-2 py-1 border border-azure-500/20">
-                         {selectedNews.category || "Announcement / お知らせ"}
-                      </span>
-                      <button onClick={() => setSelectedNews(null)} className="opacity-40 hover:opacity-100 transition-opacity">
-                         <ChevronRight size={20} className="rotate-90" />
-                      </button>
-                   </div>
-                   <h2 className="text-xl tracking-widest uppercase font-light text-white leading-relaxed">
-                      {selectedNews.title}
-                   </h2>
-                   <div className="mt-2 text-[8px] tracking-widest opacity-20 uppercase font-mono">
-                      Published: {new Date(selectedNews.created_at).toLocaleDateString()}
-                   </div>
-                </header>
-
-                <div className="space-y-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
-                   <p className="text-xs leading-relaxed tracking-widest text-white/70 whitespace-pre-wrap">
-                      {selectedNews.content}
-                   </p>
-                </div>
-
-                <div className="mt-12 flex justify-end">
-                   <button 
-                     onClick={() => setSelectedNews(null)}
-                     className="px-8 py-3 border border-white/10 text-[9px] tracking-[0.4em] hover:bg-white/5 transition-all text-white/40 hover:text-white"
-                   >
-                      Close / 閉じる
-                   </button>
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-    </div>
+          </div>
+        )}
+      </AnimatePresence>
+  </div>
   );
 }
