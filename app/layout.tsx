@@ -4,7 +4,7 @@ import GeometricBackground from "@/components/background/GeometricBackground";
 
 // Build Triggered: 2026-05-17
 export const metadata: Metadata = {
-  metadataBase: new URL("https://virtual-business-card.hexa-relation.com"),
+  metadataBase: new URL("https://virtual-business-card.hexa-relation.com/"),
   title: {
     default: "Hexa Card | 次世代NFCデジタルアイデンティティ / Next-Gen NFC Digital Identity",
     template: "%s | Hexa System"
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Hexa Card | プレミアムNFCデジタルアイデンティティ",
     description: "Hexa Cardシステムでアイデンティティを同期。物理とデジタルを繋ぐ、究極のスマート名刺。 / Synchronize your identity via the Hexa Card system. The ultimate smart card bridging physical and digital presence.",
-    url: "https://virtual-business-card.hexa-relation.com",
+    url: "https://virtual-business-card.hexa-relation.com/",
     siteName: "Hexa Card",
     images: [
       {
