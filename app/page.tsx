@@ -191,6 +191,47 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* SEO FAQ & System Details Section */}
+        <section className="w-full max-w-xl border-t border-white/5 pt-16 mb-16 text-left px-4">
+          <h2 className="text-[9px] tracking-[0.5em] uppercase font-bold text-azure-400 mb-8 border-l border-azure-500 pl-4">
+            System Resonance & FAQ / 共鳴システムの詳細とよくある質問
+          </h2>
+          
+          <div className="space-y-8 font-sans">
+            <div className="space-y-2">
+              <h3 className="text-[11px] font-bold text-white tracking-widest uppercase">Q. Hexa Cardとはどのようなサービスですか？</h3>
+              <p className="text-[9px] text-white/40 leading-relaxed tracking-wider pl-4">
+                A. 物理的なNFCスマートカードと、Web上のデジタルプロフィール（アイデンティティ）をシームレスに共鳴・同期させるビジネスツールです。カードをスマートフォンにかざすだけで、インストール不要で即座にあなたのポートフォリオや連絡先を共有できます。<br />
+                <span className="text-[8px] opacity-60 mt-1 block">Hexa Card is a professional tool that synchronizes physical NFC cards with digital profiles. Simply tap the card on a smartphone to share your portfolio and contact info instantly.</span>
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-[11px] font-bold text-white tracking-widest uppercase">Q. 会員同士の「共鳴接続」とは何ですか？</h3>
+              <p className="text-[9px] text-white/40 leading-relaxed tracking-wider pl-4">
+                A. Hexa Cardユーザー同士が出会った際、お互いのアイデンティティを共鳴させ、非同期に安全な連絡先交換を行う機能です。共鳴が完了すると、名刺帳への登録と同時にシステム内での活動を拡張するためのRelation Token (RT) が付与されます。<br />
+                <span className="text-[8px] opacity-60 mt-1 block">Resonance Connection is a feature for Hexa Card members to securely exchange contact details asynchronously. Establishing resonance also grants Relation Tokens (RT).</span>
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-[11px] font-bold text-white tracking-widest uppercase">Q. セキュリティや個人情報の保護はどのようになっていますか？</h3>
+              <p className="text-[9px] text-white/40 leading-relaxed tracking-wider pl-4">
+                A. 本システムはプライバシーの保護を最優先に設計されています。公開するエイリアス情報と、厳重に暗号化された個人情報を明確に分離し、あなたが「共鳴」を承認した信頼できるパートナーにのみ、選択した連絡先が開示される仕組みを採用しています。<br />
+                <span className="text-[8px] opacity-60 mt-1 block">Security and privacy are our highest priorities. Public aliases and encrypted personal details are separated, revealing contacts only to trusted partners you resonate with.</span>
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-[11px] font-bold text-white tracking-widest uppercase">Q. どのような端末に対応していますか？</h3>
+              <p className="text-[9px] text-white/40 leading-relaxed tracking-wider pl-4">
+                A. Safari（WebKit）を含むiOS、およびAndroid端末の標準ブラウザに完全対応しています。特別なアプリケーションのダウンロードは一切不要で、NFCのタップまたはQRコードの読み取りによって瞬時にプロフィールが透過的に展開されます。<br />
+                <span className="text-[8px] opacity-60 mt-1 block">Fully compatible with standard browsers on iOS (Safari/WebKit) and Android. No app installation required; profiles load via NFC tap or QR code scan.</span>
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Status Indicator */}
         <div className="flex items-center gap-3 opacity-30">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
