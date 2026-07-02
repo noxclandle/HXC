@@ -32,7 +32,8 @@ export async function POST(req: NextRequest) {
           user.id,
           parseInt(amount),
           "earn",
-          `Master Grace: ${message || "A gift from the Chief Officer"}`
+          `Master Grace: ${message || "A gift from the Chief Officer"}`,
+          false // 一斉付与でもEXPを増やさない
         );
         
         // 天使に喋らせるメッセージをChatMessageとして保存
