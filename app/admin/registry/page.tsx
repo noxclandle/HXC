@@ -71,7 +71,7 @@ export default function RegistryPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [currentUserRole, setCurrentUserRole] = useState<string>("");
   const [inspectUser, setInspectUser] = useState<Card | null>(null); // 追加
-  const [justAddedUids, setJustAddedUids] = useState<string[]>([]);
+  const [lastAddedUid, setLastAddedUid] = useState<string | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -142,7 +142,7 @@ export default function RegistryPage() {
       if (res.ok) {
         await fetchData();
         setNewCard({ uid: "", serial: "" });
-        setJustAddedUids(prev => [normalizedUid, ...prev]);
+        setLastAddedUid(normalizedUid);
       } else {
         const data = await res.json();
         alert(data.error || "Registration failed");
@@ -279,14 +279,12 @@ export default function RegistryPage() {
   );
   const pendingOrders = orders.filter(o => o.status === "paid");
 
-  // 表示用カードリストをソート（新規登録＆未発行を最優先で一番上に）
+  // 表示用カードリストをソート（直近の新規登録カード1枚を最優先で一番上に、その後に未発行カードを優先）
   const sortedCards = [...filteredCards].sort((a, b) => {
-    const idxA = justAddedUids.indexOf(a.uid);
-    const idxB = justAddedUids.indexOf(b.uid);
-    
-    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
-    if (idxA !== -1) return -1;
-    if (idxB !== -1) return 1;
+    if (lastAddedUid) {
+      if (a.uid === lastAddedUid) return -1;
+      if (b.uid === lastAddedUid) return 1;
+    }
 
     if (a.status === "unissued" && b.status !== "unissued") return -1;
     if (a.status !== "unissued" && b.status === "unissued") return 1;
@@ -475,7 +473,7 @@ export default function RegistryPage() {
                 <tr key={card.uid} className="border-b border-white/[0.03] hover:bg-white/[0.01] transition-all">
                   <td className="p-4 font-mono flex items-center gap-2">
                     {card.uid}
-                    {justAddedUids.includes(card.uid) && (
+                    {card.uid === lastAddedUid && (
                       <span className="text-[7px] text-azure-400 bg-azure-400/10 border border-azure-400/20 px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-[0.1em] animate-pulse shrink-0">
                         New
                       </span>
