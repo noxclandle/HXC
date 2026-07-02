@@ -268,6 +268,29 @@ export default function ResidentAgent() {
                       </div>
                     </div>
 
+                    {/* Evolution Stages / 進化レベル */}
+                    <div className="p-4 bg-white/[0.01] border border-white/5 rounded-sm space-y-3 font-sans">
+                      <p className="text-[7px] tracking-[0.4em] uppercase opacity-40 font-bold border-b border-white/5 pb-2">Evolution Stages / 進化の境界</p>
+                      <div className="space-y-2 text-[8px] tracking-wider leading-relaxed">
+                         <div className="flex justify-between items-center opacity-60">
+                            <span className="text-yellow-400 font-bold">LV. 01 - 09</span>
+                            <span className="text-white">Sentinel / センチネル</span>
+                         </div>
+                         <div className="flex justify-between items-center opacity-60">
+                            <span className="text-azure-400 font-bold">LV. 10 - 19</span>
+                            <span className="text-white">Guardian / ガーディアン</span>
+                         </div>
+                         <div className="flex justify-between items-center opacity-60">
+                            <span className="text-orange-400 font-bold">LV. 20 - 29</span>
+                            <span className="text-white">Archangel / アークエンジェル</span>
+                         </div>
+                         <div className="flex justify-between items-center opacity-60">
+                            <span className="text-rose-400 font-bold">LV. 30 (MAX)</span>
+                            <span className="text-white">Seraph / セラフ</span>
+                         </div>
+                      </div>
+                    </div>
+
                     {/* Distinct Menu Container with thicker border */}
                     <div className="p-5 bg-white/[0.01] border-2 border-white/10 rounded-sm space-y-4">
                       <p className="text-[8px] tracking-[0.4em] uppercase opacity-40 font-bold border-b border-white/5 pb-2">Menu / メニュー</p>
