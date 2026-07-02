@@ -144,6 +144,8 @@ export default function RegistryPage() {
       } else {
         const data = await res.json();
         alert(data.error || "Registration failed");
+        // 失敗時もシリアル競合や次の登録の邪魔になるのを防ぐため、入力をクリアする
+        setNewCard({ uid: "", serial: "" });
       }
     } catch (err) {
       console.error(err);
@@ -377,7 +379,7 @@ export default function RegistryPage() {
       </section>
 
       {/* 2. Quick Registry Section */}
-      <section className="mb-20 bg-azure-950/10 border border-azure-500/15 p-10 rounded-sm relative overflow-hidden z-10 shadow-xl shadow-black/20">
+      <section className="mb-20 bg-azure-950/10 border border-azure-500/15 p-6 md:p-10 rounded-sm relative overflow-hidden z-10 shadow-xl shadow-black/20">
         <div className="absolute top-0 left-0 w-1 h-full bg-azure-500/30" />
         <h2 className="text-[11px] tracking-[0.3em] uppercase text-azure-400 font-bold mb-8 flex items-center gap-3">
           <Zap className="text-amber-400" size={16} /> Asset Provisioning / ハードウェア登録
@@ -393,7 +395,8 @@ export default function RegistryPage() {
                 setNewCard(prev => ({ 
                    ...prev, 
                    uid: val, 
-                   serial: prev.serial || generateRandomSerial(cards) 
+                   // UIDが空ならシリアルも空にクリアし、値がある時のみ生成・維持する
+                   serial: val ? (prev.serial || generateRandomSerial(cards)) : ""
                 }));
               }}
               className="w-full bg-void/50 border border-white/10 p-4 text-azure-400 tracking-widest outline-none focus:border-azure-400 font-mono text-lg rounded-sm transition-all focus:bg-void/80"
@@ -401,7 +404,7 @@ export default function RegistryPage() {
           </div>
           <div className="flex-1 space-y-2.5">
             <label className="text-[8px] uppercase tracking-[0.2em] opacity-40 ml-1 font-bold">Serial Number (Auto-Assigned) / 発行シリアル番号</label>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <input 
                 value={newCard.serial} 
                 readOnly
@@ -411,7 +414,7 @@ export default function RegistryPage() {
               <button 
                 onClick={createSlot}
                 disabled={!newCard.uid || submitting}
-                className="px-10 bg-white text-black text-[9px] uppercase tracking-[0.35em] font-bold hover:bg-azure-400 hover:text-white transition-all disabled:opacity-20 active:scale-98 rounded-sm shrink-0 font-sans"
+                className="px-6 py-4 sm:py-0 bg-white text-black text-[9px] uppercase tracking-[0.35em] font-bold hover:bg-azure-400 hover:text-white transition-all disabled:opacity-20 active:scale-98 rounded-sm w-full sm:w-auto sm:px-10 shrink-0 font-sans"
               >
                 {submitting ? "Registering..." : "Register"}
               </button>
