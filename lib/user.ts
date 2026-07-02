@@ -282,3 +282,39 @@ export async function getPublicProfile(slug: string) {
 
   return result;
 }
+
+// IPとターゲットIDの24時間閲覧ログキャッシュ（インメモリ）
+const viewCache = new Map<string, number>();
+
+export async function rewardProfileView(targetUserId: string, ipAddress: string): Promise<boolean> {
+  const cleanIp = ipAddress.split(',')[0].trim(); // プロキシ環境対応
+  const cacheKey = `${cleanIp}_to_${targetUserId}`;
+  const now = Date.now();
+  const expiry = viewCache.get(cacheKey);
+
+  if (!expiry || now > expiry) {
+    // 24時間有効
+    viewCache.set(cacheKey, now + 24 * 60 * 60 * 1000);
+
+    // メモリ保護: キャッシュが大きくなりすぎた場合は期限切れをクリーンアップ
+    if (viewCache.size > 5000) {
+      for (const [key, val] of viewCache.entries()) {
+        if (now > val) viewCache.delete(key);
+      }
+    }
+
+    try {
+      await prisma.user.update({
+        where: { id: targetUserId },
+        data: {
+          exp: { increment: 5 } // 被アクセスで +5 EXP
+        }
+      });
+      return true;
+    } catch (e) {
+      console.error("Profile view EXP reward error:", e);
+      return false;
+    }
+  }
+  return false;
+}
