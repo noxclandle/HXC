@@ -30,7 +30,7 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
       case 4: return '#fb7185'; // Rose-400 (Seraph)
       case 3: return '#fb923c'; // Orange-400 (Archangel)
       case 2: return '#38bdf8'; // Azure-400 (Guardian)
-      default: return '#fbbf24'; // Yellow-400 (Sentinel / Baby)
+      default: return '#f472b6'; // Pink-400 (Sentinel / Baby)
     }
   }, [stage]);
 
@@ -99,11 +99,11 @@ export default function GeometricAngel({ level, mood, size = 200 }: GeometricAng
             {/* Stage 1 (Baby) Wings Gradient */}
             <linearGradient id="stage1-wing-left" x1="100%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="100%" stopColor="#fbbf24" stopOpacity="0.1" />
+              <stop offset="100%" stopColor="#f472b6" stopOpacity="0.1" />
             </linearGradient>
             <linearGradient id="stage1-wing-right" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="100%" stopColor="#fbbf24" stopOpacity="0.1" />
+              <stop offset="100%" stopColor="#f472b6" stopOpacity="0.1" />
             </linearGradient>
 
             {/* Stage 2 (Guardian) Wings Gradient */}
