@@ -57,6 +57,40 @@ function RegisterContent() {
   const [dialogueIndex, setDialogueIndex] = useState(0);
   const [showDialogue, setShowDialogue] = useState(true);
 
+  const playBeep = () => {
+    try {
+      const AudioContextClass = typeof window !== "undefined" && (window.AudioContext || (window as any).webkitAudioContext);
+      if (!AudioContextClass) return;
+      const ctx = new AudioContextClass();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.08);
+      
+      gain.gain.setValueAtTime(0.04, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
+      
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.08);
+    } catch (e) {
+      // Ignored
+    }
+  };
+
+  useEffect(() => {
+    if (showDialogue) {
+      const timer = setTimeout(() => {
+        playBeep();
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   // Admin用のカード情報取得と出荷処理
   useEffect(() => {
     if (isAdmin && uid) {
@@ -165,6 +199,7 @@ function RegisterContent() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, y: -20 }}
           onClick={() => {
+            playBeep();
             if (dialogueIndex < dialogueLines.length - 1) {
               setDialogueIndex(dialogueIndex + 1);
             } else {
@@ -350,6 +385,27 @@ function RegisterContent() {
                         {confirmStep === 2 && "この物理カードをあなたのアカウントに紐付けます。よろしいですか？"}
                         {confirmStep === 3 && "最終的な保存プロセスを開始します。この操作は取り消せません。"}
                       </p>
+
+                      {confirmStep === 1 && (
+                        <div className="bg-white/[0.02] border border-white/5 p-4 rounded text-left space-y-2.5 mt-6 max-w-sm mx-auto font-sans">
+                          <div className="flex justify-between items-center text-[10px] border-b border-white/5 pb-1.5">
+                            <span className="opacity-40 uppercase tracking-widest text-[8px]">氏名 / Name</span>
+                            <span className="text-white font-bold tracking-wider">{formData.name}</span>
+                          </div>
+                          <div className="flex justify-between items-center text-[10px] border-b border-white/5 pb-1.5">
+                            <span className="opacity-40 uppercase tracking-widest text-[8px]">フリガナ / Reading</span>
+                            <span className="text-white font-bold tracking-wider">{formData.handle}</span>
+                          </div>
+                          <div className="flex justify-between items-center text-[10px] border-b border-white/5 pb-1.5">
+                            <span className="opacity-40 uppercase tracking-widest text-[8px]">電話番号 / Phone</span>
+                            <span className="text-white font-bold tracking-wider">{formData.phone}</span>
+                          </div>
+                          <div className="flex justify-between items-center text-[10px] pb-0.5">
+                            <span className="opacity-40 uppercase tracking-widest text-[8px]">メールアドレス / Email</span>
+                            <span className="text-white font-bold tracking-wider">{formData.email}</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex flex-col gap-4">

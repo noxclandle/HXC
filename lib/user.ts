@@ -174,7 +174,7 @@ export async function getUserStatus(email: string | null | undefined) {
       link_facebook: user.link_facebook || "",
       phone: user.phone || "",
       address: user.address || "",
-      contact_email: profile.contact_email || ""
+      contact_email: profile.contact_email || user.email || ""
     }
   };
 }
