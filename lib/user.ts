@@ -304,24 +304,10 @@ export async function rewardProfileView(targetUserId: string, ipAddress: string)
     }
 
     try {
-      // noxユーザーであるか特定 (name/handle_name/email等に "nox" が含まれるか)
-      const targetUser = await prisma.user.findUnique({
-        where: { id: targetUserId },
-        select: { name: true, handle_name: true, email: true }
-      });
-
-      const isNox = targetUser && (
-        targetUser.name?.toLowerCase().includes("nox") ||
-        targetUser.handle_name?.toLowerCase().includes("nox") ||
-        targetUser.email?.toLowerCase().includes("nox")
-      );
-
-      const expAmount = isNox ? 5000 : 5;
-
       await prisma.user.update({
         where: { id: targetUserId },
         data: {
-          exp: { increment: expAmount } // 被アクセスで +5 EXP (noxは特別に +5000 EXP)
+          exp: { increment: 5 } // 被アクセスで一律 +5 EXP
         }
       });
       return true;
