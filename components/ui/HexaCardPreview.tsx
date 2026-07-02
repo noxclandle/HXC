@@ -1688,26 +1688,26 @@ export default function HexaCardPreview({
           <div className={`absolute inset-0 ${getBackgroundStyle()} z-0`} />
 
           {isVertical ? (
-            <div className="h-full p-10 md:p-16 flex flex-col justify-between items-center w-full absolute inset-0">
+            <div className="h-full p-6 py-8 flex flex-col justify-between items-center w-full absolute inset-0">
               <div />
-              <div className="space-y-6 relative z-10 w-full flex flex-col items-center">
-                <div className={`w-28 h-28 md:w-36 md:h-36 rounded-full border ${textColor === 'black' ? 'border-black/10' : 'border-white/10'} flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl relative`}>
-                   {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={48} className={textMutedStyle} />}
+              <div className="space-y-4 relative z-10 w-full flex flex-col items-center">
+                <div className={`w-22 h-22 md:w-26 md:h-26 rounded-full border ${textColor === 'black' ? 'border-black/10' : 'border-white/10'} flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl relative`}>
+                   {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={36} className={textMutedStyle} />}
                 </div>
                 {bio && (
-                  <div className="space-y-4 w-full">
-                     <p className={`text-[12px] md:text-[15px] tracking-[0.1em] uppercase ${textStyle} leading-relaxed italic max-w-sm mx-auto line-clamp-5 px-4 whitespace-pre-wrap`}>
+                  <div className="space-y-2 w-full">
+                     <p className={`text-[11px] md:text-[12px] tracking-[0.1em] uppercase ${textStyle} leading-relaxed italic max-w-sm mx-auto line-clamp-4 px-4 whitespace-pre-wrap`}>
                        {bio}
                      </p>
                   </div>
                 )}
               </div>
-              <div className="flex flex-wrap justify-center gap-8 md:gap-12 pb-8 z-10">
-                 {link_hp && <a href={link_hp.startsWith('http') ? link_hp : `https://${link_hp}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-2 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Globe size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">HP</span></a>}
-                 {link_x && <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-2 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Twitter size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span></a>}
-                 {link_instagram && <a href={link_instagram.startsWith('http') ? link_instagram : `https://instagram.com/${link_instagram}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-2 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Instagram size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Insta</span></a>}
-                 {link_line && <a href={link_line.startsWith('http') ? link_line : `https://line.me/ti/p/~${link_line}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-2 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><MessageCircle size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">LINE</span></a>}
-                 {link_facebook && <a href={link_facebook.startsWith('http') ? link_facebook : `https://facebook.com/${link_facebook}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-2 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Facebook size={18} /><span className="text-[11px] md:text-[13px] tracking-[0.3em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">FB</span></a>}
+              <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 pb-4 z-10 w-full px-2">
+                 {link_hp && <a href={link_hp.startsWith('http') ? link_hp : `https://${link_hp}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-1.5 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Globe size={15} /><span className="text-[9px] md:text-[10px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">HP</span></a>}
+                 {link_x && <a href={link_x.startsWith('http') ? link_x : `https://x.com/${link_x}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-1.5 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Twitter size={15} /><span className="text-[9px] md:text-[10px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity">X</span></a>}
+                 {link_instagram && <a href={link_instagram.startsWith('http') ? link_instagram : `https://instagram.com/${link_instagram}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-1.5 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Instagram size={15} /><span className="text-[9px] md:text-[10px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">Insta</span></a>}
+                 {link_line && <a href={link_line.startsWith('http') ? link_line : `https://line.me/ti/p/~${link_line}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-1.5 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><MessageCircle size={15} /><span className="text-[9px] md:text-[10px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">LINE</span></a>}
+                 {link_facebook && <a href={link_facebook.startsWith('http') ? link_facebook : `https://facebook.com/${link_facebook}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={`group/sns flex items-center gap-1.5 ${textColor === 'black' ? 'text-black/40' : 'text-white/40'} hover:${textStyle} transition-colors`}><Facebook size={15} /><span className="text-[9px] md:text-[10px] tracking-[0.2em] font-bold uppercase opacity-30 group-hover/sns:opacity-100 transition-opacity whitespace-nowrap">FB</span></a>}
               </div>
             </div>
           ) : (

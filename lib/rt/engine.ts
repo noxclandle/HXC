@@ -15,7 +15,8 @@ export async function executeRTTransaction(
   userId: string, 
   amount: number, 
   type: RTTransactionType, 
-  description: string
+  description: string,
+  grantExp: boolean = true
 ): Promise<RTTransactionResult> {
   // 数値の妥当性チェック
   if (isNaN(amount) || amount === 0) {
@@ -43,8 +44,8 @@ export async function executeRTTransaction(
       rt_balance: newBalance,
     };
 
-    // 獲得（earn）の場合のみEXPも増やす
-    if (type === "earn" && amount > 0) {
+    // 獲得（earn）かつ EXP付与が許可されている場合のみEXPも増やす
+    if (type === "earn" && amount > 0 && grantExp) {
       updateData.exp = { increment: amount };
     }
 
