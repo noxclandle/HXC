@@ -257,6 +257,7 @@ export default function ProfileEditPage() {
 
   const updateOrientation = (orientation: "horizontal" | "vertical") => {
     setFormData(prev => ({ ...prev, orientation }));
+    setEquipped((prev: any) => ({ ...prev, orientation }));
   };
 
   const updateScale = (field: "name" | "title" | "company" | "reading" | "phone" | "email" | "address", scale: string) => {

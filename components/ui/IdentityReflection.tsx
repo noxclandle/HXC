@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout, Smartphone, Share2, Sparkles, Edit3, Trophy } from "lucide-react";
 import Link from "next/link";
 import HexaCardPreview, { mapUserToCardProps } from "@/components/ui/HexaCardPreview";
@@ -17,6 +17,12 @@ export default function IdentityReflection({ user }: { user: any }) {
   const safeProfile = safeUser.profile || {};
 
   const [localOrientation, setLocalOrientation] = useState(safeEquipped.orientation || "horizontal");
+
+  useEffect(() => {
+    if (safeEquipped.orientation) {
+      setLocalOrientation(safeEquipped.orientation);
+    }
+  }, [safeEquipped.orientation]);
 
   const defaultAlign = {
     company: "center",
