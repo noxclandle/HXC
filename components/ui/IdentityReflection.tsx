@@ -17,13 +17,10 @@ export default function IdentityReflection({ user }: { user: any }) {
   const safeProfile = safeUser.profile || {};
 
   const [localOrientation, setLocalOrientation] = useState(safeEquipped.orientation || "horizontal");
-  const prevOrientationRef = useRef(safeEquipped.orientation);
-
   useEffect(() => {
-    // プロップスの値が実際に前回のプロップス値から変化した時だけ同期する（非同期競合を完全に防止）
-    if (safeEquipped.orientation && safeEquipped.orientation !== prevOrientationRef.current) {
+    // 親から降ってきた向きに常に同期する
+    if (safeEquipped.orientation) {
       setLocalOrientation(safeEquipped.orientation);
-      prevOrientationRef.current = safeEquipped.orientation;
     }
   }, [safeEquipped.orientation]);
 

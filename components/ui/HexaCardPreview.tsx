@@ -129,6 +129,10 @@ export default function HexaCardPreview({
   scaleReading = "standard", scalePhone = "standard", scaleEmail = "standard", scaleAddress = "standard",
   sound = "resonance", link_hp, link_x, link_instagram, link_line, link_facebook
 }: HexaCardProps) {
+  // IMAGE_LARGE を安全に無効な値としてフィルタリングし、Next.jsのクラッシュや画像リンク切れを防ぐ
+  const safeLogoUrl = logoUrl === "IMAGE_LARGE" ? null : logoUrl;
+  const safeFaceUrl = faceUrl === "IMAGE_LARGE" ? null : faceUrl;
+
   const [isFlipped, setIsFlipped] = useState(false);
   const [isRotating, setIsRotating] = useState(false);
   
@@ -1602,7 +1606,7 @@ export default function HexaCardPreview({
                {/* Header: Company & Logo (Moved Higher & Larger gap) */}
                <div className={`absolute top-4 left-6 right-6 md:top-6 md:left-10 md:right-10 flex flex-col z-10 ${getAlignClass(alignCompany)}`}>
                   <div className={`w-16 h-16 md:w-20 md:h-20 border ${textColor === 'black' ? 'border-black/5' : 'border-white/5'} flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative mb-5`}>
-                     {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={32} className={textMutedStyle} />}
+                     {safeLogoUrl ? <Image src={safeLogoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={32} className={textMutedStyle} />}
                   </div>
                   <p className={`tracking-[0.25em] uppercase ${textStyle} font-medium leading-relaxed truncate w-full`} style={{ fontSize: `${getDynamicFontSize(company || "CORPORATION", 14, "company", true)}px` }}>{company || "CORPORATION"}</p>
                </div>
@@ -1638,7 +1642,7 @@ export default function HexaCardPreview({
               {/* Header: Company & Logo (Moved Higher & Larger gap) */}
               <header className={`absolute top-4 left-6 right-6 md:top-6 md:left-10 md:right-10 flex flex-row items-center gap-6 z-10 ${getAlignClass(alignCompany)}`}>
                  <div className={`w-12 h-12 md:w-16 md:h-16 border ${textColor === 'black' ? 'border-black/5' : 'border-white/5'} flex items-center justify-center bg-white/[0.02] overflow-hidden shrink-0 relative`}>
-                    {logoUrl ? <Image src={logoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={24} className={textMutedStyle} />}
+                    {safeLogoUrl ? <Image src={safeLogoUrl} alt="Logo" fill className="object-contain p-2" /> : <Building2 size={24} className={textMutedStyle} />}
                  </div>
                  <p className={`tracking-[0.3em] uppercase ${textStyle} font-medium leading-tight truncate`} style={{ fontSize: `${getDynamicFontSize(company || "CORPORATION", 14, "company", false)}px` }}>{company || "CORPORATION"}</p>
               </header>
@@ -1692,7 +1696,7 @@ export default function HexaCardPreview({
               <div />
               <div className="space-y-4 relative z-10 w-full flex flex-col items-center">
                 <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full border ${textColor === 'black' ? 'border-black/10' : 'border-white/10'} flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl relative`}>
-                   {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={36} className={textMutedStyle} />}
+                   {safeFaceUrl ? <Image src={safeFaceUrl} alt="Portrait" fill className="object-cover" /> : <User size={36} className={textMutedStyle} />}
                 </div>
                 {bio && (
                   <div className="space-y-2 w-full">
@@ -1713,7 +1717,7 @@ export default function HexaCardPreview({
           ) : (
             <div className="h-full p-6 md:p-8 flex flex-row items-center justify-center gap-8 md:gap-12 w-full absolute inset-0">
                <div className={`w-24 h-24 md:w-32 md:h-32 rounded-full border ${textColor === 'black' ? 'border-black/10' : 'border-white/10'} flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl shrink-0 relative z-10`}>
-                  {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={40} className={textMutedStyle} />}
+                  {safeFaceUrl ? <Image src={safeFaceUrl} alt="Portrait" fill className="object-cover" /> : <User size={40} className={textMutedStyle} />}
                </div>
                <div className="flex flex-col justify-center text-left flex-1 min-w-0 z-10">
                   {bio && (
