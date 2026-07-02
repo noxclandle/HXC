@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
 const contactUpdateSchema = z.object({
   id: z.string().min(1, "ID is required"),
   name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address").optional().or(z.literal("")),
+  email: z.string().optional().or(z.literal("")), // メールアドレス形式チェックを緩和し、OCRや不完全入力での保存失敗を防止
   phone: z.string().optional().or(z.literal("")),
   address: z.string().optional().or(z.literal("")),
   notes: z.string().optional().or(z.literal("")),

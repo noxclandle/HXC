@@ -130,8 +130,9 @@ export async function POST(req: NextRequest) {
             ...((currentUser.equipped_assets as any) || {}),
             ...equipped_assets
           } : undefined,
-          // プロフィール情報をai_config内に同期
+          // プロフィール情報をai_config内にマージ（他のプロパティの上書き破壊を防ぐ）
           ai_config: {
+            ...((currentUser.ai_config as any) || {}),
             profile: {
               ...((currentUser.ai_config as any)?.profile || {}),
               title: title,
