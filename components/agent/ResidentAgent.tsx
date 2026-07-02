@@ -9,6 +9,7 @@ import { ambientManager } from "@/lib/audio/ambient";
 import { useToast } from "@/components/ui/ConnectionToast";
 import GeometricAngel from "@/components/ui/GeometricAngel";
 import TarotModal from "@/components/ui/TarotModal";
+import { getLevelFromExp } from "@/lib/game/level";
 
 export default function ResidentAgent() {
   const router = useRouter();
@@ -60,7 +61,7 @@ export default function ResidentAgent() {
     } catch (e) { console.error(e); }
   };
 
-  const level = Math.min(30, Math.floor(Math.sqrt(userExp / 10)) + 1);
+  const level = getLevelFromExp(userExp);
 
   const checkSoulLink = () => {
     if (typeof window !== "undefined") {
@@ -204,12 +205,12 @@ export default function ResidentAgent() {
                <div className="space-y-2 w-full">
                   <div className="flex justify-between text-[7px] tracking-widest uppercase opacity-40">
                     <span>Rank Level {level}</span>
-                    <span>{userExp.toLocaleString()} / {Math.max(1000, level * 200)} EXP</span>
+                    <span>{userExp.toLocaleString()} / 30,000 EXP</span>
                   </div>
                   <div className="h-[1px] w-full bg-white/10">
                     <motion.div 
                       initial={{ width: 0 }} 
-                      animate={{ width: `${Math.min(100, (userExp / (level * 2)))}%` }} 
+                      animate={{ width: `${Math.min(100, (userExp / 30000) * 100)}%` }} 
                       className="h-full bg-azure-400 shadow-[0_0_10px_rgba(59,130,246,0.5)]" 
                     />
                   </div>

@@ -1691,7 +1691,7 @@ export default function HexaCardPreview({
             <div className="h-full p-6 py-8 flex flex-col justify-between items-center w-full absolute inset-0">
               <div />
               <div className="space-y-4 relative z-10 w-full flex flex-col items-center">
-                <div className={`w-22 h-22 md:w-26 md:h-26 rounded-full border ${textColor === 'black' ? 'border-black/10' : 'border-white/10'} flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl relative`}>
+                <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full border ${textColor === 'black' ? 'border-black/10' : 'border-white/10'} flex items-center justify-center bg-white/[0.02] overflow-hidden shadow-2xl relative`}>
                    {faceUrl ? <Image src={faceUrl} alt="Portrait" fill className="object-cover" /> : <User size={36} className={textMutedStyle} />}
                 </div>
                 {bio && (
