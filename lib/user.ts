@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { ASSETS } from "@/lib/game/assets";
+import { getLevelFromExp } from "@/lib/game/level";
 
 let cachedAssetPrices: any = null;
 let cachedAssetPricesExpiry = 0;
@@ -134,8 +135,9 @@ export async function getUserStatus(email: string | null | undefined) {
     id: user.id,
     name: user.name || "ARCHITECT",
     rt_balance: user.rt_balance.toString(),
-    exp: isFixer ? "10000" : user.exp.toString(),
-    exp_max: isFixer ? "10000" : "1000", // EXPの上限表示用
+    exp: user.exp.toString(),
+    exp_max: "30000", // レベル30到達に必要な最大EXP
+    level: getLevelFromExp(user.exp),
     unread_messages: unreadCount,
     portfolio_links: user.portfolio_links || [],
     rank: isFixer ? "Fixer" : user.rank,

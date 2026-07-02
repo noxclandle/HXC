@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { z } from "zod";
+import { getLevelFromExp } from "@/lib/game/level";
 
 export const dynamic = "force-dynamic";
 
@@ -43,8 +44,8 @@ export async function POST(req: NextRequest) {
       })
     ]);
 
-    // 2. 経験値からコンシェルジュのレベルと段階を計算
-    const level = Math.min(30, Math.floor(Math.sqrt((user?.exp || 0) / 10)) + 1);
+    // 2. 経験値からコンシェルジュのレベルと段階を計算（30,000 EXPでLv.30最大、非線形曲線）
+    const level = getLevelFromExp(user?.exp || 0);
     let stageName = "Sentinel / センチネル (幼子天使)";
     let toneInstruction = "";
 
