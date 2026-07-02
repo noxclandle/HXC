@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
           role: "member",
           rank: "Member",
           rt_balance: 1000, // クレーム登録特典の 1000 RT を付与
-          exp: 1000,
+          exp: 0, // 新規ユーザーは一律 0 EXP (レベル1) からスタート
         }
       });
 
