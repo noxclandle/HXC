@@ -71,6 +71,7 @@ export default function RegistryPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [currentUserRole, setCurrentUserRole] = useState<string>("");
   const [inspectUser, setInspectUser] = useState<Card | null>(null); // 追加
+  const [justAddedUids, setJustAddedUids] = useState<string[]>([]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -141,6 +142,7 @@ export default function RegistryPage() {
       if (res.ok) {
         await fetchData();
         setNewCard({ uid: "", serial: "" });
+        setJustAddedUids(prev => [normalizedUid, ...prev]);
       } else {
         const data = await res.json();
         alert(data.error || "Registration failed");
@@ -277,17 +279,32 @@ export default function RegistryPage() {
   );
   const pendingOrders = orders.filter(o => o.status === "paid");
 
+  // 表示用カードリストをソート（新規登録＆未発行を最優先で一番上に）
+  const sortedCards = [...filteredCards].sort((a, b) => {
+    const idxA = justAddedUids.indexOf(a.uid);
+    const idxB = justAddedUids.indexOf(b.uid);
+    
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+
+    if (a.status === "unissued" && b.status !== "unissued") return -1;
+    if (a.status !== "unissued" && b.status === "unissued") return 1;
+
+    return 0;
+  });
+
   return (
-    <div className="max-w-7xl mx-auto p-12 bg-void text-moonlight min-h-screen">
+    <div className="max-w-7xl mx-auto p-4 md:p-12 bg-void text-moonlight min-h-screen">
       <header className="mb-16 border-b border-white/5 pb-8 relative z-10">
-        <div className="flex justify-between items-end">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
           <div>
-            <h1 className="text-2xl tracking-[0.4em] uppercase font-light mb-2 flex items-center gap-4 text-white">
+            <h1 className="text-xl md:text-2xl tracking-[0.4em] uppercase font-light mb-2 flex items-center gap-4 text-white">
               <Layers className="text-azure-400 animate-pulse" size={22} /> Central Asset Registry / 物理資産中央台帳
             </h1>
             <p className="text-[9px] tracking-[0.2em] text-azure-400/60 uppercase font-bold italic">Hexa System Oversight Protocol</p>
           </div>
-          <Link href="/admin/onboarding" className="text-[9px] uppercase tracking-[0.2em] text-azure-400 hover:text-white border-b border-azure-400/20 pb-1 hover:border-white/50 transition-all flex items-center gap-2 font-bold">
+          <Link href="/admin/onboarding" className="text-[9px] uppercase tracking-[0.2em] text-azure-400 hover:text-white border-b border-azure-400/20 pb-1 hover:border-white/50 transition-all flex items-center gap-2 font-bold shrink-0">
             Protocol Guide / 出荷手順書 <ExternalLink size={10} />
           </Link>
         </div>
@@ -454,9 +471,16 @@ export default function RegistryPage() {
               </tr>
             </thead>
             <tbody className="text-[11px] tracking-widest uppercase">
-              {filteredCards.map(card => (
+              {sortedCards.map(card => (
                 <tr key={card.uid} className="border-b border-white/[0.03] hover:bg-white/[0.01] transition-all">
-                  <td className="p-4 font-mono">{card.uid}</td>
+                  <td className="p-4 font-mono flex items-center gap-2">
+                    {card.uid}
+                    {justAddedUids.includes(card.uid) && (
+                      <span className="text-[7px] text-azure-400 bg-azure-400/10 border border-azure-400/20 px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-[0.1em] animate-pulse shrink-0">
+                        New
+                      </span>
+                    )}
+                  </td>
                   <td className="p-4 font-mono opacity-40 group hover:opacity-100 transition-opacity">
                     {card.serial || "DESTROYED"}
                   </td>
