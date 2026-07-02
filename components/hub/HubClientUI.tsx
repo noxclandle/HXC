@@ -197,11 +197,17 @@ export default function HubClientUI({
                     Purchase / 購入
                  </Link>
               </div>
-              <div className="mt-2 flex justify-start md:justify-end items-center gap-2 opacity-40">
-                 <span className="text-[7px] uppercase tracking-widest font-bold">Total EXP / 累計経験値</span>
-                 <span className="text-[10px] font-mono tracking-tighter text-white">
-                   {mounted ? Number(realStats?.exp || 0).toLocaleString() : realStats?.exp || 0} / {mounted ? Number(realStats?.exp_max || 1000).toLocaleString() : realStats?.exp_max || 1000}
-                 </span>
+              <div className="mt-2 flex flex-col md:flex-row justify-start md:justify-end items-start md:items-center gap-2 md:gap-4 opacity-40">
+                 <div className="flex items-center gap-1.5">
+                    <span className="text-[7px] uppercase tracking-widest font-bold">Concierge / レベル</span>
+                    <span className="text-[10px] font-mono tracking-tighter text-azure-400 font-bold">LV. {realStats?.level || 1}</span>
+                 </div>
+                 <div className="flex items-center gap-1.5">
+                    <span className="text-[7px] uppercase tracking-widest font-bold">Total EXP / 累計経験値</span>
+                    <span className="text-[10px] font-mono tracking-tighter text-white">
+                      {mounted ? Number(realStats?.exp || 0).toLocaleString() : realStats?.exp || 0} / {mounted ? Number(realStats?.exp_max || 30000).toLocaleString() : realStats?.exp_max || 30000}
+                    </span>
+                 </div>
               </div>
            </div>
         </div>
