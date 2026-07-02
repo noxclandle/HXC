@@ -4,6 +4,8 @@ import PublicProfileClient from "@/components/profile/PublicProfileClient";
 import ProfileClientUI from "@/components/profile/ProfileClientUI";
 import { getPublicProfile, getCachedProfile } from "@/lib/user";
 import { headers } from 'next/headers';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
 interface Props {
   params: { slug: string };
@@ -92,6 +94,17 @@ export default async function PublicProfilePage({ params }: Props) {
   
   if (!profileData) {
     notFound();
+  }
+
+  // 被アクセスでのEXP付与（+5 EXP）
+  const ipAddress = reqHeaders.get('x-forwarded-for') || reqHeaders.get('x-real-ip') || 'unknown-ip';
+  if (!isBot && profileData.id) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id || session.user.id !== profileData.id) {
+      // サーバーサイドで非同期処理してロードを妨げない
+      const { rewardProfileView } = await import("@/lib/user");
+      rewardProfileView(profileData.id, ipAddress).catch(console.error);
+    }
   }
 
   const isOfficial = ['admin', 'architect', 'fixer', 'mastermind', 'manager'].includes(profileData.role) || profileData.handle_name === 'architect';

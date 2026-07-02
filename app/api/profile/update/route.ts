@@ -65,6 +65,19 @@ export async function POST(req: NextRequest) {
 
     // トランザクションで原子性を保証
     await prisma.$transaction(async (tx) => {
+      // 1日1回限定のプロフィール更新EXP付与（+50 EXP）チェック
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const existingLogs = await tx.auditLog.findFirst({
+        where: {
+          user_id: session.user.id,
+          action: "profile_sync",
+          created_at: { gte: today }
+        }
+      });
+      
+      const shouldGrantExp = !existingLogs;
+
       await tx.user.update({
         where: { id: session.user.id },
         data: {
@@ -80,6 +93,7 @@ export async function POST(req: NextRequest) {
           phone: phone,
           address: address,
           portfolio_links: portfolio_links,
+          exp: shouldGrantExp ? { increment: 50 } : undefined, // 1日1回限定で +50 EXP
           // 装備情報をマージ
           equipped_assets: equipped_assets ? {
             ...((currentUser.equipped_assets as any) || {}),
