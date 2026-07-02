@@ -42,19 +42,32 @@ export async function POST(req: NextRequest) {
 
       const { name, email, phone, address, notes, role, coord_x, coord_y } = result.data;
 
-      const contact = await prisma.contact.create({
-        data: {
-          owner_id: session.user.id,
-          name,
-          handle_name: role || null, // スキャンされた肩書（Role）をハンドル名として保存
-          email: email || null,
-          phone: phone || null,
-          address: address || null,
-          notes: notes || null,
-          coord_x: coord_x !== undefined ? coord_x : null,
-          coord_y: coord_y !== undefined ? coord_y : null,
-          ai_tags: [],
-        },
+      // トランザクションで名刺作成とEXP加算を同時に行う
+      const contact = await prisma.$transaction(async (tx) => {
+        const newContact = await tx.contact.create({
+          data: {
+            owner_id: session.user.id,
+            name,
+            handle_name: role || null, // スキャンされた肩書（Role）をハンドル名として保存
+            email: email || null,
+            phone: phone || null,
+            address: address || null,
+            notes: notes || null,
+            coord_x: coord_x !== undefined ? coord_x : null,
+            coord_y: coord_y !== undefined ? coord_y : null,
+            ai_tags: [],
+          },
+        });
+
+        // 名刺をライブラリに追加したユーザーに +30 EXP を付与
+        await tx.user.update({
+          where: { id: session.user.id },
+          data: {
+            exp: { increment: 30 }
+          }
+        });
+
+        return newContact;
       });
 
       return NextResponse.json({ success: true, id: contact.id });

@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
         where: { id: userId },
         data: {
           rt_balance: { increment: RT_REWARD },
-          exp: { increment: RT_REWARD },
+          exp: { increment: 10 }, // デイリー共鳴ボーナスでのEXP加算を 10 EXP に修正
           last_daily_at: now
         }
       });
