@@ -166,7 +166,7 @@ export default function ProfileEditPage() {
             website: data.profile?.website || "",
             bio: data.profile?.bio || "",
             phone: data.profile?.phone || "",
-            email: data.profile?.contact_email || "",
+            email: data.profile?.contact_email || session?.user?.email || "",
             address: data.profile?.address || "",
             logoUrl: data.logo_url || "",
             faceUrl: data.photo_url || "",
