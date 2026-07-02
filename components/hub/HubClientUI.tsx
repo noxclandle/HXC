@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Camera, Book, ShieldCheck, ChevronRight, Newspaper, Sparkles, Smartphone, HelpCircle, Mail, X, Presentation, Network, CheckCircle2, Loader2 } from "lucide-react";
+import { Camera, Book, ShieldCheck, ChevronRight, Newspaper, Sparkles, Smartphone, HelpCircle, Mail, X, Presentation, Network, CheckCircle2, Loader2, Share2, Copy } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -321,6 +321,28 @@ export default function HubClientUI({
                  <p className="text-[7px] tracking-[0.2em] mt-1 text-white">Access Analytics</p>
               </div>
               <MonthlyReport stats={realStats} />
+           </div>
+
+           {/* Friend Referral / 友人紹介プログラム */}
+           <div className="p-6 border border-white/10 bg-white/[0.02] rounded-xl space-y-4">
+              <div className="opacity-80 text-[10px] tracking-[0.4em] uppercase font-bold text-white flex items-center gap-2">
+                 <Share2 size={12} className="text-azure-400" /> Referral / 友人紹介
+              </div>
+              <div className="h-px bg-white/10" />
+              <p className="text-[10px] tracking-wider leading-relaxed text-white opacity-60">
+                 あなたの公開プロフィール（デジタル名刺）のURLを友人に共有し、その友人がHexa Cardを購入すると、あなたに <span className="text-azure-400 font-bold">3,000 RT</span> が付与されます。（30人達成で限定称号を獲得）
+              </p>
+              
+              <button
+                 onClick={() => {
+                    const inviteText = `Hexa Relationへ招待します。こちらのリンクを開き、カードを購入すると紹介特典が適用されます。\nhttps://virtual-business-card.hexa-relation.com/p/${realStats?.slug || ''}`;
+                    navigator.clipboard.writeText(inviteText);
+                    showToast("紹介リンクをコピーしました / Invitation link copied.", "success");
+                 }}
+                 className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 active:scale-95 text-white font-bold text-[9px] tracking-widest uppercase transition-all rounded flex items-center justify-center gap-2"
+              >
+                 <Copy size={12} /> Copy Invitation Link / 紹介リンクをコピー
+              </button>
            </div>
         </aside>
       </div>
