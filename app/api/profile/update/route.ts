@@ -78,6 +78,37 @@ export async function POST(req: NextRequest) {
       
       const shouldGrantExp = !existingLogs;
 
+      // 名刺データの完全開示（Full Disclosure）チェック
+      const isProfileComplete = !!(
+        name && name.trim() !== "" &&
+        reading && reading.trim() !== "" &&
+        website && website.trim() !== "" &&
+        link_x && link_x.trim() !== "" &&
+        link_instagram && link_instagram.trim() !== "" &&
+        link_line && link_line.trim() !== "" &&
+        link_facebook && link_facebook.trim() !== "" &&
+        finalPhotoUrl && finalPhotoUrl.trim() !== "" &&
+        finalLogoUrl && finalLogoUrl.trim() !== "" &&
+        phone && phone.trim() !== "" &&
+        address && address.trim() !== "" &&
+        title && title.trim() !== "" &&
+        bio && bio.trim() !== "" &&
+        company && company.trim() !== ""
+      );
+
+      const disclosureRewardLog = await tx.auditLog.findFirst({
+        where: {
+          user_id: session.user.id,
+          action: "full_disclosure_reward"
+        }
+      });
+
+      const shouldRewardDisclosure = isProfileComplete && !disclosureRewardLog;
+
+      let expAdd = 0;
+      if (shouldGrantExp) expAdd += 50;
+      if (shouldRewardDisclosure) expAdd += 500;
+
       await tx.user.update({
         where: { id: session.user.id },
         data: {
@@ -93,7 +124,7 @@ export async function POST(req: NextRequest) {
           phone: phone,
           address: address,
           portfolio_links: portfolio_links,
-          exp: shouldGrantExp ? { increment: 50 } : undefined, // 1日1回限定で +50 EXP
+          exp: expAdd > 0 ? { increment: expAdd } : undefined,
           // 装備情報をマージ
           equipped_assets: equipped_assets ? {
             ...((currentUser.equipped_assets as any) || {}),
@@ -120,6 +151,16 @@ export async function POST(req: NextRequest) {
           details: { name, company, updated_at: new Date().toISOString() }
         }
       });
+
+      if (shouldRewardDisclosure) {
+        await tx.auditLog.create({
+          data: {
+            user_id: session.user.id,
+            action: "full_disclosure_reward",
+            details: { completed_at: new Date().toISOString() }
+          }
+        });
+      }
     });
 
     // キャッシュをクリアして即時反映させる

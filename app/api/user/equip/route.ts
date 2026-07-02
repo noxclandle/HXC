@@ -15,21 +15,53 @@ export async function POST(req: NextRequest) {
 
     const { equipped } = await req.json();
 
-    const currentUser = await prisma.user.findUnique({
-      where: { email: session.user.email }
-    });
+    const keys = Object.keys(equipped || {});
+    let expEarned = 0;
 
-    const currentEquipped = (currentUser?.equipped_assets as any) || {};
+    const updatedUser = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({
+        where: { email: session.user.email as string }
+      });
+      if (!user) throw new Error("User not found");
 
-    // 装備情報を equipped_assets に保存 (マージする)
-    const updatedUser = await prisma.user.update({
-      where: { email: session.user.email },
-      data: {
-        equipped_assets: {
-          ...currentEquipped,
-          ...equipped
+      const currentEquipped = (user.equipped_assets as any) || {};
+
+      // 初回装備チェック
+      for (const key of keys) {
+        const assetValue = equipped[key];
+        if (assetValue) {
+          // 過去にこのアセットの装備履歴があるか監査ログを検索
+          const isEquippedBefore = await tx.auditLog.findFirst({
+            where: {
+              user_id: user.id,
+              action: `equip_asset_${assetValue}`
+            }
+          });
+
+          if (!isEquippedBefore) {
+            // 初回装備なのでログに記録して +100 EXP 加算
+            await tx.auditLog.create({
+              data: {
+                user_id: user.id,
+                action: `equip_asset_${assetValue}`,
+                details: { category: key, value: assetValue }
+              }
+            });
+            expEarned += 100;
+          }
         }
       }
+
+      return await tx.user.update({
+        where: { email: session.user.email as string },
+        data: {
+          equipped_assets: {
+            ...currentEquipped,
+            ...equipped
+          },
+          exp: expEarned > 0 ? { increment: expEarned } : undefined
+        }
+      });
     });
 
     return NextResponse.json({ success: true, equipped: updatedUser.equipped_assets });
