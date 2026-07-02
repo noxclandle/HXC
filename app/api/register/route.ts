@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
           role: "member",
           rank: "Member", // Initiateを廃止し、最初から対等な会員として登録
           rt_balance: 3000, // 新規購入特典の3,000 RTを付与
-          exp: 3000 // 3,000 EXPを付与
+          exp: 0 // EXPは0（レベル1）からスタート
         }
       });
 

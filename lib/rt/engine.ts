@@ -15,8 +15,7 @@ export async function executeRTTransaction(
   userId: string, 
   amount: number, 
   type: RTTransactionType, 
-  description: string,
-  grantExp: boolean = true
+  description: string
 ): Promise<RTTransactionResult> {
   // 数値の妥当性チェック
   if (isNaN(amount) || amount === 0) {
@@ -39,19 +38,12 @@ export async function executeRTTransaction(
       throw new Error("Insufficient RT balance.");
     }
 
-    // 2. ユーザーの残高とEXPを更新
-    const updateData: any = {
-      rt_balance: newBalance,
-    };
-
-    // 獲得（earn）かつ EXP付与が許可されている場合のみEXPも増やす
-    if (type === "earn" && amount > 0 && grantExp) {
-      updateData.exp = { increment: amount };
-    }
-
+    // 2. ユーザーの残高のみを更新（EXPは完全に別データとして扱うため加算しない）
     const updatedUser = await tx.user.update({
       where: { id: userId },
-      data: updateData,
+      data: {
+        rt_balance: newBalance,
+      },
     });
 
     // 3. トランザクション履歴を作成

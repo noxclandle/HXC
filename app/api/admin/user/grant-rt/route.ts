@@ -29,8 +29,7 @@ export async function POST(req: NextRequest) {
       userId,
       parseInt(amount),
       "earn",
-      "Grace from Chief Officer",
-      false // 管理者からの付与ではEXPを増やさない
+      "Grace from Chief Officer"
     );
 
     // 恩寵のログを記録
