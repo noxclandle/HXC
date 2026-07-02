@@ -70,22 +70,25 @@ export async function POST(req: NextRequest) {
         });
         if (referrer) {
           await prisma.$transaction(async (tx) => {
-            // A. 紹介者に3000 RTを付与
+            // A. 紹介者に2000 RTを付与
             await tx.rTTransaction.create({
               data: {
                 user_id: referrer.id,
-                amount: 3000,
+                amount: 2000,
                 type: "REFERRAL_BONUS",
                 description: `Mock Referral bonus for Session: ${mockSessionId} (Buyer: ${customerDetails?.email || "test@example.com"})`
               }
             });
 
-            // B. 残高の加算
+            // B. 残高(+2000 RT)とEXP(+300 EXP)の加算
             await tx.user.update({
               where: { id: referrer.id },
               data: {
                 rt_balance: {
-                  increment: 3000
+                  increment: 2000
+                },
+                exp: {
+                  increment: 300
                 }
               }
             });
@@ -110,7 +113,7 @@ export async function POST(req: NextRequest) {
               }
             }
           });
-          console.log(`[Mock Referral] Successfully processed 3,000 RT referral bonus to ${referrer.email}`);
+          console.log(`[Mock Referral] Successfully processed 2,000 RT and 300 EXP referral bonus to ${referrer.email}`);
         }
       }
 

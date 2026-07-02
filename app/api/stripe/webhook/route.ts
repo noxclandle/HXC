@@ -122,22 +122,25 @@ export async function POST(req: NextRequest) {
                   return;
                 }
 
-                // A. 紹介者に3000 RTの付与ログを作成
+                // A. 紹介者に2000 RTの付与ログを作成
                 await tx.rTTransaction.create({
                   data: {
                     user_id: referrer.id,
-                    amount: 3000,
+                    amount: 2000,
                     type: "REFERRAL_BONUS",
                     description: `Referral bonus for Session: ${session.id} (Buyer: ${customerEmail})`
                   }
                 });
 
-                // B. 紹介者の残高を加算 (Prismaのインクリメント機能でアトミックに加算)
+                // B. 紹介者の残高(+2000 RT)とEXP(+300 EXP)をアトミックに加算
                 await tx.user.update({
                   where: { id: referrer.id },
                   data: {
                     rt_balance: {
-                      increment: 3000
+                      increment: 2000
+                    },
+                    exp: {
+                      increment: 300
                     }
                   }
                 });
@@ -164,7 +167,7 @@ export async function POST(req: NextRequest) {
                   }
                 }
               });
-              console.log(`[Referral] Successfully processed 3,000 RT referral bonus to ${referrer.email} for session ${session.id}`);
+              console.log(`[Referral] Successfully processed 2,000 RT and 300 EXP referral bonus to ${referrer.email} for session ${session.id}`);
             } else {
               console.warn(`[Referral] Referrer ID ${referrerId} not found in database for session ${session.id}`);
             }
