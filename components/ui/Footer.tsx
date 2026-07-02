@@ -15,10 +15,11 @@ export default function Footer() {
             className="text-[12px] tracking-[1.2em] uppercase font-black text-black"
             style={{
               textShadow: `
-                0 0 4px rgba(59, 130, 246, 0.9),
-                0 0 8px rgba(59, 130, 246, 0.7),
-                0 0 15px rgba(59, 130, 246, 0.5),
-                0 0 30px rgba(59, 130, 246, 0.3)
+                0 0 5px rgba(59, 130, 246, 0.95),
+                0 0 10px rgba(59, 130, 246, 0.85),
+                0 0 20px rgba(59, 130, 246, 0.65),
+                0 0 40px rgba(59, 130, 246, 0.45),
+                0 0 60px rgba(59, 130, 246, 0.25)
               `
             }}
           >
