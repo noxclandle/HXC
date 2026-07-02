@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Layout, Smartphone, Share2, Sparkles, Edit3, Trophy } from "lucide-react";
 import Link from "next/link";
 import HexaCardPreview, { mapUserToCardProps } from "@/components/ui/HexaCardPreview";
@@ -17,10 +17,13 @@ export default function IdentityReflection({ user }: { user: any }) {
   const safeProfile = safeUser.profile || {};
 
   const [localOrientation, setLocalOrientation] = useState(safeEquipped.orientation || "horizontal");
+  const prevOrientationRef = useRef(safeEquipped.orientation);
 
   useEffect(() => {
-    if (safeEquipped.orientation) {
+    // プロップスの値が実際に前回のプロップス値から変化した時だけ同期する（非同期競合を完全に防止）
+    if (safeEquipped.orientation && safeEquipped.orientation !== prevOrientationRef.current) {
       setLocalOrientation(safeEquipped.orientation);
+      prevOrientationRef.current = safeEquipped.orientation;
     }
   }, [safeEquipped.orientation]);
 
