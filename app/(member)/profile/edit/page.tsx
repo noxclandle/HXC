@@ -281,15 +281,10 @@ export default function ProfileEditPage() {
         vAlign: dataToSave.vAlign
       };
 
-      // 画像データが巨大なBase64かつ、初期取得時から変更されていない場合は "IMAGE_LARGE" を送る
-      // これにより Payload Too Large (413) エラーを回避する
-      const photoToSend = (dataToSave.faceUrl?.length > 10000 && originalDataRef.current?.faceUrl === "IMAGE_LARGE") 
-        ? "IMAGE_LARGE" 
-        : dataToSave.faceUrl;
-      
-      const logoToSend = (dataToSave.logoUrl?.length > 10000 && originalDataRef.current?.logoUrl === "IMAGE_LARGE")
-        ? "IMAGE_LARGE"
-        : dataToSave.logoUrl;
+      // 画像データが巨大なBase64（長さ10000超）の場合は、転送制限回避のため常に "IMAGE_LARGE" を送信する
+      // これにより 2回目以降の自動保存時における Payload Too Large (413) エラーを完全に防止する
+      const photoToSend = (dataToSave.faceUrl?.length > 10000) ? "IMAGE_LARGE" : dataToSave.faceUrl;
+      const logoToSend = (dataToSave.logoUrl?.length > 10000) ? "IMAGE_LARGE" : dataToSave.logoUrl;
 
       // 単一のAPI呼び出しに統合（原子性を確保し、レースコンディションを防止）
       const res = await fetch("/api/profile/update", {
