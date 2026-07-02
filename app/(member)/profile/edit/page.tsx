@@ -305,6 +305,7 @@ export default function ProfileEditPage() {
 
       if (res.ok) {
         setSaveStatus("saved");
+        originalDataRef.current = dataToSave; // 次回自動保存時の画像無駄送信(413 Payload Too Large)を防止するために同期
         showToast("Profile saved. / 保存しました", "success");
         setTimeout(() => setSaveStatus("idle"), 2000);
       } else {
