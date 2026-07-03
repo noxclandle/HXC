@@ -11,6 +11,14 @@ export const metadata: Metadata = {
   },
   description: "存在を超越する。選ばれた者のための、プレミアムなNFCデジタル名刺とアイデンティティ同期システム。 / Beyond existence. A premium NFC digital business card and identity synchronization system for the chosen few.",
   manifest: "/manifest.json",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
   openGraph: {
     title: "Hexa Card | プレミアムNFCデジタルアイデンティティ",
     description: "Hexa Cardシステムでアイデンティティを同期。物理とデジタルを繋ぐ、究極のスマート名刺。 / Synchronize your identity via the Hexa Card system. The ultimate smart card bridging physical and digital presence.",
