@@ -169,7 +169,7 @@ function LoginContent() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full bg-gothic-dark/30 border border-moonlight/10 p-5 pl-14 text-xs tracking-[0.2em] focus:border-moonlight focus:bg-white/[0.05] outline-none transition-all uppercase"
+                className="w-full bg-gothic-dark/30 border border-moonlight/10 p-5 pl-14 text-xs tracking-[0.2em] focus:border-azure-500/80 focus:bg-white/[0.05] focus:shadow-[0_0_15px_rgba(59,130,246,0.15)] outline-none transition-all uppercase"
               />
             </div>
             <div className="relative group">
@@ -180,7 +180,7 @@ function LoginContent() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full bg-gothic-dark/30 border border-moonlight/10 p-5 pl-14 text-xs tracking-[0.2em] focus:border-moonlight focus:bg-white/[0.05] outline-none transition-all"
+                className="w-full bg-gothic-dark/30 border border-moonlight/10 p-5 pl-14 text-xs tracking-[0.2em] focus:border-azure-500/80 focus:bg-white/[0.05] focus:shadow-[0_0_15px_rgba(59,130,246,0.15)] outline-none transition-all"
               />
             </div>
           </div>
@@ -189,7 +189,7 @@ function LoginContent() {
             <button 
               type="button"
               onClick={() => router.push("/login/forgot")}
-              className="text-[8px] tracking-[0.2em] opacity-30 hover:opacity-100 transition-opacity font-bold"
+              className="text-[8px] tracking-[0.2em] opacity-30 hover:opacity-100 transition-opacity font-bold active:scale-[0.97]"
             >
               パスワードの再設定 / Forgot Password
             </button>
@@ -198,7 +198,7 @@ function LoginContent() {
           <div className="pt-4">
             <button 
               disabled={isLoading}
-              className={`w-full py-5 bg-white text-void text-[10px] font-bold tracking-[0.8em] uppercase hover:bg-emerald-50 transition-all shadow-2xl relative overflow-hidden ${isLoading && 'opacity-50'}`}
+              className={`w-full py-5 bg-white text-void text-[10px] font-bold tracking-[0.8em] uppercase hover:bg-emerald-50 active:scale-[0.97] transition-all shadow-2xl relative overflow-hidden ${isLoading && 'opacity-50'}`}
             >
               {isLoading ? "接続中... / Connecting..." : "ログイン / Log In"}
               {isLoading && (

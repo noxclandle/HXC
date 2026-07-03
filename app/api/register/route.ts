@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
+import { rateLimit } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,12 @@ const registerSchema = z.object({
   uid: z.string().min(8),
   s: z.string().min(1),
   email: z.string().email(),
-  password: z.string().min(8),
+  password: z.string().min(8).refine((val) => {
+    // 少なくとも1文字の英字と1文字の数字を含む
+    return /[a-zA-Z]/.test(val) && /[0-9]/.test(val);
+  }, {
+    message: "Password must contain at least one letter and one number. / パスワードは英字と数字をそれぞれ1文字以上含む必要があります。"
+  }),
   name: z.string().min(1),
   handle: z.string().optional(),
   phone: z.string().min(10), // 必須（最低10桁）に変更
@@ -23,6 +29,15 @@ const registerSchema = z.object({
  */
 export async function POST(req: NextRequest) {
   try {
+    // 1. IPベースのレートリミットを適用 (DDoS・アカウント大量作成防止)
+    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+    const { success } = await rateLimit.strict.limit(ip);
+    if (!success) {
+      return NextResponse.json({ 
+        error: "Too many requests. Please try again later. / リクエスト制限を超過しました。しばらく経ってから再試行してください。" 
+      }, { status: 429 });
+    }
+
     const json = await req.json();
     const body = registerSchema.safeParse(json);
 
