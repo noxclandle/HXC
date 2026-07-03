@@ -16,16 +16,17 @@ export default function InvalidAccessPage() {
           <ShieldAlert size={64} className="text-rose-500/40" />
         </div>
 
-        <h2 className="text-2xl tracking-[0.4em] uppercase mb-4 text-rose-500">Access Denied</h2>
-        <p className="text-[10px] tracking-widest opacity-40 uppercase mb-12">
-          台帳に記録されていない魂、または物理的リンクが断絶した存在です。
+        <h2 className="text-2xl tracking-[0.4em] mb-4 text-rose-500">アクセス拒否 / Access Denied</h2>
+        <p className="text-[10px] tracking-widest opacity-40 leading-relaxed mb-12">
+          アカウントに登録されていないか、セッションの有効期限が切れています。<br />
+          Account unregistered or session has expired.
         </p>
         
         <button 
           onClick={() => window.location.href = "/"}
-          className="px-8 py-3 border border-rose-500/30 text-[10px] tracking-[0.5em] uppercase text-rose-500 hover:bg-rose-500/10 transition-all"
+          className="px-8 py-3 border border-rose-500/30 text-[10px] tracking-[0.4em] uppercase text-rose-500 hover:bg-rose-500/10 transition-all"
         >
-          Return to Void
+          トップページに戻る / Return to Top
         </button>
       </motion.div>
     </main>

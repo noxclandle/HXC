@@ -33,24 +33,24 @@ function RegisterContent() {
   // Dialogue steps for the guide character
   const dialogueLines = [
     {
-      text: "――接続、確認。アイデンティティ透過プロトコルを開始します。",
-      enText: "...Connection verified. Initiating identity permeation protocol."
+      text: "――接続を確認しました。アカウント初期設定を開始します。",
+      enText: "...Connection verified. Starting initial profile setup."
     },
     {
       text: "この度は Hexa Card をご購入いただき、誠にありがとうございます。",
       enText: "Thank you very much for purchasing Hexa Card."
     },
     {
-      text: "私はあなたのデバイスとデジタルアトリエを繋ぐ、最初の案内人です。",
-      enText: "I am your guide, connecting your device with your digital Atelier."
+      text: "私はあなたのカードとデジタルプロフィールを繋ぐ、案内人です。",
+      enText: "I am your guide, connecting your physical card to your digital profile."
     },
     {
       text: "これから、物理カードをあなたのアカウントに紐付けるための登録（同期）を行います。",
       enText: "We will now register and synchronize your physical card with your account."
     },
     {
-      text: "準備はよろしいですか？　それでは、あなたのアイデンティティを教えてください。",
-      enText: "Are you ready? Please let me know who you are."
+      text: "準備はよろしいですか？　それでは、あなたのプロフィール情報を教えてください。",
+      enText: "Are you ready? Please let me know your profile details."
     }
   ];
 
@@ -226,7 +226,7 @@ function RegisterContent() {
           {/* Dialogue Bubble */}
           <div className="w-full border border-azure-500/20 bg-void/90 p-6 rounded-lg relative space-y-3 min-h-[140px] text-left shadow-[0_0_30px_rgba(59,130,246,0.05)] flex flex-col justify-between">
             <div className="absolute -top-2.5 left-6 bg-void border border-azure-500/30 px-3 py-0.5 rounded text-[8px] tracking-[0.2em] font-bold text-azure-400 uppercase">
-              NAVIGATOR / 案内人
+              案内人 / Navigator
             </div>
 
             <div className="space-y-2 pt-2 font-sans">
@@ -239,7 +239,7 @@ function RegisterContent() {
             </div>
 
             <div className="flex justify-end text-[7px] tracking-[0.3em] font-bold text-azure-400/60 uppercase animate-pulse font-sans">
-              [ Tap / クリックして次へ ]
+              [ クリックして次へ / Click to Next ]
             </div>
           </div>
         </motion.div>
@@ -255,7 +255,7 @@ function RegisterContent() {
             {isAdmin && (
               <div className="bg-azure-500/10 border border-azure-500/30 p-6 space-y-4 text-left">
                 <div className="flex items-center gap-2 text-azure-400 font-bold text-[10px] tracking-widest uppercase">
-                  <User size={14} /> Admin Shipping Control
+                  <User size={14} /> 管理者用：出荷管理 / Admin Shipping Control
                 </div>
                 <p className="text-[9px] tracking-widest opacity-60 leading-relaxed uppercase">
                   管理権限を検知しました。このカードを出荷検品しますか？
@@ -272,7 +272,7 @@ function RegisterContent() {
                   disabled={loading}
                   className="w-full py-3 bg-azure-500 text-white text-[10px] font-bold tracking-[0.4em] uppercase hover:bg-azure-400 transition-all"
                 >
-                  {loading ? "Processing..." : "Confirm Shipment"}
+                  {loading ? "処理中... / Processing..." : "出荷完了にする / Confirm Shipment"}
                 </button>
               </div>
             )}
@@ -281,10 +281,10 @@ function RegisterContent() {
               <div className="w-12 h-12 border border-azure-500/30 bg-azure-500/5 flex items-center justify-center mx-auto rotate-45 mb-6">
                  <Hexagon size={20} className="text-azure-400 -rotate-45" />
               </div>
-              <h2 className="text-2xl tracking-[0.4em] uppercase font-light text-white">Create Profile</h2>
+              <h2 className="text-2xl tracking-[0.4em] font-light text-white">プロフィール作成 / Create Profile</h2>
               <p className="text-[12px] tracking-[0.2em] font-bold text-azure-400">
                 カードの認証に成功しました。<br />
-                あなたの情報を入力して、利用を開始してください。
+                プロフィール情報を入力して、利用を開始してください。 / Card authentication successful. Please enter your profile details to get started.
               </p>
             </header>
 
@@ -304,12 +304,12 @@ function RegisterContent() {
 
             <div className="p-5 border border-white/5 bg-white/[0.02] text-left space-y-3">
                <div className="flex justify-between items-center text-[8px] uppercase tracking-widest opacity-30">
-                  <span>Hardware UID</span>
+                  <span>ハードウェアID / Hardware UID</span>
                   <span className="text-azure-400 font-mono">{uid || "DETECTED"}</span>
                </div>
                <div className="flex justify-between items-center text-[8px] uppercase tracking-widest opacity-30">
-                  <span>Protocol Status</span>
-                  <span className="text-emerald-500 font-bold tracking-widest">READY TO SYNC</span>
+                  <span>同期ステータス / Sync Status</span>
+                  <span className="text-emerald-500 font-bold tracking-widest">同期可能 / READY TO SYNC</span>
                </div>
             </div>
 
@@ -361,7 +361,7 @@ function RegisterContent() {
                 type="submit" disabled={loading}
                 className="w-full py-6 bg-white text-void font-bold text-[12px] tracking-[0.6em] uppercase shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:bg-azure-50 transition-all mt-8 active:scale-[0.98] disabled:opacity-50"
               >
-                次へ進む / Confirm
+                確認画面へ / Confirm
               </button>
             </form>
 
@@ -374,16 +374,16 @@ function RegisterContent() {
                 >
                   <div className="max-w-xs w-full text-center space-y-12">
                     <div className="space-y-4">
-                      <div className="text-azure-400 opacity-50 text-[10px] tracking-[0.4em] uppercase font-bold">Step {confirmStep} / 3</div>
+                      <div className="text-azure-400 opacity-50 text-[10px] tracking-[0.4em] uppercase font-bold">ステップ {confirmStep} / Step {confirmStep} of 3</div>
                       <h3 className="text-xl tracking-[0.3em] uppercase font-light">
-                        {confirmStep === 1 && "Confirm Profile"}
-                        {confirmStep === 2 && "Register Card"}
-                        {confirmStep === 3 && "Finalize Setup"}
+                        {confirmStep === 1 && "プロフィールの確認 / Confirm Profile"}
+                        {confirmStep === 2 && "カードの登録 / Register Card"}
+                        {confirmStep === 3 && "設定の完了 / Finalize Setup"}
                       </h3>
                       <p className="text-[9px] tracking-[0.1em] opacity-40 leading-relaxed uppercase">
-                        {confirmStep === 1 && "入力された情報は永続的に保存されます。間違いはありませんか？"}
-                        {confirmStep === 2 && "この物理カードをあなたのアカウントに紐付けます。よろしいですか？"}
-                        {confirmStep === 3 && "最終的な保存プロセスを開始します。この操作は取り消せません。"}
+                        {confirmStep === 1 && "入力された情報は永続的に保存されます。間違いはありませんか？ / This information will be permanently saved. Is it correct?"}
+                        {confirmStep === 2 && "この物理カードをあなたのアカウントに紐付けます。よろしいですか？ / Do you want to link this physical card to your account?"}
+                        {confirmStep === 3 && "最終的な保存プロセスを開始します。この操作は取り消せません。 / Starting final setup process. This action cannot be undone."}
                       </p>
 
                       {confirmStep === 1 && (
@@ -417,10 +417,10 @@ function RegisterContent() {
                         disabled={loading}
                         className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.6em] uppercase hover:bg-azure-50 transition-all"
                       >
-                        {loading ? "Processing..." : (
-                          confirmStep === 1 ? "Confirm Profile" :
-                          confirmStep === 2 ? "Register Card" :
-                          "Save Now"
+                        {loading ? "処理中... / Processing..." : (
+                          confirmStep === 1 ? "プロフィールを確認する / Confirm Profile" :
+                          confirmStep === 2 ? "カードを登録する / Register Card" :
+                          "設定を保存する / Save Now"
                         )}
                       </button>
                       <button 
@@ -428,7 +428,7 @@ function RegisterContent() {
                         disabled={loading}
                         className="w-full py-5 border border-white/10 text-white/40 font-bold text-[10px] tracking-[0.6em] uppercase hover:bg-white/5 transition-all"
                       >
-                        Cancel
+                        キャンセル / Cancel
                       </button>
                     </div>
                   </div>
@@ -447,9 +447,9 @@ function RegisterContent() {
                <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.1, 0.4, 0.1] }} transition={{ duration: 1.5, repeat: Infinity }} className="absolute inset-0 bg-white blur-[100px] rounded-full" />
                <CheckCircle2 size={120} className="text-white relative z-10" />
             </div>
-            <h2 className="text-3xl tracking-[0.6em] uppercase font-extralight text-white">Setup Complete</h2>
+            <h2 className="text-3xl tracking-[0.6em] font-extralight text-white">設定完了 / Setup Complete</h2>
             <p className="text-[10px] tracking-[0.2em] opacity-40 uppercase mt-4">
-               プロフィールの保存が完了しました。まもなくホームへ遷移します。
+               プロフィールの保存が完了しました。まもなくホームへ遷移します。 / Profile saved successfully. Redirecting to home shortly.
             </p>
           </motion.div>
         )}

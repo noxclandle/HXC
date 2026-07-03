@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 import { z } from "zod";
+import { sendContactReplyNotification } from "@/lib/mail";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,18 @@ export async function POST(req: NextRequest) {
       data
     });
 
-    // TODO: ここで実際にユーザーにメールを送るロジック（Resend等）を追加予定
+    if (replyText) {
+      try {
+        await sendContactReplyNotification(
+          inquiry.email,
+          inquiry.name || "Customer",
+          inquiry.message,
+          replyText
+        );
+      } catch (emailError) {
+        console.error("Failed to send contact reply email:", emailError);
+      }
+    }
 
     return NextResponse.json(updatedInquiry);
   } catch (error) {
@@ -60,3 +72,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to update inquiry" }, { status: 500 });
   }
 }
+

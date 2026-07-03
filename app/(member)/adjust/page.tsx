@@ -14,8 +14,8 @@ export default function AdjustShopPage() {
   return (
     <div className="max-w-4xl mx-auto pt-24 px-6 pb-24 text-moonlight">
       <header className="mb-16">
-        <h1 className="text-2xl tracking-[0.4em] uppercase mb-2">The Exchange</h1>
-        <p className="text-[10px] tracking-widest opacity-40 uppercase">Transcendent Adjust Assets</p>
+        <h1 className="text-2xl tracking-[0.4em] uppercase mb-2">調整ストア / Adjust Shop</h1>
+        <p className="text-[10px] tracking-widest opacity-40 uppercase">カードデザインや効果のカスタマイズアセット / Customize Card Assets & Effects</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -37,7 +37,7 @@ export default function AdjustShopPage() {
                  {item.cost} <span className="text-[8px] not-italic opacity-40 uppercase ml-1">RT</span>
                </div>
                <button className={`px-6 py-2 text-[9px] uppercase tracking-widest border border-moonlight/20 hover:bg-white/10 transition-all ${item.locked ? "cursor-not-allowed" : ""}`}>
-                 {item.locked ? "Restricted" : "Resonate"}
+                 {item.locked ? "制限中 / Restricted" : "適用する / Apply"}
                </button>
             </div>
           </div>

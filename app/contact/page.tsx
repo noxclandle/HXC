@@ -49,13 +49,13 @@ export default function ContactPage() {
       <main className="min-h-screen pt-32 px-6 flex flex-col items-center justify-center text-center">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
           <CheckCircle className="text-azure-400 mx-auto mb-8" size={64} strokeWidth={1} />
-          <h1 className="text-2xl tracking-[0.4em] uppercase font-light mb-6">Connection Received / 送信完了</h1>
+          <h1 className="text-2xl tracking-[0.4em] font-light mb-6">送信完了 / Message Sent</h1>
           <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase leading-relaxed max-w-sm mx-auto mb-12">
-            メッセージを受け取りました。中央監視局にて内容を精査し、必要に応じて接続を試みます。<br /><br />
-            Message received. Our central station will analyze the frequency and connect if necessary.
+            メッセージを受け取りました。内容を確認の上、順次ご返答いたします。<br /><br />
+            Message received. We will check the content and respond to you shortly.
           </p>
           <Link href="/" className="px-10 py-4 border border-white/10 text-[9px] uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all">
-            Return to Gateway / ゲートウェイへ
+            ゲートウェイに戻る / Return to Gateway
           </Link>
         </motion.div>
       </main>
@@ -66,13 +66,13 @@ export default function ContactPage() {
     <main className="min-h-screen pt-32 pb-40 px-6 flex flex-col items-center">
       <div className="max-w-xl w-full">
         <header className="text-center mb-20">
-          <h1 className="text-2xl tracking-[0.4em] uppercase font-light mb-4">Contact / お問い合わせ</h1>
-          <p className="text-[9px] tracking-[0.2em] opacity-30 uppercase italic">Interaction & Inquiry / 交流とご質問</p>
+          <h1 className="text-2xl tracking-[0.4em] font-light mb-4">お問い合わせ / Contact</h1>
+          <p className="text-[9px] tracking-[0.2em] opacity-30 uppercase italic">お問い合わせフォーム / Inquiry Form</p>
         </header>
 
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="space-y-2">
-            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">Full Name / お名前</label>
+            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">お名前 / Full Name</label>
             <input
               required
               type="text"
@@ -84,7 +84,7 @@ export default function ContactPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">Frequency Address / メールアドレス</label>
+            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">メールアドレス / Email Address</label>
             <input
               required
               type="email"
@@ -96,7 +96,7 @@ export default function ContactPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">Subject / 件名</label>
+            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">件名 / Subject</label>
             <input
               type="text"
               value={formData.subject}
@@ -107,7 +107,7 @@ export default function ContactPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">Message / 内容</label>
+            <label className="text-[8px] uppercase tracking-[0.3em] opacity-40 ml-1">内容 / Message</label>
             <textarea
               required
               rows={6}
@@ -128,18 +128,18 @@ export default function ContactPage() {
               ) : (
                 <>
                   <Send size={14} />
-                  Transmit Message / 送信する
+                  送信する / Send Message
                 </>
               )}
             </button>
             {status === "error" && (
-              <p className="text-[9px] text-rose-500 uppercase tracking-widest mt-4 text-center">Transmission failed. Please try again. / 送信に失敗しました。再試行してください。</p>
+              <p className="text-[9px] text-rose-500 uppercase tracking-widest mt-4 text-center">送信に失敗しました。再試行してください。 / Transmission failed. Please try again.</p>
             )}
           </div>
         </form>
 
         <div className="mt-24 border-t border-white/5 pt-12 text-center">
-          <p className="text-[9px] tracking-[0.3em] opacity-20 uppercase mb-8">Social Connections / ソーシャルリンク</p>
+          <p className="text-[9px] tracking-[0.3em] opacity-20 uppercase mb-8">ソーシャルリンク / Social Links</p>
           <div className="flex justify-center gap-12 text-[10px] tracking-[0.2em] opacity-40">
             <a href="https://x.com/HexaRelation" target="_blank" className="hover:opacity-100 transition-opacity">X (TWITTER)</a>
             <span className="opacity-10 cursor-default">INSTAGRAM</span>
