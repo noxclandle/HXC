@@ -81,7 +81,7 @@ export default function LibraryPage() {
   // 全データをCSVとしてダウンロードする処理 (Excelの文字化けを防ぐBOM付き)
   const exportToCSV = () => {
     if (contacts.length === 0) {
-      alert("No data to export. / 出力するデータがありません。");
+      alert("出力するデータがありません。 / No data to export.");
       return;
     }
     
@@ -164,11 +164,11 @@ export default function LibraryPage() {
         setSelectedContact(result.contact);
         setIsEditing(false);
       } else {
-        alert("Failed to update contact.");
+        alert("連絡先の更新に失敗しました。 / Failed to update contact.");
       }
     } catch (err) {
       console.error("Save Error:", err);
-      alert("An error occurred while saving.");
+      alert("保存中にエラーが発生しました。 / An error occurred while saving.");
     } finally {
       setIsSaving(false);
     }
@@ -176,7 +176,7 @@ export default function LibraryPage() {
 
   // 削除処理
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this contact? / この連絡先を削除してもよろしいですか？")) return;
+    if (!confirm("この連絡先を削除してもよろしいですか？ / Are you sure you want to delete this contact?")) return;
     setIsDeleting(true);
 
     try {
@@ -188,11 +188,11 @@ export default function LibraryPage() {
         setContacts(prev => prev.filter(c => c.id !== id));
         setSelectedContact(null);
       } else {
-        alert("Failed to delete contact.");
+        alert("連絡先の削除に失敗しました。 / Failed to delete contact.");
       }
     } catch (err) {
       console.error("Delete Error:", err);
-      alert("An error occurred while deleting.");
+      alert("削除中にエラーが発生しました。 / An error occurred while deleting.");
     } finally {
       setIsDeleting(false);
     }
@@ -202,7 +202,7 @@ export default function LibraryPage() {
     <div className="min-h-screen bg-void text-moonlight pt-24 pb-24 px-4 md:px-8">
       <header className="max-w-6xl mx-auto mb-12">
         <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-30 hover:opacity-100 transition-opacity mb-8">
-          <ArrowLeft size={12} /> Back to Home
+          <ArrowLeft size={12} /> ホームに戻る / Back to Home
         </Link>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
@@ -215,7 +215,7 @@ export default function LibraryPage() {
               onClick={exportToCSV}
               className="flex items-center gap-2 px-5 py-3.5 border border-white/10 hover:border-white/25 hover:bg-white/[0.02] text-[9px] tracking-[0.2em] uppercase text-white/70 hover:text-white transition-all font-bold rounded-none"
             >
-              <Download size={12} /> Export CSV / CSV出力
+              <Download size={12} /> CSV出力 / Export CSV
             </button>
 
             {/* 並び替え */}
@@ -225,10 +225,10 @@ export default function LibraryPage() {
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="appearance-none bg-white/[0.02] border border-white/5 px-4 py-3.5 pr-8 text-[9px] tracking-widest uppercase focus:border-azure-500/40 outline-none transition-all text-white rounded-none cursor-pointer font-bold"
               >
-                <option value="date_desc" className="bg-void text-white">Newest / 登録日新しい順</option>
-                <option value="date_asc" className="bg-void text-white">Oldest / 登録日古い順</option>
-                <option value="name_asc" className="bg-void text-white">Name / 名前順 (A-Z)</option>
-                <option value="org_asc" className="bg-void text-white">Org / 組織名順</option>
+                <option value="date_desc" className="bg-void text-white">登録日新しい順 / Newest</option>
+                <option value="date_asc" className="bg-void text-white">登録日古い順 / Oldest</option>
+                <option value="name_asc" className="bg-void text-white">名前順 (A-Z) / Name</option>
+                <option value="org_asc" className="bg-void text-white">組織名順 / Org</option>
               </select>
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 text-[8px]">▼</div>
             </div>
@@ -238,7 +238,7 @@ export default function LibraryPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-azure-400 transition-colors" size={16} />
               <input 
                 type="text" 
-                placeholder="Search Contacts..."
+                placeholder="連絡先を検索... / Search Contacts..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full bg-white/[0.02] border border-white/5 p-4 pl-12 text-[11px] tracking-widest focus:border-azure-500/40 outline-none transition-all uppercase"
@@ -254,7 +254,7 @@ export default function LibraryPage() {
            <div className="absolute top-0 left-0 w-1 h-full bg-azure-500/20" />
            <div className="flex-1">
               <h2 className="text-sm tracking-[0.3em] uppercase font-bold text-white mb-2 flex items-center gap-2">
-                 <Camera size={14} className="text-azure-400" /> Scan Card / 名刺スキャン
+                 <Camera size={14} className="text-azure-400" /> 名刺スキャン / Scan Card
               </h2>
               <p className="text-[9px] tracking-wider text-white/40 leading-relaxed">
                  ここにかざしたスキャンカードは、このカメラで受け取った名刺を撮影するだけでデータ登録が行えます。<br />
@@ -436,7 +436,7 @@ export default function LibraryPage() {
                     onClick={() => handleDownloadVCard(selectedContact)}
                     className="w-full py-4 border border-azure-500/30 bg-azure-500/5 hover:bg-azure-500/10 text-azure-300 text-[10px] uppercase tracking-[0.2em] transition-all font-bold flex items-center justify-center gap-2 mt-4"
                   >
-                    <Smartphone size={14} /> Add to Contacts / 端末の連絡先に追加
+                    <Smartphone size={14} /> 端末の連絡先に追加 / Add to Contacts
                   </button>
 
                   {/* Actions */}
@@ -446,7 +446,7 @@ export default function LibraryPage() {
                       className="flex-1 py-3 border border-red-500/20 text-red-400 hover:bg-red-500/5 text-[9px] uppercase tracking-widest transition-all font-bold flex items-center justify-center gap-2"
                       disabled={isDeleting}
                     >
-                      <Trash2 size={12} /> Delete
+                      <Trash2 size={12} /> 削除 / Delete
                     </button>
                     <button 
                       onClick={() => {
@@ -455,7 +455,7 @@ export default function LibraryPage() {
                       }}
                       className="flex-1 py-3 bg-white text-void hover:scale-105 active:scale-95 text-[9px] uppercase tracking-widest transition-all font-bold flex items-center justify-center gap-2"
                     >
-                      <Edit2 size={12} /> Edit Details
+                      <Edit2 size={12} /> 詳細を編集 / Edit Details
                     </button>
                   </div>
                 </div>
@@ -470,7 +470,7 @@ export default function LibraryPage() {
                   {editForm && (
                     <div className="space-y-4 pt-4 border-t border-white/5 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin">
                       <div className="space-y-1">
-                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Name / お名前 <span className="text-red-500/80">*</span></label>
+                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">お名前 / Name <span className="text-red-500/80">*</span></label>
                         <input 
                           type="text" 
                           value={editForm.name}
@@ -481,7 +481,7 @@ export default function LibraryPage() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Company & Title / 組織名・役職</label>
+                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">組織名・役職 / Company & Title</label>
                         <input 
                           type="text" 
                           value={editForm.handle_name || ""}
@@ -491,7 +491,7 @@ export default function LibraryPage() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Email / メールアドレス</label>
+                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">メールアドレス / Email</label>
                         <input 
                           type="text" 
                           value={editForm.email || ""}
@@ -501,7 +501,7 @@ export default function LibraryPage() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Phone / 電話番号</label>
+                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">電話番号 / Phone</label>
                         <input 
                           type="text" 
                           value={editForm.phone || ""}
@@ -511,7 +511,7 @@ export default function LibraryPage() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Location / 所在地</label>
+                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">所在地 / Location</label>
                         <input 
                           type="text" 
                           value={editForm.address || ""}
@@ -521,7 +521,7 @@ export default function LibraryPage() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">Private Memo / メモ</label>
+                        <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">メモ / Private Memo</label>
                         <textarea 
                           value={editForm.notes || ""}
                           onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
@@ -546,7 +546,7 @@ export default function LibraryPage() {
                       className="flex-1 py-3 bg-white text-void hover:scale-105 active:scale-95 text-[9px] uppercase tracking-widest transition-all font-bold"
                       disabled={isSaving || !editForm?.name}
                     >
-                      {isSaving ? "Saving..." : "Save Changes"}
+                      {isSaving ? "保存中..." : "変更を保存 / Save Changes"}
                     </button>
                   </div>
                 </div>
