@@ -220,13 +220,6 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
               >
                 ← Hexa Card
               </Link>
-              <Link 
-                href="/login" 
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-2 text-[9px] tracking-[0.4em] uppercase font-bold text-azure-400/80 hover:text-azure-400 hover:border-azure-500/30 transition-all bg-void/60 backdrop-blur-md border border-white/10 px-3.5 py-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
-              >
-                Login
-              </Link>
             </div>
 
             <motion.div
@@ -272,15 +265,8 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
                   <p className="text-[12px] tracking-[0.6em] uppercase font-bold text-azure-400 animate-pulse pl-[0.6em]">
                     TAP TO UNVEIL
                   </p>
-                  <p className="text-[10px] tracking-[0.4em] uppercase text-white/80 font-medium pl-[0.4em]">
-                    タップして開封する
-                  </p>
                 </div>
                 
-                <p className="text-[8px] tracking-[0.2em] uppercase text-white/30">
-                  Identity Transmission Received
-                </p>
-
                 {/* Animated double chevron down */}
                 <div className="flex justify-center pt-2">
                   <motion.div
@@ -292,11 +278,6 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
                     <ChevronDown size={14} className="-mt-2.5 opacity-60" />
                   </motion.div>
                 </div>
-                
-                {/* コンシェルジュによる歓迎メッセージ吹き出し */}
-                <p className="text-[9px] tracking-widest text-azure-400/80 font-light max-w-xs mx-auto leading-relaxed pt-4 opacity-80 border-t border-white/5 mt-6 px-4">
-                  {welcomeMessage}
-                </p>
               </motion.div>
             </motion.div>
           </motion.div>
@@ -310,6 +291,29 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
                 exit={{ opacity: 0 }}
                 className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-void"
               >
+                {/* 線が通ったところを埋める六角形パターン */}
+                <motion.div
+                  initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0 }}
+                  animate={{ 
+                    clipPath: ["inset(0 0 100% 0)", "inset(0 0 0% 0)"],
+                    opacity: [0, 0.6, 0.6]
+                  }}
+                  transition={{ duration: 1.2, ease: "easeInOut" }}
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='30' height='51.96' viewBox='0 0 30 51.96' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 0 L30 8.66 L30 25.98 L15 34.64 L0 25.98 L0 8.66 Z M0 51.96 L15 43.3 L30 51.96 M15 34.64 L15 43.3' fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='0.5'/%3E%3C/svg%3E")`,
+                    backgroundSize: "30px 51.96px"
+                  }}
+                />
+ 
+                {/* スキャンライン演出 */}
+                <motion.div 
+                  initial={{ top: "0%", opacity: 0 }}
+                  animate={{ top: ["0%", "100%"], opacity: [0, 1, 0] }}
+                  transition={{ duration: 1.2, ease: "easeInOut" }}
+                  className="absolute left-0 right-0 h-[1px] bg-white/40 shadow-[0_0_20px_rgba(255,255,255,0.5)] pointer-events-none z-10"
+                />
+ 
                 <motion.div
                   initial={{ scale: 0.5, opacity: 0 }}
                   animate={{ scale: 10, opacity: 0 }}
@@ -331,14 +335,6 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
                     {data.name}
                   </p>
                 </motion.div>
-
-                {/* スキャンライン演出 */}
-                <motion.div 
-                  initial={{ top: "0%", opacity: 0 }}
-                  animate={{ top: ["0%", "100%"], opacity: [0, 1, 0] }}
-                  transition={{ duration: 1.2, ease: "easeInOut" }}
-                  className="absolute left-0 right-0 h-[1px] bg-white/40 shadow-[0_0_20px_rgba(255,255,255,0.5)] pointer-events-none"
-                />
               </motion.div>
             )}
 
