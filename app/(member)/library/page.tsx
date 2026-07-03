@@ -215,7 +215,7 @@ export default function LibraryPage() {
               onClick={exportToCSV}
               className="flex items-center gap-2 px-5 py-3.5 border border-white/10 hover:border-white/25 hover:bg-white/[0.02] text-[9px] tracking-[0.2em] uppercase text-white/70 hover:text-white transition-all font-bold rounded-none"
             >
-              <Download size={12} /> CSV出力 / Export CSV
+              <Download size={12} /> 連絡帳データ出力 / Export Contacts
             </button>
 
             {/* 並び替え */}

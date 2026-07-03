@@ -634,7 +634,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
            )}
 
            <button onClick={handleSaveContact} className="w-full py-6 bg-azure-600 text-white font-bold text-[11px] tracking-[1em] uppercase shadow-[0_0_40px_rgba(59,130,246,0.3)] hover:bg-azure-500 transition-all flex items-center justify-center gap-4 group">
-              <Download size={14} className="group-hover:translate-y-1 transition-transform" /> Save Contact
+              <Download size={14} className="group-hover:translate-y-1 transition-transform" /> 連絡先を保存 / Save Contact
            </button>
 
            {/* RESONANCE / SHARE BACK BUTTONS */}
