@@ -35,6 +35,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
   const [messageForm, setMessageForm] = useState({ name: "", company: "", content: "" });
   const [sendingMessage, setSendingMessage] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
 
   // Share Back (Two-Way Resonance) State
   const [showShareBack, setShowShareBack] = useState(false);
@@ -242,12 +243,6 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
           className="flex items-center gap-2 text-[9px] tracking-[0.4em] uppercase font-bold text-white/60 hover:text-white hover:border-white/20 transition-all bg-void/60 backdrop-blur-md border border-white/10 px-3.5 py-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
         >
           ← Hexa Card
-        </Link>
-        <Link 
-          href="/login" 
-          className="flex items-center gap-2 text-[9px] tracking-[0.4em] uppercase font-bold text-azure-400/80 hover:text-azure-400 hover:border-azure-500/30 transition-all bg-void/60 backdrop-blur-md border border-white/10 px-3.5 py-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
-        >
-          Login
         </Link>
       </div>
 
@@ -587,6 +582,87 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
             </motion.div>
           </motion.div>
         )}
+
+        {/* MESSAGE MODAL */}
+        {showMessageModal && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-void/95 z-[100] flex items-center justify-center p-4 overflow-y-auto backdrop-blur-sm">
+            <motion.div initial={{ scale: 0.95, y: 15 }} animate={{ scale: 1, y: 0 }} className="max-w-md w-full bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-2xl space-y-6 relative max-h-[90vh] overflow-y-auto custom-scrollbar font-sans">
+              
+              {/* Close Button */}
+              <button 
+                onClick={() => {
+                  setShowMessageModal(false);
+                  setMessageSent(false);
+                  setMessageForm({ name: "", company: "", content: "" });
+                }} 
+                className="absolute top-4 right-4 text-white/40 hover:text-white text-xs font-mono tracking-widest"
+              >
+                [ CLOSE ]
+              </button>
+
+              <div className="space-y-6 pt-4">
+                <header className="flex items-center gap-3 border-b border-white/5 pb-4">
+                   <MessageSquare className="text-rose-400" size={16} />
+                   <h3 className="text-[11px] tracking-[0.2em] uppercase font-bold text-white">メッセージを送信する / Transmit Message</h3>
+                </header>
+
+                {messageSent ? (
+                   <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="py-8 text-center space-y-4">
+                      <CheckCircle2 size={32} className="mx-auto text-emerald-400" />
+                      <p className="text-[10px] tracking-[0.3em] uppercase text-emerald-400 font-bold">送信完了 / Transmission Complete</p>
+                      <p className="text-[8.5px] tracking-widest text-white/40 uppercase">メッセージを送信しました。相手に届くまでお待ちください。</p>
+                   </motion.div>
+                ) : (
+                   <form onSubmit={handleSendMessage} className="space-y-4">
+                      <div className="space-y-4">
+                         <div className="space-y-1">
+                            <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">お名前 / Name <span className="text-red-500/80">*</span></label>
+                            <input 
+                              required
+                              type="text"
+                              placeholder="お名前を入力してください"
+                              value={messageForm.name}
+                              onChange={(e) => setMessageForm({...messageForm, name: e.target.value})}
+                              className="w-full bg-white/[0.02] border border-white/10 px-4 py-3 text-[11px] tracking-widest focus:border-white/30 text-white rounded-none outline-none"
+                            />
+                         </div>
+                         <div className="space-y-1">
+                            <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">社名・組織名 / Company</label>
+                            <input 
+                              type="text"
+                              placeholder="社名や組織名を入力してください"
+                              value={messageForm.company}
+                              onChange={(e) => setMessageForm({...messageForm, company: e.target.value})}
+                              className="w-full bg-white/[0.02] border border-white/10 px-4 py-3 text-[11px] tracking-widest focus:border-white/30 text-white rounded-none outline-none"
+                            />
+                         </div>
+                         <div className="space-y-1">
+                            <label className="text-[8px] tracking-[0.2em] opacity-45 uppercase block">メッセージ / Message <span className="text-red-500/80">*</span></label>
+                            <textarea 
+                              required
+                              rows={4}
+                              placeholder="メッセージ内容を入力してください"
+                              value={messageForm.content}
+                              onChange={(e) => setMessageForm({...messageForm, content: e.target.value})}
+                              className="w-full bg-white/[0.02] border border-white/10 p-4 text-[11px] tracking-widest focus:border-white/30 transition-all resize-none text-white font-sans rounded-none outline-none"
+                            />
+                         </div>
+                         <p className="text-[8px] tracking-widest text-white/40 leading-relaxed text-left pl-1">
+                             ※返信をご希望の場合は、メッセージ内にご連絡先をご記載ください。
+                         </p>
+                      </div>
+                      <button 
+                        disabled={sendingMessage}
+                        className="w-full py-4 bg-white text-void font-bold text-[10px] tracking-[0.3em] uppercase hover:bg-zinc-200 transition-all flex items-center justify-center gap-4 disabled:opacity-50 mt-6"
+                      >
+                        {sendingMessage ? <Loader2 size={16} className="animate-spin" /> : <><Send size={12} /> メッセージを送信する / Transmit Message</>}
+                      </button>
+                   </form>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       <div className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center px-6">
@@ -609,6 +685,11 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
               {...mapUserToCardProps(data, currentOrientation, rawEquipped)}
             />
           </UnifiedCardContainer>
+          <div className="text-center -mt-8 opacity-45 hover:opacity-80 transition-opacity">
+            <p className="text-[9px] tracking-[0.25em] text-white uppercase font-light">
+              カードをタップすると裏面を表示します / Tap card to view reverse side
+            </p>
+          </div>
         </motion.div>
 
         <div className="w-full max-w-sm space-y-6 mt-20">
@@ -668,6 +749,13 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                     <Network size={12} className="group-hover:scale-110 transition-transform" /> Share Your Contact / 連絡先を送り返す
                  </button>
                )}
+               
+               <button 
+                onClick={() => setShowMessageModal(true)} 
+                className="w-full py-5 bg-rose-950/20 border border-rose-500/30 text-rose-400 font-bold text-[10px] tracking-[0.3em] uppercase shadow-[0_0_20px_rgba(244,63,94,0.1)] hover:bg-rose-500/10 transition-all flex items-center justify-center gap-3 group rounded animate-in fade-in duration-300"
+              >
+                 <MessageSquare size={12} className="group-hover:scale-110 transition-transform" /> Transmit Message / メッセージを送信する
+              </button>
              </>
            )}
 
@@ -682,63 +770,8 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
         </motion.div>
       </div>
 
-      {/* Messaging Section */}
-      <section className="relative z-10 w-full max-w-lg mx-auto py-24 px-6 space-y-24 border-t border-white/5">
-         {/* Identity Contact (Message to Owner) */}
-         <div className="space-y-8">
-            <header className="flex items-center gap-4">
-               <MessageSquare className="text-rose-400" size={18} />
-               <h3 className="text-[11px] tracking-[0.2em] lg:tracking-[0.4em] uppercase font-bold text-white">Transmit Message to {profileName} / {profileName} にメッセージを送信</h3>
-               <span className="text-[8px] tracking-[0.2em] uppercase opacity-20 ml-auto">Secure Channel / 暗号化通信</span>
-            </header>
-            
-            {messageSent ? (
-               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="p-12 border border-emerald-500/20 bg-emerald-500/5 text-center space-y-4">
-                  <CheckCircle2 size={32} className="mx-auto text-emerald-400" />
-                  <p className="text-[10px] tracking-[0.3em] uppercase text-emerald-400 font-bold">Transmission Complete / 送信完了</p>
-                  <p className="text-[8px] tracking-widest text-white/40 uppercase">メッセージを送信しました。相手に届くまでお待ちください。</p>
-               </motion.div>
-            ) : (
-               <form onSubmit={handleSendMessage} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                     <input 
-                       required
-                       placeholder="NAME / お名前 (必須)"
-                       value={messageForm.name}
-                       onChange={(e) => setMessageForm({...messageForm, name: e.target.value})}
-                       className="bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-white/30 text-white"
-                     />
-                     <input 
-                       placeholder="COMPANY / 社名・組織名"
-                       value={messageForm.company}
-                       onChange={(e) => setMessageForm({...messageForm, company: e.target.value})}
-                       className="bg-white/[0.02] border border-white/10 p-4 text-[10px] tracking-widest outline-none focus:border-white/30 text-white"
-                     />
-                  </div>
-                  <div className="space-y-2">
-                      <textarea 
-                        required
-                        rows={4}
-                        placeholder="YOUR MESSAGE / メッセージ内容を入力してください... (必須)"
-                        value={messageForm.content}
-                        onChange={(e) => setMessageForm({...messageForm, content: e.target.value})}
-                        className="w-full bg-white/[0.02] border border-white/10 p-6 text-[10px] tracking-widest outline-none focus:border-white/30 transition-all resize-none text-white font-sans"
-                      />
-                      <p className="text-[9px] tracking-widest text-white/50 leading-relaxed text-left pl-1">
-                          * If you require a response, please include your contact details within the message. <br />
-                          ※返信をご希望の場合は、メッセージ内にご自身の連絡先（メールアドレス等）をご記載ください。
-                      </p>
-                   </div>
-                  <button 
-                    disabled={sendingMessage}
-                    className="w-full py-5 bg-white text-void font-bold text-[10px] tracking-[0.3em] lg:tracking-[0.5em] uppercase hover:bg-zinc-200 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
-                  >
-                    {sendingMessage ? <Loader2 size={16} className="animate-spin" /> : <><Send size={14} /> Transmit Message to {profileName} / {profileName} にメッセージを送信する</>}
-                  </button>
-               </form>
-            )}
-         </div>
-      </section>
+      {/* Spacer between sections */}
+      <div className="h-20" />
 
       {/* Digital QR Exchange Section */}
       {isOwner && (
