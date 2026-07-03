@@ -35,8 +35,7 @@ export default function GatePage() {
           >
             <Hexagon size={24} className="text-white opacity-20 -rotate-45" />
           </motion.div>
-          <h1 className="text-2xl tracking-[0.8em] uppercase font-extralight text-white">System Gateway</h1>
-          <p className="text-[10px] tracking-[0.4em] opacity-30 uppercase font-bold text-azure-400">システム・ゲートウェイ</p>
+          <h1 className="text-2xl tracking-[0.4em] font-extralight text-white">システム・ゲートウェイ / System Gateway</h1>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -46,8 +45,7 @@ export default function GatePage() {
               <div className="mb-8 text-white opacity-20 group-hover:opacity-100 transition-opacity">
                 <User size={32} strokeWidth={1} />
               </div>
-              <h2 className="text-sm tracking-[0.5em] uppercase font-bold mb-2">Home</h2>
-              <p className="text-[9px] opacity-20 uppercase tracking-widest leading-relaxed">マイページ・人脈管理</p>
+              <h2 className="text-sm tracking-[0.2em] font-bold mb-2">マイページ・人脈管理 / Home</h2>
             </div>
             <div className="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
                <ArrowRight size={16} className="text-azure-400" />
@@ -61,8 +59,7 @@ export default function GatePage() {
                 <div className="mb-8 text-azure-400 opacity-40 group-hover:opacity-100 transition-opacity">
                   <Shield size={32} strokeWidth={1} />
                 </div>
-                <h2 className="text-sm tracking-[0.5em] uppercase font-bold mb-2 text-white">Admin Panel</h2>
-                <p className="text-[9px] opacity-20 uppercase tracking-widest leading-relaxed">台帳管理・システム設定</p>
+                <h2 className="text-sm tracking-[0.2em] font-bold mb-2 text-white">台帳管理・システム設定 / Admin Panel</h2>
               </div>
               <div className="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
                  <ArrowRight size={16} className="text-azure-400" />
@@ -73,14 +70,14 @@ export default function GatePage() {
               <div className="mb-8 text-white opacity-20">
                 <Shield size={32} strokeWidth={1} />
               </div>
-              <h2 className="text-sm tracking-[0.5em] uppercase font-bold mb-2">Restricted</h2>
-              <p className="text-[9px] uppercase tracking-widest">管理者権限が必要です</p>
+              <h2 className="text-sm tracking-[0.2em] font-bold mb-2">管理者専用 / Restricted</h2>
+              <p className="text-[9px] uppercase tracking-widest opacity-40">アクセスには管理者権限が必要です / Administrator Privileges Required</p>
             </div>
           )}
         </div>
 
         <footer className="mt-20 text-center">
-           <p className="text-[8px] tracking-[0.8em] opacity-10 uppercase font-bold">System Gate / Access Secure</p>
+           <p className="text-[8px] tracking-[0.4em] opacity-10 uppercase font-bold">セキュア・システムゲート / Secured System Gateway</p>
         </footer>
       </div>
     </main>

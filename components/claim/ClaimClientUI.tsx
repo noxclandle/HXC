@@ -40,7 +40,7 @@ export default function ClaimClientUI({ contact }: ClaimClientUIProps) {
     profile: {
       title: contact.role,
       company: "",
-      bio: "Digitized via HXC."
+      bio: "HXCでデジタル化されました。 / Digitized via HXC."
     },
     equipped: {
       frame: "Obsidian",
@@ -108,7 +108,7 @@ export default function ClaimClientUI({ contact }: ClaimClientUIProps) {
       }, 2000);
 
     } catch (err: any) {
-      setErrorMessage(err.message || "An error occurred during activation.");
+      setErrorMessage(err.message || "有効化中にエラーが発生しました。 / An error occurred during activation.");
       setStatus("error");
     }
   };
@@ -122,11 +122,11 @@ export default function ClaimClientUI({ contact }: ClaimClientUIProps) {
       <div className="w-full max-w-md z-10 py-12 flex flex-col items-center">
         {/* Header */}
         <header className="text-center mb-12 space-y-2">
-          <span className="text-[8px] tracking-[0.4em] text-azure-400 font-bold uppercase">Identity Transmitted</span>
-          <h1 className="text-2xl font-extralight tracking-[0.2em] text-white">境界の透過 / CLAIM CARD</h1>
+          <span className="text-[8px] tracking-[0.4em] text-azure-400 font-bold uppercase">名刺の送信完了 / Scanned Device UID</span>
+          <h1 className="text-2xl font-extralight tracking-[0.2em] text-white">デジタル名刺の受け取り / Claim Card</h1>
           <p className="text-[9px] tracking-widest text-white/30 leading-relaxed uppercase">
-            あなたの紙名刺がデジタルに変換されました。<br />
-            パスワードを設定してこのデジタル名刺を受け取りましょう。
+            あなたの紙名刺がデジタル名刺に変換されました。<br />
+            パスワードを設定して、デジタル名刺を受け取りましょう。 / Your card has been converted to a digital card. Please set a password to claim it.
           </p>
         </header>
 
@@ -157,10 +157,10 @@ export default function ClaimClientUI({ contact }: ClaimClientUIProps) {
                   <span className="text-azure-400 text-lg">✓</span>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-sm font-bold tracking-[0.2em] text-white">アクティベート完了</h3>
+                  <h3 className="text-sm font-bold tracking-[0.2em] text-white">同期完了 / Sync Completed</h3>
                   <p className="text-[10px] tracking-widest text-white/40">
-                    あなたのアイデンティティが同期されました。<br />
-                    HXC Hubへと接続しています...
+                    プロフィールの同期が完了しました。まもなくホームへ移動します...<br />
+                    Profile synced successfully. Connecting to home...
                   </p>
                 </div>
               </motion.div>
@@ -173,7 +173,7 @@ export default function ClaimClientUI({ contact }: ClaimClientUIProps) {
                 {/* Name */}
                 <div className="space-y-2">
                   <label className="text-[8px] tracking-[0.2em] uppercase font-bold text-white/40 flex items-center gap-2">
-                    <User size={10} /> Name / 氏名
+                    <User size={10} /> 氏名 / Name
                   </label>
                   <input 
                     type="text" 
@@ -187,7 +187,7 @@ export default function ClaimClientUI({ contact }: ClaimClientUIProps) {
                 {/* Email */}
                 <div className="space-y-2">
                   <label className="text-[8px] tracking-[0.2em] uppercase font-bold text-white/40 flex items-center gap-2">
-                    <Mail size={10} /> Email / メールアドレス
+                    <Mail size={10} /> メールアドレス / Email Address
                   </label>
                   <input 
                     type="email" 
@@ -201,7 +201,7 @@ export default function ClaimClientUI({ contact }: ClaimClientUIProps) {
                 {/* Password Input */}
                 <div className="space-y-2">
                   <label className="text-[8px] tracking-[0.2em] uppercase font-bold text-white/40 flex items-center gap-2">
-                    <KeyRound size={10} /> Choose Password / パスワード設定 (8文字以上)
+                    <KeyRound size={10} /> パスワード設定 (8文字以上) / Choose Password (8+ characters)
                   </label>
                   <input 
                     type="password" 
@@ -231,10 +231,10 @@ export default function ClaimClientUI({ contact }: ClaimClientUIProps) {
                   {status === "submitting" ? (
                     <>
                       <Loader2 size={12} className="animate-spin text-void" />
-                      Synchronizing...
+                      同期中... / Synchronizing...
                     </>
                   ) : (
-                    "Claim & Activate / デジタル名刺を有効化"
+                    "有効化して受け取る / Claim & Activate"
                   )}
                 </button>
               </motion.form>
@@ -245,7 +245,7 @@ export default function ClaimClientUI({ contact }: ClaimClientUIProps) {
         {/* Footer info link */}
         <footer className="mt-12 text-center">
           <p className="text-[8px] tracking-widest text-white/20">
-            Hexa Relation (HXC) — Empowering individual identity boundaries.
+            Hexa Relation (HXC) — デジタル名刺プラットフォーム / Digital Card Platform.
           </p>
         </footer>
       </div>

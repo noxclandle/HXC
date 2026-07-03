@@ -13,14 +13,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       where: { id: params.id },
     });
     if (!contact) {
-      return { title: "Identity Lost" };
+      return { title: "不明なアイデンティティ / Identity Not Found" };
     }
     return {
-      title: `${contact.name} | 電子名刺の受取`,
-      description: "HXC (Hexa Relation) により、あなたの紙名刺がデジタルに透過されました。このカードを受け取り、アクティベートしてください。",
+      title: `デジタル名刺の受け取り: ${contact.name} / Receive Digital Card: ${contact.name}`,
+      description: "HXC (Hexa Relation) で作成されたデジタル名刺です。情報を確認して受け取ってください。 / Verify and receive this digital business card.",
     };
   } catch (e) {
-    return { title: "Hexa Claim" };
+    return { title: "名刺の受け取り / Receive Hexa Card" };
   }
 }
 
@@ -39,7 +39,7 @@ export default async function ClaimPage({ params }: Props) {
     name: contact.name,
     email: contact.email || "",
     phone: contact.phone || "",
-    role: contact.handle_name || "The Observer",
+    role: contact.handle_name || "一般 / Guest",
     address: contact.address || "",
     notes: contact.notes || "",
   };

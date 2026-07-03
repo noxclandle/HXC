@@ -5,8 +5,8 @@ import { Lock, CreditCard, ShieldCheck, Zap } from "lucide-react";
 
 export default function CheckoutPage() {
   const items = [
-    { name: "Alias Contract", desc: "Alias Barrier (Unlock alternative profile/alias feature) / 偽名の結界（別名名刺機能）の解放", price: "¥2,000", id: "alias" },
-    { name: "Black Tier Sublimation", desc: "Black Tier Sublimation (Upgrade right to premium black card membership) / ブラックカード保有者への昇華権利", price: "¥10,000", id: "black" },
+    { name: "別名プロフィール機能の解放 / Alias Profile Activation", desc: "偽名の結界（別名名刺機能）の解放 / Alias Barrier (Unlock alternative profile/alias feature)", price: "¥2,000", id: "alias" },
+    { name: "ブラック会員へのアップグレード / Black Tier Upgrade", desc: "ブラックカード保有者へのアップグレード権利 / Black Tier Upgrade (Upgrade to premium black card membership)", price: "¥10,000", id: "black" },
   ];
 
   return (
@@ -14,9 +14,9 @@ export default function CheckoutPage() {
       <header className="mb-16 border-b border-moonlight/10 pb-8 text-center">
         <h1 className="text-xl tracking-[0.6em] uppercase flex items-center justify-center gap-4">
           <Lock className="text-moonlight opacity-40" size={20} />
-          The Threshold
+          境界 / Threshold
         </h1>
-        <p className="text-[9px] tracking-widest opacity-20 uppercase mt-4">Transcend your current existence.</p>
+        <p className="text-[9px] tracking-widest opacity-20 uppercase mt-4">現在の存在を拡張する。 / Expand your current existence.</p>
       </header>
 
       <div className="space-y-4">
@@ -33,7 +33,7 @@ export default function CheckoutPage() {
             <div className="flex flex-col items-end relative z-10">
                <span className="text-xl font-extralight italic mb-4">{item.price}</span>
                <button className="px-8 py-3 bg-moonlight text-void text-[9px] font-bold uppercase tracking-widest opacity-60 cursor-not-allowed">
-                  RESTRICTED
+                  制限中 / RESTRICTED
                </button>
             </div>
 
@@ -41,7 +41,7 @@ export default function CheckoutPage() {
             <div className="absolute inset-0 bg-void/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                <div className="flex flex-col items-center gap-2">
                  <Lock size={20} className="opacity-40" />
-                 <span className="text-[8px] tracking-[0.5em] uppercase opacity-40">Awaiting Connection Authorization</span>
+                 <span className="text-[8px] tracking-[0.5em] uppercase opacity-40">接続の承認を待機中 / Awaiting Connection Authorization</span>
                </div>
             </div>
           </motion.div>
@@ -49,7 +49,7 @@ export default function CheckoutPage() {
       </div>
 
       <footer className="mt-24 text-center opacity-10 text-[8px] tracking-[0.5em] uppercase leading-relaxed">
-        Payments are currently disabled.<br />Connections must be authorized by the Chief Officer.
+        現在、お支払いは無効化されています。管理者による接続承認が必要です。<br />Payments are currently disabled. Connections must be authorized by the administrator.
       </footer>
     </div>
   );

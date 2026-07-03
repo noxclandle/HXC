@@ -157,6 +157,10 @@ export default function RegistryPage() {
   };
 
   const assignCardToOrder = async (orderId: string, cardUid: string) => {
+    if (!confirm("【送信警告】\n発送完了通知メールをお客様へ送信します。\n\n※こちらは商品を投函、発送に至ってからおしてください。\n\nこのまま発送通知メールを送信しますか？")) {
+      return;
+    }
+
     setSubmitting(true);
     try {
       const res = await fetch("/api/admin/order/update", {

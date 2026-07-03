@@ -20,25 +20,25 @@ const TIER_THEMES = {
     glow: "rgba(59, 130, 246, 0.15)",
     border: "border-blue-950/30",
     text: "text-azure-400",
-    badge: "STANDARD / 一般"
+    badge: "一般 / STANDARD"
   },
   executive: {
     glow: "rgba(234, 179, 8, 0.12)",
     border: "border-yellow-950/30",
     text: "text-yellow-500",
-    badge: "EXECUTIVE / 特別"
+    badge: "特別 / EXECUTIVE"
   },
   apex: {
     glow: "rgba(255, 255, 255, 0.15)",
     border: "border-zinc-800",
     text: "text-white",
-    badge: "APEX / 究極"
+    badge: "高級 / APEX"
   },
   corporate: {
     glow: "rgba(16, 185, 129, 0.15)",
     border: "border-emerald-950/30",
     text: "text-emerald-400",
-    badge: "CORPORATE / 法人"
+    badge: "法人 / CORPORATE"
   }
 };
 
@@ -228,7 +228,7 @@ export default function PurchasePage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-3xl md:text-4xl font-light tracking-[0.5em] uppercase text-white"
           >
-            Card Order / カードの購入
+            カードの購入 / Card Order
           </motion.h1>
           <motion.div
             initial={{ opacity: 0 }}
@@ -311,7 +311,7 @@ export default function PurchasePage() {
             {/* Segment Tabs */}
             <div className="space-y-4">
               <span className="text-[9px] uppercase tracking-[0.4em] text-white/30 block font-mono">
-                Select existence depth / 存在階層の選択
+                カード種類の選択 / Select Card Tier
               </span>
               <div className="grid grid-cols-4 gap-2 bg-white/[0.02] p-1 border border-white/5 rounded-lg">
                 {tiers.map((t) => {
@@ -393,7 +393,7 @@ export default function PurchasePage() {
                 {/* System Access Specs */}
                 <div className="space-y-4">
                   <span className="text-[9px] uppercase tracking-[0.3em] text-white/30 block font-mono">
-                    Resonance Specs / 共鳴仕様
+                    仕様と特典 / Specifications & Benefits
                   </span>
                   <ul className="space-y-3">
                     {selectedTierData.features.map((feature, i) => (
@@ -408,7 +408,7 @@ export default function PurchasePage() {
                 {/* Action Frame */}
                 <div className="pt-8 border-t border-white/5 space-y-6">
                   <div className="flex justify-between items-baseline">
-                    <span className="text-[9px] uppercase tracking-[0.3em] text-white/30 font-mono">Resonance Exchange Fee / 構築費用</span>
+                    <span className="text-[9px] uppercase tracking-[0.3em] text-white/30 font-mono">制作費用 / Creation Fee</span>
                     <span className="text-2xl font-light italic tracking-tight text-white">{selectedTierData.price}</span>
                   </div>
 
@@ -436,7 +436,7 @@ export default function PurchasePage() {
                       disabled={loading}
                       className="w-full py-5 bg-white text-black hover:bg-[#d0d0d0] transition-all duration-500 font-bold tracking-[0.5em] text-[10px] uppercase flex items-center justify-center gap-4 group disabled:opacity-50 rounded"
                     >
-                      {loading ? "Establishing... / 接続中..." : "Establish Identity / 存在を確定する"}
+                      {loading ? "接続中... / Connecting..." : "購入手続きへ進む / Proceed to Purchase"}
                       {!loading && <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />}
                     </button>
                   )}
@@ -490,10 +490,10 @@ export default function PurchasePage() {
               <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-azure-500 to-rose-500" />
               
               <header className="mb-10 text-center space-y-2">
-                <h2 className="text-xl tracking-[0.4em] uppercase font-light text-white">Identity Input / 情報入力</h2>
-                <p className="text-[9px] tracking-widest text-azure-400 font-bold uppercase font-mono">Enter details to bind with physical card</p>
+                <h2 className="text-xl tracking-[0.4em] uppercase font-light text-white">情報入力 / Information Input</h2>
+                <p className="text-[9px] tracking-widest text-azure-400 font-bold uppercase font-mono">Enter details for physical card personalization</p>
                 <p className="text-[9px] text-white/30 pt-4 leading-relaxed font-light">
-                  物理カードに刻印される基本的な情報を入力してください。<br/>
+                  物理カードに刻印される情報を入力してください。<br/>
                   この後の決済画面でも、再度情報の確認が行われます。<br/>
                   <span className="text-[8px] text-white/20 mt-2 block tracking-wider font-normal uppercase">
                     Please enter the details to be printed on your physical card. Information will be reviewed again before payment.
@@ -546,13 +546,13 @@ export default function PurchasePage() {
                     className="w-full py-5 bg-white text-black font-bold text-[10px] tracking-[0.6em] uppercase hover:bg-zinc-200 transition-all flex items-center justify-center gap-3 rounded"
                   >
                     {loading ? <Loader2 className="animate-spin" size={14} /> : null}
-                    {loading ? "Redirecting... / 接続中..." : "Go to Payment / 決済へ進む"}
+                    {loading ? "接続中... / Connecting..." : "決済へ進む / Proceed to Payment"}
                   </button>
                   <button 
                     onClick={() => setShowForm(false)}
                     className="w-full py-4 border border-white/10 text-[8px] tracking-[0.4em] uppercase text-white/30 hover:text-white transition-all rounded"
                   >
-                    Cancel / キャンセル
+                    キャンセル / Cancel
                   </button>
                 </div>
               </div>

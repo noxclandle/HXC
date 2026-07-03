@@ -360,19 +360,19 @@ export default function ProfileEditPage() {
       <header className="mb-8 lg:mb-16 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
         <div className="space-y-4 w-full lg:w-auto">
           <Link href="/hub" className="flex items-center gap-3 text-[8px] uppercase tracking-[0.2em] lg:tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity mb-4 lg:mb-8 text-white">
-            <ArrowLeft size={12} /> Back to Atelier / ホームへ戻る
+            <ArrowLeft size={12} /> ホームへ戻る / Back to Atelier
           </Link>
           <div className="flex flex-wrap items-center gap-4 lg:gap-6">
-            <h1 className="text-2xl lg:text-5xl tracking-[0.2em] lg:tracking-[0.5em] uppercase font-extralight text-white">Edit Profile / プロフィール編集</h1>
+            <h1 className="text-2xl lg:text-5xl tracking-[0.2em] lg:tracking-[0.5em] uppercase font-extralight text-white">プロフィール編集 / Edit Profile</h1>
             <AnimatePresence mode="wait">
                {saveStatus === "saving" && (
                   <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-azure-400 text-[8px] lg:text-[9px] tracking-[0.3em] uppercase font-bold px-2 lg:px-3 py-1 bg-azure-500/10 border border-azure-500/20">
-                    <Save size={10} className="animate-pulse" /> Saving / 保存中
+                    <Save size={10} className="animate-pulse" /> 保存中 / Saving
                   </motion.div>
                )}
                {saveStatus === "saved" && (
                   <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-emerald-400 text-[8px] lg:text-[9px] tracking-[0.3em] uppercase font-bold px-2 lg:px-3 py-1 bg-emerald-500/10 border border-emerald-500/20">
-                    <Check size={10} /> Saved / 保存完了
+                    <Check size={10} /> 保存完了 / Saved
                   </motion.div>
                )}
             </AnimatePresence>
@@ -386,7 +386,7 @@ export default function ProfileEditPage() {
            <UnifiedCardContainer 
              orientation={formData.orientation}
              onOrientationChange={updateOrientation}
-             previewLabel="Live Preview / ライブプレビュー"
+             previewLabel="ライブプレビュー / Live Preview"
              compact={true}
            >
                 <HexaCardPreview 
@@ -401,12 +401,12 @@ export default function ProfileEditPage() {
               <section className="space-y-10 p-4 lg:p-0">
                 <header className="flex items-center gap-4 opacity-40 border-b border-white/5 pb-4">
                    <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-[10px]">01</div>
-                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">Basic Info / 基本情報</h3>
+                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">基本情報 / Basic Info</h3>
                 </header>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                    <div className="space-y-3">
-                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Name / 氏名</label>
+                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">氏名 / Name</label>
                       <input type="text" value={formData.name} onChange={(e) => updateField('name', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="DAISUKE SASAKI / 佐々木 大輔" />
                       <div className="flex items-center">
                         <AlignButtons field="name" />
@@ -414,7 +414,7 @@ export default function ProfileEditPage() {
                       </div>
                    </div>
                    <div className="space-y-3">
-                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Reading / ふりがな</label>
+                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">フリガナ / Reading</label>
                       <input type="text" value={formData.reading} onChange={(e) => updateField('reading', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="SASAKI DAISUKE / ささき だいすけ" />
                       <div className="flex items-center">
                         <AlignButtons field="reading" />
@@ -422,7 +422,7 @@ export default function ProfileEditPage() {
                       </div>
                    </div>
                    <div className="space-y-3">
-                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Company / 所属企業</label>
+                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">所属企業 / Company</label>
                       <input type="text" value={formData.company} onChange={(e) => updateField('company', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-bronze-400 outline-none text-white" placeholder="COMPANY NAME / 企業名" />
                       <div className="flex items-center">
                         <AlignButtons field="company" />
@@ -430,7 +430,7 @@ export default function ProfileEditPage() {
                       </div>
                    </div>
                     <div className="space-y-3">
-                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Title / 肩書き</label>
+                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">肩書き / Title</label>
                        <input type="text" value={formData.title} onChange={(e) => updateField('title', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="CEO, Designer, etc." />
                        <div className="flex items-center">
                          <AlignButtons field="title" />
@@ -438,12 +438,12 @@ export default function ProfileEditPage() {
                        </div>
                     </div>
                     <div className="space-y-3 md:col-span-2">
-                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Company Location / 会社の所在地</label>
+                       <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">会社の所在地 / Company Location</label>
                        <input type="text" value={formData.address} onChange={(e) => updateField('address', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="MINAMI-AOYAMA, MINATO-KU, TOKYO / 東京都港区南青山..." />
                        <ScaleButtons field="address" />
                     </div>
                    <div className="space-y-3">
-                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Phone / 電話番号</label>
+                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">電話番号 / Phone</label>
                       <input type="text" value={formData.phone} onChange={(e) => updateField('phone', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="000-0000-0000" />
                       <div className="flex items-center">
                         <AlignButtons field="phone" />
@@ -451,7 +451,7 @@ export default function ProfileEditPage() {
                       </div>
                    </div>
                    <div className="space-y-3">
-                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Email / 公開メールアドレス</label>
+                      <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">公開メールアドレス / Email Address</label>
                       <input type="text" value={formData.email} onChange={(e) => updateField('email', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white" placeholder="contact@example.com" />
                       <div className="flex items-center">
                         <AlignButtons field="email" />
@@ -464,15 +464,15 @@ export default function ProfileEditPage() {
               <section className="space-y-10 p-4 lg:p-0">
                 <header className="flex items-center gap-4 opacity-40 border-b border-white/5 pb-4">
                    <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-[10px]">02</div>
-                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold text-white opacity-100">Brand Logo / ロゴ画像設定</h3>
+                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold text-white opacity-100">ロゴ画像設定 / Brand Logo Setup</h3>
                 </header>
                 <div className="flex flex-col gap-12">
                    <div className="space-y-4">
                       <div className="flex justify-between items-end">
-                        <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Front: Brand Logo / 表面：ブランドロゴ</label>
+                        <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">表面：ブランドロゴ / Front: Brand Logo</label>
                         {formData.logoUrl && (
                           <button type="button" onClick={() => updateField('logoUrl', "")} className="text-[7px] uppercase tracking-widest opacity-30 hover:opacity-100 flex items-center gap-1 transition-opacity">
-                            <RotateCcw size={10} /> Remove / 削除
+                            <RotateCcw size={10} /> 削除 / Remove
                           </button>
                         )}
                       </div>
@@ -485,10 +485,10 @@ export default function ProfileEditPage() {
                          <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleImageUpload(e, "logo")} />
                          {isUploading === "logo" && <div className="absolute inset-0 bg-void/80 flex items-center justify-center"><Loader2 size={24} className="animate-spin text-azure-400" /></div>}
                          <div className="absolute bottom-0 w-full py-2 bg-black/60 backdrop-blur-md">
-                            <p className="text-[7px] text-center uppercase tracking-widest font-bold text-white">Change Image / 画像を変更</p>
+                            <p className="text-[7px] text-center uppercase tracking-widest font-bold text-white">画像を変更 / Change Image</p>
                          </div>
                       </div>
-                      <p className="text-[8px] opacity-20 uppercase tracking-widest">Displayed on the front (bottom right). Transparent PNG recommended. / 名刺の表面（右下）に配置されます。背景透過PNGを推奨。</p>
+                      <p className="text-[8px] opacity-20 uppercase tracking-widest">名刺の表面（右下）に配置されます。背景透過PNGを推奨。 / Displayed on the front (bottom right). Transparent PNG recommended.</p>
                    </div>
                 </div>
               </section>
@@ -496,7 +496,7 @@ export default function ProfileEditPage() {
               <section className="space-y-10 p-4 lg:p-0">
                 <header className="flex items-center gap-4 opacity-40 border-b border-white/5 pb-4">
                    <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-[10px]">03</div>
-                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">Links & SNS / SNS・リンク設定</h3>
+                   <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">SNS・リンク設定 / Links & SNS</h3>
                 </header>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                    <div className="space-y-3">
@@ -521,15 +521,15 @@ export default function ProfileEditPage() {
                    </div>
                 </div>
                 <div className="space-y-3">
-                 <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Biography (Backface) / 自己紹介（裏面表示）</label>
-                 <textarea value={formData.bio} onChange={(e) => updateField('bio', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white h-32 resize-none" placeholder="Displayed on the back of the card. / 裏面に表示されるメッセージや紹介文" />
+                 <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">自己紹介（裏面表示） / Biography (Backface)</label>
+                 <textarea value={formData.bio} onChange={(e) => updateField('bio', e.target.value)} className="w-full bg-white/[0.03] border border-white/10 p-4 text-sm tracking-widest focus:border-azure-400 outline-none text-white h-32 resize-none" placeholder="裏面に表示されるメッセージや紹介文 / Displayed on the back of the card." />
                 </div>
                 </section>
 
               <section className="space-y-10 p-4 lg:p-0 pb-20">
                 <header className="flex items-center gap-4 opacity-40 border-b border-white/5 pb-4">
                  <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-[10px]">04</div>
-                 <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">Portrait / プロフィール写真設定</h3>
+                 <h3 className="text-[11px] tracking-[0.5em] uppercase font-bold">プロフィール写真設定 / Portrait Setup</h3>
                 </header>
                 <div className="flex flex-col gap-12">
                    <div className="space-y-4">
@@ -537,7 +537,7 @@ export default function ProfileEditPage() {
                         <label className="text-[9px] tracking-[0.4em] uppercase opacity-30 font-bold">Back: Portrait / 裏面：プロフィール写真</label>
                         {formData.faceUrl && (
                           <button type="button" onClick={() => updateField('faceUrl', "")} className="text-[7px] uppercase tracking-widest opacity-30 hover:opacity-100 flex items-center gap-1 transition-opacity">
-                            <RotateCcw size={10} /> Remove / 削除
+                            <RotateCcw size={10} /> 削除 / Remove
                           </button>
                         )}
                       </div>
@@ -550,10 +550,10 @@ export default function ProfileEditPage() {
                          <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleImageUpload(e, "face")} />
                          {isUploading === "face" && <div className="absolute inset-0 bg-void/80 flex items-center justify-center"><Loader2 size={24} className="animate-spin text-azure-400" /></div>}
                          <div className="absolute bottom-0 w-full py-2 bg-black/60 backdrop-blur-md">
-                            <p className="text-[7px] text-center uppercase tracking-widest font-bold text-white">Change Image / 画像を変更</p>
+                            <p className="text-[7px] text-center uppercase tracking-widest font-bold text-white">画像を変更 / Change Image</p>
                          </div>
                       </div>
-                      <p className="text-[8px] opacity-20 uppercase tracking-widest">Displayed prominently on the back of the card. Square photo recommended. / 名刺の裏面に大きく表示されます。正方形の写真を推奨。</p>
+                      <p className="text-[8px] opacity-20 uppercase tracking-widest">名刺の裏面に大きく表示されます。正方形の写真を推奨。 / Displayed prominently on the back of the card. Square photo recommended.</p>
                    </div>
                 </div>
               </section>

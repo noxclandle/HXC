@@ -13,25 +13,25 @@ export default function MemberGuidePage() {
 
   const sections = [
     {
-      title: "Daily Resonance / ログインボーナス",
+      title: "ログインボーナス / Daily Bonus",
       icon: <Sparkles className="text-azure-400" />,
       diagram: <ResonanceDiagram />,
       content: "1日に1回、アプリを開くだけでポイント(RT)がもらえます。夜の12時にリセットされるので、毎日忘れずにチェックしてポイントを貯めましょう。"
     },
     {
-      title: "Asset Customization / カードのデザイン",
+      title: "カードのデザイン / Asset Customization",
       icon: <Palette className="text-bronze-400" />,
       diagram: <CustomizationDiagram />,
       content: "貯まったポイントを使って、自分のカードを好きなデザインに着せ替えましょう。背景や枠を自由に選んで、あなただけの特別な1枚を作れます。"
     },
     {
-      title: "OCR Scan / 紙の名刺を取り込む",
+      title: "紙の名刺を取り込む / OCR Scan",
       icon: <Camera className="text-emerald-400" />,
       diagram: <OcrDiagram />,
       content: "もらった紙の名刺は、カメラでパシャッと撮るだけ。AIが名前や電話番号を自動で読み取って、あなたのスマホの名刺帳に保存してくれます。"
     },
     {
-      title: "NFC Exchange / デジタル名刺を渡す",
+      title: "デジタル名刺を渡す / NFC Exchange",
       icon: <Smartphone className="text-purple-400" />,
       diagram: <NfcDiagram />,
       content: (
@@ -42,7 +42,7 @@ export default function MemberGuidePage() {
           
           {/* Section 1: Greeting & Gesture */}
           <div className="border-l-2 border-azure-500/30 pl-4 space-y-3 bg-white/[0.01] p-4 border-r border-t border-b border-transparent hover:border-white/5 transition-all">
-            <span className="text-[8px] tracking-[0.2em] font-bold text-azure-400 block uppercase">Protocol: Greeting & Gesture / 挨拶と作法</span>
+            <span className="text-[8px] tracking-[0.2em] font-bold text-azure-400 block uppercase">挨拶と作法 / Greeting & Gesture</span>
             
             {/* Inline Vector: People Greeting */}
             <div className="w-full h-28 flex items-center justify-center bg-void border border-white/5 rounded-sm relative overflow-hidden my-2">
@@ -107,13 +107,13 @@ export default function MemberGuidePage() {
             <p className="text-[9px] opacity-75 leading-relaxed">
               紙の名刺交換とは異なる新しいスマートな所作です。会話の中で相手へ敬意と配慮を込めながら、
               <span className="text-white font-bold font-sans">「デジタル名刺なのですが、スマートフォンにかざしてもよろしいでしょうか？」</span>
-              と一言添えてタッチを提示すると、相手も安心して共鳴を受け取ることができます。
+              と一言添えてタッチを提示すると、相手も安心して名刺を受け取ることができます。
             </p>
           </div>
 
           {/* Section 2: NFC Alignment */}
           <div className="border-l-2 border-azure-500/30 pl-4 space-y-3 bg-white/[0.01] p-4 border-r border-t border-b border-transparent hover:border-white/5 transition-all">
-            <span className="text-[8px] tracking-[0.2em] font-bold text-azure-400 block uppercase">Observation: NFC Alignment / 読み取り位置</span>
+            <span className="text-[8px] tracking-[0.2em] font-bold text-azure-400 block uppercase">読み取り位置 / NFC Alignment</span>
             
             {/* Inline Vector: Device Target Zones */}
             <div className="grid grid-cols-2 gap-4 my-2">
@@ -164,7 +164,7 @@ export default function MemberGuidePage() {
 
           {/* Section 3: Shared Identity Features */}
           <div className="border-l-2 border-azure-500/30 pl-4 space-y-3 bg-white/[0.01] p-4 border-r border-t border-b border-transparent hover:border-white/5 transition-all">
-            <span className="text-[8px] tracking-[0.2em] font-bold text-azure-400 block uppercase">Features: Shared Identity / プロフィールの活用機能</span>
+            <span className="text-[8px] tracking-[0.2em] font-bold text-azure-400 block uppercase">プロフィールの活用機能 / Shared Identity Features</span>
             
             {/* Inline Vector: Feature Icons */}
             <div className="grid grid-cols-3 gap-2 my-2">
@@ -229,12 +229,12 @@ export default function MemberGuidePage() {
           onClick={() => router.back()} 
           className="flex items-center gap-3 text-[8px] uppercase tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity mb-8"
         >
-          <ArrowLeft size={12} /> Back to Hub
+          <ArrowLeft size={12} /> ホームに戻る / Return to Hub
         </button>
         <h1 className="text-3xl tracking-[0.4em] mb-2 font-extralight uppercase flex items-center gap-4">
-          <Book className="text-azure-400" size={28} /> System Guide
+          <Book className="text-azure-400" size={28} /> システムガイド / System Guide
         </h1>
-        <p className="text-xs tracking-widest opacity-40 uppercase">How to utilize the Hexa Relation System / システム利用ガイド</p>
+        <p className="text-xs tracking-widest opacity-40 uppercase">システム利用ガイド / Hexa Relation System Guide</p>
       </header>
  
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -272,9 +272,9 @@ export default function MemberGuidePage() {
          <div className="flex items-start gap-6 p-8 bg-azure-500/5 border border-azure-500/10">
             <HelpCircle size={24} className="text-azure-400 shrink-0" />
             <div className="space-y-2">
-               <h3 className="text-[10px] tracking-[0.3em] uppercase font-bold text-azure-400">Need more assistance? / サポートが必要な場合</h3>
+               <h3 className="text-[10px] tracking-[0.3em] uppercase font-bold text-azure-400">サポートが必要な場合 / Need more assistance?</h3>
                <p className="text-[11px] leading-relaxed opacity-60 italic">
-                 「もしシステムに不具合や表示の乱れ（UI Glitch）を感じた場合は、設定画面（Settings）の『環境報告』からフィードバックをお送りください。境界の守護者が迅速に対応いたします。」
+                 「もしシステムに不具合や表示の乱れを感じた場合は、お問い合わせフォームからフィードバックをお送りください。サポートチームが迅速に対応いたします。」
                </p>
             </div>
          </div>
@@ -282,7 +282,7 @@ export default function MemberGuidePage() {
 
       {/* Footer */}
       <footer className="mt-24 text-center opacity-20">
-         <p className="text-[7px] tracking-[0.5em] uppercase font-mono italic">Protocol: Knowledge Base Alpha / 2026 / Visualized for Clarity</p>
+         <p className="text-[7px] tracking-[0.4em] uppercase font-mono italic">システムガイド / System Guide v1.1</p>
       </footer>
     </div>
   );
