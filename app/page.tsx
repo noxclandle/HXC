@@ -8,6 +8,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://virtual-business-card.hexa-relation.com/",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
 };
 
 /**

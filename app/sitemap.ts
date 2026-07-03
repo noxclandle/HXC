@@ -101,7 +101,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
 
     const dynamicRoutes: MetadataRoute.Sitemap = users.map((user) => ({
-      url: `${baseUrl}/p/${user.handle_name}`,
+      url: `${baseUrl}/p/${encodeURIComponent(user.handle_name as string)}`,
       lastModified: user.created_at,
       changeFrequency: 'weekly',
       priority: 0.6,
