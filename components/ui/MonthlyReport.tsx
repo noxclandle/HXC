@@ -22,7 +22,7 @@ export default function MonthlyReport({ stats }: { stats?: any }) {
       return "名刺がまだ登録されていません。上の「Scan Card」から名刺を撮影して登録を開始してください。 / No contacts registered yet. Tap 'Scan Card' above to start digitizing.";
     }
     if (newConnections === 0) {
-      return `現在 ${totalContacts} 枚の名刺が登録されています。今月の新規登録はありません。データは名刺帳からCSV出力が可能です。 / ${totalContacts} contacts registered. No new connections this month.`;
+      return `現在 ${totalContacts} 枚の名刺が登録されています。今月の新規登録はありません。データは名刺帳から「連絡帳データ出力」が可能です。 / ${totalContacts} contacts registered. No new connections this month.`;
     }
     return `今月は新たに ${newConnections} 名の登録がありました。名刺帳（Library）の管理は順調です。 / ${newConnections} new connections established this month.`;
   };
