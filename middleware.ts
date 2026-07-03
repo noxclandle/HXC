@@ -27,5 +27,19 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/admin/:path*", "/hub/:path*", "/gate", "/library/:path*", "/shop/:path*", "/inventory/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/hub/:path*",
+    "/gate",
+    "/library/:path*",
+    "/shop/:path*",
+    "/inventory/:path*",
+    "/profile/:path*",
+    "/settings/:path*",
+    "/documents/:path*",
+    "/gacha/:path*",
+    "/adjust/:path*",
+    "/checkout/:path*",
+    "/scan/:path*"
+  ],
 };

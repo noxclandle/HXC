@@ -58,21 +58,21 @@ export default function LandingPage() {
         <div className="flex flex-col md:flex-row gap-4 items-center justify-center w-full max-w-2xl px-4 mb-16 z-10">
           <Link
             href="/purchase"
-            className="w-full md:w-auto px-6 md:px-8 h-[56px] bg-white text-void tracking-[0.4em] uppercase text-[10px] font-bold flex items-center justify-center gap-2 rounded-full hover:bg-zinc-200 transition-all"
+            className="w-full md:w-auto px-6 md:px-8 h-[56px] bg-white text-void tracking-[0.4em] uppercase text-[10px] font-bold flex items-center justify-center gap-2 rounded-full hover:bg-zinc-200 active:scale-[0.97] transition-all shadow-[0_0_15px_rgba(255,255,255,0.08)] hover:shadow-[0_0_20px_rgba(255,255,255,0.15)]"
           >
             <CreditCard size={12} /> カードの購入 / Order Card
           </Link>
 
           <Link
             href="/features"
-            className="w-full md:w-auto px-6 md:px-8 h-[56px] border border-white/10 tracking-[0.3em] uppercase text-[10px] font-bold text-white/40 hover:bg-white/5 hover:text-white transition-all flex items-center justify-center rounded-full"
+            className="w-full md:w-auto px-6 md:px-8 h-[56px] border border-white/10 tracking-[0.3em] uppercase text-[10px] font-bold text-white/40 hover:bg-white/5 active:bg-white/10 active:scale-[0.97] hover:text-white transition-all flex items-center justify-center rounded-full"
           >
             機能紹介 / Showcase
           </Link>
 
           <Link
             href="/login"
-            className="w-full md:w-auto px-6 md:px-8 h-[56px] border border-white/10 tracking-[0.3em] uppercase text-[10px] font-bold text-azure-400/80 hover:bg-white/5 hover:text-azure-400 transition-all flex items-center justify-center rounded-full"
+            className="w-full md:w-auto px-6 md:px-8 h-[56px] border border-white/10 tracking-[0.3em] uppercase text-[10px] font-bold text-azure-400/80 hover:bg-white/5 active:bg-white/10 active:scale-[0.97] hover:text-azure-400 transition-all flex items-center justify-center rounded-full"
           >
             ログイン / Member Login
           </Link>

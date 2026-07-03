@@ -3,8 +3,13 @@ const CACHE_NAME = 'hxc-cache-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/hub',
+  '/about',
+  '/login',
+  '/purchase',
+  '/features',
   '/manifest.json',
   '/logo.png',
+  '/image-removebg-preview.png',
   '/globals.css',
 ];
 

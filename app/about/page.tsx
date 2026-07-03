@@ -51,7 +51,7 @@ export default function AboutLP() {
         </header>
 
         {/* 5 Powers Section */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-40">
+        <section className="flex flex-row overflow-x-auto snap-x snap-mandatory gap-6 pb-8 no-scrollbar px-6 -mx-6 md:mx-0 md:grid md:grid-cols-2 md:gap-12 md:mb-40 md:overflow-visible md:px-0 md:pb-0 mb-20">
           {features.map((f, i) => (
             <motion.div 
               key={i}
@@ -59,7 +59,7 @@ export default function AboutLP() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="p-8 border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-colors group"
+              className="p-8 border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-colors group snap-center shrink-0 w-[85vw] md:w-auto"
             >
               <div className="mb-6">{f.icon}</div>
               <h3 className="text-lg tracking-[0.2em] uppercase font-light mb-4 group-hover:text-azure-400 transition-colors">{f.title}</h3>

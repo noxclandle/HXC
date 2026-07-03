@@ -1,12 +1,100 @@
 import { prisma } from "@/lib/prisma";
 import { ASSETS } from "@/lib/game/assets";
 import { getLevelFromExp } from "@/lib/game/level";
+import { Prisma, SystemConfig } from "@prisma/client";
 
-let cachedAssetPrices: any = null;
+let cachedAssetPrices: SystemConfig | null = null;
 let cachedAssetPricesExpiry = 0;
 
+export interface EquippedAssets {
+  frame?: string;
+  title?: string;
+  orientation?: string;
+  hAlign?: Record<string, string>;
+  vAlign?: Record<string, string>;
+  zoom_bg?: string;
+  aura_harmony?: number;
+}
+
+export interface AIConfig {
+  profile?: {
+    title?: string;
+    bio?: string;
+    company?: string;
+    contact_email?: string;
+  };
+}
+
+export interface UserStatus {
+  id: string;
+  name: string;
+  rt_balance: string;
+  exp: string;
+  exp_max: string;
+  level: number;
+  unread_messages: number;
+  portfolio_links: Prisma.JsonValue;
+  rank: string;
+  role: string;
+  last_daily_at: string | null;
+  last_read_news_at: string | null;
+  titles: string[];
+  owned_assets: string[];
+  asset_prices: Record<string, number>;
+  uid: string;
+  handle: string;
+  handle_name: string;
+  slug: string;
+  total_contacts: number;
+  monthly_connections: number;
+  logo_url: string;
+  photo_url: string;
+  equipped: EquippedAssets;
+  profile: {
+    title: string;
+    bio: string;
+    company: string;
+    website: string;
+    link_x: string;
+    link_instagram: string;
+    link_line: string;
+    link_facebook: string;
+    phone: string;
+    address: string;
+    contact_email: string;
+  };
+}
+
+export interface PublicProfile {
+  id: string;
+  name: string | null;
+  handle_name: string | null;
+  rank: string;
+  email: string | null;
+  photo_url: string | null;
+  logo_url: string | null;
+  phone: string | null;
+  role: string;
+  rt_balance: string;
+  exp: string;
+  equipped_assets: Prisma.JsonValue;
+  link_x: string | null;
+  link_instagram: string | null;
+  link_line: string | null;
+  link_facebook: string | null;
+  portfolio_links: Prisma.JsonValue;
+  profile: {
+    company: string;
+    title: string;
+    bio: string;
+    website: string;
+    address: string;
+    contact_email: string;
+  };
+}
+
 interface CachedProfile {
-  data: any;
+  data: PublicProfile | null;
   expiry: number;
 }
 
@@ -102,12 +190,7 @@ export async function getUserStatus(email: string | null | undefined) {
 
   const totalContacts = user._count?.contacts ?? 0;
 
-  const userEmail = user.email?.toLowerCase() || "";
-  const userName = user.name || "";
-  const isFixer = user.role === "fixer" || 
-                   userName.includes("福井") || 
-                   userName.includes("Fukui") ||
-                   userEmail.includes("str1yf5x");
+  const isFixer = user.role === "fixer";
   
   const allTitles = ["ASSOCIATE", "Observer", "Collector", "Messenger", "Connector", "Strategist", "Tech Lead", "Void Voyager", "Headhunter", "Gilded Soul", "The Sovereign", "Mastermind", "Architect", "Chief Officer", "APEX", "Fixer", "HERETIC", "NEXUS"];
   const titles = isFixer ? allTitles : (Array.isArray(user.unlocked_titles) ? user.unlocked_titles : ["ASSOCIATE"]);
@@ -118,9 +201,9 @@ export async function getUserStatus(email: string | null | undefined) {
 
   const assetPrices = assetPricesConfig?.value || {};
 
-  const aiConfig = (user.ai_config as any) || {};
+  const aiConfig = (user.ai_config as AIConfig | null) || {};
   const profile = aiConfig.profile || {};
-  const equipped = (user.equipped_assets as any) || {};
+  const equipped = (user.equipped_assets as EquippedAssets | null) || {};
 
   const defaultAlign = {
     company: "center",
@@ -149,6 +232,7 @@ export async function getUserStatus(email: string | null | undefined) {
     asset_prices: assetPrices,
     uid: user.card?.uid || "NO CARD LINKED",
     handle: user.handle_name || "", 
+    handle_name: user.handle_name || "",
     slug: user.handle_name || user.id,
     total_contacts: totalContacts,
     monthly_connections: monthlyConnections,
@@ -194,7 +278,7 @@ export async function getPublicProfile(slug: string) {
   // UUID形式かどうかを判定する正規表現
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decodedSlug);
 
-  const conditions: any[] = [
+  const conditions: Prisma.UserWhereInput[] = [
     { handle_name: { equals: decodedSlug, mode: "insensitive" as const } },
     { name: { equals: decodedSlug.replace(/-/g, " "), mode: "insensitive" as const } },
   ];
@@ -237,7 +321,7 @@ export async function getPublicProfile(slug: string) {
 
   if (!user) return null;
 
-  const aiConfig = (user.ai_config as any) || {};
+  const aiConfig = (user.ai_config as AIConfig | null) || {};
   const profile = aiConfig.profile || {};
 
   const result = {

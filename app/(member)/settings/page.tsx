@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Zap, Brain, Award, Volume2, Lock, Image } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
@@ -9,13 +9,13 @@ import { useSession } from "next-auth/react";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
-  const [rtBalance, setRtBalance] = useState(2450);
+  const [rtBalance, setRtBalance] = useState(0);
   const [aura, setAura] = useState(50);
   const [personality, setPersonality] = useState("ASSOCIATE");
-  const [activeFrame, setActiveFrame] = useState("Obsidian");
   const [activeBg, setActiveBg] = useState("Obsidian");
-
-  const [unlockedAssets, setUnlockedAssets] = useState(["Obsidian", "ASSOCIATE"]);
+  const [unlockedAssets, setUnlockedAssets] = useState<string[]>(["Obsidian", "ASSOCIATE"]);
+  const [prices, setPrices] = useState<Record<string, number>>({});
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Report Form State
   const [reportReason, setReportReason] = useState("");
@@ -23,14 +23,102 @@ export default function SettingsPage() {
   const [isReporting, setIsReporting] = useState(false);
   const [reportSuccess, setReportSuccess] = useState(false);
 
-  const handleUnlock = (name: string, cost: number) => {
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch("/api/user/status", { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          setRtBalance(parseInt(data.rt_balance) || 0);
+          setUnlockedAssets(data.owned_assets || []);
+          setActiveBg(data.equipped?.frame || "Obsidian");
+          setPersonality(data.equipped?.title || "ASSOCIATE");
+          setAura(parseInt(data.equipped?.aura_harmony) || 50);
+          setPrices(data.asset_prices || {});
+        }
+      } catch (e) {
+        console.error("Failed to load user status", e);
+      } finally {
+        setIsLoaded(true);
+      }
+    };
+    if (session) {
+      fetchStatus();
+    }
+  }, [session]);
+
+  const handleUnlock = async (name: string, rarity: string) => {
+    if (session?.user?.role === "fixer") return;
+    const cost = prices[rarity.toLowerCase()] || 0;
     if (rtBalance >= cost) {
-      if (confirm(`Unlock ${name} for ${cost} RT? / ${name} を ${cost} RT でアンロックしますか？`)) {
-        setRtBalance(rtBalance - cost);
-        setUnlockedAssets([...unlockedAssets, name]);
+      if (confirm(`${name} を ${cost} RT でアンロックしますか？ / Unlock ${name} for ${cost} RT?`)) {
+        try {
+          const res = await fetch("/api/user/unlock", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ assetId: name, rarity })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            setRtBalance(parseInt(data.rt_balance) || 0);
+            setUnlockedAssets(data.owned_assets || []);
+            alert("アンロックに成功しました！ / Unlocked successfully.");
+          } else {
+            alert(data.error || "アンロックに失敗しました。 / Unlock failed.");
+          }
+        } catch (e) {
+          console.error("Unlock request failed", e);
+          alert("通信エラーが発生しました。 / Connection error.");
+        }
       }
     } else {
-      alert("Insufficient RT. Please accumulate points. / RTが不足しています。活動してポイントを蓄積してください。");
+      alert("RTが不足しています。活動してポイントを蓄積してください。 / Insufficient RT.");
+    }
+  };
+
+  const handleEquipFrame = async (frameName: string) => {
+    try {
+      const res = await fetch("/api/user/equip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ equipped: { frame: frameName } })
+      });
+      if (res.ok) {
+        setActiveBg(frameName);
+      } else {
+        alert("設定の保存に失敗しました。 / Failed to equip frame.");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleEquipTitle = async (titleName: string) => {
+    try {
+      const res = await fetch("/api/user/equip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ equipped: { title: titleName } })
+      });
+      if (res.ok) {
+        setPersonality(titleName);
+      } else {
+        alert("設定の保存に失敗しました。 / Failed to equip title.");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleEquipAura = async (auraValue: number) => {
+    try {
+      await fetch("/api/user/equip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ equipped: { aura_harmony: auraValue } })
+      });
+    } catch (e) {
+      console.error("Failed to save aura harmony", e);
     }
   };
 
@@ -43,7 +131,7 @@ export default function SettingsPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          targetUserId: session?.user?.id, // 自分自身の環境報告として送信
+          targetUserId: session?.user?.id,
           reason: reportReason,
           details: reportDetails 
         })
@@ -60,6 +148,14 @@ export default function SettingsPage() {
       setIsReporting(false);
     }
   };
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-void flex items-center justify-center text-[10px] tracking-widest opacity-20 uppercase">
+        Loading Config...
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto pt-24 px-6 pb-24 text-moonlight">
@@ -101,24 +197,25 @@ export default function SettingsPage() {
             </h2>
             <div className="grid grid-cols-2 gap-4">
                {[
-                 { name: "Obsidian", cost: 0 },
-                 { name: "Gold", cost: 500 },
-                 { name: "Dynamic", cost: 1000 },
-                 { name: "PearlWhite", cost: 2000 },
+                 { name: "Obsidian", cost: 0, rarity: "common" },
+                 { name: "Gold", cost: 500, rarity: "epic" },
+                 { name: "Dynamic", cost: 1000, rarity: "epic" },
+                 { name: "PearlWhite", cost: 2000, rarity: "rare" },
                ].map((item) => {
-                 const isUnlocked = unlockedAssets.includes(item.name);
+                 const isUnlocked = unlockedAssets.includes(item.name) || item.rarity === "common" || session?.user?.role === "fixer";
                  const isActive = activeBg === item.name;
+                 const itemCost = prices[item.rarity.toLowerCase()] !== undefined ? prices[item.rarity.toLowerCase()] : item.cost;
                  return (
                    <button
                      key={item.name}
-                     onClick={() => isUnlocked ? setActiveBg(item.name) : handleUnlock(item.name, item.cost)}
+                     onClick={() => isUnlocked ? handleEquipFrame(item.name) : handleUnlock(item.name, item.rarity)}
                      className={`p-6 border text-left transition-all relative overflow-hidden ${
                        isActive ? "border-azure-500 bg-azure-500/10" : "border-white/5 bg-white/[0.02] hover:bg-white/5"
                      }`}
                    >
                      <p className="text-[10px] tracking-widest uppercase mb-1">{item.name}</p>
                      <p className="text-[8px] opacity-40">
-                       {isUnlocked ? "Equipped" : `${item.cost} RT`}
+                       {isActive ? "Equipped" : isUnlocked ? "Unlocked" : `${itemCost} RT`}
                      </p>
                      {!isUnlocked && <Lock size={12} className="absolute top-4 right-4 opacity-20" />}
                    </button>
@@ -134,24 +231,25 @@ export default function SettingsPage() {
             </h2>
             <div className="grid grid-cols-2 gap-4">
                {[
-                 { name: "ASSOCIATE", cost: 0 },
-                 { name: "ARCHITECT", cost: 1000 },
-                 { name: "DIRECTOR", cost: 3000 },
-                 { name: "FIXER", cost: 10000 },
+                 { name: "ASSOCIATE", cost: 0, rarity: "common" },
+                 { name: "ARCHITECT", cost: 1000, rarity: "rare" },
+                 { name: "DIRECTOR", cost: 3000, rarity: "epic" },
+                 { name: "FIXER", cost: 10000, rarity: "mythic" },
                ].map((item) => {
-                 const isUnlocked = unlockedAssets.includes(item.name);
+                 const isUnlocked = unlockedAssets.includes(item.name) || item.rarity === "common" || session?.user?.role === "fixer";
                  const isActive = personality === item.name;
+                 const itemCost = prices[item.rarity.toLowerCase()] !== undefined ? prices[item.rarity.toLowerCase()] : item.cost;
                  return (
                    <button
                      key={item.name}
-                     onClick={() => isUnlocked ? setPersonality(item.name) : handleUnlock(item.name, item.cost)}
+                     onClick={() => isUnlocked ? handleEquipTitle(item.name) : handleUnlock(item.name, item.rarity)}
                      className={`p-6 border text-left transition-all relative ${
                        isActive ? "border-bronze-500 bg-bronze-500/10" : "border-white/5 bg-white/[0.02] hover:bg-white/5"
                      }`}
                    >
                      <p className="text-[10px] tracking-widest uppercase mb-1">{item.name}</p>
                      <p className="text-[8px] opacity-40">
-                       {isUnlocked ? "Active" : `${item.cost} RT`}
+                       {isActive ? "Active" : isUnlocked ? "Unlocked" : `${itemCost} RT`}
                      </p>
                      {!isUnlocked && <Lock size={12} className="absolute top-4 right-4 opacity-20" />}
                    </button>
@@ -181,6 +279,8 @@ export default function SettingsPage() {
                 type="range" 
                 value={aura} 
                 onChange={(e) => setAura(parseInt(e.target.value))} 
+                onMouseUp={() => handleEquipAura(aura)}
+                onTouchEnd={() => handleEquipAura(aura)}
                 className="w-full accent-azure-500 bg-transparent cursor-pointer"
               />
             </div>
