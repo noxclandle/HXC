@@ -5,7 +5,7 @@ import ProfileClientUI from "@/components/profile/ProfileClientUI";
 import { motion, AnimatePresence } from "framer-motion";
 import GeometricAngel from "@/components/ui/GeometricAngel";
 import { useSession } from "next-auth/react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Mail } from "lucide-react";
 import Link from "next/link";
 
 /**
@@ -164,8 +164,8 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
 
   const handleOpen = () => {
     setIsOpened(true);
-    // アンヴェイル演出（1.2秒）の後にUIを表示
-    setTimeout(() => setShowUI(true), 1200);
+    // アンヴェイル演出（2.5秒）の後にUIを表示してしっかり見せる
+    setTimeout(() => setShowUI(true), 2500);
   };
 
   return (
@@ -246,11 +246,14 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
                 
                 <div className="absolute inset-2 border border-white/5 rounded-lg" />
                 
+                {/* Minimal Sealed Envelope Graphic */}
                 <motion.div
-                  animate={{ opacity: [0.6, 1, 0.6], scale: [0.98, 1.02, 0.98] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  animate={{ opacity: [0.5, 0.8, 0.5], scale: [0.96, 1.04, 0.96] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  className="text-azure-400/80 flex flex-col items-center justify-center gap-4"
                 >
-                  <GeometricAngel level={ownerLevel} mood="stable" size={110} />
+                  <Mail size={44} strokeWidth={1} className="drop-shadow-[0_0_15px_rgba(59,130,246,0.4)]" />
+                  <span className="text-[8px] tracking-[0.4em] uppercase opacity-40 font-mono">SEALED IDENTITY</span>
                 </motion.div>
               </div>
 
@@ -296,9 +299,9 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
                   initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0 }}
                   animate={{ 
                     clipPath: ["inset(0 0 100% 0)", "inset(0 0 0% 0)"],
-                    opacity: [0, 0.6, 0.6]
+                    opacity: [0, 0.5, 0.5]
                   }}
-                  transition={{ duration: 1.2, ease: "easeInOut" }}
+                  transition={{ duration: 2.2, ease: "easeInOut" }}
                   className="absolute inset-0 pointer-events-none"
                   style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg width='30' height='51.96' viewBox='0 0 30 51.96' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 0 L30 8.66 L30 25.98 L15 34.64 L0 25.98 L0 8.66 Z M0 51.96 L15 43.3 L30 51.96 M15 34.64 L15 43.3' fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='0.5'/%3E%3C/svg%3E")`,
@@ -310,23 +313,15 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
                 <motion.div 
                   initial={{ top: "0%", opacity: 0 }}
                   animate={{ top: ["0%", "100%"], opacity: [0, 1, 0] }}
-                  transition={{ duration: 1.2, ease: "easeInOut" }}
-                  className="absolute left-0 right-0 h-[1px] bg-white/40 shadow-[0_0_20px_rgba(255,255,255,0.5)] pointer-events-none z-10"
+                  transition={{ duration: 2.2, ease: "easeInOut" }}
+                  className="absolute left-0 right-0 h-[1px] bg-white/50 shadow-[0_0_25px_rgba(255,255,255,0.6)] pointer-events-none z-10"
                 />
  
                 <motion.div
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 10, opacity: 0 }}
-                  transition={{ duration: 1.2, ease: "easeIn" }}
-                >
-                  <GeometricAngel level={50} mood="excited" size={240} />
-                </motion.div>
-                
-                <motion.div
                   initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.8 }}
-                  className="mt-8 text-center"
+                  animate={{ opacity: [0, 1, 1, 0] }}
+                  transition={{ delay: 0.3, duration: 1.8 }}
+                  className="mt-8 text-center z-20"
                 >
                   <p className="text-[10px] tracking-[0.6em] uppercase text-white/60 font-light">
                     Unveiling
