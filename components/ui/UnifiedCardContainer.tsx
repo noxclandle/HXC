@@ -81,7 +81,7 @@ export default function UnifiedCardContainer({
               : 'scale-[0.65] xs:scale-[0.75] sm:scale-[0.85] lg:scale-100 h-[185px] xs:h-[214px] sm:h-[242px] lg:h-[285px]')
           : (compact
               ? 'scale-[0.4] xs:scale-[0.5] sm:scale-[0.6] lg:scale-100 h-[180px] xs:h-[225px] sm:h-[270px] lg:h-[450px]'
-              : 'scale-[0.8] xs:scale-[0.85] sm:scale-[0.9] lg:scale-100 h-[360px] xs:h-[385px] sm:h-[405px] lg:h-[450px]')
+              : 'scale-[0.9] xs:scale-[0.95] sm:scale-[0.95] lg:scale-100 h-[405px] xs:h-[430px] sm:h-[430px] lg:h-[450px]')
         }
       `}>
         {children}
