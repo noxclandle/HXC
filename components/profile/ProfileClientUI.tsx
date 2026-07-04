@@ -294,13 +294,13 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                   {/* Left: Input Form (Shows below card on mobile) */}
                   <div className="space-y-6 md:order-first order-last">
                     <div>
-                      <h3 className="text-sm tracking-[0.3em] uppercase font-bold text-white">Share Your Contact</h3>
+                      <h3 className="text-sm tracking-[0.3em] uppercase font-bold text-white">連絡先を送り返す / Share Your Contact</h3>
                       <p className="text-[8.5px] tracking-widest text-white/40 uppercase mt-1">連絡先を送り返し、同調を完了する</p>
                     </div>
 
                     <form onSubmit={handleShareBackSubmit} className="space-y-4">
                       <div className="space-y-1">
-                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">NAME / お名前 *</label>
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">お名前 / Name *</label>
                         <input 
                           required
                           placeholder="あなたのフルネーム"
@@ -311,7 +311,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">COMPANY / 会社名</label>
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">会社名 / Company</label>
                         <input 
                           placeholder="例: 株式会社ヘキサ"
                           value={shareBackForm.company}
@@ -321,7 +321,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">TITLE / 肩書・職種</label>
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">肩書・職種 / Title</label>
                         <input 
                           placeholder="例: デザイナー, エンジニア, VTuber"
                           value={shareBackForm.role}
@@ -331,7 +331,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">EMAIL / メールアドレス</label>
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">メールアドレス / Email</label>
                         <input 
                           type="email"
                           placeholder="your-email@example.com"
@@ -342,7 +342,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">PHONE / 電話番号</label>
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">電話番号 / Phone</label>
                         <input 
                           type="tel"
                           placeholder="090-0000-0000"
@@ -353,7 +353,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">ADDRESS / 住所</label>
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">住所 / Address</label>
                         <input 
                           placeholder="東京都渋谷区神宮前..."
                           value={shareBackForm.address}
@@ -363,7 +363,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">NOTES / メモ・メッセージ (会社名など)</label>
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1">メモ・メッセージ / Notes</label>
                         <textarea 
                           rows={2}
                           placeholder="会社名、SNSアカウント、またはオーナーへのメッセージをご記入ください"
@@ -374,7 +374,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                       </div>
 
                       <div className="space-y-2 pt-2">
-                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1 block font-bold">CARD DESIGN / カードデザインの選択</label>
+                        <label className="text-[7.5px] tracking-widest text-white/30 uppercase pl-1 block font-bold">カードデザインの選択 / Card Design</label>
                         <div className="grid grid-cols-3 gap-2">
                           {(["black", "white", "silver"] as const).map((d) => (
                             <button
@@ -397,14 +397,14 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                         disabled={sendingShareBack}
                         className="w-full py-4 mt-6 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] tracking-[0.4em] uppercase transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                       >
-                        {sendingShareBack ? <Loader2 size={12} className="animate-spin" /> : <><Send size={12} /> Send Contact / 同調を送信する</>}
+                        {sendingShareBack ? <Loader2 size={12} className="animate-spin" /> : <><Send size={12} /> 同調を送信する / Send Contact</>}
                       </button>
                     </form>
                   </div>
 
                   {/* Right: Live Interactive Card Preview (Shows at the top on mobile) */}
                   <div className="flex flex-col items-center justify-center h-full space-y-6 py-6 border-t md:border-t-0 md:border-l border-white/5 md:pl-8 order-first md:order-last">
-                    <span className="text-[7.5px] tracking-[0.3em] text-white/30 uppercase font-mono">Live Card Preview / 一時名刺プレビュー</span>
+                    <span className="text-[7.5px] tracking-[0.3em] text-white/30 uppercase font-mono">一時名刺プレビュー / Live Card Preview</span>
                     
                     <div className="relative group">
                       {/* Interactive glowing effect based on design */}
@@ -671,7 +671,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
            <div className="h-px w-8 bg-white/10 mx-auto" />
            {isOwner && (
              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4">
-                <Link href="/hub" className="text-[10px] tracking-[0.4em] uppercase text-azure-400 hover:text-white transition-colors border border-azure-500/20 px-4 py-2 bg-azure-500/5">Go to Home / 拠点へ移動</Link>
+                <Link href="/hub" className="text-[10px] tracking-[0.4em] uppercase text-azure-400 hover:text-white transition-colors border border-azure-500/20 px-4 py-2 bg-azure-500/5">拠点へ移動 / Go to Home</Link>
              </motion.div>
            )}
         </header>
@@ -685,34 +685,15 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
               {...mapUserToCardProps(data, currentOrientation, rawEquipped)}
             />
           </UnifiedCardContainer>
-          <div className="text-center -mt-8 opacity-45 hover:opacity-80 transition-opacity">
-            <p className="text-[9px] tracking-[0.25em] text-white uppercase font-light">
+          <div className="text-center mt-12 opacity-70 hover:opacity-100 transition-opacity">
+            <p className="text-[10px] tracking-[0.25em] text-white/80 uppercase font-normal">
               カードをタップすると裏面を表示します / Tap card to view reverse side
             </p>
           </div>
         </motion.div>
 
         <div className="w-full max-w-sm space-y-6 mt-20">
-           {portfolioLinks.length > 0 && (
-             <div className="space-y-4 mb-12">
-                <p className="text-[9px] tracking-[0.4em] uppercase text-azure-400 font-bold text-center mb-6">Documents / 資料</p>
-                {portfolioLinks.map((link: any, i: number) => (
-                  <a 
-                    key={i} 
-                    href={link.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between p-5 border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all group"
-                  >
-                    <div className="flex items-center gap-4">
-                       <FileText size={16} className="text-white/30 group-hover:text-white transition-colors" />
-                       <span className="text-[10px] tracking-widest uppercase font-bold text-white/80">{link.title}</span>
-                    </div>
-                    <ExternalLink size={14} className="opacity-10 group-hover:opacity-100 transition-opacity" />
-                  </a>
-                ))}
-             </div>
-           )}
+           
 
            <button onClick={handleSaveContact} className="w-full py-6 bg-azure-600 text-white font-bold text-[11px] tracking-[1em] uppercase shadow-[0_0_40px_rgba(59,130,246,0.3)] hover:bg-azure-500 transition-all flex items-center justify-center gap-4 group">
               <Download size={14} className="group-hover:translate-y-1 transition-transform" /> 連絡先を保存 / Save Contact
@@ -725,11 +706,11 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                  <>
                    {resonanceStatus === "connected" ? (
                      <div className="w-full py-5 bg-azure-950/20 border border-azure-500/30 text-azure-400 font-bold text-[10px] tracking-[0.3em] uppercase flex items-center justify-center gap-3 rounded cursor-default animate-in fade-in duration-300">
-                       <CheckCircle2 size={12} className="text-azure-400 animate-pulse" /> Resonated / 共鳴同調済み
+                       <CheckCircle2 size={12} className="text-azure-400 animate-pulse" /> 共鳴同調済み / Resonated
                      </div>
                    ) : resonanceStatus === "pending_sent" ? (
                      <div className="w-full py-5 bg-zinc-900/40 border border-white/10 text-white/40 font-bold text-[10px] tracking-[0.3em] uppercase flex items-center justify-center gap-3 rounded cursor-wait animate-in fade-in duration-300">
-                       <Loader2 size={12} className="animate-spin text-white/30" /> Resonating... / 共鳴待機中...
+                       <Loader2 size={12} className="animate-spin text-white/30" /> 共鳴待機中... / Resonating...
                      </div>
                    ) : (
                      <button 
@@ -739,14 +720,14 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                      >
                        <Network size={12} className="group-hover:scale-110 transition-transform" /> 
                        {resonanceStatus === "pending_received" 
-                         ? "Accept Resonance / 共鳴を承認し同調する" 
-                         : "Establish Resonance / アイデンティティを共鳴させる"}
+                         ? "共鳴を承認し同調する / Accept Resonance" 
+                         : "アイデンティティを共鳴させる / Establish Resonance"}
                      </button>
                    )}
                  </>
                ) : (
                  <button onClick={() => setShowShareBack(true)} className="w-full py-5 bg-emerald-950/20 border border-emerald-500/30 text-emerald-400 font-bold text-[10px] tracking-[0.3em] uppercase shadow-[0_0_20px_rgba(52,211,153,0.1)] hover:bg-emerald-500/10 transition-all flex items-center justify-center gap-3 group rounded animate-in fade-in duration-300">
-                    <Network size={12} className="group-hover:scale-110 transition-transform" /> Share Your Contact / 連絡先を送り返す
+                    <Network size={12} className="group-hover:scale-110 transition-transform" /> 連絡先を送り返す / Share Your Contact
                  </button>
                )}
                
@@ -754,13 +735,13 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
                 onClick={() => setShowMessageModal(true)} 
                 className="w-full py-5 bg-rose-950/20 border border-rose-500/30 text-rose-400 font-bold text-[10px] tracking-[0.3em] uppercase shadow-[0_0_20px_rgba(244,63,94,0.1)] hover:bg-rose-500/10 transition-all flex items-center justify-center gap-3 group rounded animate-in fade-in duration-300"
               >
-                 <MessageSquare size={12} className="group-hover:scale-110 transition-transform" /> Transmit Message / メッセージを送信する
+                 <MessageSquare size={12} className="group-hover:scale-110 transition-transform" /> メッセージを送信する / Transmit Message
               </button>
              </>
            )}
 
            <button onClick={() => { if (navigator.share) navigator.share({ title: data.name, url: window.location.href }); else { navigator.clipboard.writeText(window.location.href); alert("URL Copied."); } }} className="w-full py-5 border border-white/10 bg-white/[0.02] text-[10px] tracking-[0.4em] uppercase hover:bg-white/5 transition-all flex items-center justify-center gap-3 text-white/60">
-              <Share2 size={12} /> Share Identity
+              <Share2 size={12} /> 名刺を共有する / Share Identity
            </button>
         </div>
 
