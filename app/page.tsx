@@ -50,8 +50,7 @@ export default function LandingPage() {
         </h1>
 
         <p className="text-white/40 max-w-sm mb-12 tracking-[0.2em] text-[10px] md:text-[11px] leading-relaxed uppercase px-4">
-          物理とデジタルのアイデンティティを繋ぐ / Connecting physical and digital identities<br />
-          ビジネスネットワーキングの再定義 / Redefining business networking
+          美しく繋がる、電子名刺 / The elegant digital business card
         </p>
 
         {/* Action Buttons */}
