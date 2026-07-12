@@ -50,8 +50,9 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, balance: result.user.rt_balance.toString() });
-  } catch (error: any) {
-    logger.error("Grace grant error", { error: error?.message || String(error) });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("Grace grant error", { error: message });
     return NextResponse.json({ error: "Failed to grant grace." }, { status: 500 });
   }
 }

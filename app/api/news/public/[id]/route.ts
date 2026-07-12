@@ -20,7 +20,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 
     return NextResponse.json(announcement);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Public news detail fetch error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

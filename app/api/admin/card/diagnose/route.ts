@@ -83,8 +83,9 @@ export async function GET(req: NextRequest) {
         rtBalance: card.user.rt_balance
       } : null
     });
-  } catch (error: any) {
-    logger.error("Card diagnosis failed", { error: error?.message || String(error) });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("Card diagnosis failed", { error: message });
     return NextResponse.json({ found: false, message: "Card diagnosis failed" }, { status: 500 });
   }
 }

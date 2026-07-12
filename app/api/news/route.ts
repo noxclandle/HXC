@@ -18,7 +18,7 @@ export async function GET() {
     });
 
     return NextResponse.json(announcements);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Public news error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
@@ -37,7 +37,7 @@ export async function POST() {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Mark news read error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

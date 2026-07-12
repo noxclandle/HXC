@@ -44,8 +44,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
 
-  } catch (error: any) {
-    logger.error("News delete error", { error: error?.message || String(error) });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("News delete error", { error: message });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

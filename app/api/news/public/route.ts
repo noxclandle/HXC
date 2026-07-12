@@ -34,8 +34,9 @@ export async function GET() {
     setCachedNews(announcements);
 
     return NextResponse.json(announcements);
-  } catch (error: any) {
-    logger.error("Public news list fetch error", { error: error?.message || String(error) });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("Public news list fetch error", { error: message });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

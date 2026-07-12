@@ -108,8 +108,9 @@ export async function POST(req: NextRequest) {
 
     return response;
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Claim Register Error:", error);
-    return NextResponse.json({ error: error.message || "Failed to finalize card claim." }, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: message || "Failed to finalize card claim." }, { status: 500 });
   }
 }

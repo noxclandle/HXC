@@ -139,8 +139,9 @@ export async function POST(req: NextRequest) {
 
     return response;
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Registration error:", error);
-    return NextResponse.json({ error: error.message || "Failed to register." }, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: message || "Failed to register." }, { status: 500 });
   }
 }

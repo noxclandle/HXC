@@ -44,8 +44,9 @@ export async function POST(req: NextRequest) {
             "Daily Entropy Drain (Maintenance)"
           );
           results.push({ userId: user.id, status: "success", amount: -maintenanceCost });
-        } catch (err: any) {
-          results.push({ userId: user.id, status: "failed", reason: err.message });
+        } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : String(error);
+          results.push({ userId: user.id, status: "failed", reason: message });
         }
       }
     }

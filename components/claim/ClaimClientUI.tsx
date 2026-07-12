@@ -107,8 +107,9 @@ export default function ClaimClientUI({ contact }: ClaimClientUIProps) {
         router.push("/hub");
       }, 2000);
 
-    } catch (err: any) {
-      setErrorMessage(err.message || "有効化中にエラーが発生しました。 / An error occurred during activation.");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      setErrorMessage(message || "有効化中にエラーが発生しました。 / An error occurred during activation.");
       setStatus("error");
     }
   };

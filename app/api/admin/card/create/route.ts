@@ -41,9 +41,10 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, card });
-  } catch (error: any) {
-    logger.error("Card creation error", { error: error?.message || String(error) });
-    if (error.code === "P2002") {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("Card creation error", { error: message });
+    if (typeof error === "object" && error !== null && "code" in error && (error as { code?: unknown }).code === "P2002") {
       return NextResponse.json({ error: "This UID or Serial is already registered." }, { status: 409 });
     }
     return NextResponse.json({ error: "Failed to register card in ledger." }, { status: 500 });

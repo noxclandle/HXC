@@ -37,9 +37,10 @@ export default function GachaPage() {
         playConnectionSound(data.item.rarity === "mythic" ? "void" : data.item.rarity === "epic" ? "silver" : "default");
       }, 2500);
 
-    } catch (err: any) {
+    } catch (error: unknown) {
       setIsSpinning(false);
-      setError(err.message);
+      const message = error instanceof Error ? error.message : String(error);
+      setError(message);
     }
   };
 

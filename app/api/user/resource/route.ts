@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
     const data = type === "photo" ? user.photo_url : user.logo_url;
     return NextResponse.json({ data });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json({ error: "Failed to fetch resource." }, { status: 500 });
   }
 }

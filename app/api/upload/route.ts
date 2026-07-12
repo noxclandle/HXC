@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     const publicUrl = `${R2_PUBLIC_DOMAIN}/${fileName}`;
     return NextResponse.json({ success: true, url: publicUrl });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Failed to upload to R2" }, { status: 500 });
   }

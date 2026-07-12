@@ -68,9 +68,10 @@ export default function DocumentManager() {
       } else {
         throw new Error(data.error || "Upload failed / アップロードに失敗しました");
       }
-    } catch (err: any) {
-      console.error(err);
-      showToast(err.message || "Upload failed / アップロードに失敗しました", "error");
+    } catch (error: unknown) {
+      console.error(error);
+      const message = error instanceof Error ? error.message : String(error);
+      showToast(message || "Upload failed / アップロードに失敗しました", "error");
     } finally {
       setUploadingIndex(null);
     }

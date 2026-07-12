@@ -113,8 +113,9 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
       } else {
         setMessage("Error: " + (data.error || "修復に失敗しました。"));
       }
-    } catch (e: any) {
-      setMessage("Error: " + e.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      setMessage("Error: " + message);
     } finally {
       setIsFixingIntegrity(false);
     }

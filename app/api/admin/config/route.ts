@@ -23,8 +23,9 @@ export async function GET() {
     });
 
     return NextResponse.json(config?.value || {});
-  } catch (error: any) {
-    logger.error("Config fetch error", { error: error?.message || String(error) });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("Config fetch error", { error: message });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -59,8 +60,9 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, value: updated.value });
-  } catch (error: any) {
-    logger.error("Config update error", { error: error?.message || String(error) });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("Config update error", { error: message });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

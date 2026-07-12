@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
     const responseText = result.response.text();
 
     return NextResponse.json({ text: responseText });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Gemini sync error:", error);
     return NextResponse.json({ error: "Intelligence sync failed." }, { status: 500 });
   }

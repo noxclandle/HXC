@@ -39,7 +39,7 @@ export async function GET() {
         date: t.created_at
       }))
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Fetch stats error:", error);
     return NextResponse.json({ error: "Failed to fetch stats." }, { status: 500 });
   }

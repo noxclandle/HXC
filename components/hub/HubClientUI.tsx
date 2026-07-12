@@ -100,10 +100,11 @@ export default function HubClientUI({
         await fetchData();
       }
       setIsResonating(false);
-    } catch (e: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
       setMood('unstable');
       setIsResonating(false);
-      showToast(e.message || "Sync Failed / 境界との同期に失敗しました", "error");
+      showToast(message || "Sync Failed / 境界との同期に失敗しました", "error");
       await fetchData();
     }
   };

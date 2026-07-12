@@ -55,9 +55,10 @@ export default function IdentityReflection({ user }: { user: any }) {
         showToast(`変更に失敗しました: ${res.status} ${errData.error || ""}`, "error");
         setLocalOrientation(safeEquipped.orientation || "horizontal");
       }
-    } catch (e: any) { 
-      console.error(e);
-      showToast(`通信エラーが発生しました: ${e.message || e}`, "error");
+    } catch (error: unknown) {
+      console.error(error);
+      const message = error instanceof Error ? error.message : String(error);
+      showToast(`通信エラーが発生しました: ${message}`, "error");
       setLocalOrientation(safeEquipped.orientation || "horizontal");
     }
     finally {

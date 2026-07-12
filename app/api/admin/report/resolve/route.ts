@@ -41,8 +41,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, status: updated.status });
 
-  } catch (error: any) {
-    logger.error("Report resolve error", { error: error?.message || String(error) });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("Report resolve error", { error: message });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

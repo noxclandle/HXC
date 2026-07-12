@@ -78,8 +78,9 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (error: any) {
-    logger.error("RT Checkout Error", { error: error?.message || String(error) });
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("RT Checkout Error", { error: message });
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

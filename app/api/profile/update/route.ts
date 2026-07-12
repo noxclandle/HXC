@@ -178,10 +178,11 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    logger.error("Critical Sync Error", { error: error?.message || String(error) });
-    return NextResponse.json({ 
-      error: "サーバーとの同期に失敗しました。再試行してください。" 
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("Critical Sync Error", { error: message });
+    return NextResponse.json({
+      error: "サーバーとの同期に失敗しました。再試行してください。"
     }, { status: 500 });
   }
 }

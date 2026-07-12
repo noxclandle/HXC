@@ -33,7 +33,7 @@ export async function GET() {
     }));
 
     return NextResponse.json(richReports);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Report list error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

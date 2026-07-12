@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Device binding error:", error);
     return NextResponse.json({ error: "Failed to bind device." }, { status: 500 });
   }

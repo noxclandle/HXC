@@ -18,7 +18,7 @@ export async function GET() {
     cachedUserCountExpiry = now + 60000; // Cache for 1 minute
 
     return NextResponse.json({ userCount });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Public stats error:", error);
     return NextResponse.json({ userCount: cachedUserCount || 0 });
   }

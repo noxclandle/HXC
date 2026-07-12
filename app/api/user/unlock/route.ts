@@ -76,8 +76,9 @@ export async function POST(req: NextRequest) {
       owned_assets: finalUser.owned_assets 
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Unlock error:", error);
-    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: message || "Internal Server Error" }, { status: 500 });
   }
 }

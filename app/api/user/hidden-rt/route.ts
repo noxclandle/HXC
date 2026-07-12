@@ -45,8 +45,9 @@ export async function POST(req: Request) {
       amount,
       new_balance: user.rt_balance.toString()
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Hidden RT Error:", error);
-    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: message || "Internal Server Error" }, { status: 500 });
   }
 }

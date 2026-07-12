@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
         }
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Integrity check failed:", error);
     return NextResponse.json({ error: "Integrity check failed" }, { status: 500 });
   }
@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       message: `自動修復が完了しました。修正ユーザー数: ${fixedUsers}名、修正カード数: ${fixedCards}枚`
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Integrity repair failed:", error);
     return NextResponse.json({ error: "Integrity repair failed" }, { status: 500 });
   }

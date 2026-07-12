@@ -12,7 +12,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     }
 
     return NextResponse.json(profile);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Profile fetch error:", error);
     return NextResponse.json({ error: "Failed to fetch profile." }, { status: 500 });
   }

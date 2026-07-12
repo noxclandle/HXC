@@ -126,14 +126,15 @@ export async function POST(req: NextRequest) {
       owned_assets: result.owned_assets
     });
 
-  } catch (error: any) {
-    if (error.message === "USER_NOT_FOUND") {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (message === "USER_NOT_FOUND") {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-    if (error.message === "INSUFFICIENT_BALANCE") {
+    if (message === "INSUFFICIENT_BALANCE") {
       return NextResponse.json({ error: "Insufficient RT balance / 所持RTが不足しています" }, { status: 400 });
     }
-    logger.error("Gacha error", { error: error?.message || String(error) });
+    logger.error("Gacha error", { error: message });
     return NextResponse.json({ error: "Internal Server Error / ガチャの実行に失敗しました" }, { status: 500 });
   }
 }

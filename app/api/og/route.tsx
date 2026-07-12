@@ -266,8 +266,8 @@ export async function GET(req: NextRequest) {
         height: 630,
       }
     );
-  } catch (e: any) {
-    console.error("OGP generation failed:", e);
+  } catch (error: unknown) {
+    console.error("OGP generation failed:", error);
     return new Response('Failed to generate OGP image', { status: 500 });
   }
 }

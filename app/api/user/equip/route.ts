@@ -81,8 +81,9 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, equipped: updatedUser.equipped_assets });
-  } catch (error: any) {
-    logger.error("Equip update error", { error: error?.message || String(error) });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("Equip update error", { error: message });
     return NextResponse.json({ error: "Failed to synchronize treasury." }, { status: 500 });
   }
 }

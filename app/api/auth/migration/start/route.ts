@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, migrationToken });
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json({ error: "Migration start failed" }, { status: 500 });
   }
 }

@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json(safeUsers);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Fetch users error:", error);
     return NextResponse.json({ error: "Failed to fetch users." }, { status: 500 });
   }

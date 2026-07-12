@@ -18,7 +18,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ count });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Report count error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

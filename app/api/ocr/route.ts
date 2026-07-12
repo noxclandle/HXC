@@ -180,8 +180,9 @@ export async function POST(req: NextRequest) {
       address: address,
     });
 
-  } catch (error: any) {
-    logger.error("OCR Error", { error: error?.message || String(error) });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("OCR Error", { error: message });
     return NextResponse.json({ error: "Failed to scan the card." }, { status: 500 });
   }
 }

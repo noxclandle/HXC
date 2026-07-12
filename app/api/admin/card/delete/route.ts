@@ -57,12 +57,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, message: "Eradication confirmed." });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("CRITICAL ERADICATE ERROR:", error);
+    const message = error instanceof Error ? error.message : String(error);
     // 必ずJSONを返すことでフロントエンドのクラッシュを防ぐ
-    return NextResponse.json({ 
-      error: "抹消システム内部で深刻なエラーが発生しました。", 
-      details: error.message 
+    return NextResponse.json({
+      error: "抹消システム内部で深刻なエラーが発生しました。",
+      details: message
     }, { status: 500 });
   }
 }

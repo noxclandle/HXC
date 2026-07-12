@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, user: safeUser });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Master override error:", error);
     return NextResponse.json({ error: "Failed to override soul record." }, { status: 500 });
   }

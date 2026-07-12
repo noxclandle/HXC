@@ -77,8 +77,9 @@ export async function POST(req: NextRequest) {
       new_balance: result.updatedUser.rt_balance.toString()
     });
 
-  } catch (error: any) {
-    if (error.message === "ALREADY_RESONATED") {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (message === "ALREADY_RESONATED") {
       return NextResponse.json({ error: "Already resonated today." }, { status: 400 });
     }
     console.error("Daily Resonance Error:", error);
