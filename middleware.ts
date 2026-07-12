@@ -6,12 +6,18 @@ export default withAuth(
   function middleware(req) {
     const token = req.nextauth.token;
     const isAuth = !!token;
-    const isAdminPath = req.nextUrl.pathname.startsWith("/admin");
+    const pathname = req.nextUrl.pathname;
+    const isAdminPath = pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
+    const isApiPath = pathname.startsWith("/api");
 
     if (isAdminPath) {
-      const rank = token?.rank as string;
-      
       if (!isAuth || !ADMIN_ROLES.includes(token?.role as string)) {
+        // API routes get a JSON 401, page routes get redirected to /hub.
+        // This is defense-in-depth: each /api/admin handler must still
+        // perform its own getServerSession + ADMIN_ROLES check.
+        if (isApiPath) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
         return NextResponse.redirect(new URL("/hub", req.url));
       }
     }
@@ -29,6 +35,7 @@ export default withAuth(
 export const config = {
   matcher: [
     "/admin/:path*",
+    "/api/admin/:path*",
     "/hub/:path*",
     "/gate",
     "/library/:path*",

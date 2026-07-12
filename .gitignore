@@ -38,3 +38,7 @@ next-env.d.ts
 
 # temporary scratch scripts
 /scratch
+
+# local sqlite dev database
+/prisma/dev.db
+/prisma/*.db
