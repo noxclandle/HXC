@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  checks:
+    name: Lint, typecheck, unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      # DBやシークレットに依存しない純粋ロジック・静的検査テストのみをCIゲートとして実行する。
+      # tests/basic.spec.ts と tests/live-diagnose.spec.ts は起動中のサーバー（basic.spec.ts）
+      # または本番URL（live-diagnose.spec.ts）を必要とするため、現時点ではCIに含めていない。
+      # 将来的にステージング環境ができたら、別ジョブとしてe2eを追加する。
+      - name: Run unit & static regression tests
+        run: npx playwright test tests/rt-engine.spec.ts tests/admin-route-auth.spec.ts tests/api-zod-coverage.spec.ts --project=chromium
