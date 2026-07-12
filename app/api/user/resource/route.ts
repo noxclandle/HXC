@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
+const resourceQuerySchema = z.object({
+  type: z.enum(["photo", "logo"]),
+});
 
 /**
  * 巨大な画像データ（Base64）を非同期で取得するための専用API
@@ -18,7 +22,11 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const type = searchParams.get("type"); // "photo" or "logo"
+    const parsed = resourceQuerySchema.safeParse({ type: searchParams.get("type") });
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid or missing type" }, { status: 400 });
+    }
+    const { type } = parsed.data;
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },

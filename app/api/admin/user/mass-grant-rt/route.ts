@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
@@ -6,6 +7,11 @@ import { executeRTTransaction } from "@/lib/rt/engine";
 
 export const dynamic = "force-dynamic";
 
+const massGrantSchema = z.object({
+  rank: z.string().optional(),
+  amount: z.coerce.number().int().finite(),
+  message: z.string().optional(),
+});
 
 /**
  * 【チーフオフィサー限定】全ユーザーまたは特定ランクへ一斉にRTを授与する
@@ -13,13 +19,19 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id || !ADMIN_ROLES.includes(session.user.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const data = await req.json();
-    const { rank, amount, message } = data; // messageを追加
+    const json = await req.json();
+    const parsed = massGrantSchema.safeParse(json);
+
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+    }
+
+    const { rank, amount, message } = parsed.data;
 
     const users = await prisma.user.findMany({
       where: rank && rank !== "All" ? { rank } : { role: "member" },
@@ -30,7 +42,7 @@ export async function POST(req: NextRequest) {
       try {
         await executeRTTransaction(
           user.id,
-          parseInt(amount),
+          amount,
           "earn",
           `Master Grace: ${message || "A gift from the Chief Officer"}`
         );

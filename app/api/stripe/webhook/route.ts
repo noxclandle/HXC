@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { sendAdminOrderNotification, sendCustomerOrderNotification } from "@/lib/mail";
 import { sendDiscordNotification } from "@/lib/discord";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -21,9 +23,10 @@ export async function POST(req: NextRequest) {
 
   try {
     event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
-  } catch (err: any) {
-    console.error("Webhook signature verification failed.", err.message);
-    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    logger.error("Webhook signature verification failed.", { error: message });
+    return NextResponse.json({ error: `Webhook Error: ${message}` }, { status: 400 });
   }
 
   if (event.type === "checkout.session.completed") {
@@ -62,7 +65,10 @@ export async function POST(req: NextRequest) {
       const customerPhone = session.metadata?.custom_phone || session.customer_details?.phone || "-";
       const customerHandle = session.metadata?.custom_handle || "";
       
-      const shippingAddress = (session as any).shipping_details?.address || {};
+      // このバージョンのStripe型定義には shipping_details が含まれないため、実行時の形状に合わせて最小限の型を当てる
+      const shippingAddress =
+        (session as unknown as { shipping_details?: { address?: Record<string, string> } })
+          .shipping_details?.address || {};
 
       const tier = session.metadata?.tier || "unknown";
       const variant = session.metadata?.variant || "";
@@ -82,7 +88,7 @@ export async function POST(req: NextRequest) {
             custom_phone: customerPhone,
             custom_handle: customerHandle,
             stripe_name: session.customer_details?.name // Stripe側の名義も念のため保存
-          } as any,
+          } as Prisma.InputJsonValue,
           status: "paid",
         },
       });

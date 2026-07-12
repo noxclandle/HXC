@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { z } from "zod";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getBaseUrl } from "@/lib/utils";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -13,13 +16,30 @@ const stripe = new Stripe(stripeKey, {
   apiVersion: "2026-04-22.dahlia" as any,
 });
 
+const checkoutSchema = z.object({
+  tier: z.string().min(1),
+  variant: z.string().optional(),
+  customerDetails: z
+    .object({
+      email: z.string().email().optional(),
+      name: z.string().optional(),
+      handle: z.string().optional(),
+      phone: z.string().optional(),
+    })
+    .optional(),
+  referrerId: z.string().optional(),
+});
+
 export async function POST(req: NextRequest) {
   try {
-    const { tier, variant, customerDetails, referrerId } = await req.json();
+    const json = await req.json();
+    const parsed = checkoutSchema.safeParse(json);
 
-    if (!tier) {
+    if (!parsed.success) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
+
+    const { tier, variant, customerDetails, referrerId } = parsed.data;
 
     // 厳格な価格マッピング
     const PRICE_MAP: Record<string, number> = {
@@ -40,7 +60,7 @@ export async function POST(req: NextRequest) {
 
     // もし本番/テスト用の正しいAPIキーが設定されていない場合は、Stripe通信をバイパスして成功画面へ
     if (isMock) {
-      console.log("Mocking Stripe Checkout. Creating record and redirecting.");
+      logger.info("Mocking Stripe Checkout. Creating record and redirecting.");
       const mockSessionId = `mock_session_${Date.now()}`;
       
       // テスト用にDBに注文レコードを作成
@@ -58,7 +78,7 @@ export async function POST(req: NextRequest) {
             city: "渋谷区",
             line1: "神宮前1-2-3",
             line2: "ヘキサビル 6F"
-          } as any,
+          } as Prisma.InputJsonValue,
           status: "paid",
         },
       });
@@ -113,7 +133,7 @@ export async function POST(req: NextRequest) {
               }
             }
           });
-          console.log(`[Mock Referral] Successfully processed 2,000 RT and 300 EXP referral bonus to ${referrer.email}`);
+          logger.info("Mock referral bonus processed", { referrerId: referrer.id });
         }
       }
 
@@ -144,18 +164,19 @@ export async function POST(req: NextRequest) {
       cancel_url: `${baseUrl}/purchase`,
       metadata: {
         tier,
-        variant,
-        custom_name: customerDetails?.name,
-        custom_handle: customerDetails?.handle,
-        custom_phone: customerDetails?.phone,
-        custom_email: customerDetails?.email,
+        variant: variant || "",
+        custom_name: customerDetails?.name || "",
+        custom_handle: customerDetails?.handle || "",
+        custom_phone: customerDetails?.phone || "",
+        custom_email: customerDetails?.email || "",
         referrerId: referrerId || ""
       },
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (error: any) {
-    console.error("Stripe Checkout Error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("Stripe Checkout Error", { error: message });
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

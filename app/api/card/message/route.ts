@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { messageSchema } from "@/lib/validations/message";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // 送信元IPと受信者IDの組み合わせで24時間の報酬制限をかけるキャッシュ
 const messageRateCache = new Map<string, number>();
@@ -67,7 +68,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, id: message.id });
   } catch (error) {
-    console.error("Message reward update error:", error);
+    logger.error("Message reward update error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

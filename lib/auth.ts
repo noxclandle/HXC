@@ -1,8 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import bcrypt from "bcryptjs";
 import { ADMIN_ROLES } from "./constants";
+import { rateLimit } from "./ratelimit";
+import { logger } from "./logger";
 
 export { ADMIN_ROLES };
 
@@ -14,8 +17,12 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         deviceToken: { label: "Device Token", type: "text" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.deviceToken) return null;
+
+        const ip = (req?.headers?.get?.("x-forwarded-for") as string) || "unknown";
+        const { success } = await rateLimit.strict.limit(`soul-link:${ip}`);
+        if (!success) return null;
 
         try {
           const binding = await prisma.deviceBinding.findUnique({
@@ -49,11 +56,14 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) return null;
         const email = credentials.email.toLowerCase();
 
-        console.log(`[AUTH_DEBUG] Attempting login for: ${email}`);
+        // IPベースのレートリミット（ブルートフォース対策）
+        const ip = (req?.headers?.get?.("x-forwarded-for") as string) || "unknown";
+        const { success } = await rateLimit.strict.limit(`login:${ip}`);
+        if (!success) return null;
 
         // 1. データベースからユーザーを検索
         try {
@@ -62,21 +72,16 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!user) {
-            console.error(`[AUTH_DEBUG] User not found: ${email}`);
             return null;
           }
-
-          console.log(`[AUTH_DEBUG] User found. ID: ${user.id}`);
 
           // 2. パスワードの照合
           const isPasswordValid = await bcrypt.compare(credentials.password, user.password || "");
 
           if (!isPasswordValid) {
-            console.error(`[AUTH_DEBUG] Password mismatch for: ${email}`);
             return null;
           }
 
-          console.log(`[AUTH_DEBUG] Login successful for: ${email}`);
           return {
             id: user.id,
             name: user.name,
@@ -84,10 +89,11 @@ export const authOptions: NextAuthOptions = {
             role: user.role,
             rank: user.rank,
           };
-        } catch (dbError: any) {
-          console.error("[AUTH_DEBUG] Database error during login:", dbError.message || dbError);
-          // エラー内容を詳しく返す（開発・緊急対応用）
-          throw new Error(`Database Integrity Error: ${dbError.message || "Unknown"}`);
+        } catch (dbError: unknown) {
+          // ログには詳細を残すが、クライアントへは汎用エラーのみ返す（内部情報の漏洩防止）
+          const message = dbError instanceof Error ? dbError.message : String(dbError);
+          logger.error("Database error during login", { reason: message });
+          return null;
         }
       },
     }),
@@ -97,18 +103,18 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }: any) {
+    async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
         token.rank = user.rank;
       }
       return token;
     },
-    async session({ session, token }: any) {
+    async session({ session, token }: { session: import("next-auth").Session; token: JWT }) {
       if (session.user) {
         session.user.id = token.sub as string;
-        session.user.role = token.role as string;
-        session.user.rank = token.rank as string;
+        session.user.role = token.role;
+        session.user.rank = token.rank;
       }
       return session;
     },

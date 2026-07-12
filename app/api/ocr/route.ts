@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -180,7 +181,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error("OCR Error:", error);
+    logger.error("OCR Error", { error: error?.message || String(error) });
     return NextResponse.json({ error: "Failed to scan the card." }, { status: 500 });
   }
 }

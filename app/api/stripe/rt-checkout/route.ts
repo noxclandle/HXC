@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getBaseUrl } from "@/lib/utils";
+import { logger } from "@/lib/logger";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
@@ -15,6 +17,10 @@ const stripe = new Stripe(stripeKey, {
   apiVersion: "2026-04-22.dahlia" as any,
 });
 
+const rtCheckoutSchema = z.object({
+  packId: z.enum(["rt_small", "rt_medium", "rt_large"]),
+});
+
 export async function POST(req: NextRequest) {
   try {
     const sessionUser = await getServerSession(authOptions);
@@ -22,7 +28,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { packId } = await req.json();
+    const json = await req.json();
+    const parsed = rtCheckoutSchema.safeParse(json);
+
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid pack ID" }, { status: 400 });
+    }
+
+    const { packId } = parsed.data;
 
     const RT_PACKS: Record<string, { price: number, rt: number, label: string }> = {
       "rt_small": { price: 1000, rt: 2000, label: "2,000 RT Pack" },
@@ -66,7 +79,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
-    console.error("RT Checkout Error:", error);
+    logger.error("RT Checkout Error", { error: error?.message || String(error) });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -1,16 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { TITLES } from "@/lib/game/titles";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
+const updateRoleSchema = z.object({
+  userId: z.string().min(1),
+  role: z.string().min(1),
+  grantChiefTitle: z.boolean().optional(),
+});
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     // 権限チェック: Mastermind の称号を持つ者のみが Role を変更可能とする
     const caller = await prisma.user.findUnique({
       where: { email: session?.user?.email || "" }
@@ -21,7 +28,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden: Mastermind Authority Required" }, { status: 403 });
     }
 
-    const { userId, role, grantChiefTitle } = await req.json();
+    const json = await req.json();
+    const parsed = updateRoleSchema.safeParse(json);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+    }
+    const { userId, role, grantChiefTitle } = parsed.data;
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -52,7 +64,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, role: updatedUser.role, titles: updatedUser.unlocked_titles });
 
   } catch (error: any) {
-    console.error("Role update error:", error);
+    logger.error("Role update error", { error: error?.message || String(error) });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
+const equipCardSchema = z.object({
+  uid: z.string().min(1),
+});
 
 /**
  * ログイン中のユーザーに物理カードを紐付ける
@@ -17,8 +22,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { uid } = await req.json();
-    if (!uid) return NextResponse.json({ error: "UID is required" }, { status: 400 });
+    const json = await req.json();
+    const parsed = equipCardSchema.safeParse(json);
+    if (!parsed.success) return NextResponse.json({ error: "UID is required" }, { status: 400 });
+    const { uid } = parsed.data;
 
     // UIDの正規化
     const normalizedUid = uid.replace(/:/g, "").toUpperCase();
@@ -57,7 +64,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("Card equip error:", error);
+    logger.error("Card equip error", { error: error?.message || String(error) });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

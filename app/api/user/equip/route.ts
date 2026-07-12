@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
+const equipSchema = z.object({
+  equipped: z.record(z.string(), z.union([z.string(), z.number(), z.boolean(), z.null()])).optional(),
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,9 +18,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { equipped } = await req.json();
+    const json = await req.json();
+    const parsed = equipSchema.safeParse(json);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+    }
 
-    const keys = Object.keys(equipped || {});
+    const equipped = parsed.data.equipped || {};
+
+    const keys = Object.keys(equipped);
     let expEarned = 0;
 
     // 1. Fetch user outside of a transaction to keep connections lightweight
@@ -71,7 +82,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, equipped: updatedUser.equipped_assets });
   } catch (error: any) {
-    console.error("Equip update error:", error);
+    logger.error("Equip update error", { error: error?.message || String(error) });
     return NextResponse.json({ error: "Failed to synchronize treasury." }, { status: 500 });
   }
 }

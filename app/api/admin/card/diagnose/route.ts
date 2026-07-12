@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
+
+const diagnoseQuerySchema = z.object({
+  uid: z.string().min(1),
+});
 
 /**
  * GET: 特定の物理カードの簡易診断・詳細取得
@@ -16,11 +22,12 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const uidInput = searchParams.get("uid");
+    const parsed = diagnoseQuerySchema.safeParse({ uid: searchParams.get("uid") });
 
-    if (!uidInput) {
+    if (!parsed.success) {
       return NextResponse.json({ found: false, message: "UID is required" }, { status: 400 });
     }
+    const { uid: uidInput } = parsed.data;
 
     // UIDの正規化（大文字化・コロン除去）
     const normalizedUid = uidInput.replace(/:/g, "").toUpperCase();
@@ -77,7 +84,7 @@ export async function GET(req: NextRequest) {
       } : null
     });
   } catch (error: any) {
-    console.error("Card diagnosis failed:", error);
+    logger.error("Card diagnosis failed", { error: error?.message || String(error) });
     return NextResponse.json({ found: false, message: "Card diagnosis failed" }, { status: 500 });
   }
 }
