@@ -23,7 +23,7 @@ const API_ROOT = join(__dirname, "..", "app", "api");
 // 新規追加する場合は理由をコメントに残す。
 const KNOWN_DEBT = new Set([
   // FormDataを扱うため素のzodスキーマがそぐわない。ファイル種別・サイズ検証は別途必要。
-  "/api/ocr/route.ts",
+  "/app/api/ocr/route.ts",
 ]);
 
 function findRouteFiles(dir: string): string[] {
