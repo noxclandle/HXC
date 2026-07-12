@@ -1,7 +1,21 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+/**
+ * 使い方 (Usage):
+ *   SASAKI_SEED_PASSWORD=... CHIEF_SEED_PASSWORD=... node prisma/seed.js
+ *
+ * パスワードは環境変数で渡す。コード内に平文で残さない。
+ * (Passwords are passed via env vars — never hardcode secrets here.)
+ */
 async function main() {
+  const sasakiPassword = process.env.SASAKI_SEED_PASSWORD;
+  const chiefPassword = process.env.CHIEF_SEED_PASSWORD;
+
+  if (!sasakiPassword || !chiefPassword) {
+    console.error("❌ SASAKI_SEED_PASSWORD and CHIEF_SEED_PASSWORD must be set in the environment.");
+    process.exit(1);
+  }
   // 【安全装置】本番環境に近い状態での不用意なデータ削除を禁止
   // const targetEmails = ["prez@company.com", "member-b@test.com", "member-c@test.com", "sasaki@example.com"];
   // const targetNames = ["佐々木大輔", "佐々木　大輔"];
@@ -17,7 +31,7 @@ async function main() {
   // 1. 最強の天才: 佐々木大輔 (作成・更新 - upsertを使用し、既存データを破壊しない)
   console.log("🚀 Initializing The Genius: Daisuke Sasaki...");
   const bcrypt = require("bcryptjs");
-  const hashedSasakiPassword = await bcrypt.hash("***REMOVED-SECRET***", 10);
+  const hashedSasakiPassword = await bcrypt.hash(sasakiPassword, 12);
   const sasaki = await prisma.user.upsert({
     where: { email: "orehasaikyounotensai@gmail.com" },
     update: {
@@ -39,6 +53,7 @@ async function main() {
   });
 
   // 2. チーフオフィサー (あなた)
+  const hashedChiefPassword = await bcrypt.hash(chiefPassword, 12);
   const chief = await prisma.user.upsert({
     where: { email: "str1yf5x@gmail.com" },
     update: {},
@@ -46,7 +61,7 @@ async function main() {
       name: "Nox",
       handle_name: "ARCHITECT",
       email: "str1yf5x@gmail.com",
-      password: "***REMOVED-SECRET***",
+      password: hashedChiefPassword,
       role: "chief_officer",
       rank: "Architect",
       address: "HEXA HQ, SHIBUYA",
