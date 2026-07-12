@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth/next";
+import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 /**
  * 相関図(Connection Graph)用のデータを生成するAPI
  * GET /api/admin/graph/data
+ * 管理者限定。
  */
 export async function GET(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id || !ADMIN_ROLES.includes(session.user.role)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // 1. 全ユーザーの取得
     const users = await prisma.user.findMany({
       select: { id: true, handle_name: true, rank: true }

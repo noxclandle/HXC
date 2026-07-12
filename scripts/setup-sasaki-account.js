@@ -3,15 +3,30 @@ const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
+/**
+ * 使い方 (Usage):
+ *   node scripts/setup-sasaki-account.js <email> <password> <name> [rtAmount]
+ *
+ * メールアドレス・パスワード・氏名は引数で渡す。コード内に平文で残さない。
+ * (Email/password/name are passed as CLI args — never hardcode secrets here.)
+ */
 async function main() {
-  const email = "orehasaikyounotensa@gmail.com";
-  const password = "***REMOVED-SECRET***";
-  const name = "佐々木大輔";
-  const rtAmount = 10000;
+  const [email, password, name, rtAmountArg] = process.argv.slice(2);
+  const rtAmount = rtAmountArg ? parseInt(rtAmountArg, 10) : 0;
+
+  if (!email || !password || !name) {
+    console.error('Usage: node scripts/setup-sasaki-account.js <email> <password> <name> [rtAmount]');
+    process.exit(1);
+  }
+
+  if (password.length < 8) {
+    console.error('❌ Refusing to set a password shorter than 8 characters.');
+    process.exit(1);
+  }
 
   console.log(`🚀 Setting up account for ${name} (${email})...`);
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 12);
 
   const user = await prisma.user.upsert({
     where: { email },
@@ -36,18 +51,20 @@ async function main() {
   });
 
   console.log(`✅ User ${user.id} setup completed.`);
-  
-  // Create an initial transaction log for the RT
-  await prisma.rTTransaction.create({
-    data: {
-      user_id: user.id,
-      amount: rtAmount,
-      type: "earn",
-      description: "Genesis Grace: Initial bestowal for the Chosen One."
-    }
-  });
 
-  console.log(`💰 Granted ${rtAmount} RT to ${name}.`);
+  if (rtAmount > 0) {
+    // Create an initial transaction log for the RT
+    await prisma.rTTransaction.create({
+      data: {
+        user_id: user.id,
+        amount: rtAmount,
+        type: "earn",
+        description: "Genesis Grace: Initial bestowal for the Chosen One."
+      }
+    });
+
+    console.log(`💰 Granted ${rtAmount} RT to ${name}.`);
+  }
 }
 
 main()
