@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { ASSETS } from "@/lib/game/assets";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -132,7 +133,7 @@ export async function POST(req: NextRequest) {
     if (error.message === "INSUFFICIENT_BALANCE") {
       return NextResponse.json({ error: "Insufficient RT balance / 所持RTが不足しています" }, { status: 400 });
     }
-    console.error("Gacha error:", error);
+    logger.error("Gacha error", { error: error?.message || String(error) });
     return NextResponse.json({ error: "Internal Server Error / ガチャの実行に失敗しました" }, { status: 500 });
   }
 }

@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
+
+const resonanceQuerySchema = z.object({
+  mode: z.enum(["incoming"]).optional(),
+  targetSlug: z.string().optional(),
+});
+
+const resonancePostSchema = z.object({
+  targetSlug: z.string().min(1),
+});
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,8 +26,16 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const currentUserId = session.user.id;
 
+    const queryParsed = resonanceQuerySchema.safeParse({
+      mode: searchParams.get("mode") || undefined,
+      targetSlug: searchParams.get("targetSlug") || undefined,
+    });
+    if (!queryParsed.success) {
+      return NextResponse.json({ error: "Invalid query" }, { status: 400 });
+    }
+
     // Check if we are fetching all incoming pending requests
-    const mode = searchParams.get("mode");
+    const mode = queryParsed.data.mode;
     if (mode === "incoming") {
       const incomingRequests = await prisma.resonanceLink.findMany({
         where: {
@@ -56,7 +75,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ requests: formatted });
     }
 
-    const targetSlug = searchParams.get("targetSlug");
+    const targetSlug = queryParsed.data.targetSlug;
     if (!targetSlug) {
       return NextResponse.json({ error: "Missing target slug" }, { status: 400 });
     }
@@ -110,9 +129,10 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ status: "none", isViewerMember: true });
 
-  } catch (error: any) {
-    console.error("Resonance Status Error:", error);
-    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("Resonance Status Error", { error: message });
+    return NextResponse.json({ error: message || "Internal server error" }, { status: 500 });
   }
 }
 
@@ -123,10 +143,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { targetSlug } = await req.json();
-    if (!targetSlug) {
+    const json = await req.json();
+    const bodyParsed = resonancePostSchema.safeParse(json);
+    if (!bodyParsed.success) {
       return NextResponse.json({ error: "Missing target slug" }, { status: 400 });
     }
+    const { targetSlug } = bodyParsed.data;
 
     const currentUserId = session.user.id;
 
@@ -259,7 +281,7 @@ export async function POST(req: NextRequest) {
         });
 
         // 4. Unlock title: "Resonance Catalyst"
-        const updateTitles = (currentTitles: any) => {
+        const updateTitles = (currentTitles: unknown) => {
           const titles = (currentTitles as string[]) || [];
           if (!titles.includes("Resonance Catalyst")) {
             return [...titles, "Resonance Catalyst"];
@@ -302,8 +324,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ status: "pending", message: "Resonance request sent." });
 
-  } catch (error: any) {
-    console.error("Resonance Link Error:", error);
-    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("Resonance Link Error", { error: message });
+    return NextResponse.json({ error: message || "Internal server error" }, { status: 500 });
   }
 }

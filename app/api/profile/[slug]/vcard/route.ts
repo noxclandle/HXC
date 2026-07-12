@@ -1,14 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
+
+interface VcardProfileData {
+  phone?: string;
+  contact_email?: string;
+  company?: string;
+  title?: string;
+  website?: string;
+}
 
 export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
   try {
     const slug = decodeURIComponent(params.slug);
 
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
-    const conditions: any[] = [
+    const conditions: Prisma.UserWhereInput[] = [
       { handle_name: { equals: slug, mode: "insensitive" } }
     ];
 
@@ -28,7 +38,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     }
 
     // Extract profile info from ai_config or direct fields
-    const aiConfig = user.ai_config as any || {};
+    const aiConfig = (user.ai_config as { profile?: VcardProfileData } | null) || {};
     const profileData = aiConfig.profile || {};
 
     // 2. Construct vCard 3.0 String with Embedded Profile Image Support
@@ -74,8 +84,9 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
           });
           photoSection += CRLF;
         }
-      } catch (err: any) {
-        console.error("Failed to embed profile photo in vCard:", err.message || err);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        logger.error("Failed to embed profile photo in vCard", { error: message });
       }
     }
 
@@ -107,8 +118,9 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
 
     return response;
 
-  } catch (error: any) {
-    console.error("vCard generation error:", error.message || error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.error("vCard generation error", { error: message });
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

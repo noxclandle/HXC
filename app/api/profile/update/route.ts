@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
 import { clearProfileCache } from "@/lib/user";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +29,7 @@ const profileUpdateSchema = z.object({
     title: z.string(),
     url: z.string()
   })).optional(),
-  equipped_assets: z.any().optional(),
+  equipped_assets: z.record(z.string(), z.unknown()).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -41,7 +43,7 @@ export async function POST(req: NextRequest) {
     const result = profileUpdateSchema.safeParse(body);
 
     if (!result.success) {
-      console.error("Validation error:", result.error.format());
+      logger.warn("Profile update validation error", { issues: result.error.format() });
       return NextResponse.json({ error: "Invalid Data Format", details: result.error.format() }, { status: 400 });
     }
 
@@ -126,15 +128,15 @@ export async function POST(req: NextRequest) {
           portfolio_links: portfolio_links,
           exp: expAdd > 0 ? { increment: expAdd } : undefined,
           // 装備情報をマージ
-          equipped_assets: equipped_assets ? {
-            ...((currentUser.equipped_assets as any) || {}),
+          equipped_assets: equipped_assets ? ({
+            ...((currentUser.equipped_assets as Record<string, unknown>) || {}),
             ...equipped_assets
-          } : undefined,
+          } as Prisma.InputJsonValue) : undefined,
           // プロフィール情報をai_config内にマージ（他のプロパティの上書き破壊を防ぐ）
           ai_config: {
-            ...((currentUser.ai_config as any) || {}),
+            ...((currentUser.ai_config as Record<string, unknown>) || {}),
             profile: {
-              ...((currentUser.ai_config as any)?.profile || {}),
+              ...((currentUser.ai_config as { profile?: Record<string, unknown> } | null)?.profile || {}),
               title: title,
               bio: bio,
               company: company,
@@ -177,7 +179,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("Critical Sync Error:", error);
+    logger.error("Critical Sync Error", { error: error?.message || String(error) });
     return NextResponse.json({ 
       error: "サーバーとの同期に失敗しました。再試行してください。" 
     }, { status: 500 });

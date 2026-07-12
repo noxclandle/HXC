@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
 
+const migrationStartSchema = z.object({
+  userId: z.string().min(1),
+});
 
 /**
  * 端末移行用のハンドシェイクを開始する
@@ -11,8 +15,12 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await req.json();
-    if (!userId) return NextResponse.json({ error: "User ID required" }, { status: 400 });
+    const json = await req.json();
+    const parsed = migrationStartSchema.safeParse(json);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "User ID required" }, { status: 400 });
+    }
+    const { userId } = parsed.data;
 
     const migrationToken = crypto.randomBytes(16).toString("hex");
     
