@@ -4,9 +4,12 @@ import { motion } from "framer-motion";
 import { ChevronLeft, CreditCard, Shield, Zap, Info } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 
 export default function CardShopPage() {
   const [selected, setSelected] = useState("obsidian");
+  const [submitting, setSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const cards = [
     {
@@ -39,6 +42,29 @@ export default function CardShopPage() {
   ];
 
   const activeCard = cards.find(c => c.id === selected) || cards[0];
+
+  const handleRequestConnection = async () => {
+    setSubmitting(true);
+    setStatusMessage(null);
+    try {
+      const res = await fetch("/api/card/request-upgrade", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tier: selected }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setStatusMessage("申請を受け付けました。承認をお待ちください。");
+      } else {
+        setStatusMessage(data.error || "申請に失敗しました。");
+      }
+    } catch (error) {
+      logger.error("Failed to submit card upgrade request", { error });
+      setStatusMessage("通信エラーが発生しました。");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto pt-32 px-6 pb-24 text-moonlight">
@@ -116,10 +142,20 @@ export default function CardShopPage() {
                <span className="text-[9px] tracking-[0.4em] uppercase opacity-30 block">Acquisition Cost</span>
                <span className="text-3xl font-extralight italic">{activeCard.price}</span>
             </div>
-            <button className="px-12 py-4 bg-moonlight text-void text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-colors">
-              Request Connection
+            <button
+              onClick={handleRequestConnection}
+              disabled={submitting}
+              className="px-12 py-4 bg-moonlight text-void text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-colors disabled:opacity-40"
+            >
+              {submitting ? "Submitting..." : "Request Connection"}
             </button>
           </div>
+
+          {statusMessage && (
+            <p className="text-[10px] tracking-widest uppercase text-azure-400 border border-azure-500/20 bg-azure-500/5 p-4">
+              {statusMessage}
+            </p>
+          )}
 
           <p className="text-[8px] tracking-[0.3em] opacity-20 uppercase leading-relaxed">
             * 物理カードの発行には「Mastermind」または「Chief Officer」による承認共鳴が必要です。<br />
