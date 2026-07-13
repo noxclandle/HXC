@@ -22,6 +22,10 @@ export default withAuth(
       }
     }
 
+    if (pathname.startsWith("/api/ocr") && !isAuth) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     return NextResponse.next();
   },
   {
@@ -47,6 +51,7 @@ export const config = {
     "/gacha/:path*",
     "/adjust/:path*",
     "/checkout/:path*",
-    "/scan/:path*"
+    "/scan/:path*",
+    "/api/ocr"
   ],
 };

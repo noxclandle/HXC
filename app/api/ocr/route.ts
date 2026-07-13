@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
@@ -8,9 +10,15 @@ export const dynamic = "force-dynamic";
  * - 外部の有料API（Google等）は一切使わず、追加料金のリスクは永久に0円です。
  * - Vercel上でフリーズするTesseract.jsを廃止し、軽量な外部の無料OCRサービス（OCR.space）を利用します。
  * - 日本の名刺レイアウト特有の規則性（都道府県、郵便番号、部署名、人名の構成など）に基いて厳密に分類します。
+ * 会員限定（呼び出し元は(member)/scanページのみ）。
  */
 export async function POST(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const data = await req.formData();
     const file = data.get("image") as File;
     
