@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         name: true,
+        handle_name: true,
         email: true,
         phone: true, // 追加
         rank: true,
