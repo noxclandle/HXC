@@ -23,7 +23,8 @@ export async function POST(req: NextRequest) {
     const tasks = await prisma.scheduledTask.findMany({
       where: {
         status: "pending",
-        scheduled_at: { lte: new Date() }
+        scheduled_at: { lte: new Date() },
+        action: "MASS_GRACE" // 他の用途（IDENTITY_MIGRATION等）で流用されたレコードを誤処理しない
       }
     });
 
