@@ -35,6 +35,21 @@ export async function POST(req: NextRequest) {
     try {
       const type = session.metadata?.type;
 
+      if (type === "alias_unlock") {
+        const userId = session.metadata?.userId;
+        if (userId) {
+          const user = await prisma.user.update({
+            where: { id: userId },
+            data: { is_alias_unlocked: true },
+            select: { name: true, email: true },
+          });
+          const userIdentifier = `${user.name || "不明"} (${user.email || "メールなし"})`;
+          await sendDiscordNotification(`【HXC監視局】別名プロフィール機能の購入を検知。ユーザー: ${userIdentifier} (ID: ${userId})`);
+          logger.info("Alias profile unlocked via Stripe", { userId });
+        }
+        return NextResponse.json({ received: true });
+      }
+
       if (type === "rt_purchase") {
         const userId = session.metadata?.userId;
         const rtAmount = parseInt(session.metadata?.rtAmount || "0");

@@ -152,6 +152,9 @@ export async function getUserStatus(email: string | null | undefined) {
         portfolio_links: true,
         last_daily_at: true,
         last_read_news_at: true,
+        alias_name: true,
+        is_alias_active: true,
+        is_alias_unlocked: true,
         card: {
           select: { uid: true }
         },
@@ -237,6 +240,9 @@ export async function getUserStatus(email: string | null | undefined) {
     slug: user.handle_name || user.id,
     total_contacts: totalContacts,
     monthly_connections: monthlyConnections,
+    alias_name: user.alias_name || "",
+    is_alias_active: user.is_alias_active,
+    is_alias_unlocked: user.is_alias_unlocked,
     // 画像がBase64で巨大な場合、初期通信を圧迫するため、
     // ここではデータの存在有無のみを返し、実際の表示はキャッシュや別ルートで行うよう検討
     logo_url: user.logo_url && user.logo_url.length > 5000 ? "IMAGE_LARGE" : (user.logo_url || ""),
@@ -317,6 +323,9 @@ export async function getPublicProfile(slug: string) {
       rt_balance: true,
       exp: true,
       role: true,
+      alias_name: true,
+      is_alias_active: true,
+      is_alias_unlocked: true,
     }
   });
 
@@ -325,10 +334,13 @@ export async function getPublicProfile(slug: string) {
   const aiConfig = (user.ai_config as AIConfig | null) || {};
   const profile = aiConfig.profile || {};
 
+  // 別名プロフィールが解放済み・有効な場合は公開名を別名に差し替える
+  const useAlias = user.is_alias_unlocked && user.is_alias_active && user.alias_name;
+
   const result = {
     id: user.id,
-    name: user.name,
-    handle_name: user.handle_name,
+    name: useAlias ? user.alias_name : user.name,
+    handle_name: useAlias ? user.alias_name : user.handle_name,
     rank: user.rank,
     email: user.email,
     photo_url: user.photo_url,

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Zap, Brain, Award, Volume2, Lock, Image } from "lucide-react";
+import { Sparkles, Zap, Brain, Award, Volume2, Lock, Image, UserCircle2 } from "lucide-react";
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import { useSession } from "next-auth/react";
@@ -17,6 +17,12 @@ export default function SettingsPage() {
   const [unlockedAssets, setUnlockedAssets] = useState<string[]>(["Obsidian", "ASSOCIATE"]);
   const [prices, setPrices] = useState<Record<string, number>>({});
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Alias Profile State
+  const [aliasName, setAliasName] = useState("");
+  const [isAliasActive, setIsAliasActive] = useState(false);
+  const [isAliasUnlocked, setIsAliasUnlocked] = useState(false);
+  const [savingAlias, setSavingAlias] = useState(false);
 
   // Report Form State
   const [reportReason, setReportReason] = useState("");
@@ -36,6 +42,9 @@ export default function SettingsPage() {
           setPersonality(data.equipped?.title || "ASSOCIATE");
           setAura(parseInt(data.equipped?.aura_harmony) || 50);
           setPrices(data.asset_prices || {});
+          setAliasName(data.alias_name || "");
+          setIsAliasActive(!!data.is_alias_active);
+          setIsAliasUnlocked(!!data.is_alias_unlocked);
         }
       } catch (e) {
         logger.error("Failed to load user status", { error: e });
@@ -120,6 +129,28 @@ export default function SettingsPage() {
       });
     } catch (e) {
       logger.error("Failed to save aura harmony", { error: e });
+    }
+  };
+
+  const handleSaveAlias = async (updates: { aliasName?: string; isAliasActive?: boolean }) => {
+    setSavingAlias(true);
+    try {
+      const res = await fetch("/api/profile/alias", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        if (data.alias_name !== undefined) setAliasName(data.alias_name || "");
+        if (data.is_alias_active !== undefined) setIsAliasActive(!!data.is_alias_active);
+      } else {
+        alert(data.error || "保存に失敗しました。");
+      }
+    } catch (e) {
+      logger.error("Failed to save alias settings", { error: e });
+    } finally {
+      setSavingAlias(false);
     }
   };
 
@@ -285,6 +316,49 @@ export default function SettingsPage() {
                 className="w-full accent-azure-500 bg-transparent cursor-pointer"
               />
             </div>
+          </div>
+
+          {/* Alias Profile */}
+          <div className="pt-16 border-t border-white/5 space-y-6">
+            <h2 className="text-[10px] tracking-[0.3em] opacity-40 flex items-center gap-2">
+              <UserCircle2 size={14} /> Alias Profile / 別名プロフィール
+            </h2>
+            {!isAliasUnlocked ? (
+              <p className="text-[10px] tracking-widest opacity-40 leading-relaxed">
+                この機能は未解放です。<a href="/checkout" className="text-azure-400 underline">解放ページ</a>から購入できます。
+              </p>
+            ) : (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[8px] tracking-widest opacity-40 uppercase">Alias Name / 別名</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={aliasName}
+                      onChange={(e) => setAliasName(e.target.value)}
+                      placeholder="別名を入力..."
+                      className="flex-1 bg-white/5 border border-white/10 p-4 text-xs tracking-widest outline-none focus:border-white/20"
+                    />
+                    <button
+                      onClick={() => handleSaveAlias({ aliasName })}
+                      disabled={savingAlias}
+                      className="px-6 border border-white/10 text-[9px] uppercase tracking-widest hover:bg-white/5 transition-all disabled:opacity-40"
+                    >
+                      保存
+                    </button>
+                  </div>
+                </div>
+                <label className="flex items-center gap-3 text-[9px] uppercase tracking-widest opacity-60 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isAliasActive}
+                    onChange={(e) => handleSaveAlias({ isAliasActive: e.target.checked })}
+                    disabled={savingAlias || !aliasName}
+                  />
+                  公開プロフィールで別名を使用する / Use alias on public profile
+                </label>
+              </div>
+            )}
           </div>
 
           {/* Account Management (Danger Zone) */}
