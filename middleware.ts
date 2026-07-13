@@ -1,9 +1,10 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import { kv } from "@vercel/kv";
 import { ADMIN_ROLES } from "@/lib/constants";
 
 export default withAuth(
-  function middleware(req) {
+  async function middleware(req) {
     const token = req.nextauth.token;
     const isAuth = !!token;
     const pathname = req.nextUrl.pathname;
@@ -19,6 +20,18 @@ export default withAuth(
           return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
         return NextResponse.redirect(new URL("/hub", req.url));
+      }
+    } else {
+      // Emergency kill-switch toggled from /admin/security. Admin paths stay
+      // reachable above so an admin can always lift the lockdown.
+      const lockdown = (await kv.get<boolean>("system_lockdown")) === true;
+      if (lockdown) {
+        if (isApiPath) {
+          return NextResponse.json({ error: "System is under maintenance lockdown." }, { status: 503 });
+        }
+        if (pathname !== "/lockdown") {
+          return NextResponse.redirect(new URL("/lockdown", req.url));
+        }
       }
     }
 
