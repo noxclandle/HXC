@@ -6,9 +6,18 @@ import { Activity, Terminal, Radio, ArrowLeft, ShieldAlert, User, Globe } from "
 import Link from "next/link";
 import { logger } from "@/lib/logger";
 
+interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  type: string;
+  created_at: string;
+}
+
 export default function AuditLogsPage() {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
   const fetchLogs = async () => {
     try {
@@ -21,8 +30,18 @@ export default function AuditLogsPage() {
     }
   };
 
+  const fetchAnnouncements = async () => {
+    try {
+      const res = await fetch("/api/admin/news/list");
+      if (res.ok) setAnnouncements(await res.json());
+    } catch (e) {
+      logger.error("Failed to fetch announcements", { error: e });
+    }
+  };
+
   useEffect(() => {
     fetchLogs();
+    fetchAnnouncements();
   }, []);
 
   const getActionColor = (action: string) => {
@@ -193,28 +212,19 @@ export default function AuditLogsPage() {
               <Radio size={14} /> Master Proclamations
             </h2>
             <div className="space-y-4">
-              {[
-                {
-                  msg: "Welcome to the First Phase.",
-                  date: "2026.04.17",
-                  target: "All",
-                },
-                {
-                  msg: "RT distribution for Early Birds.",
-                  date: "2026.04.15",
-                  target: "Black Tier",
-                },
-              ].map((p, i) => (
+              {announcements.length === 0 ? (
+                <p className="text-[8px] tracking-widest opacity-20 italic uppercase">No proclamations recorded.</p>
+              ) : announcements.slice(0, 5).map((p) => (
                 <div
-                  key={i}
+                  key={p.id}
                   className="p-6 border border-white/5 bg-white/[0.01] space-y-4 hover:bg-white/[0.03] transition-all group"
                 >
-                  <p className="text-[10px] tracking-widest leading-relaxed italic opacity-40 group-hover:opacity-80 transition-opacity">
-                    &quot;{p.msg}&quot;
+                  <p className="text-[10px] tracking-widest leading-relaxed italic opacity-40 group-hover:opacity-80 transition-opacity truncate">
+                    &quot;{p.title}&quot;
                   </p>
                   <div className="flex justify-between items-center text-[7px] tracking-widest uppercase opacity-20">
-                    <span>To: {p.target}</span>
-                    <span>{p.date}</span>
+                    <span>Type: {p.type}</span>
+                    <span>{new Date(p.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
               ))}
