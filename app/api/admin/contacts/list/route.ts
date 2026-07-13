@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,7 @@ export async function GET() {
 
     return NextResponse.json(inquiries);
   } catch (error) {
-    console.error("Inquiry List Error:", error);
+    logger.error("Inquiry List Error", { error });
     return NextResponse.json({ error: "Failed to fetch inquiries" }, { status: 500 });
   }
 }

@@ -6,6 +6,7 @@ import { Sparkles, Zap, Brain, Award, Volume2, Lock, Image } from "lucide-react"
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import { useSession } from "next-auth/react";
+import { logger } from "@/lib/logger";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
@@ -37,7 +38,7 @@ export default function SettingsPage() {
           setPrices(data.asset_prices || {});
         }
       } catch (e) {
-        console.error("Failed to load user status", e);
+        logger.error("Failed to load user status", { error: e });
       } finally {
         setIsLoaded(true);
       }
@@ -67,7 +68,7 @@ export default function SettingsPage() {
             alert(data.error || "アンロックに失敗しました。 / Unlock failed.");
           }
         } catch (e) {
-          console.error("Unlock request failed", e);
+          logger.error("Unlock request failed", { error: e });
           alert("通信エラーが発生しました。 / Connection error.");
         }
       }
@@ -89,7 +90,7 @@ export default function SettingsPage() {
         alert("設定の保存に失敗しました。 / Failed to equip frame.");
       }
     } catch (e) {
-      console.error(e);
+      logger.error("Failed to equip frame", { error: e });
     }
   };
 
@@ -106,7 +107,7 @@ export default function SettingsPage() {
         alert("設定の保存に失敗しました。 / Failed to equip title.");
       }
     } catch (e) {
-      console.error(e);
+      logger.error("Failed to equip title", { error: e });
     }
   };
 
@@ -118,7 +119,7 @@ export default function SettingsPage() {
         body: JSON.stringify({ equipped: { aura_harmony: auraValue } })
       });
     } catch (e) {
-      console.error("Failed to save aura harmony", e);
+      logger.error("Failed to save aura harmony", { error: e });
     }
   };
 
@@ -143,7 +144,7 @@ export default function SettingsPage() {
         setTimeout(() => setReportSuccess(false), 5000);
       }
     } catch (error) {
-      console.error("Report failed", error);
+      logger.error("Report failed", { error });
     } finally {
       setIsReporting(false);
     }

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, Crown, User as UserIcon, Lock, Search, Sparkles, AlertCircle, Eye, Wallet, Package, Trophy, Mail, Phone, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 
 interface UserData {
   id: string;
@@ -41,7 +42,7 @@ export default function UsersAdminPage() {
         setUsers(data);
       }
     } catch (err) {
-      console.error(err);
+      logger.error("Failed to fetch users", { error: err });
     } finally {
       setLoading(false);
     }
@@ -78,7 +79,7 @@ export default function UsersAdminPage() {
         setSelectedUser(null);
         fetchUsers();
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { logger.error("Failed to grant RT", { error: err }); }
   };
 
   const handleUpdateRole = async (userId: string, newRole: string) => {
@@ -96,7 +97,7 @@ export default function UsersAdminPage() {
         const data = await res.json();
         alert(data.error || "Update failed");
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { logger.error("Failed to update role", { error: err }); }
   };
 
   return (

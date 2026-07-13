@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import HexaCardPreview, { Alignment, mapUserToCardProps } from "@/components/ui/HexaCardPreview";
 import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import { useToast } from "@/components/ui/ConnectionToast";
+import { logger } from "@/lib/logger";
 
 const defaultAlign = {
   company: "center",
@@ -90,7 +91,7 @@ export default function ProfileEditPage() {
       const resBlob = await fetch(compressedBase64);
       const blob = await resBlob.blob();
       
-      console.log(`Optimized ${type} size: ${(blob.size / 1024).toFixed(2)} KB`);
+      logger.debug("Optimized image size", { type, sizeKb: (blob.size / 1024).toFixed(2) });
 
       const formData = new FormData();
       formData.append("file", blob, `upload.${type === "face" ? "jpg" : "png"}`);
@@ -107,7 +108,7 @@ export default function ProfileEditPage() {
       updateField(type === "face" ? "faceUrl" : "logoUrl", uploadData.url);
       showToast("Image optimized and uploaded. / 画像を最適化してアップロードしました", "success");
     } catch (err) {
-      console.error(err);
+      logger.error("Image upload failed", { error: err });
       showToast("Upload failed. / アップロードに失敗しました", "error");
     } finally {
       setIsUploading(null);
@@ -207,7 +208,7 @@ export default function ProfileEditPage() {
             scaleAddress: data.equipped.scaleAddress || "standard"
           }));
         }
-      } catch (e) { console.error(e); }
+      } catch (e) { logger.error("Failed to fetch initial profile data", { error: e }); }
       finally { setIsLoaded(true); }
     };
 
@@ -308,10 +309,10 @@ export default function ProfileEditPage() {
         setSaveStatus("error");
         // サーバーからの具体的なエラーメッセージを表示
         showToast(errData.error || "Save failed. / 保存に失敗しました", "error");
-        console.error("Auto-save sync error:", errData);
+        logger.error("Auto-save sync error", { error: errData });
       }
       } catch (err) {
-      console.error("Auto-save network error:", err);
+      logger.error("Auto-save network error", { error: err });
       setSaveStatus("error");
       showToast("Network error. / 通信エラーが発生しました", "error");
       }

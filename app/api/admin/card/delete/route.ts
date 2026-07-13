@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -52,13 +53,13 @@ export async function POST(req: NextRequest) {
         }
       });
     } catch (logError) {
-      console.warn("Log creation failed, but eradication succeeded.");
+      logger.warn("Log creation failed, but eradication succeeded", { error: logError });
     }
 
     return NextResponse.json({ success: true, message: "Eradication confirmed." });
 
   } catch (error: unknown) {
-    console.error("CRITICAL ERADICATE ERROR:", error);
+    logger.error("CRITICAL ERADICATE ERROR", { error });
     const message = error instanceof Error ? error.message : String(error);
     // 必ずJSONを返すことでフロントエンドのクラッシュを防ぐ
     return NextResponse.json({

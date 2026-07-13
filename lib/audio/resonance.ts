@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * 名刺受信時の共鳴音を生成・再生する
  * 複数のオシレーターを重ね、神秘的な「共鳴」を演出する
@@ -118,6 +120,6 @@ export function playConnectionSound(type: string = "resonance") {
         createOscillator(660, 0.05, 1.2);
     }
   } catch (e) {
-    console.warn("AudioContext playback blocked or failed:", e);
+    logger.warn("AudioContext playback blocked or failed", { error: e });
   }
 }

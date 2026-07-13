@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Database, Save, ArrowLeft, ShieldAlert, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 
 export default function ConfigAdminPage() {
   const [prices, setPrices] = useState<Record<string, number>>({});
@@ -15,7 +16,7 @@ export default function ConfigAdminPage() {
       try {
         const res = await fetch("/api/admin/config");
         if (res.ok) setPrices(await res.json());
-      } catch (e) { console.error(e); }
+      } catch (e) { logger.error("Failed to fetch config", { error: e }); }
       finally { setLoading(false); }
     };
     fetchConfig();
@@ -29,7 +30,7 @@ export default function ConfigAdminPage() {
         body: JSON.stringify(prices)
       });
       if (res.ok) alert("Asset prices synchronized.");
-    } catch (e) { console.error(e); }
+    } catch (e) { logger.error("Failed to save config", { error: e }); }
     finally { setIsSaving(false); }
   };
 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Mail, MessageSquare, Send, CheckCircle, Clock, Search, Reply } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { logger } from "@/lib/logger";
 
 export default function AdminContactsPage() {
   const [inquiries, setInquiries] = useState<any[]>([]);
@@ -19,7 +20,7 @@ export default function AdminContactsPage() {
         setInquiries(data);
       }
     } catch (err) {
-      console.error(err);
+      logger.error("Failed to fetch inquiries", { error: err });
     } finally {
       setLoading(false);
     }
@@ -50,7 +51,7 @@ export default function AdminContactsPage() {
         setSelectedInquiry(updated);
       }
     } catch (err) {
-      console.error(err);
+      logger.error("Failed to send reply", { error: err });
     } finally {
       setIsSubmitting(false);
     }
@@ -76,7 +77,7 @@ export default function AdminContactsPage() {
         setSelectedInquiry(updated);
       }
     } catch (err) {
-      console.error(err);
+      logger.error("Failed to update inquiry status", { error: err });
     }
   };
 

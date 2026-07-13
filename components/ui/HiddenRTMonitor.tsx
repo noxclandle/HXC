@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { useToast } from "@/components/ui/ConnectionToast";
+import { logger } from "@/lib/logger";
 
 export default function HiddenRTMonitor() {
   const [isVisible, setIsVisible] = useState(false);
@@ -56,7 +57,7 @@ export default function HiddenRTMonitor() {
         window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
       }
     } catch (e) {
-      console.error(e);
+      logger.error("Failed to collect hidden RT fragment", { error: e });
     } finally {
       setIsVisible(false);
       setIsCollecting(false);

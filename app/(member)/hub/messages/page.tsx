@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Mail, MessageSquare, Calendar, Trash2, Eye, ShieldCheck, CheckCircle2, ChevronRight } from "lucide-react";
 import { useToast } from "@/components/ui/ConnectionToast";
+import { logger } from "@/lib/logger";
 
 interface CardMessage {
   id: string;
@@ -50,7 +51,7 @@ export default function MailboxPage() {
         alert(errData.error || "Failed to add contact. / 追加に失敗しました。");
       }
     } catch (e) {
-      console.error(e);
+      logger.error("Failed to add contact", { error: e });
       showToast("通信エラーが発生しました。", "error");
     } finally {
       setAddingContactId(null);
@@ -76,7 +77,7 @@ export default function MailboxPage() {
         setMessages(data);
       }
     } catch (err) {
-      console.error(err);
+      logger.error("Failed to fetch messages", { error: err });
       showToast("メッセージの取得に失敗しました", "error");
     } finally {
       setLoading(false);
@@ -106,7 +107,7 @@ export default function MailboxPage() {
           window.dispatchEvent(new CustomEvent("hxc-assets-updated"));
         }
       } catch (err) {
-        console.error(err);
+        logger.error("Failed to mark message as read", { error: err });
       }
     }
   };

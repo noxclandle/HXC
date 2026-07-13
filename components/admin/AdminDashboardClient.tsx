@@ -9,6 +9,7 @@ import {
   RefreshCw, Wrench, FileText, MessageSquare, Package
 } from "lucide-react";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 
 interface AdminDashboardClientProps {
   stats: {
@@ -63,7 +64,7 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
         });
       }
     } catch (e) {
-      console.error(e);
+      logger.error("Failed to fetch integrity diagnostics", { error: e });
     } finally {
       setIsCheckingIntegrity(false);
     }
@@ -91,7 +92,7 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
         setPendingInquiries(d.count);
       }
     } catch (e) {
-      console.error("Failed to fetch daily tasks:", e);
+      logger.error("Failed to fetch daily tasks", { error: e });
     } finally {
       setIsUpdatingTasks(false);
     }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Trash2, Send, Activity } from "lucide-react";
 import { useToast } from "@/components/ui/ConnectionToast";
+import { logger } from "@/lib/logger";
 
 interface NewsItem {
   id: string;
@@ -23,7 +24,7 @@ export default function AdminNewsPage() {
     try {
       const res = await fetch("/api/admin/news/list");
       if (res.ok) setNews(await res.json());
-    } catch (e) { console.error(e); }
+    } catch (e) { logger.error("Failed to fetch news", { error: e }); }
     finally { setLoading(false); }
   };
 
@@ -46,7 +47,7 @@ export default function AdminNewsPage() {
       } else {
         showToast("Transmission failed / 配信に失敗しました", "error");
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { logger.error("Failed to publish news", { error: err }); }
     finally { setIsPublishing(false); }
   };
 
@@ -62,7 +63,7 @@ export default function AdminNewsPage() {
         showToast("Record purged / 削除しました", "info");
         fetchNews();
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { logger.error("Failed to delete news", { error: err }); }
   };
 
   return (

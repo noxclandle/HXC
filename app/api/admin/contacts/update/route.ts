@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 import { z } from "zod";
 import { sendContactReplyNotification } from "@/lib/mail";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -62,13 +63,13 @@ export async function POST(req: NextRequest) {
           replyText
         );
       } catch (emailError) {
-        console.error("Failed to send contact reply email:", emailError);
+        logger.error("Failed to send contact reply email", { error: emailError });
       }
     }
 
     return NextResponse.json(updatedInquiry);
   } catch (error) {
-    console.error("Inquiry Update Error:", error);
+    logger.error("Inquiry Update Error", { error });
     return NextResponse.json({ error: "Failed to update inquiry" }, { status: 500 });
   }
 }

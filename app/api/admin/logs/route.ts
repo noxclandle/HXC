@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +29,7 @@ export async function GET() {
 
     return NextResponse.json(logs);
   } catch (error: unknown) {
-    console.error("Fetch audit logs error:", error);
+    logger.error("Fetch audit logs error", { error });
     return NextResponse.json({ error: "Failed to fetch logs." }, { status: 500 });
   }
 }

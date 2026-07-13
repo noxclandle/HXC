@@ -12,6 +12,7 @@ import ResidentAgent from "@/components/agent/ResidentAgent";
 import { useSession, signIn } from "next-auth/react";
 import { QRCodeSVG } from "qrcode.react";
 import { Send, MessageSquare, Edit3, CheckCircle2, Loader2, FileText, ExternalLink } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?: boolean }) {
   const { status } = useSession();
@@ -70,7 +71,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
         alert("Failed to transmit message. Please try again. / 送信に失敗しました。再度お試しください。");
       }
     } catch (e) {
-      console.error(e);
+      logger.error("Failed to send message", { error: e });
       alert("Network error. Please try again. / 通信エラーが発生しました。再度お試しください。");
     } finally {
       setSendingMessage(false);
@@ -107,7 +108,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
         alert("Failed to transmit contact. Please try again. / 送信に失敗しました。再度お試しください。");
       }
     } catch (e) {
-      console.error(e);
+      logger.error("Failed to submit share-back contact", { error: e });
       alert("Network error. Please try again. / 通信エラーが発生しました。再度お試しください。");
     } finally {
       setSendingShareBack(false);
@@ -147,7 +148,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
           setIsViewerMember(resData.isViewerMember);
         }
       } catch (e) {
-        console.error("Failed to fetch resonance status:", e);
+        logger.error("Failed to fetch resonance status", { error: e });
       }
     };
     
@@ -181,7 +182,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
         alert("Failed to establish resonance. / 共鳴リンクに失敗しました。");
       }
     } catch (e) {
-      console.error(e);
+      logger.error("Failed to establish resonance", { error: e });
       alert("Network error. Please try again. / 通信エラーが発生しました。");
     } finally {
       setLoadingResonance(false);
@@ -218,7 +219,7 @@ export default function ProfileClientUI({ data, isOwner }: { data: any, isOwner?
         alert("Failed to submit report. Please try again. / 通報の送信に失敗しました。再度お試しください。");
       }
     } catch (e) {
-      console.error(e);
+      logger.error("Failed to submit report", { error: e });
       alert("Network error. Please try again. / 通信エラーが発生しました。再度お試しください。");
     } finally {
       setReporting(false);

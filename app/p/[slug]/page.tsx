@@ -6,6 +6,7 @@ import { getPublicProfile, getCachedProfile } from "@/lib/user";
 import { headers } from 'next/headers';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 interface Props {
   params: { slug: string };
@@ -103,7 +104,7 @@ export default async function PublicProfilePage({ params }: Props) {
     if (!session?.user?.id || session.user.id !== profileData.id) {
       // サーバーサイドで非同期処理してロードを妨げない
       const { rewardProfileView } = await import("@/lib/user");
-      rewardProfileView(profileData.id, ipAddress).catch(console.error);
+      rewardProfileView(profileData.id, ipAddress).catch((error) => logger.error("Failed to reward profile view", { error }));
     }
   }
 

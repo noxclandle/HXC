@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 
 export const revalidate = 3600 // Cache sitemap for 1 hour
 
@@ -122,7 +123,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [...staticRoutes, ...dynamicRoutes, ...newsRoutes];
   } catch (error) {
-    console.error("Failed to generate dynamic sitemap:", error);
+    logger.error("Failed to generate dynamic sitemap", { error });
     return staticRoutes; // Fallback to static routes if DB fails
   }
 }

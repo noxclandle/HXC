@@ -4,6 +4,7 @@ import { sendDiscordNotification } from "@/lib/discord";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -102,7 +103,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, id: inquiry.id });
     }
   } catch (error) {
-    console.error("Submission Error:", error);
+    logger.error("Submission Error", { error });
     return NextResponse.json({ error: "Failed to process request" }, { status: 500 });
   }
 }
@@ -157,7 +158,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ success: true, contact: updated });
   } catch (error) {
-    console.error("Update Contact Error:", error);
+    logger.error("Update Contact Error", { error });
     return NextResponse.json({ error: "Failed to update contact" }, { status: 500 });
   }
 }
@@ -193,7 +194,7 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Delete Contact Error:", error);
+    logger.error("Delete Contact Error", { error });
     return NextResponse.json({ error: "Failed to delete contact" }, { status: 500 });
   }
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json(announcement);
   } catch (error: unknown) {
-    console.error("Public news detail fetch error:", error);
+    logger.error("Public news detail fetch error", { error });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

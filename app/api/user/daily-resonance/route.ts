@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { executeRTTransaction } from "@/lib/rt/engine";
 import { rateLimit } from "@/lib/ratelimit";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -82,7 +83,7 @@ export async function POST(req: NextRequest) {
     if (message === "ALREADY_RESONATED") {
       return NextResponse.json({ error: "Already resonated today." }, { status: 400 });
     }
-    console.error("Daily Resonance Error:", error);
+    logger.error("Daily Resonance Error", { error });
     return NextResponse.json({ error: "Sync failed. / 同期に失敗しました。" }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 import { getPublicProfile } from '@/lib/user';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -267,7 +268,7 @@ export async function GET(req: NextRequest) {
       }
     );
   } catch (error: unknown) {
-    console.error("OGP generation failed:", error);
+    logger.error("OGP generation failed", { error });
     return new Response('Failed to generate OGP image', { status: 500 });
   }
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { getUserStatus } from "@/lib/user";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,7 @@ export async function GET() {
 
     return NextResponse.json(status);
   } catch (error: unknown) {
-    console.error("Fetch status error:", error);
+    logger.error("Fetch status error", { error });
     return NextResponse.json({ error: "Failed to fetch status." }, { status: 500 });
   }
 }

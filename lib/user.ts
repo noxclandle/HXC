@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { ASSETS } from "@/lib/game/assets";
 import { getLevelFromExp } from "@/lib/game/level";
 import { Prisma, SystemConfig } from "@prisma/client";
+import { logger } from "@/lib/logger";
 
 let cachedAssetPrices: SystemConfig | null = null;
 let cachedAssetPricesExpiry = 0;
@@ -396,7 +397,7 @@ export async function rewardProfileView(targetUserId: string, ipAddress: string)
       });
       return true;
     } catch (e) {
-      console.error("Profile view EXP reward error:", e);
+      logger.error("Profile view EXP reward error", { error: e });
       return false;
     }
   }

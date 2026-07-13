@@ -6,6 +6,7 @@ import Link from "next/link";
 import HexaCardPreview, { mapUserToCardProps } from "@/components/ui/HexaCardPreview";
 import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import { useToast } from "@/components/ui/ConnectionToast";
+import { logger } from "@/lib/logger";
 
 export default function IdentityReflection({ user }: { user: any }) {
   const { showToast } = useToast();
@@ -56,7 +57,7 @@ export default function IdentityReflection({ user }: { user: any }) {
         setLocalOrientation(safeEquipped.orientation || "horizontal");
       }
     } catch (error: unknown) {
-      console.error(error);
+      logger.error("Failed to update orientation", { error });
       const message = error instanceof Error ? error.message : String(error);
       showToast(`通信エラーが発生しました: ${message}`, "error");
       setLocalOrientation(safeEquipped.orientation || "horizontal");
@@ -121,13 +122,13 @@ export default function IdentityReflection({ user }: { user: any }) {
                       title: `${safeUser.name || 'Hexa Card'}`,
                       text: `新時代のデジタル名刺「Hexa Card」と同調しました。私のプロフィールはこちら：`,
                       url: shareUrl
-                    }).catch(console.error);
+                    }).catch((err) => logger.error("Failed to share card", { error: err }));
                   } else {
                     try {
                       navigator.clipboard.writeText(shareUrl);
                       showToast("名刺のリンクをコピーしました。 / Link copied.", "success");
                     } catch (err) {
-                      console.error(err);
+                      logger.error("Failed to copy share link", { error: err });
                       showToast("コピーに失敗しました。", "error");
                     }
                   }

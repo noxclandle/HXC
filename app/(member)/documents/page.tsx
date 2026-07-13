@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/ConnectionToast";
 import BackgroundGenerator from "@/components/hub/BackgroundGenerator";
+import { logger } from "@/lib/logger";
 
 export default function DocumentManager() {
   const { data: session } = useSession();
@@ -28,9 +29,9 @@ export default function DocumentManager() {
           setUserSlug(data.slug || "");
           setEquippedZoomBg(data.equipped?.zoom_bg || "ZoomBgDefault");
         }
-      } catch (e) { 
-        console.error(e); 
-      } finally { 
+      } catch (e) {
+        logger.error("Failed to fetch initial document data", { error: e });
+      } finally {
         setIsLoaded(true); 
       }
     };
@@ -69,7 +70,7 @@ export default function DocumentManager() {
         throw new Error(data.error || "Upload failed / アップロードに失敗しました");
       }
     } catch (error: unknown) {
-      console.error(error);
+      logger.error("Document upload failed", { error });
       const message = error instanceof Error ? error.message : String(error);
       showToast(message || "Upload failed / アップロードに失敗しました", "error");
     } finally {

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldAlert, CheckCircle, Clock, Trash2, ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 
 export default function ReportsAdminPage() {
   const [reports, setReports] = useState<any[]>([]);
@@ -13,7 +14,7 @@ export default function ReportsAdminPage() {
     try {
       const res = await fetch("/api/admin/report/list");
       if (res.ok) setReports(await res.json());
-    } catch (e) { console.error(e); }
+    } catch (e) { logger.error("Failed to fetch reports", { error: e }); }
     finally { setLoading(false); }
   };
 
@@ -28,7 +29,7 @@ export default function ReportsAdminPage() {
         body: JSON.stringify({ id })
       });
       if (res.ok) fetchReports();
-    } catch (e) { console.error(e); }
+    } catch (e) { logger.error("Failed to resolve report", { error: e }); }
   };
 
   return (

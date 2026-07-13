@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { logger } from "@/lib/logger";
 
 interface Contact {
   id: string;
@@ -167,7 +168,7 @@ export default function LibraryPage() {
         alert("連絡先の更新に失敗しました。 / Failed to update contact.");
       }
     } catch (err) {
-      console.error("Save Error:", err);
+      logger.error("Save Error", { error: err });
       alert("保存中にエラーが発生しました。 / An error occurred while saving.");
     } finally {
       setIsSaving(false);
@@ -191,7 +192,7 @@ export default function LibraryPage() {
         alert("連絡先の削除に失敗しました。 / Failed to delete contact.");
       }
     } catch (err) {
-      console.error("Delete Error:", err);
+      logger.error("Delete Error", { error: err });
       alert("削除中にエラーが発生しました。 / An error occurred while deleting.");
     } finally {
       setIsDeleting(false);

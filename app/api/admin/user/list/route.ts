@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -56,7 +57,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(safeUsers);
   } catch (error: unknown) {
-    console.error("Fetch users error:", error);
+    logger.error("Fetch users error", { error });
     return NextResponse.json({ error: "Failed to fetch users." }, { status: 500 });
   }
 }

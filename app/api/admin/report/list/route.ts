@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,7 @@ export async function GET() {
 
     return NextResponse.json(richReports);
   } catch (error: unknown) {
-    console.error("Report list error:", error);
+    logger.error("Report list error", { error });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

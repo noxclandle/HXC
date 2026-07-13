@@ -9,6 +9,7 @@ import MonthlyReport from "@/components/ui/MonthlyReport";
 import IdentityReflection from "@/components/ui/IdentityReflection";
 import { useToast } from "@/components/ui/ConnectionToast";
 import TarotModal from "@/components/ui/TarotModal";
+import { logger } from "@/lib/logger";
 
 export default function HubClientUI({ 
   initialStats, 
@@ -62,8 +63,8 @@ export default function HubClientUI({
         const rData = await resonanceRes.json();
         setResonanceRequests(rData.requests || []);
       }
-    } catch (err) { 
-      console.error(err);
+    } catch (err) {
+      logger.error("Failed to fetch hub data", { error: err });
     }
   }, []);
 
@@ -126,7 +127,7 @@ export default function HubClientUI({
         showToast("Failed to establish resonance. / 同調に失敗しました", "error");
       }
     } catch (e) {
-      console.error(e);
+      logger.error("Failed to accept resonance", { error: e });
       showToast("Network error. / 通信エラーが発生しました", "error");
     } finally {
       setProcessingResonance(null);
@@ -164,7 +165,7 @@ export default function HubClientUI({
       });
       await fetchData();
     } catch (e) {
-      console.error(e);
+      logger.error("Failed to mark news as read", { error: e });
     }
   };
 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { logger } from "@/lib/logger";
 
 /**
  * 軌跡 (Pointer) システムの進化的統合:
@@ -38,7 +39,7 @@ export default function ConnectionInteraction() {
           default: setCurrentStyle({ color: "#FFFFFF", shape: "hex" });
         }
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { logger.error("Failed to fetch pointer style", { error: e }); }
   };
 
   useEffect(() => {
@@ -70,7 +71,7 @@ export default function ConnectionInteraction() {
         }, 800);
         return () => clearTimeout(timer);
       } catch (err) {
-        console.error("Interaction error:", err);
+        logger.error("Interaction error", { error: err });
       }
     };
 

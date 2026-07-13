@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { rateLimit } from "@/lib/ratelimit";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -140,7 +141,7 @@ export async function POST(req: NextRequest) {
     return response;
 
   } catch (error: unknown) {
-    console.error("Registration error:", error);
+    logger.error("Registration error", { error });
     const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json({ error: message || "Failed to register." }, { status: 500 });
   }

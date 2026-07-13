@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { logger } from "@/lib/logger";
 
 export default class HubErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -16,7 +17,7 @@ export default class HubErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Hub Crash:", error, errorInfo);
+    logger.error("Hub Crash", { error, componentStack: errorInfo.componentStack });
   }
 
   render() {

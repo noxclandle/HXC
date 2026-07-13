@@ -6,6 +6,7 @@ import { ShieldCheck, Mail, Lock, AlertCircle, Loader2, Sparkles } from "lucide-
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { logger } from "@/lib/logger";
 
 function LoginContent() {
   const [email, setEmail] = useState("");
@@ -34,10 +35,10 @@ function LoginContent() {
             router.push("/gate");
           } else {
             // 失敗した場合は通常のログインを促す（トークンが無効などの場合）
-            console.warn("Soul-Link auto-login failed.");
+            logger.warn("Soul-Link auto-login failed.");
           }
         } catch (e) {
-          console.error("Auto-login error:", e);
+          logger.error("Auto-login error", { error: e });
         } finally {
           setIsAutoLoggingIn(false);
         }
@@ -76,7 +77,7 @@ function LoginContent() {
             }
           }
         } catch (e) {
-          console.warn("Silent binding failed");
+          logger.warn("Silent binding failed", { error: e });
         }
 
         const sessionRes = await fetch("/api/auth/session");

@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
-    console.error("Unlink error:", error);
+    logger.error("Unlink error", { error });
     return NextResponse.json({ error: "Failed to unlink card." }, { status: 500 });
   }
 }

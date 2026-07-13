@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/ConnectionToast";
 import GeometricAngel from "@/components/ui/GeometricAngel";
 import TarotModal from "@/components/ui/TarotModal";
 import { getLevelFromExp } from "@/lib/game/level";
+import { logger } from "@/lib/logger";
 
 export default function ResidentAgent() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function ResidentAgent() {
         const data = await res.json();
         setAllNews(data);
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { logger.error("Failed to fetch news", { error: e }); }
     finally { setIsNewsLoading(false); }
   };
 
@@ -58,7 +59,7 @@ export default function ResidentAgent() {
     try {
       await fetch("/api/user/read-news", { method: "POST" });
       fetchStatus();
-    } catch (e) { console.error(e); }
+    } catch (e) { logger.error("Failed to mark news as read", { error: e }); }
   };
 
   const level = getLevelFromExp(userExp);
@@ -78,7 +79,7 @@ export default function ResidentAgent() {
         setIsSoulLinked(true);
         showToast("Soul-Link Established / 魂の同調を完了しました", "success");
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { logger.error("Failed to bind device", { error: e }); }
   };
 
   const checkDailyStatus = (lastDailyAt: string | null) => {
@@ -101,7 +102,7 @@ export default function ResidentAgent() {
         setHasDaily(checkDailyStatus(data.last_daily_at));
         setLastReadAt(data.last_read_news_at);
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { logger.error("Failed to fetch status", { error: e }); }
   }, []);
 
   useEffect(() => {
@@ -161,8 +162,8 @@ export default function ResidentAgent() {
           showToast("Sync Failed / 境界との同期に失敗しました", "error");
         }
       }
-    } catch (e) { 
-      console.error(e);
+    } catch (e) {
+      logger.error("Failed to collect daily bonus", { error: e });
       showToast("Network Error / 通信が不安定です", "error");
     }
   };

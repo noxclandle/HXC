@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Activity, Terminal, Radio, ArrowLeft, ShieldAlert, User, Globe } from "lucide-react";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 
 export default function AuditLogsPage() {
   const [logs, setLogs] = useState<any[]>([]);
@@ -14,7 +15,7 @@ export default function AuditLogsPage() {
       const res = await fetch("/api/admin/logs");
       if (res.ok) setLogs(await res.json());
     } catch (e) {
-      console.error(e);
+      logger.error("Failed to fetch audit logs", { error: e });
     } finally {
       setLoading(false);
     }

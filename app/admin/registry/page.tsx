@@ -24,6 +24,7 @@ import {
   MapPin
 } from "lucide-react";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 
 interface Card {
   uid: string;
@@ -90,7 +91,7 @@ export default function RegistryPage() {
         setCurrentUserRole(session?.user?.role || "");
       }
     } catch (err) {
-      console.error(err);
+      logger.error("Failed to fetch registry data", { error: err });
     } finally {
       setLoading(false);
     }
@@ -150,7 +151,7 @@ export default function RegistryPage() {
         setNewCard({ uid: "", serial: "" });
       }
     } catch (err) {
-      console.error(err);
+      logger.error("Failed to create card slot", { error: err });
     } finally {
       setSubmitting(false);
     }
@@ -176,7 +177,7 @@ export default function RegistryPage() {
         alert("Assignment failed");
       }
     } catch (err) {
-      console.error(err);
+      logger.error("Failed to assign card to order", { error: err });
     } finally {
       setSubmitting(false);
     }
@@ -199,7 +200,7 @@ export default function RegistryPage() {
         alert("紐付け解除に失敗しました。");
       }
     } catch (err) {
-      console.error(err);
+      logger.error("Failed to unlink card", { error: err });
     } finally {
       setSubmitting(false);
     }
@@ -222,7 +223,7 @@ export default function RegistryPage() {
         alert("無効化処理に失敗しました。");
       }
     } catch (err) {
-      console.error(err);
+      logger.error("Failed to void card", { error: err });
     } finally {
       setSubmitting(false);
     }
@@ -262,7 +263,7 @@ export default function RegistryPage() {
       }
     } catch (err) {
       alert("通信エラー：抹消プロセスを完遂できませんでした。ネットワークを確認してください。");
-      console.error(err);
+      logger.error("Failed to delete card", { error: err });
     } finally {
       setSubmitting(false);
     }

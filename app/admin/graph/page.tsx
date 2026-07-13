@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Share2, Filter, ZoomIn, Activity, Download } from "lucide-react";
 import Image from "next/image";
+import { logger } from "@/lib/logger";
 
 export default function ConnectionGraphPage() {
   const [nodes, setNodes] = useState<any[]>([]);
@@ -27,7 +28,7 @@ export default function ConnectionGraphPage() {
         }));
         setNodes(initialNodes);
       } catch (err) {
-        console.warn("Graph data failed, using fallback.");
+        logger.warn("Graph data failed, using fallback", { error: err });
         setNodes([
           { id: "Nox", connections: ["Sera", "Kenta"], rank: "Architect", photo: "/logo.png", x: 0, y: 0, vx: 0, vy: 0, tags: ["Technical"] },
           { id: "Sera", connections: ["Nox"], rank: "Black Tier", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80", x: 100, y: 100, vx: 0, vy: 0, tags: ["High-Value"] },

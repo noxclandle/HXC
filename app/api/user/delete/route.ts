@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   try {
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ message: "Identity erased." });
   } catch (error) {
-    console.error("Deletion error:", error);
+    logger.error("Deletion error", { error });
     return NextResponse.json({ error: "Failed to erase identity." }, { status: 500 });
   }
 }

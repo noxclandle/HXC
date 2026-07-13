@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { executeRTTransaction, calculateFloatingReward } from "@/lib/rt/engine";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
       new_balance: user.rt_balance.toString()
     });
   } catch (error: unknown) {
-    console.error("Hidden RT Error:", error);
+    logger.error("Hidden RT Error", { error });
     const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json({ error: message || "Internal Server Error" }, { status: 500 });
   }

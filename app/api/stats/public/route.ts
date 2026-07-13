@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export async function GET() {
 
     return NextResponse.json({ userCount });
   } catch (error: unknown) {
-    console.error("Public stats error:", error);
+    logger.error("Public stats error", { error });
     return NextResponse.json({ userCount: cachedUserCount || 0 });
   }
 }

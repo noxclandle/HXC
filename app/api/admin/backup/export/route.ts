@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +49,7 @@ export async function GET() {
       }
     });
   } catch (error) {
-    console.error("Backup Export Error:", error);
+    logger.error("Backup Export Error", { error });
     return NextResponse.json({ error: "Failed to generate backup" }, { status: 500 });
   }
 }

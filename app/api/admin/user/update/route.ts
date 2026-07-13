@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, user: safeUser });
   } catch (error: unknown) {
-    console.error("Master override error:", error);
+    logger.error("Master override error", { error });
     return NextResponse.json({ error: "Failed to override soul record." }, { status: 500 });
   }
 }

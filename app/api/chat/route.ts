@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -45,7 +46,7 @@ export async function GET(req: NextRequest) {
 
       return NextResponse.json(messages);
     } catch (dbError) {
-      console.warn("Database offline, returning mock chat history.");
+      logger.warn("Database offline, returning mock chat history", { error: dbError });
       return NextResponse.json([
         { role: "agent", text: "境界の観測者です。データベースとの同期が一時的に途絶えていますが、私はここにいます。" }
       ]);
@@ -82,7 +83,7 @@ export async function POST(req: NextRequest) {
       });
       return NextResponse.json(message);
     } catch (dbError) {
-      console.warn("Database offline, message not saved.");
+      logger.warn("Database offline, message not saved", { error: dbError });
       return NextResponse.json({ role, text, created_at: new Date() });
     }
   } catch (error) {

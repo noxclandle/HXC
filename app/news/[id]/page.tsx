@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import NewsDetailClient from '@/components/news/NewsDetailClient';
+import { logger } from '@/lib/logger';
 
 interface Props {
   params: { id: string };
@@ -14,7 +15,7 @@ async function getAnnouncement(id: string) {
     });
     return announcement;
   } catch (error) {
-    console.error("Failed to fetch announcement in SSR:", error);
+    logger.error("Failed to fetch announcement in SSR", { error });
     return null;
   }
 }

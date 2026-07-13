@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     return response;
   } catch (error: unknown) {
-    console.error("Device binding error:", error);
+    logger.error("Device binding error", { error });
     return NextResponse.json({ error: "Failed to bind device." }, { status: 500 });
   }
 }

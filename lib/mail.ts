@@ -4,6 +4,8 @@
  * Enforces strict "Japanese / English" formatting and simplified English terminology.
  */
 
+import { logger } from "@/lib/logger";
+
 interface SendMailArgs {
   to: string;
   subject: string;
@@ -14,8 +16,7 @@ interface SendMailArgs {
 async function sendResendEmail({ to, subject, text, html }: SendMailArgs) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    console.warn("[MAILER] RESEND_API_KEY is not defined. Logging email instead:");
-    console.log(`To: ${to}\nSubject: ${subject}\nContent:\n${text}`);
+    logger.warn("[MAILER] RESEND_API_KEY is not defined. Logging email instead", { to, subject, text });
     return;
   }
 
@@ -37,13 +38,13 @@ async function sendResendEmail({ to, subject, text, html }: SendMailArgs) {
 
     if (!res.ok) {
       const errText = await res.text();
-      console.error(`[MAILER] Failed to send email via Resend: ${res.status} ${res.statusText} - ${errText}`);
+      logger.error("[MAILER] Failed to send email via Resend", { status: res.status, statusText: res.statusText, errText });
     } else {
       const data = await res.json();
-      console.log(`[MAILER] Email sent successfully via Resend. ID: ${data.id}`);
+      logger.info("[MAILER] Email sent successfully via Resend", { id: data.id });
     }
   } catch (error) {
-    console.error("[MAILER] Error calling Resend API:", error);
+    logger.error("[MAILER] Error calling Resend API", { error });
   }
 }
 

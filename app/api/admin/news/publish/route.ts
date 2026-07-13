@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 import { z } from "zod";
 import { clearNewsCache } from "@/lib/news-cache";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, announcement });
 
   } catch (error: unknown) {
-    console.error("News publish error:", error);
+    logger.error("News publish error", { error });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

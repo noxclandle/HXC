@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight, Newspaper, ArrowLeft, Loader2, Calendar, Tag } from "lucide-react";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 
 export default function PublicNewsPage() {
   const [news, setNews] = useState<any[]>([]);
@@ -14,7 +15,7 @@ export default function PublicNewsPage() {
       try {
         const res = await fetch("/api/news/public");
         if (res.ok) setNews(await res.json());
-      } catch (e) { console.error(e); }
+      } catch (e) { logger.error("Failed to fetch news", { error: e }); }
       finally { setLoading(false); }
     };
     fetchNews();

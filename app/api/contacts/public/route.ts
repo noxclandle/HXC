@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +49,7 @@ export async function GET(req: NextRequest) {
       ai_tags: contact.ai_tags,
     });
   } catch (error) {
-    console.error("GET Public Contact Error:", error);
+    logger.error("GET Public Contact Error", { error });
     return NextResponse.json({ error: "Failed to fetch contact" }, { status: 500 });
   }
 }
@@ -99,7 +100,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, id: message.id });
   } catch (error) {
-    console.error("Public Contact Submit Error:", error);
+    logger.error("Public Contact Submit Error", { error });
     return NextResponse.json({ error: "Failed to submit contact details" }, { status: 500 });
   }
 }

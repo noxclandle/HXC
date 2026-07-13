@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
 import { z } from "zod";
 import { sendCustomerShipmentNotification, sendSetupGuideNotification } from "@/lib/mail";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -58,7 +59,7 @@ export async function POST(req: NextRequest) {
         await sendCustomerShipmentNotification(updatedOrder.customer_email, updatedOrder.customer_name);
         await sendSetupGuideNotification(updatedOrder.customer_email, updatedOrder.customer_name);
       } catch (mailError) {
-        console.error("Failed to send shipment confirmation or setup guide email:", mailError);
+        logger.error("Failed to send shipment confirmation or setup guide email", { error: mailError });
       }
     }
 
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(updatedOrder);
   } catch (error) {
-    console.error("Order Update Error:", error);
+    logger.error("Order Update Error", { error });
     return NextResponse.json({ error: "Failed to update order" }, { status: 500 });
   }
 }

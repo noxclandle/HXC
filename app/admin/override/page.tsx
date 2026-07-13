@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ShieldAlert, Save, RotateCcw, Key, Zap, TrendingUp } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 export default function MasterOverridePage() {
   const [targetUser, setTargetUser] = useState({
@@ -58,7 +59,7 @@ export default function MasterOverridePage() {
               <button 
                 onClick={() => {
                   const input = document.getElementById('newTitleInput') as HTMLInputElement;
-                  console.log(`Bestowing title: ${input.value} upon soul.`);
+                  logger.info("Bestowing title upon soul", { title: input.value });
                   input.value = "";
                 }}
                 className="px-4 py-2 border border-moonlight/30 text-[8px] uppercase tracking-widest hover:bg-white/5 transition-all"
@@ -83,7 +84,7 @@ export default function MasterOverridePage() {
               <button 
                 onClick={() => {
                   const input = document.getElementById('rtAmountInput') as HTMLInputElement;
-                  console.log(`Master Grace: ${input.value} RT bestowed.`);
+                  logger.info("Master Grace RT bestowed", { amount: input.value });
                   window.dispatchEvent(new CustomEvent("rt-grace-received"));
                   input.value = "";
                 }}
@@ -133,7 +134,7 @@ export default function MasterOverridePage() {
                     key={target}
                     onClick={() => {
                       if(confirm(`本当に ${target} 全員に恩寵を授けますか？`)) {
-                        console.log("Mass Bestowal Initiated.");
+                        logger.info("Mass Bestowal Initiated", { target });
                       }
                     }}
                     className="py-3 border border-moonlight/10 text-[8px] uppercase tracking-widest hover:bg-rose-500/10 hover:border-rose-500/40 transition-all"

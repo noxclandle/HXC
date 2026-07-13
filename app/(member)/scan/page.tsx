@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ScanLine, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { playConnectionSound } from "@/lib/audio/resonance";
+import { logger } from "@/lib/logger";
 
 // クライアント側で画像をリサイズ＆圧縮するユーティリティ（転送速度の向上とエラー防止）
 const compressImage = (file: File, maxWidth = 1000, maxHeight = 1000, quality = 0.8): Promise<Blob> => {
@@ -103,7 +104,7 @@ export default function ScanPage() {
       const compressedBlob = await compressImage(file, 1000, 1000, 0.85);
       targetFile = new File([compressedBlob], "card.jpg", { type: "image/jpeg" });
     } catch (compressErr) {
-      console.error("Compression failed, using original file:", compressErr);
+      logger.error("Compression failed, using original file", { error: compressErr });
       targetFile = file;
     }
 
@@ -141,7 +142,7 @@ export default function ScanPage() {
       }
     } catch (err) {
       clearInterval(ocrInterval);
-      console.error("OCR failed:", err);
+      logger.error("OCR failed", { error: err });
       setAiInsight("Auto-fill unavailable. Please enter details manually.");
     } finally {
       clearInterval(ocrInterval);
@@ -200,7 +201,7 @@ export default function ScanPage() {
     } catch (err) {
       clearInterval(progressInterval);
       setAiInsight("An error occurred while saving. / エラーが発生しました。");
-      console.error(err);
+      logger.error("Failed to save contact", { error: err });
       setIsSaving(false);
     }
   };

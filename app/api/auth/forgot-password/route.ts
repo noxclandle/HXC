@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { sendPasswordResetEmail } from "@/lib/mail";
 import { z } from "zod";
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email(),
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ message: "If an account exists, a reset link has been sent." });
   } catch (error) {
-    console.error("Forgot password error:", error);
+    logger.error("Forgot password error", { error });
     return NextResponse.json({ error: "Failed to process request." }, { status: 500 });
   }
 }

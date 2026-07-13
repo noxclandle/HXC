@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { z } from "zod";
 import { getLevelFromExp } from "@/lib/game/level";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -128,7 +129,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ text: responseText });
   } catch (error: unknown) {
-    console.error("Gemini sync error:", error);
+    logger.error("Gemini sync error", { error });
     return NextResponse.json({ error: "Intelligence sync failed." }, { status: 500 });
   }
 }

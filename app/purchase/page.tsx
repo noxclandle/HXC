@@ -7,6 +7,7 @@ import { ChevronRight, CreditCard, Shield, Star, Crown, Check, ArrowRight, Arrow
 import HexaCardPreview from "@/components/ui/HexaCardPreview";
 import UnifiedCardContainer from "@/components/ui/UnifiedCardContainer";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 
 type TierId = "standard" | "executive" | "apex" | "corporate";
 
@@ -58,7 +59,7 @@ export default function PurchasePage() {
     fetch("/api/stats/public")
       .then(res => res.json())
       .then(data => setUserCount(data.userCount || 0))
-      .catch(err => console.error(err));
+      .catch(err => logger.error("Failed to fetch user count", { error: err }));
   }, []);
 
   const tiers = [
@@ -146,7 +147,7 @@ export default function PurchasePage() {
       try {
         referrerId = localStorage.getItem("hxc_referrer_id") || "";
       } catch (e) {
-        console.error("Failed to retrieve referrer ID from localStorage:", e);
+        logger.error("Failed to retrieve referrer ID from localStorage", { error: e });
       }
 
       const res = await fetch("/api/stripe/checkout", {
@@ -169,7 +170,7 @@ export default function PurchasePage() {
         setLoading(false);
       }
     } catch (error) {
-      console.error(error);
+      logger.error("Checkout failed", { error });
       alert("An error occurred during checkout. / 決済処理中にエラーが発生しました。");
       setLoading(false);
     }

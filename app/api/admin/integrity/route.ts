@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions, ADMIN_ROLES } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -78,7 +79,7 @@ export async function GET(req: NextRequest) {
       }
     });
   } catch (error: unknown) {
-    console.error("Integrity check failed:", error);
+    logger.error("Integrity check failed", { error });
     return NextResponse.json({ error: "Integrity check failed" }, { status: 500 });
   }
 }
@@ -144,7 +145,7 @@ export async function POST(req: NextRequest) {
       message: `自動修復が完了しました。修正ユーザー数: ${fixedUsers}名、修正カード数: ${fixedCards}枚`
     });
   } catch (error: unknown) {
-    console.error("Integrity repair failed:", error);
+    logger.error("Integrity repair failed", { error });
     return NextResponse.json({ error: "Integrity repair failed" }, { status: 500 });
   }
 }

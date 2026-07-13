@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export async function GET(req: NextRequest) {
       entities: userCount
     });
   } catch (error) {
-    console.error("Heartbeat sync failed:", error);
+    logger.error("Heartbeat sync failed", { error });
     return NextResponse.json({ status: "Silenced", resonance: false }, { status: 500 });
   }
 }

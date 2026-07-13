@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Discord Webhook を使用して通知を送信するユーティリティ
  */
@@ -5,7 +7,7 @@ export async function sendDiscordNotification(message: string) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
   if (!webhookUrl) {
-    console.warn("DISCORD_WEBHOOK_URL is not set. Skipping notification.");
+    logger.warn("DISCORD_WEBHOOK_URL is not set. Skipping notification.");
     return;
   }
 
@@ -21,9 +23,9 @@ export async function sendDiscordNotification(message: string) {
     });
 
     if (!res.ok) {
-      console.error("Failed to send Discord notification:", await res.text());
+      logger.error("Failed to send Discord notification", { error: await res.text() });
     }
   } catch (error) {
-    console.error("Discord notification error:", error);
+    logger.error("Discord notification error", { error });
   }
 }

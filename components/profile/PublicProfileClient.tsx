@@ -7,6 +7,7 @@ import GeometricAngel from "@/components/ui/GeometricAngel";
 import { useSession } from "next-auth/react";
 import { ChevronDown, Mail } from "lucide-react";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 
 /**
  * 高級感のあるロード画面（スケルトン）
@@ -155,9 +156,9 @@ export default function PublicProfileClient({ slug, initialData }: { slug: strin
     if (data?.id) {
       try {
         localStorage.setItem("hxc_referrer_id", data.id);
-        console.log(`[Referral] Saved referrer ID: ${data.id}`);
+        logger.debug("[Referral] Saved referrer ID", { referrerId: data.id });
       } catch (e) {
-        console.error("Failed to save referrer ID to localStorage:", e);
+        logger.error("Failed to save referrer ID to localStorage", { error: e });
       }
     }
   }, [data]);

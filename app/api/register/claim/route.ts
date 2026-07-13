@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -109,7 +110,7 @@ export async function POST(req: NextRequest) {
     return response;
 
   } catch (error: unknown) {
-    console.error("Claim Register Error:", error);
+    logger.error("Claim Register Error", { error });
     const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json({ error: message || "Failed to finalize card claim." }, { status: 500 });
   }

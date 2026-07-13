@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 const resetPasswordSchema = z.object({
   token: z.string(),
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ message: "Password has been reset successfully." });
   } catch (error) {
-    console.error("Reset password error:", error);
+    logger.error("Reset password error", { error });
     return NextResponse.json({ error: "Failed to reset password." }, { status: 500 });
   }
 }

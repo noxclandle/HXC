@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
           });
           const userIdentifier = user ? `${user.name || "不明"} (${user.email || "メールなし"})` : "不明";
           await sendDiscordNotification(`【HXC監視局】RTチャージを検知。ユーザー: ${userIdentifier} (ID: ${userId}), 付与RT: ${rtAmount}`);
-          console.log(`Successfully granted ${rtAmount} RT to user ${userId} via executeRTTransaction`);
+          logger.info("Successfully granted RT via executeRTTransaction", { rtAmount, userId });
         }
         return NextResponse.json({ received: true });
       }
@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
                 });
 
                 if (doubleCheckTx) {
-                  console.log(`[Referral] Duplicate prevention triggered inside transaction for session ${session.id}`);
+                  logger.info("[Referral] Duplicate prevention triggered inside transaction", { sessionId: session.id });
                   return;
                 }
 
@@ -169,19 +169,19 @@ export async function POST(req: NextRequest) {
                         unlocked_titles: newTitles
                       }
                     });
-                    console.log(`[Referral] Referrer ${referrer.email} unlocked Legendary Title: Resonance Catalyst`);
+                    logger.info("[Referral] Referrer unlocked Legendary Title: Resonance Catalyst", { referrerEmail: referrer.email });
                   }
                 }
               });
-              console.log(`[Referral] Successfully processed 2,000 RT and 300 EXP referral bonus to ${referrer.email} for session ${session.id}`);
+              logger.info("[Referral] Successfully processed 2,000 RT and 300 EXP referral bonus", { referrerEmail: referrer.email, sessionId: session.id });
             } else {
-              console.warn(`[Referral] Referrer ID ${referrerId} not found in database for session ${session.id}`);
+              logger.warn("[Referral] Referrer not found in database", { referrerId, sessionId: session.id });
             }
           } else {
-            console.log(`[Referral] Referral bonus already processed for session ${session.id}`);
+            logger.info("[Referral] Referral bonus already processed", { sessionId: session.id });
           }
         } catch (referralError) {
-          console.error("[Referral] Error processing referral bonus:", referralError);
+          logger.error("[Referral] Error processing referral bonus", { error: referralError });
           // 紹介処理のエラーで全体の注文処理(Webhook)を落とさないようキャッチするが、ログには残す
         }
       }
@@ -219,7 +219,7 @@ export async function POST(req: NextRequest) {
           `■ 配送先: ${shippingAddress.postal_code || ""} ${shippingAddress.state || ""}${shippingAddress.city || ""}${shippingAddress.line1 || ""} ${shippingAddress.line2 || ""}`
         );
       } catch (mailError) {
-        console.error("Failed to send notification mails:", mailError);
+        logger.error("Failed to send notification mails", { error: mailError });
       }
 
       // 2. If it's an Apex tier, try to automatically grant black_member role
@@ -243,13 +243,13 @@ export async function POST(req: NextRequest) {
                unlocked_titles: newTitles
              }
           });
-          console.log(`Automatically upgraded user ${existingUser.email} to black_member and granted exclusive assets.`);
+          logger.info("Automatically upgraded user to black_member and granted exclusive assets", { userEmail: existingUser.email });
         }
       }
 
-      console.log(`Successfully processed session: ${session.id}`);
+      logger.info("Successfully processed session", { sessionId: session.id });
     } catch (dbError) {
-      console.error("Failed to save order to database:", dbError);
+      logger.error("Failed to save order to database", { error: dbError });
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
   }

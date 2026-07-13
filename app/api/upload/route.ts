@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { s3Client, R2_BUCKET_NAME, R2_PUBLIC_DOMAIN } from "@/lib/s3";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
+import { logger } from "@/lib/logger";
 
 /**
  * Cloudflare R2への画像アップロードAPI
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, url: publicUrl });
 
   } catch (error: unknown) {
-    console.error("Upload error:", error);
+    logger.error("Upload error", { error });
     return NextResponse.json({ error: "Failed to upload to R2" }, { status: 500 });
   }
 }

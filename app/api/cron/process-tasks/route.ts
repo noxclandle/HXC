@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { executeRTTransaction } from "@/lib/rt/engine";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
               data: { user_id: user.id, role: "agent", text: `【予約布告】チーフオフィサーより： 「${message}」` }
             });
           }
-        } catch (e) { console.error(`Task execution failed for user ${user.id}`, e); }
+        } catch (e) { logger.error("Task execution failed for user", { userId: user.id, error: e }); }
       }
 
       await prisma.scheduledTask.update({

@@ -13,6 +13,7 @@ import { playConnectionSound } from "@/lib/audio/resonance";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { useSearchParams } from "next/navigation";
 import { ASSETS, Asset, CATEGORIES, getRarityStyles } from "@/lib/game/assets";
+import { logger } from "@/lib/logger";
 
 const RT_PACKS = [
   { id: "rt_small", price: 1000, rt: 2000, label: "2,000 Points / 2,000 ポイント", description: "Basic point refill. For a single asset purchase. / 基本的なポイント補充。1回のアセット購入に。" },
@@ -112,7 +113,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
         setAssetPrices(data.asset_prices || {});
         if (data.equipped) setEquipped((prev: any) => ({ ...prev, ...data.equipped, textColor: data.equipped.textColor || "white" }));
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { logger.error("Failed to fetch inventory data", { error: e }); }
   }, []);
 
   useEffect(() => {
@@ -141,7 +142,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
         throw new Error("Failed to sync");
       }
     } catch (e) {
-      console.error(e);
+      logger.error("Failed to commit equipped assets", { error: e });
       showToast("保存に失敗しました / Save failed", "error");
       fetchData();
     } finally {
@@ -169,7 +170,7 @@ export default function InventoryClientUI({ initialStats }: { initialStats: any 
       } else {
         showToast(data.error || "解放に失敗しました / Unlock failed", "error");
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { logger.error("Failed to unlock asset", { error: err }); }
     finally { setUnlockingAsset(null); setConfirmingAsset(null); }
   };
 

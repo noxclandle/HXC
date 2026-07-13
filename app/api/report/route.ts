@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, reportId: report.id });
 
   } catch (error: unknown) {
-    console.error("Report error:", error);
+    logger.error("Report error", { error });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

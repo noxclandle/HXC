@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
 import { executeRTTransaction } from "@/lib/rt/engine";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -77,7 +78,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error: unknown) {
-    console.error("Unlock error:", error);
+    logger.error("Unlock error", { error });
     const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json({ error: message || "Internal Server Error" }, { status: 500 });
   }
