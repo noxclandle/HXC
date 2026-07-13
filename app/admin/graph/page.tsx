@@ -97,6 +97,52 @@ export default function ConnectionGraphPage() {
 
   const filteredNodes = nodes.filter(n => !filterTag || n.tags.includes(filterTag));
 
+  const handleExportMap = () => {
+    const width = 1600;
+    const height = 1000;
+    const cx = width / 2;
+    const cy = height / 2;
+    const escapeXml = (s: string) =>
+      s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+    const lineEls = filteredNodes
+      .flatMap((n1) =>
+        n1.connections.map((targetId: string) => {
+          const n2 = nodes.find((n) => n.id === targetId);
+          if (!n2) return "";
+          const isHighValue = n1.tags.includes("High-Value");
+          const color = isHighValue ? "rgba(255,215,0,0.4)" : "rgba(224,224,224,0.2)";
+          return `<line x1="${cx + n1.x}" y1="${cy + n1.y}" x2="${cx + n2.x}" y2="${cy + n2.y}" stroke="${color}" stroke-width="${isHighValue ? 2 : 1}" />`;
+        })
+      )
+      .join("");
+
+    const nodeEls = filteredNodes
+      .map(
+        (n) => `
+      <circle cx="${cx + n.x}" cy="${cy + n.y}" r="24" fill="#0a0a0a" stroke="#e0e0e0" stroke-width="1" />
+      <text x="${cx + n.x}" y="${cy + n.y + 40}" fill="#e0e0e0" font-size="10" text-anchor="middle" font-family="monospace">${escapeXml(String(n.id))}</text>
+      <text x="${cx + n.x}" y="${cy + n.y + 52}" fill="#8888aa" font-size="8" text-anchor="middle" font-family="monospace">${escapeXml(String(n.rank || ""))}</text>`
+      )
+      .join("");
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+      <rect width="${width}" height="${height}" fill="#050505" />
+      ${lineEls}
+      ${nodeEls}
+    </svg>`;
+
+    const blob = new Blob([svg], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `hexa-connection-map-${new Date().toISOString().slice(0, 10)}.svg`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-12 bg-void text-moonlight min-h-screen">
       <header className="mb-16 border-b border-moonlight/10 pb-8 flex flex-col gap-8">
@@ -109,7 +155,7 @@ export default function ConnectionGraphPage() {
             <p className="text-[10px] tracking-widest opacity-40 uppercase mt-2">人脈ネットワークの可視化：会社や役職の繋がりを俯瞰します</p>
           </div>
           <div className="flex items-center gap-12">
-             <button onClick={() => alert("Generating high-res map...")} className="flex items-center gap-2 text-[8px] uppercase tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity"><Download size={14} /> Export Map</button>
+             <button onClick={handleExportMap} className="flex items-center gap-2 text-[8px] uppercase tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity"><Download size={14} /> Export Map</button>
              <div className="flex flex-col items-end gap-2">
                <span className="text-[8px] tracking-[0.4em] uppercase opacity-40 flex items-center gap-2"><ZoomIn size={10}/> Magnification</span>
                <input type="range" min="0.5" max="3" step="0.1" value={scale} onChange={(e) => setScale(parseFloat(e.target.value))} className="w-32 accent-moonlight h-1 bg-moonlight/10 appearance-none cursor-pointer" />
