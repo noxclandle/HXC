@@ -324,17 +324,17 @@ export default function AdminDashboardClient({ stats, reportCount }: AdminDashbo
             initial={{ opacity: 0, y: 15 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ delay: i * 0.05 }} 
-            className="p-6 border border-white/5 bg-white/[0.01] backdrop-blur-md relative overflow-hidden rounded-xl group"
+            className="p-6 border border-white/10 bg-white/[0.03] backdrop-blur-md relative overflow-hidden rounded-xl group"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-azure-500/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="flex justify-between items-center mb-4">
-              <span className="text-[7px] text-azure-400 font-bold tracking-[0.2em] uppercase">{s.label}</span>
-              <div className="p-1.5 border border-white/10 text-azure-400/60 rounded-lg">{s.icon}</div>
+              <span className="text-[7px] text-azure-300 font-bold tracking-[0.2em] uppercase">{s.label}</span>
+              <div className="p-1.5 border border-white/15 text-azure-400/80 rounded-lg">{s.icon}</div>
             </div>
             <p className="text-2xl font-light tracking-tight text-white mb-1">
                {s.value}
             </p>
-            <p className="text-[7px] text-white/30 uppercase tracking-widest">{s.desc}</p>
+            <p className="text-[7px] text-white/45 uppercase tracking-widest">{s.desc}</p>
           </motion.div>
         ))}
       </div>

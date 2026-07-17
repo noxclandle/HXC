@@ -180,20 +180,34 @@ export default function FeaturesPage() {
   // 3. 同業にはない唯一無二の価値
   const vsCompetitors = [
     {
-      title: "月額費用の完全排除（買い切りモデル） / No Monthly Fees (One-time Purchase)",
-      subtitle: "NO MONTHLY SUBSCRIPTIONS",
-      desc: "多くのデジタル名刺サービスが月額や年額のサブスクリプション契約を求める中、Hexa Cardは完全な『買い切りモデル』を採用。追加のランニングコストは一切発生せず、一生涯無料でシステムをお使いいただけます。 / While other services require monthly fees, Hexa Card is a one-time purchase with zero recurring costs. Enjoy lifetime access to the system for free."
+      title: "買い切りなのに、システムは進化し続ける / One-Time Purchase, Ever-Evolving System",
+      subtitle: "STATIC HARDWARE, LIVING SOFTWARE",
+      desc: "買い切り型の名刺サービスの多くは「静的なプロフィールページ」止まりです。Hexa Cardは買い切り価格でありながら、共鳴接続・レベル/RT経済・月次レポートなど、クラウド上で継続的に進化するシステムを無償で提供し続けます。 / Most one-time-purchase card services stop at a static profile page. Hexa Card pairs a one-time price with a continuously evolving cloud system — resonance connections, an RT/leveling economy, monthly reports — at no extra cost, ever."
     },
     {
       title: "クリエイター・個人のためのアイデンティティ設計 / Creator-First Identity",
       subtitle: "CREATOR-CENTRIC ARCHITECTURE",
-      desc: "ビジネス用の実名利用を前提とした他社サービスとは異なり、私たちはハンドルネームや活動アバターでの登録を全面的にサポート。現実とバーチャルの多面的なアイデンティティを自由に表現できます。 / Unlike corporate-focused services, we fully support aliases, creator names, and avatars, allowing you to express your multi-dimensional identity."
+      desc: "実名でのビジネス利用を前提とした一般的な名刺サービスとは異なり、私たちはハンドルネームや活動アバターでの登録を全面的にサポート。現実とバーチャルの多面的なアイデンティティを自由に表現できます。 / Unlike services built around real-name business use, we fully support aliases, creator names, and avatars, allowing you to express your multi-dimensional identity."
     },
     {
       title: "所有感を満たすビジュアル演出 / Premium Visual Resonance",
       subtitle: "HIGH-END RESONANCE EFFECTS",
-      desc: "ただ情報を渡すだけではない。カードを開いた瞬間のアニメーションや演出、サウンドなど、高級Webデザインの技術を駆使したエフェクトを標準搭載。圧倒的な体験価値で同業者と差別化します。 / Beyond sharing info. Deliver custom animations, frames, and sounds crafted with premium web design technology to stand out with an unforgettable experience."
+      desc: "多くの競合はテンプレートの静的なデザイン選択に留まります。Hexa Cardはカードを開いた瞬間のアニメーション、フレーム演出、BGMまで標準搭載し、圧倒的な体験価値を提供します。 / Most competitors offer only static template choices. Hexa Card ships with opening animations, frame effects, and BGM as standard, delivering an unmatched experiential edge."
+    },
+    {
+      title: "一方通行のプロフィールで終わらない、双方向のネットワーク / Beyond a One-Way Profile: A Real Network",
+      subtitle: "RECIPROCAL CONNECTION GRAPH",
+      desc: "多くのデジタル名刺は「見せるだけ」の一方通行です。Hexa Cardは「共鳴接続」でユーザー同士がつながり、紹介プログラムや実績称号など、渡した後も関係が育っていく仕組みを持っています。 / Most digital business cards are one-way displays. Hexa Card's Resonance Connection lets members link to each other, with referral rewards and earned titles that keep the relationship growing after the exchange."
     }
+  ];
+
+  // 4. 主要カテゴリとの比較（社名は挙げず、カテゴリで正確に比較）
+  const comparisonRows = [
+    { axis: "料金モデル / Pricing Model", hexa: "買い切り + 無償アップデート / One-time + free updates", subscriptionApps: "月額課金が主流 / Mostly monthly subscription", staticNfc: "買い切りが多い / Often one-time" },
+    { axis: "エイリアス・匿名活動対応 / Alias Support", hexa: "◎ 標準搭載 / Built-in", subscriptionApps: "△ 実名前提 / Real-name oriented", staticNfc: "△ 実名前提 / Real-name oriented" },
+    { axis: "動的ビジュアル・音演出 / Motion & Sound", hexa: "◎ 標準搭載 / Standard", subscriptionApps: "× 非対応 / Not offered", staticNfc: "△ 静的デザインのみ / Static design only" },
+    { axis: "紙名刺のAI-OCR取込 / Paper Card OCR", hexa: "◎ 標準搭載 / Standard", subscriptionApps: "◯ 一部対応 / Some support this", staticNfc: "× 非対応 / Not offered" },
+    { axis: "会員間ネットワーク機能 / Member Network", hexa: "◎ 共鳴接続・紹介制度 / Resonance + referrals", subscriptionApps: "△ 名刺管理のみ / Card storage only", staticNfc: "× 非対応 / Not offered" },
   ];
 
   return (
@@ -435,7 +449,7 @@ export default function FeaturesPage() {
           <h2 className="text-xl md:text-2xl font-light tracking-[0.2em] text-white">同業他社にはない、唯一無二の価値 / The Unique Value of Hexa Card</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {vsCompetitors.map((comp, idx) => (
             <motion.div
               key={idx}
@@ -453,6 +467,33 @@ export default function FeaturesPage() {
               <p className="text-[10px] text-white/50 leading-relaxed font-light">{comp.desc}</p>
             </motion.div>
           ))}
+        </div>
+
+        {/* Comparison Table (category-based, no brand names) */}
+        <div className="mt-16 overflow-x-auto">
+          <table className="w-full min-w-[560px] border-collapse text-left">
+            <thead>
+              <tr className="border-b border-white/10">
+                <th className="py-3 pr-4 text-[8px] tracking-[0.2em] uppercase text-white/40 font-mono font-bold">比較項目 / Axis</th>
+                <th className="py-3 px-4 text-[8px] tracking-[0.2em] uppercase text-white font-mono font-bold bg-purple-500/[0.06]">Hexa Card</th>
+                <th className="py-3 px-4 text-[8px] tracking-[0.2em] uppercase text-white/40 font-mono font-bold">月額制 名刺アプリ / Subscription Apps</th>
+                <th className="py-3 pl-4 text-[8px] tracking-[0.2em] uppercase text-white/40 font-mono font-bold">一般的なNFC名刺 / Static NFC Cards</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comparisonRows.map((row, idx) => (
+                <tr key={idx} className="border-b border-white/5">
+                  <td className="py-4 pr-4 text-[9px] text-white/60 font-bold tracking-wide">{row.axis}</td>
+                  <td className="py-4 px-4 text-[9px] text-white font-bold bg-purple-500/[0.03]">{row.hexa}</td>
+                  <td className="py-4 px-4 text-[9px] text-white/40">{row.subscriptionApps}</td>
+                  <td className="py-4 pl-4 text-[9px] text-white/40">{row.staticNfc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="text-[8px] text-white/20 mt-4 tracking-wider">
+            ※ 一般的な市場カテゴリとの機能比較です。個々のサービスの仕様は変更される場合があります。 / A general market-category comparison. Individual competitor offerings may vary or change over time.
+          </p>
         </div>
       </section>
 

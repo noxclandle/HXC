@@ -46,6 +46,7 @@ const TIER_THEMES = {
 export default function PurchasePage() {
   const [selection, setSelection] = useState<Selection>({ tier: "standard", variant: "Original" });
   const [userCount, setUserCount] = useState<number>(0);
+  const [apexRemaining, setApexRemaining] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -58,7 +59,10 @@ export default function PurchasePage() {
   useEffect(() => {
     fetch("/api/stats/public")
       .then(res => res.json())
-      .then(data => setUserCount(data.userCount || 0))
+      .then(data => {
+        setUserCount(data.userCount || 0);
+        setApexRemaining(typeof data.apexRemaining === "number" ? data.apexRemaining : null);
+      })
       .catch(err => logger.error("Failed to fetch user count", { error: err }));
   }, []);
 
@@ -97,11 +101,13 @@ export default function PurchasePage() {
       name: "Apex",
       price: "¥1,000,000",
       type: "The Black",
-      desc: "究極のステータスを証明する完全特注のブラックカード。全世界10枠限定発行。残された席はあと僅かです。 / Custom-crafted black card representing the ultimate status. Limited to 10 slots worldwide. Very few remain.",
+      desc: "究極のステータスを証明する完全特注のブラックカード。全世界10枠限定発行。 / Custom-crafted black card representing the ultimate status. Limited to 10 slots worldwide.",
       options: [{ label: "Black", value: "Black" }],
       features: [
         "Bespoke Apex Material / 特注最高級ブラック素材",
-        "Limit 10 (8 left) / 全世界限定 10 枠 (残り 8)",
+        apexRemaining !== null
+          ? `Limit 10 (${apexRemaining} left) / 全世界限定 10 枠 (残り ${apexRemaining})`
+          : "Limit 10 / 全世界限定 10 枠",
         "Initial 3,000 RT / 初期 3,000 RT 付与",
         "Exclusive Title / 限定称号付与権",
         "Concierge / エグゼクティブ・コンシェルジュ"
