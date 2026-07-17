@@ -4,7 +4,7 @@ import { NextAuthOptions } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import bcrypt from "bcryptjs";
 import { ADMIN_ROLES } from "./constants";
-import { rateLimit } from "./ratelimit";
+import { rateLimit, safeLimit } from "./ratelimit";
 import { logger } from "./logger";
 
 export { ADMIN_ROLES };
@@ -21,7 +21,7 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.deviceToken) return null;
 
         const ip = (req?.headers?.get?.("x-forwarded-for") as string) || "unknown";
-        const { success } = await rateLimit.strict.limit(`soul-link:${ip}`);
+        const { success } = await safeLimit(rateLimit.strict, `soul-link:${ip}`);
         if (!success) return null;
 
         try {
@@ -62,7 +62,7 @@ export const authOptions: NextAuthOptions = {
 
         // IPベースのレートリミット（ブルートフォース対策）
         const ip = (req?.headers?.get?.("x-forwarded-for") as string) || "unknown";
-        const { success } = await rateLimit.strict.limit(`login:${ip}`);
+        const { success } = await safeLimit(rateLimit.strict, `login:${ip}`);
         if (!success) return null;
 
         // 1. データベースからユーザーを検索

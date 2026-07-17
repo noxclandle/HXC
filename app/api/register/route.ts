@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-import { rateLimit } from "@/lib/ratelimit";
+import { rateLimit, safeLimit } from "@/lib/ratelimit";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   try {
     // 1. IPベースのレートリミットを適用 (DDoS・アカウント大量作成防止)
     const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
-    const { success } = await rateLimit.strict.limit(ip);
+    const { success } = await safeLimit(rateLimit.strict, ip);
     if (!success) {
       return NextResponse.json({ 
         error: "Too many requests. Please try again later. / リクエスト制限を超過しました。しばらく経ってから再試行してください。" 

@@ -24,7 +24,15 @@ export default withAuth(
     } else {
       // Emergency kill-switch toggled from /admin/security. Admin paths stay
       // reachable above so an admin can always lift the lockdown.
-      const lockdown = (await kv.get<boolean>("system_lockdown")) === true;
+      // KVバックエンド未設定時にここで例外を投げると保護対象の全ページが
+      // 巻き込まれて落ちるため、フェイルオープン（ロックダウンなし扱い）にする。
+      let lockdown = false;
+      try {
+        lockdown = (await kv.get<boolean>("system_lockdown")) === true;
+      } catch (e) {
+        console.error("[middleware] KV backend unavailable, failing open", e);
+        lockdown = false;
+      }
       if (lockdown) {
         if (isApiPath) {
           return NextResponse.json({ error: "System is under maintenance lockdown." }, { status: 503 });

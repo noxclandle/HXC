@@ -60,9 +60,16 @@ export async function GET() {
       logger.warn("Failed to read active DB connections", { error });
     }
 
-    const lockdown = (await kv.get<boolean>("system_lockdown")) === true;
+    let lockdown = false;
+    let kvAvailable = true;
+    try {
+      lockdown = (await kv.get<boolean>("system_lockdown")) === true;
+    } catch (error: unknown) {
+      kvAvailable = false;
+      logger.warn("Failed to read lockdown flag from KV", { error });
+    }
 
-    return NextResponse.json({ rules, totalBlocked24h, activeConnections, lockdown });
+    return NextResponse.json({ rules, totalBlocked24h, activeConnections, lockdown, kvAvailable });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
     logger.error("Security status fetch error", { error: message });

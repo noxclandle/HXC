@@ -1,5 +1,6 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
+import { logger } from "./logger";
 
 /**
  * 各プロトコルの上限値。app/admin/security の表示もここを唯一の情報源として参照する。
@@ -36,3 +37,21 @@ export const rateLimit = {
     prefix: RATE_LIMIT_RULES.relaxed.prefix,
   }),
 };
+
+/**
+ * KVバックエンド（環境変数未設定など）が使えない場合でも呼び出し側をブロックしないための
+ * フェイルオープンラッパー。レート制限が一時的に効かなくなるより、認証自体が壊れる方が
+ * 実害が大きいため、エラー時はリクエストを通す。
+ */
+export async function safeLimit(
+  limiter: Ratelimit,
+  key: string
+): Promise<{ success: boolean }> {
+  try {
+    return await limiter.limit(key);
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    logger.error("Rate limiter backend unavailable, failing open", { reason: message });
+    return { success: true };
+  }
+}
