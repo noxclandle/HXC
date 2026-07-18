@@ -8,7 +8,10 @@ import { logger } from "@/lib/logger";
 export const dynamic = "force-dynamic";
 
 const equipSchema = z.object({
-  equipped: z.record(z.string(), z.union([z.string(), z.number(), z.boolean(), z.null()])).optional(),
+  equipped: z.record(
+    z.string(),
+    z.union([z.string(), z.number(), z.boolean(), z.null(), z.record(z.string(), z.string())])
+  ).optional(),
 });
 
 export async function POST(req: NextRequest) {
