@@ -15,6 +15,23 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_mock", {
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 
+/**
+ * 「同じ Checkout Session の注文が既にある」ことによるエラーか。
+ *
+ * Prisma の P2002（一意制約違反）のうち、stripe_session_id が原因のものだけを
+ * 「処理済み」とみなす。他の一意制約（card_uid など）まで成功扱いにすると、
+ * 本物の不整合を握りつぶしてしまう。
+ */
+function isDuplicateSessionError(error: unknown): boolean {
+  if (typeof error !== "object" || error === null) return false;
+  const candidate = error as { code?: unknown; meta?: { target?: unknown } };
+  if (candidate.code !== "P2002") return false;
+
+  const target = candidate.meta?.target;
+  const fields = Array.isArray(target) ? target.map(String) : [String(target ?? "")];
+  return fields.some((field) => field.includes("stripe_session_id"));
+}
+
 export async function POST(req: NextRequest) {
   const payload = await req.text();
   const sig = req.headers.get("stripe-signature") as string;
@@ -56,13 +73,19 @@ export async function POST(req: NextRequest) {
 
         if (userId && rtAmount > 0) {
           const { executeRTTransaction } = await import("@/lib/rt/engine");
+          /*
+            Stripe は同じイベントを複数回送ることがある（再送・タイムアウト後のリトライ）。
+            セッションIDを冪等キーとして渡し、2回目以降は加算しない。
+            これが無いと、1回の支払いでRTが2重に付与される。
+          */
           await executeRTTransaction(
             userId,
             rtAmount,
             "earn",
-            `Stripe RT Purchase (Session: ${session.id})`
+            `Stripe RT Purchase (Session: ${session.id})`,
+            `Session: ${session.id}`
           );
-          
+
           const user = await prisma.user.findUnique({
             where: { id: userId },
             select: { name: true, email: true }
@@ -89,7 +112,15 @@ export async function POST(req: NextRequest) {
       const variant = session.metadata?.variant || "";
       const price = session.amount_total || 0;
 
-      // 1. Create the order
+      /*
+        1. Create the order
+
+        stripe_session_id は unique なので、同じイベントが再送されると
+        ここで一意制約違反(P2002)になる。これは「既に処理済み」という意味であって
+        障害ではないため、200 を返して Stripe のリトライを止める。
+        500 を返し続けると Stripe は最長3日間再送し、最終的に
+        エンドポイントを無効化してしまう（＝以後の注文をすべて取りこぼす）。
+      */
       const newOrder = await prisma.order.create({
         data: {
           stripe_session_id: session.id,
@@ -237,33 +268,56 @@ export async function POST(req: NextRequest) {
         logger.error("Failed to send notification mails", { error: mailError });
       }
 
-      // 2. If it's an Apex tier, try to automatically grant black_member role
+      /*
+        2. If it's an Apex tier, try to automatically grant black_member role
+
+        メール送信や紹介処理と同様、ここでの失敗で Webhook 全体を落とさない。
+        注文レコードは既に作成済みなので、ここで 500 を返すと
+        再送時に order.create が一意制約違反になり、復旧できない状態に陥る。
+      */
       if (tier === "Apex" && customerEmail) {
-        const existingUser = await prisma.user.findUnique({
-          where: { email: customerEmail }
-        });
-
-        if (existingUser) {
-          const currentAssets = (existingUser.owned_assets as string[]) || [];
-          const currentTitles = (existingUser.unlocked_titles as string[]) || [];
-          
-          const newAssets = Array.from(new Set([...currentAssets, "ImperialGold"]));
-          const newTitles = Array.from(new Set([...currentTitles, "APEX"]));
-
-          await prisma.user.update({
-             where: { id: existingUser.id },
-             data: { 
-               role: 'black_member',
-               owned_assets: newAssets,
-               unlocked_titles: newTitles
-             }
+        try {
+          const existingUser = await prisma.user.findUnique({
+            where: { email: customerEmail }
           });
-          logger.info("Automatically upgraded user to black_member and granted exclusive assets", { userEmail: existingUser.email });
+
+          if (existingUser) {
+            const currentAssets = (existingUser.owned_assets as string[]) || [];
+            const currentTitles = (existingUser.unlocked_titles as string[]) || [];
+
+            const newAssets = Array.from(new Set([...currentAssets, "ImperialGold"]));
+            const newTitles = Array.from(new Set([...currentTitles, "APEX"]));
+
+            await prisma.user.update({
+               where: { id: existingUser.id },
+               data: {
+                 role: 'black_member',
+                 owned_assets: newAssets,
+                 unlocked_titles: newTitles
+               }
+            });
+            logger.info("Automatically upgraded user to black_member and granted exclusive assets", { userEmail: existingUser.email });
+          }
+        } catch (apexError) {
+          logger.error("Failed to grant Apex privileges (order itself is saved)", { error: apexError, customerEmail });
         }
       }
 
       logger.info("Successfully processed session", { sessionId: session.id });
     } catch (dbError) {
+      // 同じセッションが再送された場合。障害ではないので 200 を返してリトライを止める
+      if (isDuplicateSessionError(dbError)) {
+        logger.info("Duplicate webhook delivery ignored (order already exists)", {
+          sessionId: session.id,
+        });
+        return NextResponse.json({ received: true, duplicate: true });
+      }
+
+      /*
+        本当の障害（DB停止など）はここで 500 を返す。
+        Stripe が再送してくれるため、復旧後に注文が保存される。
+        ここを一律 200 にすると、障害中の注文が黙って失われる。
+      */
       logger.error("Failed to save order to database", { error: dbError });
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
