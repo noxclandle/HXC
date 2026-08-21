@@ -60,6 +60,7 @@ import ConnectionInteraction from "@/components/ui/ConnectionInteraction";
 import NextAuthProvider from "@/components/providers/NextAuthProvider";
 import { ConnectionToastProvider } from "@/components/ui/ConnectionToast";
 import GameLoadingScreen from "@/components/ui/GameLoadingScreen";
+import ArrivalObserver from "@/components/analytics/ArrivalObserver";
 
 export default function RootLayout({
   children,
@@ -175,6 +176,7 @@ export default function RootLayout({
       <body className="bg-void text-moonlight min-h-screen flex flex-col antialiased">
         <NextAuthProvider>
           <ConnectionToastProvider>
+            <ArrivalObserver />
             <GameLoadingScreen />
             <ConnectionInteraction />
             <div className="relative z-10 flex-grow flex flex-col">

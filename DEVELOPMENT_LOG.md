@@ -85,3 +85,17 @@
 
 
 
+
+## 第13章: 流入の観測 (Arrival Observation)
+- **背景**:
+  - SNS(YouTube/Instagram)では `run_promo_rotation.sh` により隔日で Hexa Card の宣伝動画が自動投稿され続けていたが、本サイトには計測が一切存在せず、宣伝が訪問者を1人でも連れてきているのかを検証する手段がなかった。
+  - 投稿側のリンクには計測タグ(utm_*)を付与済みだが、着地点に受け皿がないため測定が成立していなかった。
+- **実装 (`components/analytics/ArrivalObserver.tsx`)**:
+  - Hexa Relation の既存 Firebase プロジェクトへ相乗りし、`analytics/hxc`(訪問数) と `referrals/hxc/logs`(流入元) を記録。hexa-relation.com 側と同一スキーマのため、既存の管理画面から他事業と横並びで観測できる。
+  - **依存パッケージを一切追加していない。** firebase SDK ではなく Firestore の REST API を fetch で直接叩く方式とし、決済を担う本体のバンドルを膨らませない構成とした。
+  - 既存のコード・UI・描画ロジックには干渉しない。副作用は fetch のみで、通信が失敗しても握りつぶし、観測の不調が製品の動作を止めることはない。
+  - 個人が特定されうる情報は送信しない。パスは第1階層のみに丸めて記録する。
+  - 1訪問1回に限定(sessionStorage)。プライベートブラウズ等で sessionStorage が使えない環境でも例外を出さず継続する。
+- **ローカル検証**:
+  - `npx next dev` で起動し(`prisma db push` を伴う `npm run dev` は本番DBへの干渉を避けるため使用せず)、utm 付きURLで着地。Firestore に `analytics/hxc hits=1` および `referrals/hxc/logs` へ `youtube/short/hexacard/TEST20260822` が記録されることを確認。コンソールエラーなし、`tsc --noEmit` 通過。
+  - ※本番での動作証明は未実施(デプロイ後に確認する)。
