@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { sendAdminOrderNotification, sendCustomerOrderNotification } from "@/lib/mail";
-import { sendDiscordNotification } from "@/lib/discord";
+import { notifyPurchase } from "@/lib/purchase-notify";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +14,23 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_mock", {
 });
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
+
+/**
+ * 「同じ Checkout Session の注文が既にある」ことによるエラーか。
+ *
+ * Prisma の P2002（一意制約違反）のうち、stripe_session_id が原因のものだけを
+ * 「処理済み」とみなす。他の一意制約（card_uid など）まで成功扱いにすると、
+ * 本物の不整合を握りつぶしてしまう。
+ */
+function isDuplicateSessionError(error: unknown): boolean {
+  if (typeof error !== "object" || error === null) return false;
+  const candidate = error as { code?: unknown; meta?: { target?: unknown } };
+  if (candidate.code !== "P2002") return false;
+
+  const target = candidate.meta?.target;
+  const fields = Array.isArray(target) ? target.map(String) : [String(target ?? "")];
+  return fields.some((field) => field.includes("stripe_session_id"));
+}
 
 export async function POST(req: NextRequest) {
   const payload = await req.text();
@@ -44,7 +61,17 @@ export async function POST(req: NextRequest) {
             select: { name: true, email: true },
           });
           const userIdentifier = `${user.name || "不明"} (${user.email || "メールなし"})`;
-          await sendDiscordNotification(`【HXC監視局】別名プロフィール機能の購入を検知。ユーザー: ${userIdentifier} (ID: ${userId})`);
+          await notifyPurchase({
+            service: "Hexa Card",
+            product: "別名プロフィール",
+            amountJpy: session.amount_total,
+            buyer: userIdentifier,
+            fields: [
+              { name: "解放された機能", value: "別名でのプロフィール公開", inline: true },
+              { name: "ユーザーID", value: userId, inline: true },
+            ],
+            reference: session.id,
+          });
           logger.info("Alias profile unlocked via Stripe", { userId });
         }
         return NextResponse.json({ received: true });
@@ -56,19 +83,35 @@ export async function POST(req: NextRequest) {
 
         if (userId && rtAmount > 0) {
           const { executeRTTransaction } = await import("@/lib/rt/engine");
+          /*
+            Stripe は同じイベントを複数回送ることがある（再送・タイムアウト後のリトライ）。
+            セッションIDを冪等キーとして渡し、2回目以降は加算しない。
+            これが無いと、1回の支払いでRTが2重に付与される。
+          */
           await executeRTTransaction(
             userId,
             rtAmount,
             "earn",
-            `Stripe RT Purchase (Session: ${session.id})`
+            `Stripe RT Purchase (Session: ${session.id})`,
+            `Session: ${session.id}`
           );
-          
+
           const user = await prisma.user.findUnique({
             where: { id: userId },
             select: { name: true, email: true }
           });
           const userIdentifier = user ? `${user.name || "不明"} (${user.email || "メールなし"})` : "不明";
-          await sendDiscordNotification(`【HXC監視局】RTチャージを検知。ユーザー: ${userIdentifier} (ID: ${userId}), 付与RT: ${rtAmount}`);
+          await notifyPurchase({
+            service: "Hexa Card",
+            product: "RTチャージ",
+            amountJpy: session.amount_total,
+            buyer: userIdentifier,
+            fields: [
+              { name: "付与RT", value: `${rtAmount.toLocaleString("ja-JP")} RT`, inline: true },
+              { name: "ユーザーID", value: userId, inline: true },
+            ],
+            reference: session.id,
+          });
           logger.info("Successfully granted RT via executeRTTransaction", { rtAmount, userId });
         }
         return NextResponse.json({ received: true });
@@ -89,7 +132,15 @@ export async function POST(req: NextRequest) {
       const variant = session.metadata?.variant || "";
       const price = session.amount_total || 0;
 
-      // 1. Create the order
+      /*
+        1. Create the order
+
+        stripe_session_id は unique なので、同じイベントが再送されると
+        ここで一意制約違反(P2002)になる。これは「既に処理済み」という意味であって
+        障害ではないため、200 を返して Stripe のリトライを止める。
+        500 を返し続けると Stripe は最長3日間再送し、最終的に
+        エンドポイントを無効化してしまう（＝以後の注文をすべて取りこぼす）。
+      */
       const newOrder = await prisma.order.create({
         data: {
           stripe_session_id: session.id,
@@ -224,46 +275,86 @@ export async function POST(req: NextRequest) {
         }
         
         // Discord Notification
-        await sendDiscordNotification(
-          `【HXC監視局】新規注文を検知。\n` +
-          `■ プラン: ${tier}\n` +
-          `■ バリアント: ${variant || "なし"}\n` +
-          `■ 顧客氏名: ${customerName}\n` +
-          `■ 顧客メール: ${customerEmail}\n` +
-          `■ 顧客電話: ${customerPhone}\n` +
-          `■ 配送先: ${shippingAddress.postal_code || ""} ${shippingAddress.state || ""}${shippingAddress.city || ""}${shippingAddress.line1 || ""} ${shippingAddress.line2 || ""}`
-        );
+        await notifyPurchase({
+          service: "Hexa Card",
+          product: `物理カード（${tier}）`,
+          amountJpy: price,
+          buyer: `${customerName} (${customerEmail || "メールなし"})`,
+          fields: [
+            { name: "プラン", value: tier, inline: true },
+            { name: "バリアント", value: variant || "なし", inline: true },
+            { name: "電話", value: customerPhone || "未入力", inline: true },
+            {
+              name: "配送先",
+              value:
+                [
+                  shippingAddress.postal_code,
+                  shippingAddress.state,
+                  shippingAddress.city,
+                  shippingAddress.line1,
+                  shippingAddress.line2,
+                ]
+                  .filter(Boolean)
+                  .join(" ") || "未入力",
+            },
+            { name: "次にやること", value: "管理室の「発行・登録手順」から製造・発送を開始" },
+          ],
+          reference: newOrder.id,
+        });
       } catch (mailError) {
         logger.error("Failed to send notification mails", { error: mailError });
       }
 
-      // 2. If it's an Apex tier, try to automatically grant black_member role
+      /*
+        2. If it's an Apex tier, try to automatically grant black_member role
+
+        メール送信や紹介処理と同様、ここでの失敗で Webhook 全体を落とさない。
+        注文レコードは既に作成済みなので、ここで 500 を返すと
+        再送時に order.create が一意制約違反になり、復旧できない状態に陥る。
+      */
       if (tier === "Apex" && customerEmail) {
-        const existingUser = await prisma.user.findUnique({
-          where: { email: customerEmail }
-        });
-
-        if (existingUser) {
-          const currentAssets = (existingUser.owned_assets as string[]) || [];
-          const currentTitles = (existingUser.unlocked_titles as string[]) || [];
-          
-          const newAssets = Array.from(new Set([...currentAssets, "ImperialGold"]));
-          const newTitles = Array.from(new Set([...currentTitles, "APEX"]));
-
-          await prisma.user.update({
-             where: { id: existingUser.id },
-             data: { 
-               role: 'black_member',
-               owned_assets: newAssets,
-               unlocked_titles: newTitles
-             }
+        try {
+          const existingUser = await prisma.user.findUnique({
+            where: { email: customerEmail }
           });
-          logger.info("Automatically upgraded user to black_member and granted exclusive assets", { userEmail: existingUser.email });
+
+          if (existingUser) {
+            const currentAssets = (existingUser.owned_assets as string[]) || [];
+            const currentTitles = (existingUser.unlocked_titles as string[]) || [];
+
+            const newAssets = Array.from(new Set([...currentAssets, "ImperialGold"]));
+            const newTitles = Array.from(new Set([...currentTitles, "APEX"]));
+
+            await prisma.user.update({
+               where: { id: existingUser.id },
+               data: {
+                 role: 'black_member',
+                 owned_assets: newAssets,
+                 unlocked_titles: newTitles
+               }
+            });
+            logger.info("Automatically upgraded user to black_member and granted exclusive assets", { userEmail: existingUser.email });
+          }
+        } catch (apexError) {
+          logger.error("Failed to grant Apex privileges (order itself is saved)", { error: apexError, customerEmail });
         }
       }
 
       logger.info("Successfully processed session", { sessionId: session.id });
     } catch (dbError) {
+      // 同じセッションが再送された場合。障害ではないので 200 を返してリトライを止める
+      if (isDuplicateSessionError(dbError)) {
+        logger.info("Duplicate webhook delivery ignored (order already exists)", {
+          sessionId: session.id,
+        });
+        return NextResponse.json({ received: true, duplicate: true });
+      }
+
+      /*
+        本当の障害（DB停止など）はここで 500 を返す。
+        Stripe が再送してくれるため、復旧後に注文が保存される。
+        ここを一律 200 にすると、障害中の注文が黙って失われる。
+      */
       logger.error("Failed to save order to database", { error: dbError });
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
