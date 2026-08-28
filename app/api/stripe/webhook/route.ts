@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { sendAdminOrderNotification, sendCustomerOrderNotification } from "@/lib/mail";
-import { sendDiscordNotification } from "@/lib/discord";
+import { notifyPurchase } from "@/lib/purchase-notify";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
@@ -61,7 +61,17 @@ export async function POST(req: NextRequest) {
             select: { name: true, email: true },
           });
           const userIdentifier = `${user.name || "不明"} (${user.email || "メールなし"})`;
-          await sendDiscordNotification(`【HXC監視局】別名プロフィール機能の購入を検知。ユーザー: ${userIdentifier} (ID: ${userId})`);
+          await notifyPurchase({
+            service: "Hexa Card",
+            product: "別名プロフィール",
+            amountJpy: session.amount_total,
+            buyer: userIdentifier,
+            fields: [
+              { name: "解放された機能", value: "別名でのプロフィール公開", inline: true },
+              { name: "ユーザーID", value: userId, inline: true },
+            ],
+            reference: session.id,
+          });
           logger.info("Alias profile unlocked via Stripe", { userId });
         }
         return NextResponse.json({ received: true });
@@ -91,7 +101,17 @@ export async function POST(req: NextRequest) {
             select: { name: true, email: true }
           });
           const userIdentifier = user ? `${user.name || "不明"} (${user.email || "メールなし"})` : "不明";
-          await sendDiscordNotification(`【HXC監視局】RTチャージを検知。ユーザー: ${userIdentifier} (ID: ${userId}), 付与RT: ${rtAmount}`);
+          await notifyPurchase({
+            service: "Hexa Card",
+            product: "RTチャージ",
+            amountJpy: session.amount_total,
+            buyer: userIdentifier,
+            fields: [
+              { name: "付与RT", value: `${rtAmount.toLocaleString("ja-JP")} RT`, inline: true },
+              { name: "ユーザーID", value: userId, inline: true },
+            ],
+            reference: session.id,
+          });
           logger.info("Successfully granted RT via executeRTTransaction", { rtAmount, userId });
         }
         return NextResponse.json({ received: true });
@@ -255,15 +275,32 @@ export async function POST(req: NextRequest) {
         }
         
         // Discord Notification
-        await sendDiscordNotification(
-          `【HXC監視局】新規注文を検知。\n` +
-          `■ プラン: ${tier}\n` +
-          `■ バリアント: ${variant || "なし"}\n` +
-          `■ 顧客氏名: ${customerName}\n` +
-          `■ 顧客メール: ${customerEmail}\n` +
-          `■ 顧客電話: ${customerPhone}\n` +
-          `■ 配送先: ${shippingAddress.postal_code || ""} ${shippingAddress.state || ""}${shippingAddress.city || ""}${shippingAddress.line1 || ""} ${shippingAddress.line2 || ""}`
-        );
+        await notifyPurchase({
+          service: "Hexa Card",
+          product: `物理カード（${tier}）`,
+          amountJpy: price,
+          buyer: `${customerName} (${customerEmail || "メールなし"})`,
+          fields: [
+            { name: "プラン", value: tier, inline: true },
+            { name: "バリアント", value: variant || "なし", inline: true },
+            { name: "電話", value: customerPhone || "未入力", inline: true },
+            {
+              name: "配送先",
+              value:
+                [
+                  shippingAddress.postal_code,
+                  shippingAddress.state,
+                  shippingAddress.city,
+                  shippingAddress.line1,
+                  shippingAddress.line2,
+                ]
+                  .filter(Boolean)
+                  .join(" ") || "未入力",
+            },
+            { name: "次にやること", value: "管理室の「発行・登録手順」から製造・発送を開始" },
+          ],
+          reference: newOrder.id,
+        });
       } catch (mailError) {
         logger.error("Failed to send notification mails", { error: mailError });
       }
