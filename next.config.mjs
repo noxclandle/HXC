@@ -11,6 +11,20 @@ const nextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        /**
+         * Vercel が配る `*.vercel.app` は独自ドメインと同じ中身を返すため、
+         * 放っておくと同じページが二つのURLで拾われる（重複コンテンツ）。
+         * 表の住所は virtual-business-card.hexa-relation.com だけ、とここで宣言する。
+         */
+        source: '/:path*',
+        has: [{ type: 'host', value: '(?<vercelPreview>.*\\.vercel\\.app)' }],
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
+    ];
+  },
   async redirects() {
     return [
       {
