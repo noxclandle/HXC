@@ -468,12 +468,14 @@ export default function PurchasePage() {
         {/* Activity Ticker */}
         <div className="mt-24 border-t border-white/5 pt-8 flex justify-center overflow-hidden">
           <div className="flex gap-20 animate-infinite-scroll opacity-10 hover:opacity-45 transition-opacity duration-700">
+            {/*
+              以前ここに "New Identity established in Tokyo / 12m ago" 等の
+              固定文字列を並べていたが、これは実在しない取引の演出だった。
+              在庫を煽る表示は、実データに基づくものだけを残す。
+            */}
             {[
-              `SYSTEM: Phase 01 slots decreasing / ${Math.max(100 - userCount, 0)} remaining`,
-              "LOG: New Identity established in Tokyo / 12m ago",
-              "LOG: Apex Tier reserved in London / 1h ago",
-              "SYSTEM: Relation Token synchronization complete",
-              "LOG: New Identity established in Seoul / 45m ago"
+              `SYSTEM: Phase 01 slots / ${Math.max(100 - userCount, 0)} remaining`,
+              "SYSTEM: Relation Token synchronization complete"
             ].map((text, i) => (
               <span key={i} className="text-[8px] tracking-[0.5em] uppercase whitespace-nowrap font-mono text-white">
                 {text}

@@ -136,7 +136,7 @@ export default function GameStyleServiceLP() {
             <div className="text-[10px] text-white/40 leading-loose tracking-wider uppercase space-y-4">
               <p>
                 <strong className="text-white">1. 圧倒的な滞在時間</strong><br />
-                単にスクロールして眺めるだけのサイトと比較し、パラメータの数値を動かしたり、クエストをクリックして読み進めるインタラクティブなUIは、サイト滞在時間を平均2.4倍に引き上げます。
+                単にスクロールして眺めるだけのサイトと違い、パラメータの数値を動かしたり、クエストをクリックして読み進めるインタラクティブなUIは、訪問者が自分で操作する時間を生みます。
               </p>
               <p>
                 <strong className="text-white">2. 高いSNSシェア率</strong><br />

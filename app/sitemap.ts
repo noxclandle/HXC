@@ -46,6 +46,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      // 購入前の不安（相手に手間がかかるのでは／気まずくならないか）に
+      // 正面から答える唯一のページ。検索からの第2の入口として載せる。
+      url: `${baseUrl}/guide`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/purchase`,
       lastModified: new Date(),
       changeFrequency: 'monthly',

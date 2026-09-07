@@ -6,10 +6,12 @@ import GeometricBackground from "@/components/background/GeometricBackground";
 export const metadata: Metadata = {
   metadataBase: new URL("https://virtual-business-card.hexa-relation.com/"),
   title: {
-    default: "Hexa Card | 次世代NFCデジタルアイデンティティ / Next-Gen NFC Digital Identity",
+    default: "相手アプリ不要のNFCデジタル名刺 3,000円 | Hexa Card",
     template: "%s | Hexa System"
   },
-  description: "存在を超越する。選ばれた者のための、プレミアムなNFCデジタル名刺とアイデンティティ同期システム。 / Beyond existence. A premium NFC digital business card and identity synchronization system for the chosen few.",
+  // 検索結果は、まだ何屋かも知らない人が最初に見る場所。
+  // 世界観の語ではなく「何が起きるか」を置く。世界観は本文と /about で守る。
+  description: "スマホにかざすだけで、顔写真つきの連絡先が相手の電話帳に入るNFC名刺です。相手にアプリは要りません。買い切り3,000円から、月額料金はなし。役職や連絡先が変わっても、管理画面で直せば手元のカードは刷り直し不要です。",
   manifest: "/manifest.json",
   robots: {
     index: true,
